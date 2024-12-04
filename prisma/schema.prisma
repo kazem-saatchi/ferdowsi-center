@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id            String @id @unique @default(uuid())
+  plaque        Int
+  area          Float
+  floor         Int
+  ownerId       String
+  renterId      String?
+  isActive      Boolean @default(true)
+
+  owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
+  renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
+  
+  histories     ShopHistory[]
+  charges       Charge[]
+  payments      Payment[]
+}
+
+model Person {
+  id            String @id @unique @default(uuid())
+  phoneOne      String
+  phoneTwo      String?
+  IdNumber      String
+  firstName     String
+  LastName      String
+  password      String
+  isActive      Boolean @default(true)
+
+  ownedShops    Shop[] @relation("ShopOwner")
+  rentedShops   Shop[] @relation("ShopRenter")
+
+  histories     ShopHistory[]
+  charges       Charge[]
+  payments      Payment[]
+}
+
+model ShopHistory {
+  id            String   @id @unique @default(uuid())
+  shopId        String
+  personId      String
+  type          HistoryType
+  startDate     DateTime
+  endDate       DateTime?
+  isActive      Boolean  @default(true)
+
+  shop          Shop     @relation(fields: [shopId], references: [id])
+  person        Person   @relation(fields: [personId], references: [id])
+
+  @@index([shopId])
+  @@index([personId])
+}
+
+enum HistoryType {
+  ownership
+  activePeriod
+  deactivePeriod
+  rental
+}
+
+model Charge {
+  id            String   @id @unique @default(uuid())
+  title         String
+  amount        String
+  shopId        String
+  pelaque       Int
+  personId      String
+  date          DateTime
+  operationId   String
+
+  shop          Shop    @relation(fields: [shopId],references: [id])
+  person        Person  @relation(fields: [personId],references: [id])
+  operation     Operation @relation(fields: [operationId],references: [id])
+
+  @@index([operationId])
+  @@index([shopId])
+  @@index([personId])
+}
+
+model Payment {
+  id            String   @id @unique @default(uuid())
+  amount        String
+  shopId        String
+  pelaque       Int
+  personId      String
+  date          DateTime
+
+  shop          Shop    @relation(fields: [shopId],references: [id])
+  person        Person  @relation(fields: [personId],references: [id])
+
+  @@index([shopId])
+  @@index([personId])
+}
+
+model Operation {
+  id            String   @id @unique @default(uuid())
+  title         String
+  date          DateTime
+
+  charges       Charge[]
+}
+
+model Log {
+  id          String   @id @unique @default(uuid())
+  action      String   // Description of the action (e.g., "Payment Added")
+  details     String?  // Optional JSON or text for additional information
+  performedBy String   // ID of the user who performed the action
+  shopId      String?  // Optional reference to the shop (if relevant)
+  personId    String?  // Optional reference to the person (if relevant)
+  timestamp   DateTime @default(now()) // Automatically logs the time
+}
+
