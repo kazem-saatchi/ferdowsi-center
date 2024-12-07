@@ -28,7 +28,7 @@ model Person {
   id            String @id @unique @default(uuid())
   phoneOne      String
   phoneTwo      String?
-  IdNumber      String
+  IdNumber      String @unique
   firstName     String
   LastName      String
   password      String
@@ -117,3 +117,11 @@ model Log {
   timestamp   DateTime @default(now()) // Automatically logs the time
 }
 
+model Session {
+  id          String   @id @default(uuid())
+  personId    String   
+  idNumber    String
+  createdAt   DateTime @default(now())
+
+  @@index([personId]) 
+}
