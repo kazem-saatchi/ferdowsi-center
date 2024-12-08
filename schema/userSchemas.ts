@@ -15,3 +15,13 @@ export const addPersonSchema = z.object({
 
 export type AddPersonData = z.infer<typeof addPersonSchema>;
 //--------------------------------------------------------------------------------------
+export const findPersonByIdSchema = addPersonSchema.omit({
+  firstName: true,
+  lastName: true,
+  password: true,
+  phoneOne: true,
+  phoneTwo: true,
+});
+
+export type findPersonByIdData = z.infer<typeof findPersonByIdSchema>;
+//--------------------------------------------------------------------------------------

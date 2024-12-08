@@ -1,22 +1,23 @@
-'use server'
+"use server";
 
+import { Person } from "@prisma/client";
 import { verifyToken } from "./auth";
 
-interface ActionResponse {
+// utils/handleServerAction.ts
+interface ActionResponse<T> {
   success: boolean;
   message: string;
-  data?: any;
+  data?: T;
 }
 
-export async function handleServerAction(
-  action: (user: any) => Promise<any>, // Action with user context
-  token: string | null // Optional token from client
-): Promise<ActionResponse> {
+export async function handleServerAction<T>(
+  action: (user: Person) => Promise<T>
+): Promise<ActionResponse<T>> {
   try {
     // Verify token and extract user data
-    const user = token ? await verifyToken() : null;
+    const authResult = await verifyToken() || null;
 
-    if (!user) {
+    if (!authResult.person || !authResult.success) {
       return {
         success: false,
         message: "Unauthorized access",
@@ -24,7 +25,7 @@ export async function handleServerAction(
     }
 
     // Execute the action with user context
-    const data = await action(user);
+    const data = await action(authResult.person);
     return {
       success: true,
       message: "Operation succeeded",
@@ -33,9 +34,7 @@ export async function handleServerAction(
   } catch (error) {
     const isProduction = process.env.NODE_ENV === "production";
     const message =
-      error instanceof Error
-        ? error.message
-        : "An unknown error occurred.";
+      error instanceof Error ? error.message : "An unknown error occurred.";
     return {
       success: false,
       message: isProduction ? "An error occurred." : message,

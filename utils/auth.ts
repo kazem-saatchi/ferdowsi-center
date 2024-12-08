@@ -1,5 +1,3 @@
-"use server";
-
 import { db } from "@/lib/db";
 import { Person } from "@prisma/client";
 import { cookies } from "next/headers";
@@ -7,7 +5,7 @@ import { cookies } from "next/headers";
 export interface AuthResult {
   success: boolean;
   message: string;
-  person?: Person | null;
+  person?: Person;
 }
 
 export async function verifyToken(): Promise<AuthResult> {
@@ -28,6 +26,11 @@ export async function verifyToken(): Promise<AuthResult> {
     const person = await db.person.findUnique({
       where: { id: session.personId },
     });
+
+    // check authentication
+    if (!person) {
+      return { success: false, message: "user not found" };
+    }
 
     return { success: true, message: "user verified", person };
   } catch (error) {
