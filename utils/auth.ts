@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { Person } from "@prisma/client";
 import { cookies } from "next/headers";
+import { errorMSG, successMSG } from "./messages";
 
 export interface AuthResult {
   success: boolean;
@@ -14,13 +15,13 @@ export async function verifyToken(): Promise<AuthResult> {
     const token = cookieStore.get("token")?.value;
 
     if (!token) {
-      return { success: false, message: "user session" };
+      return { success: false, message: errorMSG.unauthorized };
     }
 
     const session = await db.session.findUnique({ where: { id: token } });
 
     if (!session) {
-      return { success: false, message: "userNotFound" };
+      return { success: false, message: errorMSG.unauthorized };
     }
 
     const person = await db.person.findUnique({
@@ -29,15 +30,15 @@ export async function verifyToken(): Promise<AuthResult> {
 
     // check authentication
     if (!person) {
-      return { success: false, message: "user not found" };
+      return { success: false, message: errorMSG.userNotFound };
     }
 
-    return { success: true, message: "user verified", person };
+    return { success: true, message: successMSG.userVerified, person };
   } catch (error) {
     if (error instanceof Error) {
       return { success: false, message: error.message };
     } else {
-      return { success: false, message: "unauthorized" };
+      return { success: false, message: errorMSG.unknownError };
     }
   }
 }

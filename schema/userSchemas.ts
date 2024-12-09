@@ -25,3 +25,14 @@ export const findPersonByIdSchema = addPersonSchema.omit({
 
 export type findPersonByIdData = z.infer<typeof findPersonByIdSchema>;
 //--------------------------------------------------------------------------------------
+export const findPersonByFilterSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  phoneOne: z.string().optional(),
+  phoneTwo: z.string().optional(),
+  IdNumber: z.string().optional(),
+  isActive: z.boolean().optional(),
+});
+
+export type FindPersonByFilterData = z.infer<typeof findPersonByFilterSchema>;
+//--------------------------------------------------------------------------------------

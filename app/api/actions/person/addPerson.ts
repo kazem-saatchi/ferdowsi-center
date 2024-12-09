@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { AddPersonData, addPersonSchema } from "@/schema/userSchemas";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
+import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
 interface AddPersonResponse {
@@ -14,7 +15,7 @@ interface AddPersonResponse {
 async function createPerson(data: AddPersonData, person: Person) {
   // Only admins or authorized roles can add new people
   if (person.role !== "ADMIN") {
-    throw new Error("You do not have permission to perform this action.");
+    throw new Error(errorMSG.noPermission);
   }
 
   // Validate input
@@ -30,7 +31,7 @@ async function createPerson(data: AddPersonData, person: Person) {
     where: { IdNumber: validation.data.IdNumber },
   });
   if (existingPerson) {
-    throw new Error("IdNumber already exists");
+    throw new Error(errorMSG.duplicateId);
   }
 
   // Hash password and create person
@@ -47,7 +48,7 @@ async function createPerson(data: AddPersonData, person: Person) {
     },
   });
 
-  return { message: "Person added successfully", id: newPerson.id };
+  return { message: successMSG.personAdded, id: newPerson.id };
 }
 
 export default async function addPerson(data: AddPersonData) {

@@ -2,6 +2,7 @@
 
 import { Person } from "@prisma/client";
 import { verifyToken } from "./auth";
+import { errorMSG, successMSG } from "./messages";
 
 // utils/handleServerAction.ts
 interface ActionResponse<T> {
@@ -15,12 +16,12 @@ export async function handleServerAction<T>(
 ): Promise<ActionResponse<T>> {
   try {
     // Verify token and extract user data
-    const authResult = await verifyToken() || null;
+    const authResult = (await verifyToken()) || null;
 
     if (!authResult.person || !authResult.success) {
       return {
         success: false,
-        message: "Unauthorized access",
+        message: errorMSG.unauthorized,
       };
     }
 
@@ -28,16 +29,16 @@ export async function handleServerAction<T>(
     const data = await action(authResult.person);
     return {
       success: true,
-      message: "Operation succeeded",
+      message: successMSG.actionSucceeded,
       data,
     };
   } catch (error) {
     const isProduction = process.env.NODE_ENV === "production";
     const message =
-      error instanceof Error ? error.message : "An unknown error occurred.";
+      error instanceof Error ? error.message : errorMSG.unknownError;
     return {
       success: false,
-      message: isProduction ? "An error occurred." : message,
+      message: message,
     };
   }
 }
