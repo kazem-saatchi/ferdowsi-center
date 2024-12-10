@@ -17,9 +17,9 @@ export async function verifyToken(): Promise<AuthResult> {
     if (!token) {
       return { success: false, message: errorMSG.unauthorized };
     }
-
+    
     const session = await db.session.findUnique({ where: { id: token } });
-
+    
     if (!session) {
       return { success: false, message: errorMSG.unauthorized };
     }

@@ -19,24 +19,25 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
-
   // Validate input
   const validation = findPersonByFilterSchema.safeParse(data);
+  console.log(validation.error)
   if (!validation.success) {
     throw new Error(
       validation.error.errors.map((err) => err.message).join(", ")
     );
   }
-
+  
   const filters = validation.data;
+  console.log("filter",filters)
 
   // Build dynamic filter
   const whereClause: Record<string, any> = {};
-  if (filters.firstName) whereClause.firstName = filters.firstName;
-  if (filters.lastName) whereClause.lastName = filters.lastName;
-  if (filters.phoneOne) whereClause.phoneOne = filters.phoneOne;
-  if (filters.phoneTwo) whereClause.phoneTwo = filters.phoneTwo;
-  if (filters.IdNumber) whereClause.IdNumber = filters.IdNumber;
+  if (filters.firstName) whereClause.firstName = { contains: filters.firstName, mode: 'insensitive' };
+  if (filters.lastName) whereClause.lastName = { contains: filters.lastName, mode: 'insensitive' };
+  if (filters.phoneOne) whereClause.phoneOne = { contains: filters.phoneOne };
+  if (filters.phoneTwo) whereClause.phoneTwo = { contains: filters.phoneTwo };
+  if (filters.IdNumber) whereClause.IdNumber = { contains: filters.IdNumber };
   if (filters.isActive !== undefined) whereClause.isActive = filters.isActive;
 
   // Fetch persons based on filters
@@ -45,7 +46,7 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   });
 
   if (persons.length === 0) {
-    throw new Error(errorMSG.noPersonsFound);
+    return { message: errorMSG.noPersonsFound, persons: [] };
   }
 
   return { message: successMSG.personsFound, persons };
@@ -56,3 +57,4 @@ export default async function findPersonByFilter(data: FindPersonByFilterData) {
     findPersons(data, user)
   );
 }
+
