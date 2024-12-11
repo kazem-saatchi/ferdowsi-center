@@ -31,7 +31,7 @@ async function updatePerson(data: updatePersonData, person: Person) {
     data: {
       IdNumber: validation.data.IdNumber,
       firstName: validation.data.firstName,
-      LastName: validation.data.lastName,
+      lastName: validation.data.lastName,
       phoneOne: validation.data.phoneOne,
       phoneTwo: validation.data.phoneTwo,
       isActive: validation.data.isActive,
@@ -40,7 +40,7 @@ async function updatePerson(data: updatePersonData, person: Person) {
 
   return {
     message: successMSG.personUpdated,
-    lastName: updatedPerson.LastName,
+    lastName: updatedPerson.lastName,
   };
 }
 

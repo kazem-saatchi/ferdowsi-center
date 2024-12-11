@@ -36,7 +36,7 @@ export default function AddPersonPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"

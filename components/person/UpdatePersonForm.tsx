@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import updatePersonInfo from "@/app/api/actions/person/updatePerson";
+import { useStore } from "@/store/store";
+import { useShallow } from "zustand/react/shallow";
 
 interface UpdatePersonFormProps {
   initialData: {

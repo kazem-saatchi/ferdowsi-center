@@ -15,7 +15,7 @@ export default function SearchPersonsPage() {
     setIsLoading(true);
     try {
       const result = await findPersonByFilter(filters);
-      console.log("find person",result);
+      console.log("find person", result);
       if (result.success && result.data?.persons) {
         setPersons(result.data.persons);
         toast.success(result.message);
@@ -37,14 +37,12 @@ export default function SearchPersonsPage() {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">Search Persons</h1>
-      <div className="grid gap-8 md:grid-cols-[1fr,2fr]">
+      <div className="flex flex-col">
         <PersonSearchForm onSearch={handleSearch} />
         <div>
-          {isLoading ? (
-            <p className="text-center">Loading...</p>
-          ) : persons.length > 0 ? (
-            <PersonList persons={persons} />
-          ) : (
+          {isLoading && <p className="text-center">Loading...</p>}
+          {!isLoading && persons.length > 0 && <PersonList persons={persons} />}
+          {!isLoading && persons.length === 0 && (
             <p className="text-center">
               No persons found. Try adjusting your search criteria.
             </p>

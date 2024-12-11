@@ -1,15 +1,30 @@
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider } from "@/components/ui/sidebar"
-import { UserPlus, Search, UserCog, Home } from 'lucide-react'
-import Link from "next/link"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import { verifyToken } from "@/utils/auth";
+import { UserPlus, Search, UserCog, Home } from "lucide-react";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const { success, person } = await verifyToken();
+  if (person?.role !== "ADMIN" || !success) {
+    redirect("/");
+  }
+
   return (
     <SidebarProvider>
-      <div className="flex h-screen">
+      <div className="flex h-screen w-full">
         <Sidebar side="right">
           <SidebarHeader>
             <h2 className="text-xl font-bold p-4">Admin Dashboard</h2>
@@ -51,11 +66,10 @@ export default function AdminLayout({
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto no-scrollbar">
           {children}
         </main>
       </div>
     </SidebarProvider>
-  )
+  );
 }
-

@@ -19,25 +19,25 @@ export function PersonList({ persons }: PersonListProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>ID Number</TableHead>
-          <TableHead>First Name</TableHead>
-          <TableHead>Last Name</TableHead>
-          <TableHead>Primary Phone</TableHead>
-          <TableHead>Secondary Phone</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Edit</TableHead>
+          <TableHead className="text-center">ID Number</TableHead>
+          <TableHead className="text-center">First Name</TableHead>
+          <TableHead className="text-center">Last Name</TableHead>
+          <TableHead className="text-center">Primary Phone</TableHead>
+          <TableHead className="text-center">Secondary Phone</TableHead>
+          <TableHead className="text-center">Status</TableHead>
+          <TableHead className="text-center">Edit</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {persons.map((person) => (
           <TableRow key={person.id}>
-            <TableCell>{person.IdNumber}</TableCell>
-            <TableCell>{person.firstName}</TableCell>
-            <TableCell>{person.LastName}</TableCell>
-            <TableCell>{person.phoneOne}</TableCell>
-            <TableCell>{person.phoneTwo || "N/A"}</TableCell>
-            <TableCell>{person.isActive ? "Active" : "Inactive"}</TableCell>
-            <TableCell>
+            <TableCell className="text-center">{person.IdNumber}</TableCell>
+            <TableCell className="text-center">{person.firstName}</TableCell>
+            <TableCell className="text-center">{person.lastName}</TableCell>
+            <TableCell className="text-center">{person.phoneOne}</TableCell>
+            <TableCell className="text-center">{person.phoneTwo || "N/A"}</TableCell>
+            <TableCell className="text-center">{person.isActive ? "Active" : "Inactive"}</TableCell>
+            <TableCell className="text-center">
               <Link href={`/admin/update-person/${person.IdNumber}`}>
                 <Button variant="secondary">edit</Button>
               </Link>

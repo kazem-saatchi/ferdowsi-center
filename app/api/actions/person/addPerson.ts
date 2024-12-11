@@ -41,7 +41,7 @@ async function createPerson(data: AddPersonData, person: Person) {
     data: {
       IdNumber: validation.data.IdNumber,
       firstName: validation.data.firstName,
-      LastName: validation.data.lastName,
+      lastName: validation.data.lastName,
       phoneOne: validation.data.phoneOne,
       phoneTwo: validation.data.phoneTwo,
       password: hashedPassword,

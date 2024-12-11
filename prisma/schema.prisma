@@ -31,7 +31,7 @@ model Person {
   phoneTwo      String?
   IdNumber      String @unique
   firstName     String
-  LastName      String
+  lastName      String
   password      String
   isActive      Boolean @default(true)
   role          Role @default(USER)

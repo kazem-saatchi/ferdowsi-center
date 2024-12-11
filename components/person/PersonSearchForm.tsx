@@ -90,7 +90,7 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
               onChange={handleChange}
             />
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Checkbox 
               id="isActive" 
               name="isActive" 
