@@ -1,7 +1,7 @@
 "use client";
 
 import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
-import { useFindPersonById } from "@/tanstack/mutations";
+import { useFindPersonById } from "@/tanstack/queries";
 import { useEffect } from "react";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";

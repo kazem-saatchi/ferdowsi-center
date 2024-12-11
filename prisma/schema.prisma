@@ -10,7 +10,7 @@ datasource db {
 
 model Shop {
   id            String @id @unique @default(uuid())
-  plaque        Int
+  plaque        Int @unique
   area          Float
   floor         Int
   ownerId       String

@@ -8,7 +8,14 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { verifyToken } from "@/utils/auth";
-import { UserPlus, Search, UserCog, Home } from "lucide-react";
+import {
+  UserPlus,
+  Search,
+  UserCog,
+  Home,
+  Users,
+  ShoppingBag,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -41,6 +48,14 @@ export default async function AdminLayout({
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
+                  <Link href="/admin/all-persons">
+                    <Users className="mr-2 h-4 w-4" />
+                    <span>All Persons</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
                   <Link href="/admin/add-person">
                     <UserPlus className="mr-2 h-4 w-4" />
                     <span>Add Person</span>
@@ -63,10 +78,18 @@ export default async function AdminLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/add-shop">
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    <span>Add Shop</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
-        <main className="flex-1 overflow-y-auto no-scrollbar">
+        <main className="flex-1 overflow-y-auto no-scrollbar p-8 items-center justify-center bg-neutral-100">
           {children}
         </main>
       </div>

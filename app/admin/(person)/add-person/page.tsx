@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import addPerson from "@/app/api/actions/person/addPerson";
+import { useAddPerson } from "@/tanstack/mutations";
 
 export default function AddPersonPage() {
-  const router = useRouter();
+  //Tanstack Mutation
+  const mutationAddPerson = useAddPerson();
+
+  // Loading and FormData State
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     IdNumber: "",
     firstName: "",
@@ -25,18 +27,27 @@ export default function AddPersonPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const result = await addPerson(formData);
-      if (result.message) {
-        toast.success(result.message);
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
-    }
+    setIsLoading(true);
+
+    mutationAddPerson.mutate(formData, {
+      onSuccess: () => {
+        setFormData({
+          IdNumber: "",
+          firstName: "",
+          lastName: "",
+          phoneOne: "",
+          phoneTwo: "",
+          password: "",
+        });
+      },
+      onSettled: () => {
+        setIsLoading(false);
+      },
+    });
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -107,8 +118,8 @@ export default function AddPersonPage() {
             required
           />
         </div>
-        <Button type="submit" className="w-full">
-          Add Person
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Adding..." : "Add Person"}
         </Button>
       </form>
     </div>
