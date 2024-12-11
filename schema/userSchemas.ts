@@ -2,11 +2,8 @@ import { z } from "zod";
 
 //--------------------------------------------------------------------------------------
 export const addPersonSchema = z.object({
-  phoneOne: z.string().regex(/^09[0-9]{9}$/),
-  phoneTwo: z
-    .string()
-    .regex(/^09[0-9]{9}$/)
-    .nullable(),
+  phoneOne: z.string(),
+  phoneTwo: z.string().nullable(),
   IdNumber: z.string().length(10),
   firstName: z.string(),
   lastName: z.string(),
@@ -24,6 +21,16 @@ export const findPersonByIdSchema = addPersonSchema.omit({
 });
 
 export type findPersonByIdData = z.infer<typeof findPersonByIdSchema>;
+//--------------------------------------------------------------------------------------
+export const updatePersonSchema = addPersonSchema
+  .omit({
+    password: true,
+  })
+  .extend({
+    isActive: z.boolean(),
+  });
+
+export type updatePersonData = z.infer<typeof updatePersonSchema>;
 //--------------------------------------------------------------------------------------
 export const findPersonByFilterSchema = z.object({
   firstName: z.string().optional(),

@@ -11,6 +11,7 @@ export const errorMSG = {
 
 export const successMSG = {
   personAdded: "Person added successfully",
+  personUpdated: "Person updated successfully",
   personIdFound: "Person finded successfully",
   userVerified: "User Successfully verified",
   actionSucceeded: "Operation succeeded",
