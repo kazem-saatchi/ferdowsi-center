@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +11,17 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { toast } from "sonner";
+
 import { useAddShop } from "@/tanstack/mutations";
+import { PersonSelect } from "@/components/person/PersonSelect";
+import { useFindPersonAll } from "@/tanstack/queries";
+import { useStore } from "@/store/store";
+import { useShallow } from "zustand/react/shallow";
+import { addShopSchema } from "@/schema/shopSchema";
+import { toast } from "sonner";
 
 export default function AddShopPage() {
+  const { data, isLoading, isError, error, refetch } = useFindPersonAll();
   const [formData, setFormData] = useState({
     plaque: "",
     area: "",
@@ -22,6 +29,19 @@ export default function AddShopPage() {
     ownerId: "",
     renterId: "",
   });
+
+  const { personsAll, setPersonAll } = useStore(
+    useShallow((state) => ({
+      personsAll: state.personsAll,
+      setPersonAll: state.setPersonAll,
+    }))
+  );
+
+  useEffect(() => {
+    if (data?.data?.persons) {
+      setPersonAll(data.data.persons);
+    }
+  }, [data, setPersonAll]);
 
   const addShopMutation = useAddShop();
 
@@ -33,8 +53,17 @@ export default function AddShopPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // Validate input
+    const validation = addShopSchema.safeParse(data);
+    if (!validation.success) {
+      toast.error(
+        validation.error.errors.map((err) => err.message).join(", ")
+      );
+      return
+    }
 
     addShopMutation.mutate(
       {
@@ -45,7 +74,7 @@ export default function AddShopPage() {
         renterId: formData.renterId,
       },
       {
-        onSettled: () => {
+        onSuccess: () => {
           // Reset form after successful submission
           setFormData({
             plaque: "",
@@ -103,22 +132,23 @@ export default function AddShopPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ownerId">Owner ID</Label>
-              <Input
-                id="ownerId"
-                name="ownerId"
+              <Label htmlFor="ownerId">Owner</Label>
+              <PersonSelect
                 value={formData.ownerId}
-                onChange={handleChange}
-                required
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, ownerId: value }))
+                }
+                label="Owner"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="renterId">Renter ID (Optional)</Label>
-              <Input
-                id="renterId"
-                name="renterId"
+              <Label htmlFor="renterId">Renter (Optional)</Label>
+              <PersonSelect
                 value={formData.renterId}
-                onChange={handleChange}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, renterId: value }))
+                }
+                label="Renter"
               />
             </div>
           </CardContent>

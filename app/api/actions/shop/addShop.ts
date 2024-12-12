@@ -39,10 +39,11 @@ async function createShop(data: AddShopData, person: Person) {
       area: validation.data.area,
       floor: validation.data.floor,
       ownerId: validation.data.ownerId,
+      renterId: validation.data.renterId || null,
     },
   });
 
-  return { message: successMSG.personAdded, plaque: newShop.plaque };
+  return { message: successMSG.shopAdded, plaque: newShop.plaque };
 }
 
 export default async function addShop(data: AddShopData) {

@@ -18,4 +18,6 @@ export const successMSG = {
   userVerified: "User Successfully verified",
   actionSucceeded: "Operation succeeded",
   personsFound: "Persons found successfully.",
+
+  shopAdded: "Shop Added Successfully",
 };

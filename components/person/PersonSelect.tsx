@@ -23,10 +23,9 @@ export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const { personsAll, setPersonAll } = useStore(
+  const { personsAll } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
-      setPersonAll: state.setPersonAll,
     }))
   );
 
@@ -73,16 +72,17 @@ export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="mt-4 max-h-[300px] overflow-y-auto">
+          <div className="mt-4 max-h-[400px] overflow-y-auto no-scrollbar">
             {filteredPersons.map((person) => (
-              <Button
+              <div
                 key={person.id}
-                variant="ghost"
-                className="w-full justify-start"
+                // variant="ghost"
+                className=" justify-start p-2 m-2 border rounded-md cursor-pointer"
                 onClick={() => handleSelect(person)}
+                // type="button"
               >
                 {person.firstName} {person.lastName} ({person.IdNumber})
-              </Button>
+              </div>
             ))}
           </div>
         </DialogContent>
