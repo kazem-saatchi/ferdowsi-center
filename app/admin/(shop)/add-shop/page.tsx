@@ -30,6 +30,9 @@ export default function AddShopPage() {
     renterId: "",
   });
 
+  // Error State
+  const [formErrors, setFormErrors] = useState<any>({});
+
   const { personsAll, setPersonAll } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
@@ -59,33 +62,35 @@ export default function AddShopPage() {
     // Validate input
     const validation = addShopSchema.safeParse(data);
     if (!validation.success) {
-      toast.error(
-        validation.error.errors.map((err) => err.message).join(", ")
-      );
-      return
-    }
+      // Set form errors
+      const errors = validation.error.format();
+      setFormErrors(errors);
+      
+    } else {
 
-    addShopMutation.mutate(
-      {
-        plaque: parseInt(formData.plaque),
-        area: parseFloat(formData.area),
-        floor: parseInt(formData.floor),
-        ownerId: formData.ownerId,
-        renterId: formData.renterId,
-      },
-      {
-        onSuccess: () => {
-          // Reset form after successful submission
-          setFormData({
-            plaque: "",
-            area: "",
-            floor: "",
-            ownerId: "",
-            renterId: "",
-          });
+      
+      addShopMutation.mutate(
+        {
+          plaque: parseInt(formData.plaque),
+          area: parseFloat(formData.area),
+          floor: parseInt(formData.floor),
+          ownerId: formData.ownerId,
+          renterId: formData.renterId,
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            // Reset form after successful submission
+            setFormData({
+              plaque: "",
+              area: "",
+              floor: "",
+              ownerId: "",
+              renterId: "",
+            });
+          },
+        }
+      );
+    }
   };
 
   return (
