@@ -14,18 +14,19 @@ import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
 
 interface PersonSelectProps {
-  value: string;
-  onChange: (value: string) => void;
+  property: string;
   label: string;
 }
 
-export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
+export function PersonSelect({ label, property }: PersonSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const { personsAll } = useStore(
+  const { personsAll, newShop, setNewShop } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
+      setNewShop: state.setNewShop,
+      newShop: state.newShop,
     }))
   );
 
@@ -44,12 +45,12 @@ export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
     }
   }, [search, personsAll]);
 
-  const handleSelect = (person: Person) => {
-    onChange(person.id);
-    setOpen(false);
-  };
-
-  const selectedPerson = personsAll?.find((person) => person.id === value);
+  const selectedPerson = personsAll?.find(
+    (person) =>
+      (person.id === newShop[property as "ownerId" | "renterId"] &&
+        newShop[property as "ownerId" | "renterId"]) ||
+      undefined
+  );
 
   return (
     <div>
@@ -57,6 +58,7 @@ export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
         variant="outline"
         onClick={() => setOpen(true)}
         className="w-full justify-start text-left font-normal"
+        type="button"
       >
         {selectedPerson
           ? `${selectedPerson.firstName} ${selectedPerson.lastName} (${selectedPerson.IdNumber})`
@@ -78,7 +80,11 @@ export function PersonSelect({ value, onChange, label }: PersonSelectProps) {
                 key={person.id}
                 // variant="ghost"
                 className=" justify-start p-2 m-2 border rounded-md cursor-pointer"
-                onClick={() => handleSelect(person)}
+                onClick={() => {
+                  setNewShop(property, person.id);
+                  console.log(newShop)
+                  setOpen(false);
+                }}
                 // type="button"
               >
                 {person.firstName} {person.lastName} ({person.IdNumber})

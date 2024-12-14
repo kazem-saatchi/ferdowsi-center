@@ -18,25 +18,23 @@ import { useFindPersonAll } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
-import { toast } from "sonner";
 
 export default function AddShopPage() {
+  // Tansack Query and Mutation
   const { data, isLoading, isError, error, refetch } = useFindPersonAll();
-  const [formData, setFormData] = useState({
-    plaque: "",
-    area: "",
-    floor: "",
-    ownerId: "",
-    renterId: "",
-  });
+  const addShopMutation = useAddShop();
 
   // Error State
+  const [saving, setSaving] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<any>({});
 
-  const { personsAll, setPersonAll } = useStore(
+  const { setPersonAll, newShop, setNewShop, resetNewShop } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
       setPersonAll: state.setPersonAll,
+      newShop: state.newShop,
+      setNewShop: state.setNewShop,
+      resetNewShop: state.resetNewShop,
     }))
   );
 
@@ -44,52 +42,27 @@ export default function AddShopPage() {
     if (data?.data?.persons) {
       setPersonAll(data.data.persons);
     }
-  }, [data, setPersonAll]);
-
-  const addShopMutation = useAddShop();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  }, [data]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    setSaving(true);
     // Validate input
-    const validation = addShopSchema.safeParse(data);
+    const validation = addShopSchema.safeParse(newShop);
     if (!validation.success) {
       // Set form errors
       const errors = validation.error.format();
+      setSaving(false)
       setFormErrors(errors);
-      
     } else {
-
-      
-      addShopMutation.mutate(
-        {
-          plaque: parseInt(formData.plaque),
-          area: parseFloat(formData.area),
-          floor: parseInt(formData.floor),
-          ownerId: formData.ownerId,
-          renterId: formData.renterId,
+      addShopMutation.mutate(validation.data, {
+        onSuccess: () => {
+          resetNewShop();
         },
-        {
-          onSuccess: () => {
-            // Reset form after successful submission
-            setFormData({
-              plaque: "",
-              area: "",
-              floor: "",
-              ownerId: "",
-              renterId: "",
-            });
-          },
-        }
-      );
+        onSettled: () => {
+          setSaving(false);
+        },
+      });
     }
   };
 
@@ -108,10 +81,16 @@ export default function AddShopPage() {
                 id="plaque"
                 name="plaque"
                 type="number"
-                value={formData.plaque}
-                onChange={handleChange}
-                required
+                value={newShop.plaque}
+                onChange={(event) => {
+                  setNewShop("plaque", parseInt(event.target.value));
+                }}
               />
+              {formErrors.plaque && (
+                <span className="text-red-500 text-sm">
+                  {formErrors.plaque?._errors[0]}
+                </span>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="area">Area (sq m)</Label>
@@ -120,10 +99,16 @@ export default function AddShopPage() {
                 name="area"
                 type="number"
                 step="0.01"
-                value={formData.area}
-                onChange={handleChange}
-                required
+                value={newShop.area}
+                onChange={(event) => {
+                  setNewShop("area", parseFloat(event.target.value));
+                }}
               />
+              {formErrors.area && (
+                <span className="text-red-500 text-sm">
+                  {formErrors.area?._errors[0]}
+                </span>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="floor">Floor</Label>
@@ -131,30 +116,34 @@ export default function AddShopPage() {
                 id="floor"
                 name="floor"
                 type="number"
-                value={formData.floor}
-                onChange={handleChange}
-                required
+                value={newShop.floor}
+                onChange={(event) => {
+                  setNewShop("floor", parseInt(event.target.value));
+                }}
               />
+              {formErrors.floor && (
+                <span className="text-red-500 text-sm">
+                  {formErrors.floor?._errors[0]}
+                </span>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="ownerId">Owner</Label>
-              <PersonSelect
-                value={formData.ownerId}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, ownerId: value }))
-                }
-                label="Owner"
-              />
+              <PersonSelect property="ownerId" label="Owner" />
+              {formErrors.ownerId && (
+                <span className="text-red-500 text-sm">
+                  {formErrors.ownerId?._errors[0]}
+                </span>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="renterId">Renter (Optional)</Label>
-              <PersonSelect
-                value={formData.renterId}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, renterId: value }))
-                }
-                label="Renter"
-              />
+              <PersonSelect property="renterId" label="Renter" />
+              {formErrors.renterId && (
+                <span className="text-red-500 text-sm">
+                  {formErrors.renterId?._errors[0]}
+                </span>
+              )}
             </div>
           </CardContent>
           <CardFooter>
@@ -163,7 +152,7 @@ export default function AddShopPage() {
               className="w-full"
               disabled={addShopMutation.isPending}
             >
-              {addShopMutation.isPending ? "Adding Shop..." : "Add Shop"}
+              {saving ? "Adding Shop..." : "Add Shop"}
             </Button>
           </CardFooter>
         </form>

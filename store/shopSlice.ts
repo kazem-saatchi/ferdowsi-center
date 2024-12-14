@@ -1,0 +1,51 @@
+import { StateCreator } from "zustand";
+import { Shop } from "@prisma/client";
+import { AddShopData } from "@/schema/shopSchema";
+
+type Shops = {
+  shopById: Shop | null;
+  setshopById: (shop: Shop) => void;
+  shopsAll: Shop[] | null;
+  setshopAll: (shops: Shop[]) => void;
+  newShop: AddShopData;
+  setNewShop: (property: string, value: any) => void;
+  resetNewShop: () => void;
+};
+
+export type ShopSlice = Shops;
+
+export const createShopSlice: StateCreator<
+  ShopSlice,
+  [["zustand/immer", never]],
+  [],
+  ShopSlice
+> = (set) => ({
+  // States
+  shopById: null,
+  shopsAll: null,
+  newShop: {
+    plaque: 0,
+    area: 0,
+    floor: 1,
+    ownerId: "",
+    renterId: null,
+  },
+
+  // Set Utils
+  setshopById: (shop) => set({ shopById: shop }),
+  setshopAll: (shops) => set({ shopsAll: shops }),
+  setNewShop: (property, value) =>
+    set((state) => {
+      state.newShop = { ...state.newShop, [property]: value };
+    }),
+  resetNewShop: () =>
+    set({
+      newShop: {
+        plaque: 0,
+        area: 0,
+        floor: 1,
+        ownerId: "",
+        renterId: null,
+      },
+    }),
+});
