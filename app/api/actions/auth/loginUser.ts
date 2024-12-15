@@ -9,7 +9,13 @@ interface LoginData {
   password: string;
 }
 
-export async function loginUser(data: LoginData) {
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  role?: "ADMIN" | "USER";
+}
+
+export async function loginUser(data: LoginData): Promise<LoginResponse> {
   try {
     // Find the user by IdNumber
     const user = await db.person.findUnique({
@@ -17,22 +23,21 @@ export async function loginUser(data: LoginData) {
     });
 
     if (!user) {
-      return { success: false, error: "User not found" };
+      return { success: false, message: "User not found" };
     }
 
     // Compare passwords
     const isPasswordValid = await comparePassword(data.password, user.password);
 
     if (!isPasswordValid) {
-      return { success: false, error: "Invalid password" };
+      return { success: false, message: "Invalid password" };
     }
 
     const session = await db.session.create({
       data: { idNumber: user.IdNumber, personId: user.id },
     });
 
-    if(session) {
-
+    if (session) {
     }
 
     // Store token in Cookie
@@ -43,10 +48,9 @@ export async function loginUser(data: LoginData) {
       maxAge: expireTime,
     });
 
-
-    return { success: true };
+    return { success: true, message: "Login successful", role: user.role };
   } catch (error) {
     console.error("Login error:", error);
-    return { success: false, error: "An error occurred during login" };
+    return { success: false, message: "An error occurred during login" };
   }
 }

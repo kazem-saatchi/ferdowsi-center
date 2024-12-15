@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default async function AdminLayout({
   children,
@@ -37,15 +38,17 @@ export default async function AdminLayout({
             <h2 className="text-xl font-bold p-4">Admin Dashboard</h2>
           </SidebarHeader>
           <SidebarContent>
+            <Separator />
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin">
+                  <Link href="/admin/dashboard">
                     <Home className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <Separator />
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/admin/all-persons">
@@ -78,6 +81,7 @@ export default async function AdminLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <Separator />
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/admin/add-shop">
@@ -86,6 +90,23 @@ export default async function AdminLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/all-shops">
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    <span>All Shops</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/find-shop">
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    <span>Find Shop</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <Separator />
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>

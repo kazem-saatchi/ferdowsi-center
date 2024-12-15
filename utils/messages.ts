@@ -20,4 +20,5 @@ export const successMSG = {
   personsFound: "Persons found successfully.",
 
   shopAdded: "Shop Added Successfully",
+  shopsFound: "Shops founded successfully",
 };

@@ -12,7 +12,7 @@ interface findPersonsAllResponse {
 
 async function findPersons(user: Person) {
   // check authentication
-  if (!user) {
+  if (!user || user.role !== "ADMIN") {
     throw new Error(errorMSG.unauthorized);
   }
 
