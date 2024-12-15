@@ -18,3 +18,29 @@ export const addShopSchema = z.object({
 
 export type AddShopData = z.infer<typeof addShopSchema>;
 //--------------------------------------------------------------------------------------
+export const updateShopInfoSchema = addShopSchema
+  .omit({
+    ownerId: true,
+    renterId: true,
+  })
+  .extend({ id: z.string() });
+
+export type UpdateShopInfoData = z.infer<typeof updateShopInfoSchema>;
+//--------------------------------------------------------------------------------------
+export const shopHistoryTypeEnum = z.enum([
+  "ownership",
+  "activePeriod",
+  "deactivePeriod",
+  "rental",
+]);
+
+export const addShopHistorySchema = z.object({
+  shopId: z.string().uuid(),
+  personId: z.string().uuid(),
+  type: shopHistoryTypeEnum,
+  startDate: z.string().datetime(),
+  endDate: z.string().datetime().optional(),
+});
+
+export type AddShopHistoryData = z.infer<typeof addShopHistorySchema>;
+//--------------------------------------------------------------------------------------

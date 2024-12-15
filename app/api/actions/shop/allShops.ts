@@ -17,7 +17,7 @@ async function findShops(user: Person) {
   }
 
   // find Shops
-  const shops = await db.shop.findMany();
+  const shops = await db.shop.findMany({ orderBy: { plaque: "asc" } });
 
   return { message: successMSG.shopsFound, shops: shops };
 }

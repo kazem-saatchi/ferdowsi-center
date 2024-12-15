@@ -1,7 +1,6 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { findPersonByIdData, findPersonByIdSchema } from "@/schema/userSchemas";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -11,23 +10,15 @@ interface findPersonResponse {
   message: string;
 }
 
-async function findPerson(data: findPersonByIdData, user: Person) {
+async function findPerson(id: string, user: Person) {
   // check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
 
-  // Validate input
-  const validation = findPersonByIdSchema.safeParse(data);
-  if (!validation.success) {
-    throw new Error(
-      validation.error.errors.map((err) => err.message).join(", ")
-    );
-  }
-
   // find Person by Id
   const person = await db.person.findUnique({
-    where: { IdNumber: validation.data.IdNumber },
+    where: { IdNumber: id },
   });
   if (!person) {
     throw new Error(errorMSG.personIdNotFound);
@@ -36,8 +27,8 @@ async function findPerson(data: findPersonByIdData, user: Person) {
   return { message: successMSG.personIdFound, person: person };
 }
 
-export default async function findPersonById(data: findPersonByIdData) {
+export default async function findPersonById(id: string) {
   return handleServerAction<findPersonResponse>((user) =>
-    findPerson(data, user)
+    findPerson(id, user)
   );
 }

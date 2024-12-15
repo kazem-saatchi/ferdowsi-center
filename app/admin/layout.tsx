@@ -100,9 +100,9 @@ export default async function AdminLayout({
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin/find-shop">
+                  <Link href="/admin/edit-shop">
                     <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>Find Shop</span>
+                    <span>Update Shop</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

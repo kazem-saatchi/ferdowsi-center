@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Shop" ALTER COLUMN "renterName" DROP NOT NULL,
+ALTER COLUMN "renterName" DROP DEFAULT;

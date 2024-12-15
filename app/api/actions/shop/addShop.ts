@@ -33,6 +33,29 @@ async function createShop(data: AddShopData, person: Person) {
     throw new Error(errorMSG.duplicatePlaque);
   }
 
+  // Find owner
+  const owner = await db.person.findUnique({
+    where: { id: validation.data.ownerId },
+  });
+
+  if (!owner) {
+    throw new Error(errorMSG.ownerNotFound);
+  }
+
+  let renter: Person | null = null;
+  if (validation.data.renterId && validation.data.renterId !== "") {
+    renter = await db.person.findUnique({
+      where: { id: validation.data.renterId },
+    });
+    if (!renter) {
+      throw new Error(errorMSG.renterNotFound);
+    }
+  }
+
+  const ownerName = owner.firstName + " " + owner.lastName;
+  const renterName = renter ? renter.firstName + " " + renter.lastName : null;
+
+
   const newShop = await db.shop.create({
     data: {
       plaque: validation.data.plaque,
@@ -40,6 +63,8 @@ async function createShop(data: AddShopData, person: Person) {
       floor: validation.data.floor,
       ownerId: validation.data.ownerId,
       renterId: validation.data.renterId || null,
+      ownerName: ownerName,
+      renterName: renterName,
     },
   });
 

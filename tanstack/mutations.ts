@@ -8,8 +8,9 @@ import addPerson from "@/app/api/actions/person/addPerson";
 import { toast } from "sonner";
 import updatePersonInfo from "@/app/api/actions/person/updatePerson";
 import deletePersonById from "@/app/api/actions/person/deletePerson";
-import { AddShopData } from "@/schema/shopSchema";
+import { AddShopData, UpdateShopInfoData } from "@/schema/shopSchema";
 import addShop from "@/app/api/actions/shop/addShop";
+import updateShopInfo from "@/app/api/actions/shop/updateShopInfo";
 
 // Add Person
 export function useAddPerson() {
@@ -35,47 +36,51 @@ export function useAddPerson() {
 
 // Update Person
 export function useUpatePerson() {
-    const queryClient = useQueryClient();
-    const router = useRouter();
-  
-    return useMutation({
-      mutationFn: async (data: updatePersonData) => await updatePersonInfo(data),
-      onSuccess: (data,variables) => {
-        if (data.success) {
-          queryClient.invalidateQueries({ queryKey: ["person",variables.IdNumber] });
-          queryClient.refetchQueries({ queryKey: ["person",variables.IdNumber] });
-          toast.success(data.data?.message);
-        } else {
-          toast.error(data.data?.message || data.message);
-        }
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
-  }
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: updatePersonData) => await updatePersonInfo(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({
+          queryKey: ["person", variables.IdNumber],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["person", variables.IdNumber],
+        });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
 
 // Delete Person
 export function useDeletePerson() {
-    const queryClient = useQueryClient();
-    const router = useRouter();
-  
-    return useMutation({
-      mutationFn: async (id: string) => await deletePersonById(id),
-      onSuccess: (data,variables) => {
-        if (data.success) {
-          queryClient.invalidateQueries({ queryKey: ["all-persons"] });
-          queryClient.refetchQueries({ queryKey: ["all-persons"] });
-          toast.success(data.data?.message);
-        } else {
-          toast.error(data.data?.message || data.message);
-        }
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
-  }
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (id: string) => await deletePersonById(id),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-persons"] });
+        queryClient.refetchQueries({ queryKey: ["all-persons"] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
 
 // Add Shop
 export function useAddShop() {
@@ -97,5 +102,28 @@ export function useAddShop() {
       toast.error(error.message);
     },
   });
-}  
+}
 
+// Update Shop Info
+export function useUpateShopInfo() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: UpdateShopInfoData) => await updateShopInfo(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+        queryClient.refetchQueries({ queryKey: ["all-shops"] });
+        queryClient.invalidateQueries({ queryKey: ["shop", variables.id] });
+        queryClient.refetchQueries({ queryKey: ["shop", variables.id] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}

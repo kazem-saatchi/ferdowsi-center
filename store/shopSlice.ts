@@ -6,7 +6,7 @@ type Shops = {
   shopById: Shop | null;
   setshopById: (shop: Shop) => void;
   shopsAll: Shop[] | null;
-  setshopAll: (shops: Shop[]) => void;
+  setshopsAll: (shops: Shop[]) => void;
   newShop: AddShopData;
   setNewShop: (property: string, value: any) => void;
   resetNewShop: () => void;
@@ -33,7 +33,7 @@ export const createShopSlice: StateCreator<
 
   // Set Utils
   setshopById: (shop) => set({ shopById: shop }),
-  setshopAll: (shops) => set({ shopsAll: shops }),
+  setshopsAll: (shops) => set({ shopsAll: shops }),
   setNewShop: (property, value) =>
     set((state) => {
       state.newShop = { ...state.newShop, [property]: value };

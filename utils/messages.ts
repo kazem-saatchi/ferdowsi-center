@@ -7,7 +7,12 @@ export const errorMSG = {
   duplicateId: "IdNumber already exists",
   duplicatePlaque: "Plaque Number already exists",
   personIdNotFound: "person by Id not found",
+  shopIdNotFound: "shop by Id not found",
   noPersonsFound: "No persons found matching the given filters.",
+  ownerNotFound: "The Owner Not Found",
+  renterNotFound: "The Renter Not Found",
+  shopNotFound: "The specified shop does not exist.",
+  personNotFound: "The specified person does not exist.",
 };
 
 export const successMSG = {
@@ -21,4 +26,8 @@ export const successMSG = {
 
   shopAdded: "Shop Added Successfully",
   shopsFound: "Shops founded successfully",
+  shopIdFound: "Shop Finded Successfully",
+  shopUpdated:"Shop updated successfully",
+
+  shopHistoryAdded: "Shop history entry added successfully.",
 };

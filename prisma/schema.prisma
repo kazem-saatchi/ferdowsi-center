@@ -16,6 +16,8 @@ model Shop {
   ownerId       String
   renterId      String?
   isActive      Boolean @default(true)
+  ownerName     String @default("")
+  renterName    String? 
 
   owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
