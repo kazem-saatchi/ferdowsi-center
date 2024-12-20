@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/db";
 import { updateShopOwner, UpdateShopOwnerData } from "@/schema/shopSchema";
-
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -13,7 +12,7 @@ interface updateShopResponse {
 }
 
 async function updateShop(data: UpdateShopOwnerData, user: Person) {
-  // Only admins or authorized roles can update new people
+  // Only admins or authorized roles can update the shop owner
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
@@ -26,24 +25,55 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
     );
   }
 
-  // Find New Owner
+  // Find new owner
   const newOwner = await db.person.findUnique({
     where: { id: validation.data.ownerId },
   });
-
   if (!newOwner) {
     throw new Error(errorMSG.userNotFound);
   }
 
-  const ownerName = newOwner.firstName + " " + newOwner.lastName;
+  const ownerName = `${newOwner.firstName} ${newOwner.lastName}`;
 
-  // Update Shop Owner
-  const updatedShop = await db.shop.update({
-    where: { id: validation.data.shopId },
-    data: {
-      ownerId: newOwner.id,
-      ownerName,
-    },
+  // Find the current ownership history (active ownership)
+  const currentOwnershipHistory = await db.shopHistory.findFirst({
+    where: { shopId: validation.data.shopId, type: "ownership", endDate: null },
+  });
+
+  if (!currentOwnershipHistory) {
+    throw new Error(errorMSG.noActiveOwnership);
+  }
+
+  // Update shop owner and history in a transaction
+  const transaction = await db.$transaction(async (prisma) => {
+    // Update shop with the new owner
+    const updatedShop = await prisma.shop.update({
+      where: { id: validation.data.shopId },
+      data: {
+        ownerId: newOwner.id,
+        ownerName,
+      },
+    });
+
+    // Update the end date of the current ownership record
+    await prisma.shopHistory.update({
+      where: { id: currentOwnershipHistory.id },
+      data: {
+        endDate: new Date(validation.data.startDate).toISOString(),
+      },
+    });
+
+    // Add a new ownership history record for the new owner
+    await prisma.shopHistory.create({
+      data: {
+        shopId: updatedShop.id,
+        personId: newOwner.id,
+        type: "ownership",
+        startDate: new Date(validation.data.startDate).toISOString(),
+      },
+    });
+
+    return updatedShop;
   });
 
   return {

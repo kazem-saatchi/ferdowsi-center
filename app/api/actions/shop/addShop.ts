@@ -5,6 +5,7 @@ import { AddShopData, addShopSchema } from "@/schema/shopSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 interface AddPersonResponse {
   plaque: number;
@@ -12,7 +13,7 @@ interface AddPersonResponse {
 }
 
 async function createShop(data: AddShopData, person: Person) {
-  // Only admins or authorized roles can add new people
+  // Only admins or authorized roles can add new shops
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
@@ -25,7 +26,7 @@ async function createShop(data: AddShopData, person: Person) {
     );
   }
 
-  // Check for duplicate IdNumber
+  // Check for duplicate plaque
   const existingShop = await db.shop.findUnique({
     where: { plaque: validation.data.plaque },
   });
@@ -37,13 +38,13 @@ async function createShop(data: AddShopData, person: Person) {
   const owner = await db.person.findUnique({
     where: { id: validation.data.ownerId },
   });
-
   if (!owner) {
     throw new Error(errorMSG.ownerNotFound);
   }
 
+  // Find renter if specified
   let renter: Person | null = null;
-  if (validation.data.renterId && validation.data.renterId !== "") {
+  if (validation.data.renterId) {
     renter = await db.person.findUnique({
       where: { id: validation.data.renterId },
     });
@@ -52,23 +53,52 @@ async function createShop(data: AddShopData, person: Person) {
     }
   }
 
-  const ownerName = owner.firstName + " " + owner.lastName;
-  const renterName = renter ? renter.firstName + " " + renter.lastName : null;
+  // Create shop and history entries in a transaction
+  const transaction = await db.$transaction(async (prisma) => {
+    const newShop = await prisma.shop.create({
+      data: {
+        plaque: validation.data.plaque,
+        area: validation.data.area,
+        floor: validation.data.floor,
+        ownerId: validation.data.ownerId,
+        renterId: validation.data.renterId || null,
+        ownerName: `${owner.firstName} ${owner.lastName}`,
+        renterName: renter ? `${renter.firstName} ${renter.lastName}` : null,
+      },
+    });
 
+    const historyEntries: Prisma.ShopHistoryCreateManyInput[] = [
+      {
+        shopId: newShop.id,
+        personId: newShop.ownerId,
+        type: "ownership",
+        startDate: new Date().toISOString(),
+      },
+      {
+        shopId: newShop.id,
+        personId: newShop.ownerId,
+        type: "activePeriod",
+        startDate: new Date().toISOString(),
+      },
+    ];
 
-  const newShop = await db.shop.create({
-    data: {
-      plaque: validation.data.plaque,
-      area: validation.data.area,
-      floor: validation.data.floor,
-      ownerId: validation.data.ownerId,
-      renterId: validation.data.renterId || null,
-      ownerName: ownerName,
-      renterName: renterName,
-    },
+    if (newShop.renterId) {
+      historyEntries.push({
+        shopId: newShop.id,
+        personId: newShop.renterId,
+        type: "rental",
+        startDate: new Date().toISOString(),
+      });
+    }
+
+    await prisma.shopHistory.createMany({
+      data: historyEntries,
+    });
+
+    return newShop;
   });
 
-  return { message: successMSG.shopAdded, plaque: newShop.plaque };
+  return { message: successMSG.shopAdded, plaque: transaction.plaque };
 }
 
 export default async function addShop(data: AddShopData) {

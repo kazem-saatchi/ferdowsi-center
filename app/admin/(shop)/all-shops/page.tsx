@@ -12,6 +12,7 @@ import { useShallow } from "zustand/react/shallow";
 export default function AllShopsPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllShops();
 
+  // Zustand State
   const { setShopsAll, shopsAll } = useStore(
     useShallow((state) => ({
       shopsAll: state.shopsAll,

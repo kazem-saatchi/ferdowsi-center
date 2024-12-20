@@ -13,6 +13,7 @@ export const errorMSG = {
   renterNotFound: "The Renter Not Found",
   shopNotFound: "The specified shop does not exist.",
   personNotFound: "The specified person does not exist.",
+  noActiveOwnership: "The person has not Have active ownerShip",
 };
 
 export const successMSG = {
@@ -27,7 +28,7 @@ export const successMSG = {
   shopAdded: "Shop Added Successfully",
   shopsFound: "Shops founded successfully",
   shopIdFound: "Shop Finded Successfully",
-  shopUpdated:"Shop updated successfully",
+  shopUpdated: "Shop updated successfully",
 
   shopHistoryAdded: "Shop history entry added successfully.",
 };

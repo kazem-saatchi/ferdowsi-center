@@ -46,15 +46,25 @@ export type AddShopHistoryData = z.infer<typeof addShopHistorySchema>;
 //--------------------------------------------------------------------------------------
 export const updateShopOwner = z.object({
   shopId: z.string(),
-  ownerId: z.string()
+  ownerId: z.string(),
+  startDate: z.string().datetime(),
 });
 
-export type UpdateShopOwnerData = z.infer<typeof updateShopOwner>
+export type UpdateShopOwnerData = z.infer<typeof updateShopOwner>;
 //--------------------------------------------------------------------------------------
 export const updateShopRenter = z.object({
   shopId: z.string(),
-  renterId: z.string()
+  renterId: z.string(),
+  startDate: z.string().datetime(),
 });
 
-export type UpdateShopRenterData = z.infer<typeof updateShopRenter>
+export type UpdateShopRenterData = z.infer<typeof updateShopRenter>;
+//--------------------------------------------------------------------------------------
+export const endShopRenter = z.object({
+  shopId: z.string(),
+  renterId: z.string(),
+  endDate: z.string().datetime(),
+});
+
+export type EndShopRenterData = z.infer<typeof endShopRenter>;
 //--------------------------------------------------------------------------------------
