@@ -14,14 +14,14 @@ import {
 
 import { useAddShop } from "@/tanstack/mutations";
 import { PersonSelect } from "@/components/person/PersonSelect";
-import { useFindPersonAll } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
-  const { data, isLoading, isError, error, refetch } = useFindPersonAll();
+  const { data, isLoading, isError, error, refetch } = useFindAllPersons();
   const addShopMutation = useAddShop();
 
   // Error State
@@ -52,7 +52,7 @@ export default function AddShopPage() {
     if (!validation.success) {
       // Set form errors
       const errors = validation.error.format();
-      setSaving(false)
+      setSaving(false);
       setFormErrors(errors);
     } else {
       addShopMutation.mutate(validation.data, {

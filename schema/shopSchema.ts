@@ -44,3 +44,17 @@ export const addShopHistorySchema = z.object({
 
 export type AddShopHistoryData = z.infer<typeof addShopHistorySchema>;
 //--------------------------------------------------------------------------------------
+export const updateShopOwner = z.object({
+  shopId: z.string(),
+  ownerId: z.string()
+});
+
+export type UpdateShopOwnerData = z.infer<typeof updateShopOwner>
+//--------------------------------------------------------------------------------------
+export const updateShopRenter = z.object({
+  shopId: z.string(),
+  renterId: z.string()
+});
+
+export type UpdateShopRenterData = z.infer<typeof updateShopRenter>
+//--------------------------------------------------------------------------------------

@@ -8,9 +8,14 @@ import addPerson from "@/app/api/actions/person/addPerson";
 import { toast } from "sonner";
 import updatePersonInfo from "@/app/api/actions/person/updatePerson";
 import deletePersonById from "@/app/api/actions/person/deletePerson";
-import { AddShopData, UpdateShopInfoData } from "@/schema/shopSchema";
+import {
+  AddShopData,
+  AddShopHistoryData,
+  UpdateShopInfoData,
+} from "@/schema/shopSchema";
 import addShop from "@/app/api/actions/shop/addShop";
 import updateShopInfo from "@/app/api/actions/shop/updateShopInfo";
+import addShopHistory from "@/app/api/actions/history/addShopHistory";
 
 // Add Person
 export function useAddPerson() {
@@ -117,6 +122,29 @@ export function useUpateShopInfo() {
         queryClient.refetchQueries({ queryKey: ["all-shops"] });
         queryClient.invalidateQueries({ queryKey: ["shop", variables.id] });
         queryClient.refetchQueries({ queryKey: ["shop", variables.id] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useAddShopHistory() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (historyData: AddShopHistoryData) =>
+      await addShopHistory(historyData),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        // queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+        // queryClient.refetchQueries({ queryKey: ["all-shops"] });
+
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

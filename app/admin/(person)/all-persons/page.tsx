@@ -1,30 +1,29 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useStore } from '@/store/store'
-import { useShallow } from 'zustand/react/shallow'
-import { useFindPersonAll } from '@/tanstack/queries'
-import { PersonList } from '@/components/person/PersonList'
-import LoadingComponent from '@/components/LoadingComponent'
-import ErrorComponent from '@/components/ErrorComponent'
+import { useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useStore } from "@/store/store";
+import { useShallow } from "zustand/react/shallow";
+import { useFindAllPersons } from "@/tanstack/queries";
+import { PersonList } from "@/components/person/PersonList";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function AllPersonsPage() {
-  const { data, isLoading, isError, error,refetch } = useFindPersonAll()
-  
+  const { data, isLoading, isError, error, refetch } = useFindAllPersons();
 
   const { personsAll, setPersonAll } = useStore(
     useShallow((state) => ({
-        personsAll: state.personsAll,
-        setPersonAll: state.setPersonAll,
+      personsAll: state.personsAll,
+      setPersonAll: state.setPersonAll,
     }))
   );
 
   useEffect(() => {
     if (data?.data?.persons) {
-      setPersonAll(data.data.persons)
+      setPersonAll(data.data.persons);
     }
-  }, [data, setPersonAll])
+  }, [data, setPersonAll]);
 
   if (isLoading) {
     return <LoadingComponent text="در حال بارگذاری" />;
@@ -63,6 +62,5 @@ export default function AllPersonsPage() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
-
