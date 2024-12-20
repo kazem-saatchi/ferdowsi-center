@@ -38,10 +38,40 @@ async function updateShop(data: EndShopRenterData, user: Person) {
     throw new Error(errorMSG.shopNotFound);
   }
 
-  // Remove Shop Renter
-  await db.shop.update({
-    where: { id: validation.data.shopId },
-    data: { renterId: null, renterName: null },
+  // Find the current rental history (if any) for this shop
+  const currentRentalHistory = await db.shopHistory.findFirst({
+    where: { shopId: validation.data.shopId, type: "rental", endDate: null },
+  });
+
+  if (!currentRentalHistory) {
+    throw new Error(errorMSG.noActiveRental);
+  }
+
+    // Validate that the endDate is not earlier than the startDate of the rental
+    const startDate = new Date(currentRentalHistory.startDate);
+    const endDate = new Date(validation.data.endDate);
+  
+    if (endDate < startDate) {
+      throw new Error(errorMSG.invalidEndDate);
+    }
+
+  // Perform updates using a transaction
+  const transaction = await db.$transaction(async (prisma) => {
+    // Remove Shop Renter
+    await prisma.shop.update({
+      where: { id: validation.data.shopId },
+      data: { renterId: null, renterName: null },
+    });
+
+    // Close the current rental history if it exists
+    if (currentRentalHistory) {
+      await prisma.shopHistory.update({
+        where: { id: currentRentalHistory.id },
+        data: {
+          endDate: new Date(validation.data.endDate).toISOString(),
+        },
+      });
+    }
   });
 
   return {

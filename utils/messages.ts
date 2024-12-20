@@ -13,7 +13,10 @@ export const errorMSG = {
   renterNotFound: "The Renter Not Found",
   shopNotFound: "The specified shop does not exist.",
   personNotFound: "The specified person does not exist.",
-  noActiveOwnership: "The person has not Have active ownerShip",
+  noActiveRental: "The Shop has not Have active Rental",
+  invalidEndDate:
+    "The start date cannot be earlier than the current period's start date.",
+  noActiveOwnership: "No active ownership found for the shop.",
 };
 
 export const successMSG = {

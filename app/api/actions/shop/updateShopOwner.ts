@@ -44,6 +44,14 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
     throw new Error(errorMSG.noActiveOwnership);
   }
 
+ // Validate that the new startDate is not earlier than the current ownership's startDate
+  const startDate = new Date(currentOwnershipHistory.startDate);
+  const endDate = new Date(validation.data.startDate);
+
+  if (endDate < startDate) {
+    throw new Error(errorMSG.invalidEndDate);
+  }
+
   // Update shop owner and history in a transaction
   const transaction = await db.$transaction(async (prisma) => {
     // Update shop with the new owner
