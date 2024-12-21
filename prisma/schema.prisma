@@ -54,7 +54,9 @@ enum Role {
 model ShopHistory {
   id            String   @id @unique @default(uuid())
   shopId        String
+  plaque        Int
   personId      String
+  personName    String
   type          HistoryType
   startDate     DateTime
   endDate       DateTime?
@@ -62,6 +64,8 @@ model ShopHistory {
 
   shop          Shop     @relation(fields: [shopId], references: [id])
   person        Person   @relation(fields: [personId], references: [id])
+
+  createdAt     DateTime @default(now()) 
 
   @@index([shopId])
   @@index([personId])

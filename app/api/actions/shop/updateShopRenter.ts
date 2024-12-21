@@ -76,11 +76,13 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
     }
 
     // Create a new rental history entry if there’s a new renter
-    if (newRenter) {
+    if (newRenter && renterName) {
       await prisma.shopHistory.create({
         data: {
           shopId: updatedShop.id,
+          plaque:updatedShop.plaque,
           personId: newRenter.id,
+          personName:renterName,
           type: "rental",
           startDate: new Date(validation.data.startDate).toISOString(),
         },

@@ -75,7 +75,9 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
     await prisma.shopHistory.create({
       data: {
         shopId: updatedShop.id,
+        plaque: updatedShop.plaque,
         personId: newOwner.id,
+        personName: updatedShop.ownerName,
         type: "ownership",
         startDate: new Date(validation.data.startDate).toISOString(),
       },

@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   UserCheck,
   UserX,
+  ClipboardList,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -134,6 +135,14 @@ export default async function AdminLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <Separator />
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/all-shop-history">
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    <span>All Shop History</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>

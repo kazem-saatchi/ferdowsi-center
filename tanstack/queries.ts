@@ -1,5 +1,6 @@
 "use client";
 
+import findAllShopHistory from "@/app/api/actions/history/getAllHistory";
 import findPersonAll from "@/app/api/actions/person/findPersonAll";
 import findPersonById from "@/app/api/actions/person/findPersonById";
 import findPersonByShop from "@/app/api/actions/person/findPersonByShop";
@@ -39,5 +40,12 @@ export function usePersonsByShop(shopId: string) {
   return useQuery({
     queryKey: ["shop-persons", shopId],
     queryFn: async () => await findPersonByShop(shopId),
+  });
+}
+
+export function useShopHistoryAll() {
+  return useQuery({
+    queryKey: ["all-histories"],
+    queryFn: async () => await findAllShopHistory(),
   });
 }

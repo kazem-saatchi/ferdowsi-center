@@ -70,22 +70,28 @@ async function createShop(data: AddShopData, person: Person) {
     const historyEntries: Prisma.ShopHistoryCreateManyInput[] = [
       {
         shopId: newShop.id,
+        plaque: newShop.plaque,
         personId: newShop.ownerId,
+        personName: newShop.ownerName,
         type: "ownership",
         startDate: new Date().toISOString(),
       },
       {
         shopId: newShop.id,
+        plaque: newShop.plaque,
         personId: newShop.ownerId,
+        personName: newShop.ownerName,
         type: "activePeriod",
         startDate: new Date().toISOString(),
       },
     ];
 
-    if (newShop.renterId) {
+    if (newShop.renterId && newShop.renterName) {
       historyEntries.push({
         shopId: newShop.id,
+        plaque: newShop.plaque,
         personId: newShop.renterId,
+        personName: newShop.renterName,
         type: "rental",
         startDate: new Date().toISOString(),
       });

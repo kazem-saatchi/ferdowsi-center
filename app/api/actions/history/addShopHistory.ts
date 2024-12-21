@@ -46,7 +46,9 @@ async function addShopHistoryEntry(
   const shopHistory = await db.shopHistory.create({
     data: {
       shopId,
+      plaque: shop.plaque,
       personId,
+      personName: `${person.firstName} ${person.lastName}`,
       type,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,

@@ -34,4 +34,5 @@ export const successMSG = {
   shopUpdated: "Shop updated successfully",
 
   shopHistoryAdded: "Shop history entry added successfully.",
+  shopHistoryFound: "Shop history Founded successfully.",
 };
