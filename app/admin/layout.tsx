@@ -18,6 +18,7 @@ import {
   UserCheck,
   UserX,
   ClipboardList,
+  ToggleLeft,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -134,12 +135,36 @@ export default async function AdminLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/update-shop-status">
+                    <ToggleLeft className="mr-2 h-4 w-4" />
+                    <span>Update Shop Status</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <Separator />
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/admin/all-shop-history">
                     <ClipboardList className="mr-2 h-4 w-4" />
-                    <span>All Shop History</span>
+                    <span>All History</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/history-by-shop">
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    <span>Shop History</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/history-by-person">
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    <span>Person History</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

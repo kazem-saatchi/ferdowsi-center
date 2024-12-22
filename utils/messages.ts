@@ -17,6 +17,7 @@ export const errorMSG = {
   invalidEndDate:
     "The start date cannot be earlier than the current period's start date.",
   noActiveOwnership: "No active ownership found for the shop.",
+  incorrectStatus: "No active or inactive period found for the shop.",
 };
 
 export const successMSG = {

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import { format } from "date-fns-jalali";
 import { ShopHistory } from "@prisma/client";
 import { useState } from "react";
 

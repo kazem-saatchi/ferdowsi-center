@@ -27,6 +27,7 @@ export function PersonList({ persons }: PersonListProps) {
           <TableHead className="text-center">Secondary Phone</TableHead>
           <TableHead className="text-center">Status</TableHead>
           <TableHead className="text-center">Action</TableHead>
+          <TableHead className="text-center">History</TableHead>
           <TableHead className="text-center">Delete</TableHead>
         </TableRow>
       </TableHeader>
@@ -46,6 +47,11 @@ export function PersonList({ persons }: PersonListProps) {
             <TableCell className="text-center">
               <Link href={`/admin/update-person/${person.IdNumber}`}>
                 <Button variant="secondary">edit</Button>
+              </Link>
+            </TableCell>
+            <TableCell className="text-center">
+              <Link href={`/admin/history-by-person/${person.id}`}>
+                <Button variant="outline">History</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">

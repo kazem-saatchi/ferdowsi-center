@@ -19,11 +19,11 @@ async function getAllHistories(
   if (!user || user.role !== "ADMIN") {
     throw new Error(errorMSG.unauthorized);
   }
-
+  
   // Get ShopHistories
   const shopHistoryList = await db.shopHistory.findMany({
     where: { personId },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { plaque: "desc" }],
   });
 
   return {

@@ -15,6 +15,7 @@ import {
   UpdateShopInfoData,
   UpdateShopOwnerData,
   UpdateShopRenterData,
+  UpdateShopStatusData,
 } from "@/schema/shopSchema";
 import addShop from "@/app/api/actions/shop/addShop";
 import updateShopInfo from "@/app/api/actions/shop/updateShopInfo";
@@ -22,6 +23,7 @@ import addShopHistory from "@/app/api/actions/history/addShopHistory";
 import updateShopOwnerId from "@/app/api/actions/shop/updateShopOwner";
 import updateShopRenterId from "@/app/api/actions/shop/updateShopRenter";
 import endShopRenterId from "@/app/api/actions/shop/endShopRenter";
+import updateShopStatus from "@/app/api/actions/shop/updateShopStatus";
 
 // Add Person
 export function useAddPerson() {
@@ -221,6 +223,32 @@ export function useEndShopRenter() {
   return useMutation({
     mutationFn: async (data: EndShopRenterData) =>
       await endShopRenterId(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+        queryClient.refetchQueries({ queryKey: ["all-shops"] });
+
+        queryClient.invalidateQueries({ queryKey: ["shop",variables.shopId] });
+        queryClient.refetchQueries({ queryKey: ["shop",variables.shopId] });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdateShopStatus() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: UpdateShopStatusData) =>
+      await updateShopStatus(data),
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-shops"] });

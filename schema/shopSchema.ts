@@ -68,3 +68,11 @@ export const endShopRenter = z.object({
 
 export type EndShopRenterData = z.infer<typeof endShopRenter>;
 //--------------------------------------------------------------------------------------
+export const updateShopStatusSchema = z.object({
+  shopId: z.string(),
+  newStatus: z.boolean(),
+  date: z.string().datetime(),
+});
+
+export type UpdateShopStatusData = z.infer<typeof updateShopStatusSchema>;
+//--------------------------------------------------------------------------------------

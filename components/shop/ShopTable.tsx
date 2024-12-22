@@ -25,6 +25,7 @@ export function ShopsTable({ shops }: ShopsTableProps) {
           <TableHead className="text-center">Owner</TableHead>
           <TableHead className="text-center">Renter</TableHead>
           <TableHead className="text-center">Status</TableHead>
+          <TableHead className="text-center">History</TableHead>
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -40,6 +41,13 @@ export function ShopsTable({ shops }: ShopsTableProps) {
             </TableCell>
             <TableCell className="text-center">
               {shop.isActive ? "Active" : "Inactive"}
+            </TableCell>
+            <TableCell className="text-center">
+              <Link href={`/admin/history-by-shop/${shop.id}`} passHref>
+                <Button variant="secondary" size="sm">
+                  History
+                </Button>
+              </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/edit-shop/${shop.id}`} passHref>
