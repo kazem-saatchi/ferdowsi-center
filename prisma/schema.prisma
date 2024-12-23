@@ -81,7 +81,7 @@ enum HistoryType {
 model Charge {
   id            String   @id @unique @default(uuid())
   title         String
-  amount        String
+  amount        Int
   shopId        String
   pelaque       Int
   personId      String
