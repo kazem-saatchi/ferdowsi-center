@@ -38,7 +38,9 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
   }
 
   // Determine the current status history type based on the new status
-  const currentType = validation.data.newStatus ? "deactivePeriod" : "activePeriod";
+  const currentType = validation.data.newStatus
+    ? "deactivePeriod"
+    : "activePeriod";
   const newType = validation.data.newStatus ? "activePeriod" : "deactivePeriod";
 
   // Find the current status history (active or inactive)
@@ -88,6 +90,7 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
         personName: shop.ownerName,
         type: newType,
         startDate: endDate.toISOString(),
+        isActive: validation.data.newStatus,
       },
     });
   });
