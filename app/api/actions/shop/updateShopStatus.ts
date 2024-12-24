@@ -15,7 +15,7 @@ interface UpdateShopResponse {
 }
 
 async function updateShop(data: UpdateShopStatusData, user: Person) {
-  // Only admins or authorized roles can update shop status
+  // Only admins can update shop status
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
@@ -28,69 +28,81 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
     );
   }
 
+  // Extract validated data
+  const { shopId, newStatus, date } = validation.data;
+  const newStartDate = new Date(date);
+
   // Find the shop
   const shop = await db.shop.findUnique({
-    where: { id: validation.data.shopId },
+    where: { id: shopId },
+    select: {
+      id: true,
+      plaque: true,
+      ownerId: true,
+      ownerName: true,
+      renterId: true,
+      isActive: true,
+    },
   });
 
   if (!shop) {
     throw new Error(errorMSG.shopNotFound);
   }
 
-  // Determine the current status history type based on the new status
-  const currentType = validation.data.newStatus
-    ? "deactivePeriod"
-    : "activePeriod";
-  const newType = validation.data.newStatus ? "activePeriod" : "deactivePeriod";
+  // Determine current and new history types
+  const isActivating = newStatus === "ACTIVATE";
+  const currentType = isActivating
+    ? "InActive"
+    : shop.renterId
+    ? "ActiveByRenter"
+    : "ActiveByOwner";
+  const newType = isActivating ? "ActiveByOwner" : "InActive";
 
-  // Find the current status history (active or inactive)
+  // Find the current status history
   const currentStatusHistory = await db.shopHistory.findFirst({
-    where: {
-      shopId: validation.data.shopId,
-      type: currentType,
-      endDate: null,
-    },
+    where: { shopId, type: currentType, endDate: null },
   });
 
-  // If no matching history found, throw an error
   if (!currentStatusHistory) {
     throw new Error(errorMSG.incorrectStatus);
   }
 
-  // Validate that the end date is not earlier than the start date
+  // Validate dates
   const startDate = new Date(currentStatusHistory.startDate);
-  const endDate = new Date(validation.data.date);
-
-  if (endDate < startDate) {
+  if (newStartDate < startDate) {
     throw new Error(errorMSG.invalidEndDate);
   }
 
-  // Perform updates using a transaction
+  // Perform updates within a transaction
   await db.$transaction(async (prisma) => {
-    // Update the shop's active status
+    // Update shop's active status and renter information
     await prisma.shop.update({
-      where: { id: validation.data.shopId },
-      data: { isActive: validation.data.newStatus },
-    });
-
-    // Close the current active or inactive period
-    await prisma.shopHistory.update({
-      where: { id: currentStatusHistory.id },
+      where: { id: shopId },
       data: {
-        endDate: endDate.toISOString(),
+        isActive: isActivating,
+        renterId: null, // Clear renter on inactivation
+        renterName: null,
       },
     });
 
-    // Add a new history record for the updated status
+    // Close the current status history
+    await prisma.shopHistory.update({
+      where: { id: currentStatusHistory.id },
+      data: {
+        endDate: newStartDate.toISOString(),
+      },
+    });
+
+    // Add a new history entry for the updated status
     await prisma.shopHistory.create({
       data: {
         shopId: shop.id,
         plaque: shop.plaque,
-        personId: shop.ownerId,
+        personId: shop.ownerId, // Always associate with the owner
         personName: shop.ownerName,
         type: newType,
-        startDate: endDate.toISOString(),
-        isActive: validation.data.newStatus,
+        startDate: newStartDate.toISOString(),
+        isActive: isActivating,
       },
     });
   });

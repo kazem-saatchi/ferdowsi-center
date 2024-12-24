@@ -1,86 +1,94 @@
 "use server";
 
 import { db } from "@/lib/db";
-import {
-  updateShopRenter,
-  EndShopRenterData,
-  endShopRenter,
-} from "@/schema/shopSchema";
-
+import { EndShopRenterData, endShopRenter } from "@/schema/shopSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-interface updateShopResponse {
+interface UpdateShopResponse {
   message: string;
+  shopId: string;
+  renterStatus: string;
 }
 
 async function updateShop(data: EndShopRenterData, user: Person) {
-  // Only admins or authorized roles can update new people
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
-  // Validate input
   const validation = endShopRenter.safeParse(data);
   if (!validation.success) {
-    throw new Error(
-      validation.error.errors.map((err) => err.message).join(", ")
-    );
+    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
   }
 
-  // Find Shop
   const shop = await db.shop.findUnique({
     where: { id: validation.data.shopId },
+    select: { id: true, plaque: true, ownerId: true, ownerName: true },
   });
 
   if (!shop) {
     throw new Error(errorMSG.shopNotFound);
   }
 
-  // Find the current rental history (if any) for this shop
+  if (!shop.ownerId) {
+    throw new Error(errorMSG.ownerNotFound);
+  }
+
   const currentRentalHistory = await db.shopHistory.findFirst({
-    where: { shopId: validation.data.shopId, type: "rental", endDate: null },
+    where: {
+      shopId: validation.data.shopId,
+      type: "ActiveByRenter",
+      endDate: null,
+    },
   });
 
   if (!currentRentalHistory) {
     throw new Error(errorMSG.noActiveRental);
   }
 
-    // Validate that the endDate is not earlier than the startDate of the rental
-    const startDate = new Date(currentRentalHistory.startDate);
-    const endDate = new Date(validation.data.endDate);
-  
-    if (endDate < startDate) {
-      throw new Error(errorMSG.invalidEndDate);
-    }
+  const startDate = new Date(currentRentalHistory.startDate);
+  const endDate = new Date(validation.data.endDate);
 
-  // Perform updates using a transaction
+  if (endDate < startDate) {
+    throw new Error(errorMSG.invalidEndDate);
+  }
+
+  const currentDate = endDate.toISOString();
+
   const transaction = await db.$transaction(async (prisma) => {
-    // Remove Shop Renter
+    // Update shop's renter status
     await prisma.shop.update({
-      where: { id: validation.data.shopId },
+      where: { id: shop.id },
       data: { renterId: null, renterName: null },
     });
 
-    // Close the current rental history if it exists
-    if (currentRentalHistory) {
-      await prisma.shopHistory.update({
-        where: { id: currentRentalHistory.id },
-        data: {
-          endDate: new Date(validation.data.endDate).toISOString(),
-        },
-      });
-    }
+    // Close the current rental history
+    await prisma.shopHistory.update({
+      where: { id: currentRentalHistory.id },
+      data: { endDate: currentDate },
+    });
+
+    // Add new history entry for the owner
+    await prisma.shopHistory.create({
+      data: {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        personId: shop.ownerId,
+        personName: shop.ownerName,
+        type: "ActiveByOwner",
+        startDate: currentDate,
+      },
+    });
   });
 
   return {
     message: successMSG.shopUpdated,
+    shopId: shop.id,
+    renterStatus: "Removed",
   };
 }
 
 export default async function endShopRenterId(data: EndShopRenterData) {
-  return handleServerAction<updateShopResponse>((user) =>
-    updateShop(data, user)
-  );
+  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
 }

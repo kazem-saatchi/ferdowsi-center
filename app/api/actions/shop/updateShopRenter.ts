@@ -6,31 +6,28 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-interface updateShopResponse {
+interface UpdateShopResponse {
   renterName: string | null; // Allow null if renter is being cleared
   message: string;
 }
 
 async function updateShop(data: UpdateShopRenterData, user: Person) {
-  // Only admins or authorized roles can update the shop renter
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
-  // Validate input
   const validation = updateShopRenter.safeParse(data);
   if (!validation.success) {
-    throw new Error(
-      validation.error.errors.map((err) => err.message).join(", ")
-    );
+    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
   }
 
-  // Check for the new renter by renterId (if not null)
-  const newRenter = await db.person.findUnique({
-    where: { id: validation.data.renterId },
-  });
+  const newRenter = validation.data.renterId
+    ? await db.person.findUnique({
+        where: { id: validation.data.renterId },
+        select: { id: true, firstName: true, lastName: true },
+      })
+    : null;
 
-  // If renterId is provided but not found, throw an error
   if (validation.data.renterId && !newRenter) {
     throw new Error(errorMSG.userNotFound);
   }
@@ -39,24 +36,20 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
     ? `${newRenter.firstName} ${newRenter.lastName}`
     : null;
 
-  // Find the current rental history (if any) for this shop
+  const newStartDate = new Date(validation.data.startDate);
+
   const currentRentalHistory = await db.shopHistory.findFirst({
-    where: { shopId: validation.data.shopId, type: "rental", endDate: null },
+    where: { shopId: validation.data.shopId, type: "ActiveByRenter", endDate: null },
   });
 
   if (currentRentalHistory) {
-    // Validate that the new startDate is not earlier than the current rental's startDate
-    const startDate = new Date(currentRentalHistory.startDate);
-    const endDate = new Date(validation.data.startDate);
-
-    if (endDate < startDate) {
+    const currentStartDate = new Date(currentRentalHistory.startDate);
+    if (newStartDate < currentStartDate) {
       throw new Error(errorMSG.invalidEndDate);
     }
   }
 
-  // Perform updates using a transaction
   const transaction = await db.$transaction(async (prisma) => {
-    // Update the shop with the new renter information
     const updatedShop = await prisma.shop.update({
       where: { id: validation.data.shopId },
       data: {
@@ -65,26 +58,24 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
       },
     });
 
-    // Close the current rental history if it exists
     if (currentRentalHistory) {
       await prisma.shopHistory.update({
         where: { id: currentRentalHistory.id },
         data: {
-          endDate: new Date(validation.data.startDate).toISOString(),
+          endDate: newStartDate.toISOString(),
         },
       });
     }
 
-    // Create a new rental history entry if there’s a new renter
     if (newRenter && renterName) {
       await prisma.shopHistory.create({
         data: {
           shopId: updatedShop.id,
-          plaque:updatedShop.plaque,
+          plaque: updatedShop.plaque,
           personId: newRenter.id,
-          personName:renterName,
-          type: "rental",
-          startDate: new Date(validation.data.startDate).toISOString(),
+          personName: renterName,
+          type: "ActiveByRenter",
+          startDate: newStartDate.toISOString(),
         },
       });
     }
@@ -99,7 +90,5 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
 }
 
 export default async function updateShopRenterId(data: UpdateShopRenterData) {
-  return handleServerAction<updateShopResponse>((user) =>
-    updateShop(data, user)
-  );
+  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
 }

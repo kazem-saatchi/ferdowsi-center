@@ -4,21 +4,19 @@ import { db } from "@/lib/db";
 import { AddShopData, addShopSchema } from "@/schema/shopSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import { Person, Prisma } from "@prisma/client";
 
-interface AddPersonResponse {
+interface AddShopResponse {
+  shopId: string;
   plaque: number;
   message: string;
 }
 
 async function createShop(data: AddShopData, person: Person) {
-  // Only admins or authorized roles can add new shops
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
-  // Validate input
   const validation = addShopSchema.safeParse(data);
   if (!validation.success) {
     throw new Error(
@@ -26,34 +24,36 @@ async function createShop(data: AddShopData, person: Person) {
     );
   }
 
-  // Check for duplicate plaque
+  // a constant date for all shop start date
+  const currentDate = "2024-12-24T00:00:00.000Z";
+
   const existingShop = await db.shop.findUnique({
     where: { plaque: validation.data.plaque },
+    select: { id: true },
   });
   if (existingShop) {
     throw new Error(errorMSG.duplicatePlaque);
   }
 
-  // Find owner
   const owner = await db.person.findUnique({
     where: { id: validation.data.ownerId },
+    select: { firstName: true, lastName: true },
   });
   if (!owner) {
     throw new Error(errorMSG.ownerNotFound);
   }
 
-  // Find renter if specified
-  let renter: Person | null = null;
+  let renter = null;
   if (validation.data.renterId) {
     renter = await db.person.findUnique({
       where: { id: validation.data.renterId },
+      select: { firstName: true, lastName: true },
     });
     if (!renter) {
       throw new Error(errorMSG.renterNotFound);
     }
   }
 
-  // Create shop and history entries in a transaction
   const transaction = await db.$transaction(async (prisma) => {
     const newShop = await prisma.shop.create({
       data: {
@@ -73,29 +73,18 @@ async function createShop(data: AddShopData, person: Person) {
         plaque: newShop.plaque,
         personId: newShop.ownerId,
         personName: newShop.ownerName,
-        type: "ownership",
-        startDate: new Date().toISOString(),
+        type: "Ownership",
+        startDate: currentDate,
       },
       {
         shopId: newShop.id,
         plaque: newShop.plaque,
-        personId: newShop.ownerId,
-        personName: newShop.ownerName,
-        type: "activePeriod",
-        startDate: new Date().toISOString(),
+        personId: newShop.renterId || newShop.ownerId,
+        personName: newShop.renterName || newShop.ownerName,
+        type: newShop.renterId ? "ActiveByRenter" : "ActiveByOwner",
+        startDate: currentDate,
       },
     ];
-
-    if (newShop.renterId && newShop.renterName) {
-      historyEntries.push({
-        shopId: newShop.id,
-        plaque: newShop.plaque,
-        personId: newShop.renterId,
-        personName: newShop.renterName,
-        type: "rental",
-        startDate: new Date().toISOString(),
-      });
-    }
 
     await prisma.shopHistory.createMany({
       data: historyEntries,
@@ -104,11 +93,13 @@ async function createShop(data: AddShopData, person: Person) {
     return newShop;
   });
 
-  return { message: successMSG.shopAdded, plaque: transaction.plaque };
+  return {
+    shopId: transaction.id,
+    plaque: transaction.plaque,
+    message: successMSG.shopAdded,
+  };
 }
 
 export default async function addShop(data: AddShopData) {
-  return handleServerAction<AddPersonResponse>((user) =>
-    createShop(data, user)
-  );
+  return handleServerAction<AddShopResponse>((user) => createShop(data, user));
 }

@@ -70,7 +70,7 @@ export type EndShopRenterData = z.infer<typeof endShopRenter>;
 //--------------------------------------------------------------------------------------
 export const updateShopStatusSchema = z.object({
   shopId: z.string(),
-  newStatus: z.boolean(),
+  newStatus: z.enum(["ACTIVATE","INACTIVATE"]),
   date: z.string().datetime(),
 });
 

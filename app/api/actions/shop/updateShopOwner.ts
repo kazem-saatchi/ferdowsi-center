@@ -6,28 +6,24 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-interface updateShopResponse {
+interface UpdateShopResponse {
   ownerName: string;
   message: string;
 }
 
 async function updateShop(data: UpdateShopOwnerData, user: Person) {
-  // Only admins or authorized roles can update the shop owner
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
-  // Validate input
   const validation = updateShopOwner.safeParse(data);
   if (!validation.success) {
-    throw new Error(
-      validation.error.errors.map((err) => err.message).join(", ")
-    );
+    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
   }
 
-  // Find new owner
   const newOwner = await db.person.findUnique({
     where: { id: validation.data.ownerId },
+    select: { id: true, firstName: true, lastName: true },
   });
   if (!newOwner) {
     throw new Error(errorMSG.userNotFound);
@@ -35,26 +31,34 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
 
   const ownerName = `${newOwner.firstName} ${newOwner.lastName}`;
 
-  // Find the current ownership history (active ownership)
   const currentOwnershipHistory = await db.shopHistory.findFirst({
-    where: { shopId: validation.data.shopId, type: "ownership", endDate: null },
+    where: { shopId: validation.data.shopId, type: "Ownership", endDate: null },
   });
 
   if (!currentOwnershipHistory) {
     throw new Error(errorMSG.noActiveOwnership);
   }
 
- // Validate that the new startDate is not earlier than the current ownership's startDate
-  const startDate = new Date(currentOwnershipHistory.startDate);
-  const endDate = new Date(validation.data.startDate);
+  const activeHistory = await db.shopHistory.findFirst({
+    where: {
+      shopId: validation.data.shopId,
+      type: { in: ["ActiveByOwner", "ActiveByRenter"] },
+      endDate: null,
+    },
+  });
 
-  if (endDate < startDate) {
+  if (!activeHistory) {
+    throw new Error(errorMSG.noActiveOwnership);
+  }
+
+  const startDate = new Date(currentOwnershipHistory.startDate);
+  const newStartDate = new Date(validation.data.startDate);
+
+  if (newStartDate < startDate) {
     throw new Error(errorMSG.invalidEndDate);
   }
 
-  // Update shop owner and history in a transaction
   const transaction = await db.$transaction(async (prisma) => {
-    // Update shop with the new owner
     const updatedShop = await prisma.shop.update({
       where: { id: validation.data.shopId },
       data: {
@@ -63,25 +67,34 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
       },
     });
 
-    // Update the end date of the current ownership record
     await prisma.shopHistory.update({
       where: { id: currentOwnershipHistory.id },
-      data: {
-        endDate: new Date(validation.data.startDate).toISOString(),
-      },
+      data: { endDate: newStartDate.toISOString() },
     });
 
-    // Add a new ownership history record for the new owner
     await prisma.shopHistory.create({
       data: {
         shopId: updatedShop.id,
         plaque: updatedShop.plaque,
         personId: newOwner.id,
-        personName: updatedShop.ownerName,
-        type: "ownership",
-        startDate: new Date(validation.data.startDate).toISOString(),
+        personName: ownerName,
+        type: "Ownership",
+        startDate: newStartDate.toISOString(),
       },
     });
+
+    if (activeHistory.type === "ActiveByOwner") {
+      await prisma.shopHistory.create({
+        data: {
+          shopId: updatedShop.id,
+          plaque: updatedShop.plaque,
+          personId: newOwner.id,
+          personName: ownerName,
+          type: "ActiveByOwner",
+          startDate: newStartDate.toISOString(),
+        },
+      });
+    }
 
     return updatedShop;
   });
@@ -93,7 +106,5 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
 }
 
 export default async function updateShopOwnerId(data: UpdateShopOwnerData) {
-  return handleServerAction<updateShopResponse>((user) =>
-    updateShop(data, user)
-  );
+  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
 }

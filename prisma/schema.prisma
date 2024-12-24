@@ -72,10 +72,10 @@ model ShopHistory {
 }
 
 enum HistoryType {
-  ownership
-  activePeriod
-  deactivePeriod
-  rental
+  ActiveByOwner
+  ActiveByRenter
+  InActive
+  Ownership
 }
 
 model Charge {
