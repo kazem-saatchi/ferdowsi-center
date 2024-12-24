@@ -43,7 +43,7 @@ export default function UpdateShopStatusPage() {
     try {
       await updateShopStatusMutation.mutateAsync({
         shopId: selectedShopId,
-        newStatus: !selectedShop?.isActive,
+        newStatus: selectedShop?.isActive ? "INACTIVATE" : "ACTIVATE",
         date: new Date(statusChangeDate).toISOString(),
       })
       toast.success(`Shop status updated successfully`)

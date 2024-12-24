@@ -18,6 +18,9 @@ export const errorMSG = {
     "The start date cannot be earlier than the current period's start date.",
   noActiveOwnership: "No active ownership found for the shop.",
   incorrectStatus: "No active or inactive period found for the shop.",
+  invalidDateRange: "The dates are invalid",
+  noRelevantHistory: "No history found in That range",
+  noChargeGenerated: "no Charge Generated",
 };
 
 export const successMSG = {
@@ -36,4 +39,6 @@ export const successMSG = {
 
   shopHistoryAdded: "Shop history entry added successfully.",
   shopHistoryFound: "Shop history Founded successfully.",
+
+  chargesCreated: "Charge Generated Successfully",
 };

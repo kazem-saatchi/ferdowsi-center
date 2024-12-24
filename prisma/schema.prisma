@@ -87,6 +87,7 @@ model Charge {
   personId      String
   date          DateTime
   operationId   String
+  daysCount     Int
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])
