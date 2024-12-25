@@ -24,6 +24,8 @@ import updateShopOwnerId from "@/app/api/actions/shop/updateShopOwner";
 import updateShopRenterId from "@/app/api/actions/shop/updateShopRenter";
 import endShopRenterId from "@/app/api/actions/shop/endShopRenter";
 import updateShopStatus from "@/app/api/actions/shop/updateShopStatus";
+import { AddChargeByShopData } from "@/schema/chargeSchema";
+import handleCreateCharge from "@/app/api/actions/charge/addChargeByShop";
 
 // Add Person
 export function useAddPerson() {
@@ -256,6 +258,32 @@ export function useUpdateShopStatus() {
 
         queryClient.invalidateQueries({ queryKey: ["shop",variables.shopId] });
         queryClient.refetchQueries({ queryKey: ["shop",variables.shopId] });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useAddChargeByShop() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddChargeByShopData) =>
+      await handleCreateCharge(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        // queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+        // queryClient.refetchQueries({ queryKey: ["all-shops"] });
+
+        // queryClient.invalidateQueries({ queryKey: ["shop",variables.shopId] });
+        // queryClient.refetchQueries({ queryKey: ["shop",variables.shopId] });
 
         toast.success(data.data?.message);
       } else {

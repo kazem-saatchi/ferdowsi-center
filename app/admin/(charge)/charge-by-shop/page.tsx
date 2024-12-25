@@ -1,10 +1,27 @@
 "use client";
 
-import splitHistories from "@/app/api/actions/charge/addChargeByShop";
+import handleCreateCharge from "@/app/api/actions/charge/addChargeByShop";
+import { Button } from "@/components/ui/button";
+import { useAddChargeByShop } from "@/tanstack/mutations";
 
-async function ChargesByShop() {
-    await splitHistories({shopId:"64dcdc00-36ad-40f1-92d1-50476e306a8f",fromDate:new Date("2024-12-21 17:08:11.617"),ToDate:new Date("2024-12-31 00:00:00")})
-  return <div>ChargesByShop</div>;
+function ChargesByShop() {
+  const addChargeMutation = useAddChargeByShop();
+
+  const handleSubmit = async () => {
+    addChargeMutation.mutate({
+      shopId: "c48178a7-042d-4a76-8acc-45a93c18f8ae",
+      fromDate: new Date("2024-12-21 00:00:00"),
+      toDate: new Date("2024-12-31 00:00:00"),
+      dailyAmount: 100,
+    });
+  };
+
+  return (
+    <div>
+      ChargesByShop
+      <Button onClick={handleSubmit}>Add</Button>
+    </div>
+  );
 }
 
 export default ChargesByShop;
