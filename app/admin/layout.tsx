@@ -19,6 +19,7 @@ import {
   UserX,
   ClipboardList,
   ToggleLeft,
+  DollarSign,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -165,6 +166,15 @@ export default async function AdminLayout({
                   <Link href="/admin/history-by-person">
                     <ClipboardList className="mr-2 h-4 w-4" />
                     <span>Person History</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <Separator />
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/all-charges">
+                    <DollarSign className="mr-2 h-4 w-4" />
+                    <span>All Charges</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

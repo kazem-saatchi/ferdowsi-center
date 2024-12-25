@@ -4,19 +4,28 @@ import { db } from "@/lib/db";
 import { AddChargeByShopData } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { addDays, differenceInDays, startOfDay } from "date-fns-jalali";
-
+import {
+  differenceInDays,
+  endOfMonth,
+  parseISO,
+  startOfDay,
+  startOfMonth,
+} from "date-fns-jalali";
 
 async function createCharge(data: AddChargeByShopData) {
-  const { fromDate, toDate, shopId, dailyAmount } = data;
+  const { month, shopId, title } = data;
 
-  // Normalize dates to the start of the day (ignoring hours)
-  const normalizedFromDate = startOfDay(new Date(fromDate));
-  const normalizedToDate = startOfDay(new Date(toDate));
+  // Parse the month and calculate the start and end of the month
+  const parsedMonth = parseISO(`${month}-01`); // Convert "YYYY-MM" to a date
+  const normalizedFromDate = startOfMonth(parsedMonth);
+  const normalizedToDate = endOfMonth(parsedMonth);
 
   if (normalizedToDate <= normalizedFromDate) {
     throw new Error(errorMSG.invalidDateRange);
   }
+
+  // Calculate the number of days (inclusive)
+  const totalDays = differenceInDays(normalizedToDate, normalizedFromDate) + 1;
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
@@ -36,7 +45,22 @@ async function createCharge(data: AddChargeByShopData) {
     throw new Error(errorMSG.noRelevantHistory);
   }
 
-  console.log(relevantHistories)
+  const currentTime = new Date().toISOString();
+
+  const operation = await db.operation.create({
+    data: { date: currentTime, title },
+  });
+
+  if (!operation) {
+    throw new Error(errorMSG.unknownError);
+  }
+
+  const monthlyChargeList = await db.monthlyCharge.findMany({
+    where: { shopId },
+  });
+
+  // Calculate the amount based on the daily rate
+  const dailyAmount = monthlyChargeList[0].totalAmount / totalDays;
 
   // Calculate charges for each history period
   const charges = relevantHistories.map((history) => {
@@ -60,24 +84,21 @@ async function createCharge(data: AddChargeByShopData) {
     // Skip if no overlap
     if (days <= 0) return null;
 
-    // Calculate the amount based on the daily rate
-    const amount = days * dailyAmount;
-
     return {
-      title: `Charge for ${
-        history.type
-      } (${chargeStartDate.toISOString()} - ${chargeEndDate.toISOString()})`,
-      amount,
+      title: `Charge for ${history.type}`,
+      amount:days * dailyAmount,
       shopId: history.shopId,
       plaque: history.plaque,
       personId: history.personId,
+      personName: history.personName,
       date: chargeStartDate, // Date associated with the charge
-      operationId: "generatedOperationId", // Replace with a valid operation ID
+      operationId: operation.id,
+      operationName: operation.title,
       daysCount: days,
     };
   });
 
-  console.log(charges)
+  console.log(charges);
 
   const filteredCharges = charges.filter(Boolean);
 
@@ -85,13 +106,11 @@ async function createCharge(data: AddChargeByShopData) {
     throw new Error(errorMSG.noChargeGenerated);
   }
 
-  
-
   // Save the charges in the database using a transaction
   await db.$transaction(async (prisma) => {
     for (const charge of filteredCharges) {
       if (charge) {
-        console.log("saving..")
+        console.log("saving..");
         await prisma.charge.create({
           data: {
             title: charge.title,
@@ -99,8 +118,10 @@ async function createCharge(data: AddChargeByShopData) {
             shopId: charge.shopId,
             pelaque: charge?.plaque,
             personId: charge.personId,
+            personName: charge.personName,
             date: charge?.date,
             operationId: charge.operationId,
+            operationName: charge.operationName,
             daysCount: charge?.daysCount,
           },
         });

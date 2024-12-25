@@ -85,8 +85,10 @@ model Charge {
   shopId        String
   pelaque       Int
   personId      String
+  personName    String
   date          DateTime
   operationId   String
+  operationName String
   daysCount     Int
 
   shop          Shop    @relation(fields: [shopId],references: [id])
@@ -104,6 +106,7 @@ model Payment {
   shopId        String
   pelaque       Int
   personId      String
+  personName    String
   date          DateTime
 
   shop          Shop    @relation(fields: [shopId],references: [id])
@@ -117,6 +120,8 @@ model Operation {
   id            String   @id @unique @default(uuid())
   title         String
   date          DateTime
+
+  createdAt     DateTime @default(now()) 
 
   charges       Charge[]
 }
@@ -138,4 +143,16 @@ model Session {
   createdAt   DateTime @default(now())
 
   @@index([personId]) 
+}
+
+model MonthlyCharge {
+  id              String   @id @unique @default(uuid())
+  shopId          String    @unique
+  plaque          Int
+  area            Float
+  constantAmount  Int
+  metericAmount   Int
+  totalAmount     Int
+
+  createdAt     DateTime @default(now()) 
 }

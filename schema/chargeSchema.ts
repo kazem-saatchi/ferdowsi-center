@@ -2,10 +2,9 @@ import { z } from "zod";
 
 //--------------------------------------------------------------------------------------
 export const addChargeByShop = z.object({
-  fromDate: z.date(),
-  toDate: z.date(),
+  month: z.string(), // Month in "YYYY-MM" format
   shopId: z.string(),
-  dailyAmount: z.number(),
+  title: z.string()
 });
 
 export type AddChargeByShopData = z.infer<typeof addChargeByShop>;
