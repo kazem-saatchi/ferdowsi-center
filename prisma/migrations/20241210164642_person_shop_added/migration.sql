@@ -51,7 +51,7 @@ CREATE TABLE "Charge" (
     "title" TEXT NOT NULL,
     "amount" TEXT NOT NULL,
     "shopId" TEXT NOT NULL,
-    "pelaque" INTEGER NOT NULL,
+    "plaque" INTEGER NOT NULL,
     "personId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "operationId" TEXT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
     "amount" TEXT NOT NULL,
     "shopId" TEXT NOT NULL,
-    "pelaque" INTEGER NOT NULL,
+    "plaque" INTEGER NOT NULL,
     "personId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
 

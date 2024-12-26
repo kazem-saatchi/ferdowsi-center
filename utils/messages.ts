@@ -21,6 +21,7 @@ export const errorMSG = {
   invalidDateRange: "The dates are invalid",
   noRelevantHistory: "No history found in That range",
   noChargeGenerated: "no Charge Generated",
+  shopChargeReferenceNotFound:"The Monthly CHarge Not Found"
 };
 
 export const successMSG = {
@@ -41,5 +42,7 @@ export const successMSG = {
   shopHistoryFound: "Shop history Founded successfully.",
 
   chargesCreated: "Charge Generated Successfully",
-  chargesFound:"CHarges founded successfully"
+  chargesFound:"CHarges founded successfully",
+
+  
 };

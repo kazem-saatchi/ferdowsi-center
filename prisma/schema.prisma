@@ -21,7 +21,8 @@ model Shop {
 
   owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
-  
+
+  chargeData    ShopChargeReference?
   histories     ShopHistory[]
   charges       Charge[]
   payments      Payment[]
@@ -83,7 +84,7 @@ model Charge {
   title         String
   amount        Int
   shopId        String
-  pelaque       Int
+  plaque       Int
   personId      String
   personName    String
   date          DateTime
@@ -104,7 +105,7 @@ model Payment {
   id            String   @id @unique @default(uuid())
   amount        String
   shopId        String
-  pelaque       Int
+  plaque       Int
   personId      String
   personName    String
   date          DateTime
@@ -145,14 +146,20 @@ model Session {
   @@index([personId]) 
 }
 
-model MonthlyCharge {
+model ShopChargeReference {
   id              String   @id @unique @default(uuid())
-  shopId          String    @unique
+  shopId          String   @unique
   plaque          Int
   area            Float
   constantAmount  Int
   metericAmount   Int
   totalAmount     Int
+  year            Int      @default(2024) // Example default year
 
-  createdAt     DateTime @default(now()) 
+  createdAt       DateTime @default(now()) 
+
+  shop            Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([year])
 }

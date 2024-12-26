@@ -28,10 +28,10 @@ export const updateShopInfoSchema = addShopSchema
 export type UpdateShopInfoData = z.infer<typeof updateShopInfoSchema>;
 //--------------------------------------------------------------------------------------
 export const shopHistoryTypeEnum = z.enum([
-  "ownership",
-  "activePeriod",
-  "deactivePeriod",
-  "rental",
+  "Ownership",
+  "ActiveByOwner",
+  "ActiveByRenter",
+  "InActive",
 ]);
 
 export const addShopHistorySchema = z.object({

@@ -20,6 +20,8 @@ import {
   ClipboardList,
   ToggleLeft,
   DollarSign,
+  PlusCircle,
+  Zap,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -172,9 +174,25 @@ export default async function AdminLayout({
               <Separator />
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin/all-charges">
+                  <Link href="/admin/all-charges-list">
                     <DollarSign className="mr-2 h-4 w-4" />
                     <span>All Charges</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/add-charges-all-shops">
+                    <Zap className="mr-2 h-4 w-4" />
+                    <span>Add Charges to All Shops</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/add-charge-to-shop">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    <span>Add Charge to Shop</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -5,7 +5,6 @@ import { useFindAllCharges } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { ChargeTable } from "@/components/charge/ChargeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 
