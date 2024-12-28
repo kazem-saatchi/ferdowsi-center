@@ -9,6 +9,7 @@ export const addShopSchema = z.object({
     .number()
     .min(1, { message: "Area must be a positive number greater than zero." }),
   floor: z.number().int({ message: "Floor must be an integer." }),
+  type: z.enum(["STORE","OFFICE"]),
   ownerId: z.string().uuid({ message: "Owner ID must be a valid UUID." }),
   renterId: z
     .string()

@@ -82,7 +82,6 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
                 className=" justify-start p-2 m-2 border rounded-md cursor-pointer"
                 onClick={() => {
                   setNewShop(property, person.id);
-                  console.log(newShop)
                   setOpen(false);
                 }}
                 // type="button"

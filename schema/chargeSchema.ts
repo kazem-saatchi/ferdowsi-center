@@ -10,8 +10,8 @@ export const addChargeByShopSchema = z.object({
 export type AddChargeByShopData = z.infer<typeof addChargeByShopSchema>;
 //--------------------------------------------------------------------------------------
 export const addChargeAllShopsSchema = z.object({
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
   title: z.string(),
 });
 

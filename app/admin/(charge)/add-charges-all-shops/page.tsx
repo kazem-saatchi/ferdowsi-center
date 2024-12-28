@@ -37,8 +37,8 @@ export default function AddChargesToAllShopsPage() {
   });
 
   const [dataState, setDataState] = useState<AddChargeAllShopsData>({
-    startDate: "",
-    endDate: "",
+    startDate: new Date(),
+    endDate: new Date(),
     title: "",
   });
 
@@ -55,9 +55,15 @@ export default function AddChargesToAllShopsPage() {
         title,
         month: formattedDate,
       });
+      console.log(date.toFirstOfMonth().toDate().toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }))
+      console.log(date.toLastOfMonth().toDate().toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }))
+      console.log(date.toLastOfMonth().toDate().getTime())
+      console.log(persianDate.dayOfYear)
+      console.log(date.toLastOfMonth().toDate().toISOString())
 
-      const startDate = date.toFirstOfMonth().toDate().toISOString();
-      const endDate = date.toLastOfMonth().toDate().toISOString();
+      const startDate = date.toFirstOfMonth().toDate();
+      const endDate = date.toLastOfMonth().toDate();
+      endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
       setDataState({
         startDate,
         endDate,
@@ -79,8 +85,8 @@ export default function AddChargesToAllShopsPage() {
           title: "",
         });
         setDataState({
-          startDate: "",
-          endDate: "",
+          startDate: new Date(),
+          endDate: new Date(),
           title: "",
         });
       } else {

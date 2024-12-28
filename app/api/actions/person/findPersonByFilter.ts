@@ -21,7 +21,7 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   }
   // Validate input
   const validation = findPersonByFilterSchema.safeParse(data);
-  console.log(validation.error)
+ 
   if (!validation.success) {
     throw new Error(
       validation.error.errors.map((err) => err.message).join(", ")
@@ -29,7 +29,6 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   }
   
   const filters = validation.data;
-  console.log("filter",filters)
 
   // Build dynamic filter
   const whereClause: Record<string, any> = {};

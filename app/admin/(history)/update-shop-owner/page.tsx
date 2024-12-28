@@ -17,11 +17,14 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export default function UpdateShopOwnerPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedOwnerId, setSelectedOwnerId] = useState("");
-  const [ownerChangeDate, setOwnerChangeDate] = useState("");
+  const [ownerChangeDate, setOwnerChangeDate] = useState<Date | null>(null);
   const [currentOwnerName, setCurrentOwnerName] = useState("");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
@@ -64,15 +67,17 @@ export default function UpdateShopOwnerPage() {
       await updateShopOwnerMutation.mutateAsync({
         shopId: selectedShopId,
         ownerId: selectedOwnerId,
-        startDate: new Date(ownerChangeDate).toISOString(),
+        startDate: ownerChangeDate.toISOString(),
       });
       // Reset form after successful submission
       setSelectedShopId("");
       setSelectedOwnerId("");
-      setOwnerChangeDate("");
+      setOwnerChangeDate(null);
       setCurrentOwnerName("");
+      toast.success("Shop owner updated successfully");
     } catch (error) {
       console.error("Error updating shop owner:", error);
+      toast.error("Failed to update shop owner");
     }
   };
 
@@ -85,6 +90,17 @@ export default function UpdateShopOwnerPage() {
     id: person.id,
     label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
   })) || [];
+
+  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
+    return (
+      <Input
+        onFocus={openCalendar}
+        value={value}
+        onChange={handleValueChange}
+        readOnly
+      />
+    );
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -123,12 +139,20 @@ export default function UpdateShopOwnerPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="ownerChangeDate">Owner Change Date</Label>
-              <Input
-                id="ownerChangeDate"
-                type="date"
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
                 value={ownerChangeDate}
-                onChange={(e) => setOwnerChangeDate(e.target.value)}
-                required
+                onChange={(date) => {
+                  if (date) {
+                    setOwnerChangeDate(date.toDate());
+                  } else {
+                    setOwnerChangeDate(null);
+                  }
+                }}
+                render={<CustomInput />}
+                format="YYYY/MM/DD"
               />
             </div>
           </CardContent>

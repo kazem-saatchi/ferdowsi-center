@@ -18,17 +18,21 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
 
   const validation = updateShopRenter.safeParse(data);
   if (!validation.success) {
-    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
+    throw new Error(
+      validation.error.errors.map((err) => err.message).join(", ")
+    );
   }
 
-  const newRenter = validation.data.renterId
+  const { shopId, renterId, startDate } = validation.data;
+
+  const newRenter = renterId
     ? await db.person.findUnique({
-        where: { id: validation.data.renterId },
+        where: { id: renterId },
         select: { id: true, firstName: true, lastName: true },
       })
     : null;
 
-  if (validation.data.renterId && !newRenter) {
+  if (renterId && !newRenter) {
     throw new Error(errorMSG.userNotFound);
   }
 
@@ -36,10 +40,14 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
     ? `${newRenter.firstName} ${newRenter.lastName}`
     : null;
 
-  const newStartDate = new Date(validation.data.startDate);
+  const newStartDate = new Date(startDate);
 
   const currentRentalHistory = await db.shopHistory.findFirst({
-    where: { shopId: validation.data.shopId, type: "ActiveByRenter", endDate: null },
+    where: {
+      shopId,
+      type: "ActiveByRenter",
+      endDate: null,
+    },
   });
 
   if (currentRentalHistory) {
@@ -49,9 +57,13 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
     }
   }
 
+  const currentOwnerHistory = await db.shopHistory.findFirst({
+    where: { shopId, type: "ActiveByOwner", endDate: null },
+  });
+
   const transaction = await db.$transaction(async (prisma) => {
     const updatedShop = await prisma.shop.update({
-      where: { id: validation.data.shopId },
+      where: { id: shopId },
       data: {
         renterId: newRenter?.id || null,
         renterName,
@@ -65,6 +77,15 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
           endDate: newStartDate.toISOString(),
         },
       });
+    }
+
+    if(currentOwnerHistory) {
+      await prisma.shopHistory.update({
+        where:{id:currentOwnerHistory.id},
+        data:{
+          endDate: newStartDate.toISOString(),
+        }
+      })
     }
 
     if (newRenter && renterName) {
@@ -90,5 +111,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
 }
 
 export default async function updateShopRenterId(data: UpdateShopRenterData) {
-  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
+  return handleServerAction<UpdateShopResponse>((user) =>
+    updateShop(data, user)
+  );
 }

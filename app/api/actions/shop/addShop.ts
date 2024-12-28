@@ -25,7 +25,7 @@ async function createShop(data: AddShopData, person: Person) {
   }
 
   // a constant date for all shop start date
-  const currentDate = "2024-12-24T00:00:00.000Z";
+  const currentDate = "2024-01-01T00:00:00.000Z";
 
   const existingShop = await db.shop.findUnique({
     where: { plaque: validation.data.plaque },
@@ -60,6 +60,7 @@ async function createShop(data: AddShopData, person: Person) {
         plaque: validation.data.plaque,
         area: validation.data.area,
         floor: validation.data.floor,
+        type: validation.data.type,
         ownerId: validation.data.ownerId,
         renterId: validation.data.renterId || null,
         ownerName: `${owner.firstName} ${owner.lastName}`,

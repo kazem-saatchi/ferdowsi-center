@@ -33,6 +33,8 @@ export default function EditShopPage() {
     floor: "",
   });
 
+  const [shopType, setShopType] = useState<"STORE" | "OFFICE">("STORE");
+
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function EditShopPage() {
         area: data?.data.shop.area.toString(),
         floor: data?.data.shop.floor.toString(),
       });
+      setShopType(data.data.shop.type);
     }
   }, [data]);
 
@@ -62,6 +65,7 @@ export default function EditShopPage() {
         plaque: parseInt(formData.plaque),
         area: parseFloat(formData.area),
         floor: parseInt(formData.floor),
+        type: shopType,
       });
       router.push("/admin/all-shops");
     } catch (error) {

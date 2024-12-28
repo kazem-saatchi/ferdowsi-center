@@ -17,12 +17,15 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export default function RemoveShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [currentRenterName, setCurrentRenterName] = useState("");
   const [currentRenterId, setCurrentRenterId] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
   const endShopRenterMutation = useEndShopRenter();
@@ -58,15 +61,17 @@ export default function RemoveShopRenterPage() {
       await endShopRenterMutation.mutateAsync({
         shopId: selectedShopId,
         renterId: currentRenterId,
-        endDate: new Date(endDate).toISOString(),
+        endDate: endDate.toISOString(),
       });
+      toast.success("Shop renter removed successfully");
       // Reset form after successful submission
       setSelectedShopId("");
       setCurrentRenterName("");
       setCurrentRenterId("");
-      setEndDate("");
+      setEndDate(null);
     } catch (error) {
       console.error("Error removing shop renter:", error);
+      toast.error("Failed to remove shop renter");
     }
   };
 
@@ -74,6 +79,17 @@ export default function RemoveShopRenterPage() {
     id: shop.id,
     label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
   })) || [];
+
+  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
+    return (
+      <Input
+        onFocus={openCalendar}
+        value={value}
+        onChange={handleValueChange}
+        readOnly
+      />
+    );
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -103,12 +119,20 @@ export default function RemoveShopRenterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="endDate">Rental End Date</Label>
-              <Input
-                id="endDate"
-                type="date"
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
+                onChange={(date) => {
+                  if (date) {
+                    setEndDate(date.toDate());
+                  } else {
+                    setEndDate(null);
+                  }
+                }}
+                render={<CustomInput />}
+                format="YYYY/MM/DD"
               />
             </div>
           </CardContent>

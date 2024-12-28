@@ -18,6 +18,7 @@ import { useFindAllPersons } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
@@ -144,6 +145,19 @@ export default function AddShopPage() {
                   {formErrors.renterId?._errors[0]}
                 </span>
               )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shopType">Type</Label>
+              <RadioGroup property="shopType" defaultValue="STORE" dir="rtl">
+                <div className="flex items-center space-x-2" onClick={()=>setNewShop("type","STORE")}>
+                  <RadioGroupItem value="STORE" id="r1" />
+                  <Label htmlFor="r1">STORE</Label>
+                </div>
+                <div className="flex items-center space-x-2" onClick={()=>setNewShop("type","OFFICE")}>
+                  <RadioGroupItem value="oFFICE" id="r2" />
+                  <Label htmlFor="r2">OFFICE</Label>
+                </div>
+              </RadioGroup>
             </div>
           </CardContent>
           <CardFooter>

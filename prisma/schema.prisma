@@ -13,6 +13,7 @@ model Shop {
   plaque        Int @unique
   area          Float
   floor         Int
+  type          ShopType
   ownerId       String
   renterId      String?
   isActive      Boolean @default(true)
@@ -26,6 +27,11 @@ model Shop {
   histories     ShopHistory[]
   charges       Charge[]
   payments      Payment[]
+}
+
+enum ShopType {
+  STORE
+  OFFICE
 }
 
 model Person {

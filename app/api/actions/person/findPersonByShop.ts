@@ -54,8 +54,6 @@ async function findPerson(shopId: string, user: Person) {
   // Convert Set to Array (to remove duplicates)
   const persons = Array.from(personsSet);
 
-  console.log(persons)
-
   return { message: successMSG.personsFound, persons };
 }
 

@@ -10,12 +10,8 @@ import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 import {
   differenceInDays,
-  endOfMonth,
-  parseISO,
   startOfDay,
-  startOfMonth,
-  parse,
-} from "date-fns-jalali";
+} from "date-fns";
 
 interface AddChargeResponse {
   message: string;
@@ -36,19 +32,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   }
   const { startDate,endDate, title } = validation?.data;
 
-  // // Parse the month and calculate the start and end of the month
-  // const parsedMonth = parseISO(`${month}-01`); // Convert "YYYY-MM" to a date
-  // const normalizedFromDate = startOfMonth(parsedMonth);
-  // const normalizedToDate = endOfMonth(parsedMonth);
-
-  // // Parse the Jalali date string to a JavaScript Date object
-  // const parsedDate = parse(`${month}-01`, "yyyy-MM-dd", new Date(), {
-  //   useAdditionalDayOfYearTokens: true,
-  // });
-
-  // console.log(parsedDate);
-  // console.log(normalizedFromDate.toISOString());
-  // console.log(normalizedToDate);
 
   if (endDate <= startDate) {
     throw new Error(errorMSG.invalidDateRange);
@@ -56,6 +39,8 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
   // Calculate the number of days (inclusive)
   const totalDays = differenceInDays(endDate, startDate) + 1;
+
+  console.log(totalDays)
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
@@ -108,19 +93,24 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
       const dailyAmount = shopChargeReference.totalAmount / totalDays;
 
+      console.log("daily Amount",dailyAmount)
+
       const historyStartDate = startOfDay(new Date(history.startDate));
+      
       const historyEndDate = history.endDate
         ? startOfDay(new Date(history.endDate))
         : endDate;
 
       const chargeStartDate =
-        historyStartDate.toDateString() > startDate
+        historyStartDate > startDate
           ? historyStartDate
           : startDate;
       const chargeEndDate =
         historyEndDate < endDate ? historyEndDate : endDate;
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
+
+      console.log("days",days)
 
       if (days > 0) {
         acc.push({

@@ -17,11 +17,14 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export default function UpdateShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedRenterId, setSelectedRenterId] = useState("");
-  const [renterChangeDate, setRenterChangeDate] = useState("");
+  const [renterChangeDate, setRenterChangeDate] = useState<Date | null>(null);
   const [currentRenterName, setCurrentRenterName] = useState("");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
@@ -64,15 +67,17 @@ export default function UpdateShopRenterPage() {
       await updateShopRenterMutation.mutateAsync({
         shopId: selectedShopId,
         renterId: selectedRenterId,
-        startDate: new Date(renterChangeDate).toISOString(),
+        startDate: renterChangeDate.toISOString(),
       });
       // Reset form after successful submission
       setSelectedShopId("");
       setSelectedRenterId("");
-      setRenterChangeDate("");
+      setRenterChangeDate(null);
       setCurrentRenterName("");
+      toast.success("Shop renter updated successfully");
     } catch (error) {
       console.error("Error updating shop renter:", error);
+      toast.error("Failed to update shop renter");
     }
   };
 
@@ -85,6 +90,17 @@ export default function UpdateShopRenterPage() {
     id: person.id,
     label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
   })) || [];
+
+  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
+    return (
+      <Input
+        onFocus={openCalendar}
+        value={value}
+        onChange={handleValueChange}
+        readOnly
+      />
+    );
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -123,12 +139,20 @@ export default function UpdateShopRenterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="renterChangeDate">Renter Change Date</Label>
-              <Input
-                id="renterChangeDate"
-                type="date"
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
                 value={renterChangeDate}
-                onChange={(e) => setRenterChangeDate(e.target.value)}
-                required
+                onChange={(date) => {
+                  if (date) {
+                    setRenterChangeDate(date.toDate());
+                  } else {
+                    setRenterChangeDate(null);
+                  }
+                }}
+                render={<CustomInput />}
+                format="YYYY/MM/DD"
               />
             </div>
           </CardContent>
