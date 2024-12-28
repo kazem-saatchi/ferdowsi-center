@@ -1,9 +1,9 @@
-import { object, z } from "zod";
+import { z } from "zod";
 
 //--------------------------------------------------------------------------------------
 export const addChargeByShopSchema = z.object({
-  month: z.string(), // Month in "YYYY-MM" format
-  shopId: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
   title: z.string(),
 });
 
@@ -18,8 +18,8 @@ export const addChargeAllShopsSchema = z.object({
 export type AddChargeAllShopsData = z.infer<typeof addChargeAllShopsSchema>;
 //--------------------------------------------------------------------------------------
 export const ShopChargeReferenceSchema = z.object({
-  constValue: z.number(),
-  metericValue: z.number(),
+  storeConst: z.number(),
+  storeMetric: z.number(),
 });
 
 export type ShopChargeReferenceData = z.infer<typeof ShopChargeReferenceSchema>;
