@@ -25,7 +25,6 @@ async function generateShopChargeReference(
 
   // Fetch all active shops
   const shopsList = await db.shop.findMany({
-    where: { isActive: true },
     orderBy: { plaque: "asc" },
   });
 

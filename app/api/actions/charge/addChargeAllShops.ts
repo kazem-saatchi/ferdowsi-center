@@ -34,37 +34,37 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
       validation.error.errors.map((err) => err.message).join(", ")
     );
   }
-  const { month, title } = validation?.data;
+  const { startDate,endDate, title } = validation?.data;
 
-  // Parse the month and calculate the start and end of the month
-  const parsedMonth = parseISO(`${month}-01`); // Convert "YYYY-MM" to a date
-  const normalizedFromDate = startOfMonth(parsedMonth);
-  const normalizedToDate = endOfMonth(parsedMonth);
+  // // Parse the month and calculate the start and end of the month
+  // const parsedMonth = parseISO(`${month}-01`); // Convert "YYYY-MM" to a date
+  // const normalizedFromDate = startOfMonth(parsedMonth);
+  // const normalizedToDate = endOfMonth(parsedMonth);
 
-  // Parse the Jalali date string to a JavaScript Date object
-  const parsedDate = parse(`${month}-01`, "yyyy-MM-dd", new Date(), {
-    useAdditionalDayOfYearTokens: true,
-  });
+  // // Parse the Jalali date string to a JavaScript Date object
+  // const parsedDate = parse(`${month}-01`, "yyyy-MM-dd", new Date(), {
+  //   useAdditionalDayOfYearTokens: true,
+  // });
 
-  console.log(parsedDate);
-  console.log(normalizedFromDate.toISOString());
-  console.log(normalizedToDate);
+  // console.log(parsedDate);
+  // console.log(normalizedFromDate.toISOString());
+  // console.log(normalizedToDate);
 
-  if (normalizedToDate <= normalizedFromDate) {
+  if (endDate <= startDate) {
     throw new Error(errorMSG.invalidDateRange);
   }
 
   // Calculate the number of days (inclusive)
-  const totalDays = differenceInDays(normalizedToDate, normalizedFromDate) + 1;
+  const totalDays = differenceInDays(endDate, startDate) + 1;
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
     where: {
       type: { in: ["ActiveByOwner", "ActiveByRenter", "InActive"] }, // Exclude "Ownership"
-      startDate: { lte: normalizedToDate.toISOString() },
+      startDate: { lte: endDate },
       OR: [
         { endDate: null }, // Include ongoing periods
-        { endDate: { gte: normalizedFromDate.toISOString() } }, // Include overlapping periods
+        { endDate: { gte: startDate } }, // Include overlapping periods
       ],
     },
     orderBy: { startDate: "asc" },
@@ -73,6 +73,8 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   if (!relevantHistories.length) {
     throw new Error(errorMSG.noRelevantHistory);
   }
+
+  console.log(relevantHistories)
 
   const currentTime = new Date().toISOString();
 
@@ -109,14 +111,14 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
       const historyStartDate = startOfDay(new Date(history.startDate));
       const historyEndDate = history.endDate
         ? startOfDay(new Date(history.endDate))
-        : normalizedToDate;
+        : endDate;
 
       const chargeStartDate =
-        historyStartDate > normalizedFromDate
+        historyStartDate.toDateString() > startDate
           ? historyStartDate
-          : normalizedFromDate;
+          : startDate;
       const chargeEndDate =
-        historyEndDate < normalizedToDate ? historyEndDate : normalizedToDate;
+        historyEndDate < endDate ? historyEndDate : endDate;
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 

@@ -22,6 +22,8 @@ import {
   DollarSign,
   PlusCircle,
   Zap,
+  List,
+  FileText,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -193,6 +195,23 @@ export default async function AdminLayout({
                   <Link href="/admin/add-charge-to-shop">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     <span>Add Charge to Shop</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <Separator />
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/all-charge-reference">
+                    <List className="mr-2 h-4 w-4" />
+                    <span>all Charge list</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/generate-charge-list">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>generate Charge list</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

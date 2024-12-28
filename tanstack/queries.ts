@@ -1,6 +1,7 @@
 "use client";
 
 import findAllcharges from "@/app/api/actions/charge/getAllCharges";
+import findAllChargesReference from "@/app/api/actions/charge/getAllChargesReference";
 import findAllShopHistory from "@/app/api/actions/history/getAllHistory";
 import findHistoryByPerson from "@/app/api/actions/history/getHistoryByPerson";
 import findHistoryByShop from "@/app/api/actions/history/getHistoryByShop";
@@ -39,6 +40,13 @@ export function useFindAllCharges() {
   });
 }
 
+export function useFindAllChargesReference() {
+  return useQuery({
+    queryKey: ["all-charges-reference"],
+    queryFn: async () => await findAllChargesReference(),
+  });
+}
+
 export function useFindShopById(id: string) {
   return useQuery({
     queryKey: ["shop", id],
@@ -73,5 +81,3 @@ export function useShopHistoryByPerson(personId: string) {
     queryFn: async () => await findHistoryByPerson(personId),
   });
 }
-
-
