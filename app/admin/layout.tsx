@@ -8,27 +8,14 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { verifyToken } from "@/utils/auth";
-import {
-  UserPlus,
-  Search,
-  UserCog,
-  Home,
-  Users,
-  ShoppingBag,
-  UserCheck,
-  UserX,
-  ClipboardList,
-  ToggleLeft,
-  DollarSign,
-  PlusCircle,
-  Zap,
-  List,
-  FileText,
-  Euro,
-} from "lucide-react";
+import { Home } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import AdminPersonPanel from "@/components/side-panel/AdminPersonPanel";
+import AdminShopPanel from "@/components/side-panel/AdminShopPanel";
+import AdminHistoryPanel from "@/components/side-panel/AdminHistoryPanel";
+import AdminChargePanel from "@/components/side-panel/AdminChargePanel";
 
 export default async function AdminLayout({
   children,
@@ -59,171 +46,13 @@ export default async function AdminLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/all-persons">
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>All Persons</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/add-person">
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    <span>Add Person</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/search-persons">
-                    <Search className="mr-2 h-4 w-4" />
-                    <span>Search Persons</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/update-person">
-                    <UserCog className="mr-2 h-4 w-4" />
-                    <span>Update Person</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <AdminPersonPanel />
               <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/add-shop">
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>Add Shop</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/all-shops">
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>All Shops</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/edit-shop">
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>Update Shop</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <AdminShopPanel />
               <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/update-shop-owner">
-                    <UserCheck className="mr-2 h-4 w-4" />
-                    <span>Update Shop Owner</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/update-shop-renter">
-                    <UserX className="mr-2 h-4 w-4" />
-                    <span>Update Shop Renter</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/remove-shop-renter">
-                    <UserX className="mr-2 h-4 w-4" />
-                    <span>Remove Shop Renter</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/update-shop-status">
-                    <ToggleLeft className="mr-2 h-4 w-4" />
-                    <span>Update Shop Status</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <AdminHistoryPanel />
               <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/all-shop-history">
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    <span>All History</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/history-by-shop">
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    <span>Shop History</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/history-by-person">
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    <span>Person History</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/all-charges-list">
-                    <DollarSign className="mr-2 h-4 w-4" />
-                    <span>All Charges</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/find-charge-by-shop">
-                    <Euro className="mr-2 h-4 w-4" />
-                    <span>Charges By Shop</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/add-charges-all-shops">
-                    <Zap className="mr-2 h-4 w-4" />
-                    <span>Add Charges to All Shops</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/add-charge-to-shop">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    <span>Add Charge to Shop</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <Separator />
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/all-charge-reference">
-                    <List className="mr-2 h-4 w-4" />
-                    <span>all Charge list</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/generate-charge-list">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>generate Charge list</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <AdminChargePanel />
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
