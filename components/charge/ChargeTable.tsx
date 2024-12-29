@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatNumber } from "@/utils/formatNumber";
 import { Charge } from "@prisma/client";
 import { format } from "date-fns";
 
@@ -31,11 +32,11 @@ export function ChargeTable({ charges }: ChargeTableProps) {
         {charges.map((charge) => (
           <TableRow key={charge.id}>
             <TableCell className="text-center">{charge.title}</TableCell>
-            <TableCell className="text-center">{charge.amount}</TableCell>
+            <TableCell className="text-center text-xl">{formatNumber(charge.amount)}</TableCell>
             <TableCell className="text-center">{charge.plaque}</TableCell>
             <TableCell className="text-center">{charge.personName}</TableCell>
-            <TableCell className="text-center">
-              {format(new Date(charge.date), "PPP")}
+            <TableCell className="text-center text-xl">
+              {new Date(charge.date).toLocaleDateString('fa-IR')}
             </TableCell>
             <TableCell className="text-center">
               {charge.operationName}

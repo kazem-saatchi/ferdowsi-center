@@ -21,7 +21,8 @@ async function generateShopChargeReference(
     );
   }
 
-  const { constValue, metericValue } = validation.data;
+  const { officeConst, officeMetric, storeConst, storeMetric } =
+    validation.data;
 
   // Fetch all active shops
   const shopsList = await db.shop.findMany({
@@ -35,15 +36,21 @@ async function generateShopChargeReference(
   // Prepare new charge reference data
   const currentYear = new Date().getFullYear();
   const newChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
-    shopsList.map((shop) => ({
-      shopId: shop.id,
-      plaque: shop.plaque,
-      area: shop.area,
-      constantAmount: constValue,
-      metericAmount: shop.area * metericValue,
-      totalAmount: shop.area * metericValue + constValue,
-      year: currentYear,
-    }));
+    shopsList.map((shop) => {
+      const constValue = shop.type === "STORE" ? storeConst : officeConst;
+      const metricValue = shop.type === "STORE" ? storeMetric : officeMetric;
+      const chargeObject = {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        area: shop.area,
+        constantAmount: constValue,
+        metricAmount: metricValue,
+        totalAmount: shop.area * metricValue + constValue,
+        year: currentYear,
+      };
+
+      return chargeObject;
+    });
 
   // Transaction: Clear old references for these shops and insert new ones
   await db.$transaction(async (prisma) => {

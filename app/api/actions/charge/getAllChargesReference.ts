@@ -21,7 +21,7 @@ async function getAllChargesReference(
 
   // Get ShopCharges
   const chargeList = await db.shopChargeReference.findMany({
-    orderBy: { plaque: "desc" },
+    orderBy: { plaque: "asc" },
   });
 
   return {

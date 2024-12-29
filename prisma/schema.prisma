@@ -158,7 +158,7 @@ model ShopChargeReference {
   plaque          Int
   area            Float
   constantAmount  Int
-  metericAmount   Int
+  metricAmount    Int
   totalAmount     Int
   year            Int      @default(2024) // Example default year
 

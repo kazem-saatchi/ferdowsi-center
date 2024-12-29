@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Vazirmatn } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import TanstackProvider from "@/provider/TanstackProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-const rubik = Rubik({ subsets: ["arabic"] });
+const fontFamily = Vazirmatn({ subsets: ["arabic"] });
 
 export const metadata: Metadata = {
   title: "Ferdowsi App",
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body className={cn(rubik.className)}>
+      <body className={cn(fontFamily.className)}>
         <TanstackProvider>{children}</TanstackProvider>
         <Toaster
             toastOptions={{

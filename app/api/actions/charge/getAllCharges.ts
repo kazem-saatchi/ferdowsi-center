@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import {  Person, Charge } from "@prisma/client";
+import { Person, Charge } from "@prisma/client";
 
 interface FindchargeResponse {
   success: boolean;
@@ -19,7 +19,7 @@ async function getAllCharges(user: Person): Promise<FindchargeResponse> {
 
   // Get ShopCharges
   const chargeList = await db.charge.findMany({
-    orderBy: { date: "desc" },
+    orderBy: [{ date: "desc" }, { plaque: "asc" }],
   });
 
   return {
@@ -30,7 +30,5 @@ async function getAllCharges(user: Person): Promise<FindchargeResponse> {
 }
 
 export default async function findAllcharges() {
-  return handleServerAction<FindchargeResponse>((user) =>
-    getAllCharges(user)
-  );
+  return handleServerAction<FindchargeResponse>((user) => getAllCharges(user));
 }

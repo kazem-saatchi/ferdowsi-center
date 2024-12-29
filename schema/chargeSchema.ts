@@ -20,6 +20,8 @@ export type AddChargeAllShopsData = z.infer<typeof addChargeAllShopsSchema>;
 export const ShopChargeReferenceSchema = z.object({
   storeConst: z.number(),
   storeMetric: z.number(),
+  officeConst: z.number(),
+  officeMetric: z.number(),
 });
 
 export type ShopChargeReferenceData = z.infer<typeof ShopChargeReferenceSchema>;
