@@ -1,22 +1,27 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useAddChargeByShop } from '@/tanstack/mutations'
-import { useFindAllShops } from '@/tanstack/queries'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { toast } from 'sonner'
-import { CustomSelect } from '@/components/CustomSelect'
-import DatePicker from "react-multi-date-picker"
-import persian from "react-date-object/calendars/persian"
-import persian_fa from "react-date-object/locales/persian_fa"
-import { useStore } from '@/store/store'
-import { useShallow } from 'zustand/react/shallow'
-import DateObject from "react-date-object"
-import { AddChargeByShopData } from '@/schema/chargeSchema'
-
+import { useState, useEffect } from "react";
+import { useAddChargeByShop } from "@/tanstack/mutations";
+import { useFindAllShops } from "@/tanstack/queries";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { toast } from "sonner";
+import { CustomSelect } from "@/components/CustomSelect";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import { useStore } from "@/store/store";
+import { useShallow } from "zustand/react/shallow";
+import DateObject from "react-date-object";
+import { AddChargeByShopData } from "@/schema/chargeSchema";
 
 const CustomInput = ({ value, openCalendar, handleValueChange }: any) => {
   return (
@@ -26,84 +31,103 @@ const CustomInput = ({ value, openCalendar, handleValueChange }: any) => {
       onChange={handleValueChange}
       readOnly
     />
-  )
-}
+  );
+};
 
 export default function AddChargeToShopPage() {
-  const [formData, setFormData] = useState<AddChargeByShopData>({
-    month: '',
-    shopId: '',
-    title: '',
-  })
+  const [formData, setFormData] = useState({
+    month: "",
+    shopId: "",
+    title: "",
+  });
 
-  const addChargeMutation = useAddChargeByShop()
-  const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops()
+  const [dataState, setDataState] = useState<AddChargeByShopData>({
+    startDate: new Date(),
+    endDate: new Date(),
+    title: "",
+    shopId: "",
+  });
+
+  const addChargeMutation = useAddChargeByShop();
+  const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
 
   const { setShopsAll, shopsAll } = useStore(
     useShallow((state) => ({
       shopsAll: state.shopsAll,
       setShopsAll: state.setshopsAll,
     }))
-  )
+  );
 
   useEffect(() => {
     if (shopsData?.data?.shops) {
-      setShopsAll(shopsData.data.shops)
+      setShopsAll(shopsData.data.shops);
     }
-  }, [shopsData, setShopsAll])
+  }, [shopsData, setShopsAll]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleDateChange = (date: any) => {
     if (date) {
-      const persianDate = new DateObject(date).convert(persian, persian_fa)
-      const formattedDate = `${persianDate.year}-${String(persianDate.month.number).padStart(2, '0')}`
-      const displayDate = `${persianDate.month.name} ${persianDate.year}`
-      setFormData(prev => ({
+      const persianDate = new DateObject(date).convert(persian, persian_fa);
+      const formattedDate = `${persianDate.year}-${String(
+        persianDate.month.number
+      ).padStart(2, "0")}`;
+      const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
+      setFormData((prev) => ({
         ...prev,
-        month: formattedDate
-      }))
-      // return displayDate
+        title,
+        month: formattedDate,
+      }));
+      const startDate = date.toFirstOfMonth().toDate();
+      const endDate = date.toLastOfMonth().toDate();
+      endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
+      setDataState({
+        startDate,
+        endDate,
+        title,
+        shopId: formData.shopId,
+      });
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       if (!formData.shopId) {
-        toast.error("Please select a shop")
-        return
+        toast.error("Please select a shop");
+        return;
       }
-      
-      const result = await addChargeMutation.mutateAsync(formData)
-      
+
+      const result = await addChargeMutation.mutateAsync(dataState);
+
       if (result.success) {
-        toast.success("Charge added successfully")
+        toast.success("Charge added successfully");
         // Reset form after successful submission
         setFormData({
-          month: '',
-          shopId: '',
-          title: '',
-        })
+          month: "",
+          shopId: "",
+          title: "",
+        });
       } else {
-        toast.error(result.message || "Failed to add charge")
+        toast.error(result.message || "Failed to add charge");
       }
     } catch (error) {
-      console.error('Error adding charge:', error)
-      toast.error("An error occurred while adding the charge")
+      console.error("Error adding charge:", error);
+      toast.error("An error occurred while adding the charge");
     }
-  }
+  };
 
-  const shopOptions = shopsAll?.map((shop) => ({
-    id: shop.id,
-    label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
-  })) || []
+  const shopOptions =
+    shopsAll?.map((shop) => ({
+      id: shop.id,
+      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+    })) || [];
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -119,7 +143,9 @@ export default function AddChargeToShopPage() {
               <CustomSelect
                 options={shopOptions}
                 value={formData.shopId}
-                onChange={(value) => setFormData(prev => ({ ...prev, shopId: value }))}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, shopId: value }))
+                }
                 label="Shop"
               />
             </div>
@@ -137,27 +163,27 @@ export default function AddChargeToShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
-              <Input 
-                id="title" 
-                name="title" 
-                value={formData.title} 
-                onChange={handleChange} 
-                required 
+              <Input
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                disabled
+                required
               />
             </div>
           </CardContent>
           <CardFooter>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={addChargeMutation.isPending}
             >
-              {addChargeMutation.isPending ? 'Adding Charge...' : 'Add Charge'}
+              {addChargeMutation.isPending ? "Adding Charge..." : "Add Charge"}
             </Button>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
+  );
 }
-

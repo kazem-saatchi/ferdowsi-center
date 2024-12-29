@@ -24,6 +24,7 @@ import {
   Zap,
   List,
   FileText,
+  Euro,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -179,6 +180,14 @@ export default async function AdminLayout({
                   <Link href="/admin/all-charges-list">
                     <DollarSign className="mr-2 h-4 w-4" />
                     <span>All Charges</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/find-charge-by-shop">
+                    <Euro className="mr-2 h-4 w-4" />
+                    <span>Charges By Shop</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

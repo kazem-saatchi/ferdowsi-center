@@ -40,7 +40,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   // Calculate the number of days (inclusive)
   const totalDays = differenceInDays(endDate, startDate) + 1;
 
-  console.log(totalDays)
+
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
@@ -59,7 +59,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error(errorMSG.noRelevantHistory);
   }
 
-  console.log(relevantHistories)
 
   const currentTime = new Date().toISOString();
 
@@ -92,8 +91,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
       }
 
       const dailyAmount = shopChargeReference.totalAmount / totalDays;
-
-      console.log("daily Amount",dailyAmount)
 
       const historyStartDate = startOfDay(new Date(history.startDate));
       

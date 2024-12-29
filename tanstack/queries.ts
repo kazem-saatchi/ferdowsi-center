@@ -1,7 +1,9 @@
 "use client";
 
-import findAllcharges from "@/app/api/actions/charge/getAllCharges";
+import findAllCharges from "@/app/api/actions/charge/getAllCharges";
 import findAllChargesReference from "@/app/api/actions/charge/getAllChargesReference";
+import findChargesByPerson from "@/app/api/actions/charge/getChargesByPerson";
+import findChargesByShop from "@/app/api/actions/charge/getChargesByShop";
 import findAllShopHistory from "@/app/api/actions/history/getAllHistory";
 import findHistoryByPerson from "@/app/api/actions/history/getHistoryByPerson";
 import findHistoryByShop from "@/app/api/actions/history/getHistoryByShop";
@@ -10,6 +12,7 @@ import findPersonById from "@/app/api/actions/person/findPersonById";
 import findPersonByShop from "@/app/api/actions/person/findPersonByShop";
 import findAllShops from "@/app/api/actions/shop/allShops";
 import findShopById from "@/app/api/actions/shop/findShopById";
+import { GetChargeByPersonData, GetChargeByShopData } from "@/schema/chargeSchema";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFindPersonById(id: string) {
@@ -36,7 +39,7 @@ export function useFindAllShops() {
 export function useFindAllCharges() {
   return useQuery({
     queryKey: ["all-charges"],
-    queryFn: async () => await findAllcharges(),
+    queryFn: async () => await findAllCharges(),
   });
 }
 
@@ -79,5 +82,19 @@ export function useShopHistoryByPerson(personId: string) {
   return useQuery({
     queryKey: ["person-history", personId],
     queryFn: async () => await findHistoryByPerson(personId),
+  });
+}
+
+export function useFindChargesByShop(data: GetChargeByShopData) {
+  return useQuery({
+    queryKey: ["shop-charges", data.shopId],
+    queryFn: async () => await findChargesByShop({ shopId: data.shopId }),
+  });
+}
+
+export function useFindChargesByPerson(data: GetChargeByPersonData) {
+  return useQuery({
+    queryKey: ["person-charges", data.personId],
+    queryFn: async () => await findChargesByPerson({ personId: data.personId }),
   });
 }

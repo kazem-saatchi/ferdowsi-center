@@ -27,6 +27,7 @@ export function ShopsTable({ shops }: ShopsTableProps) {
           <TableHead className="text-center">Status</TableHead>
           <TableHead className="text-center">Type</TableHead>
           <TableHead className="text-center">History</TableHead>
+          <TableHead className="text-center">Charges</TableHead>
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -48,6 +49,13 @@ export function ShopsTable({ shops }: ShopsTableProps) {
               <Link href={`/admin/history-by-shop/${shop.id}`} passHref>
                 <Button variant="secondary" size="sm">
                   History
+                </Button>
+              </Link>
+            </TableCell>
+            <TableCell className="text-center">
+              <Link href={`/admin/find-charge-by-shop/${shop.id}`} passHref>
+                <Button variant="secondary" size="sm">
+                  Charges
                 </Button>
               </Link>
             </TableCell>

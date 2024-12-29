@@ -30,29 +30,24 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
     );
   }
 
-  const { month, shopId, title } = validation.data;
+  const { startDate, endDate, shopId, title } = validation.data;
 
-  // Normalize dates for the specified month
-  const parsedMonth = parseISO(`${month}-01`);
-  const normalizedFromDate = startOfMonth(parsedMonth);
-  const normalizedToDate = endOfMonth(parsedMonth);
-
-  if (normalizedToDate <= normalizedFromDate) {
+  if (endDate <= startDate) {
     throw new Error(errorMSG.invalidDateRange);
   }
 
-  // Calculate total days in the month
-  const totalDays = differenceInDays(normalizedToDate, normalizedFromDate) + 1;
+  // Calculate the number of days (inclusive)
+  const totalDays = differenceInDays(endDate, startDate) + 1;
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
     where: {
-      shopId,
       type: { in: ["ActiveByOwner", "ActiveByRenter", "InActive"] },
-      startDate: { lte: normalizedToDate.toISOString() },
+      shopId,
+      startDate: { lte: endDate },
       OR: [
         { endDate: null }, // Include ongoing periods
-        { endDate: { gte: normalizedFromDate.toISOString() } },
+        { endDate: { gte: startDate } }, // Include overlapping periods
       ],
     },
     orderBy: { startDate: "asc" },
@@ -84,17 +79,17 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
     (acc, history) => {
       const historyStartDate = startOfDay(new Date(history.startDate));
       const historyEndDate = history.endDate
-        ? startOfDay(new Date(history.endDate))
-        : normalizedToDate;
-
-      const chargeStartDate =
-        historyStartDate > normalizedFromDate
-          ? historyStartDate
-          : normalizedFromDate;
-      const chargeEndDate =
-        historyEndDate < normalizedToDate ? historyEndDate : normalizedToDate;
-
-      const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
+         ? startOfDay(new Date(history.endDate))
+         : endDate;
+ 
+       const chargeStartDate =
+         historyStartDate > startDate
+           ? historyStartDate
+           : startDate;
+       const chargeEndDate =
+         historyEndDate < endDate ? historyEndDate : endDate;
+ 
+       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 
       if (days > 0) {
         acc.push({
