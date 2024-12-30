@@ -109,7 +109,7 @@ model Charge {
 
 model Payment {
   id            String   @id @unique @default(uuid())
-  amount        String
+  amount        Int
   shopId        String
   plaque       Int
   personId      String
