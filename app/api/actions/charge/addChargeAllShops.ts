@@ -107,8 +107,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 
-      console.log("days",days)
-
       if (days > 0) {
         acc.push({
           title: `Charge for ${history.type}`,

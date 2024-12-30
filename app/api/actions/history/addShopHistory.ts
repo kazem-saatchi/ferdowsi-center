@@ -43,15 +43,17 @@ async function addShopHistoryEntry(
   }
 
   // Create ShopHistory entry
-  const shopHistory = await db.shopHistory.create({
+  await db.shopHistory.create({
     data: {
-      shopId,
       plaque: shop.plaque,
-      personId,
       personName: `${person.firstName} ${person.lastName}`,
       type,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,
+      // shopId:shop.id,
+      // personId:person.id,
+      shop: { connect: { id: shop.id } },
+      person: { connect: { id: person.id } },
     },
   });
 

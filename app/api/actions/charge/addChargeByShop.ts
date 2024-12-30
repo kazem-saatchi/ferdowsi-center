@@ -10,11 +10,8 @@ import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 import {
   differenceInDays,
-  endOfMonth,
-  parseISO,
   startOfDay,
-  startOfMonth,
-} from "date-fns-jalali";
+} from "date-fns";
 
 async function createCharge(data: AddChargeByShopData, person: Person) {
   // Authorization check
