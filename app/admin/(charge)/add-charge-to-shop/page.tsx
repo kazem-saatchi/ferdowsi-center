@@ -15,24 +15,15 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { CustomSelect } from "@/components/CustomSelect";
-import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import DateObject from "react-date-object";
 import { AddChargeByShopData } from "@/schema/chargeSchema";
+import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 
-const CustomInput = ({ value, openCalendar, handleValueChange }: any) => {
-  return (
-    <Input
-      onFocus={openCalendar}
-      value={value}
-      onChange={handleValueChange}
-      readOnly
-    />
-  );
-};
+
 
 export default function AddChargeToShopPage() {
   const [formData, setFormData] = useState({
@@ -72,7 +63,7 @@ export default function AddChargeToShopPage() {
     }));
   };
 
-  const handleDateChange = (date: any) => {
+  const handleDateChange = (date: DateObject) => {
     if (date) {
       const persianDate = new DateObject(date).convert(persian, persian_fa);
       const formattedDate = `${persianDate.year}-${String(
@@ -149,18 +140,8 @@ export default function AddChargeToShopPage() {
                 label="Shop"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="month">Month</Label>
-              <DatePicker
-                calendar={persian}
-                locale={persian_fa}
-                calendarPosition="bottom-right"
-                onlyMonthPicker
-                onChange={handleDateChange}
-                render={<CustomInput />}
-                format="MMMM YYYY"
-              />
-            </div>
+            <JalaliMonthCalendar handleDateChange={handleDateChange} />
+       
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input

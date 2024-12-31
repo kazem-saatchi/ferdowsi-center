@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
-import { useUpdateShopOwner } from "@/tanstack/mutations";
+import { useAddPaymentByShop } from "@/tanstack/mutations";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,17 +18,17 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
+import { addPaymentByInfoSchema, AddPaymentByInfoData } from '@/schema/paymentSchema';
 
-export default function UpdateShopOwnerPage() {
+export default function AddPaymentPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
-  const [selectedOwnerId, setSelectedOwnerId] = useState("");
-  const [ownerChangeDate, setOwnerChangeDate] = useState<Date | null>(null);
-  const [currentOwnerName, setCurrentOwnerName] = useState("");
+  const [selectedPersonId, setSelectedPersonId] = useState("");
+  const [paymentDate, setPaymentDate] = useState<Date | null>(null);
+  const [amount, setAmount] = useState("");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
-  const { data: personsData, isLoading: isLoadingPersons } =
-    useFindAllPersons();
-  const updateShopOwnerMutation = useUpdateShopOwner();
+  const { data: personsData, isLoading: isLoadingPersons } = useFindAllPersons();
+  const addPaymentMutation = useAddPaymentByShop();
 
   const { setShopsAll, shopsAll, personsAll, setPersonsAll } = useStore(
     useShallow((state) => ({
@@ -48,36 +48,42 @@ export default function UpdateShopOwnerPage() {
     }
   }, [shopsData, personsData, setShopsAll, setPersonsAll]);
 
-  useEffect(() => {
-    if (selectedShopId && shopsAll) {
-      const selectedShop = shopsAll.find((shop) => shop.id === selectedShopId);
-      setCurrentOwnerName(selectedShop?.ownerName || "");
-    }
-  }, [selectedShopId, shopsAll]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedShopId || !selectedOwnerId || !ownerChangeDate) {
+    if (!selectedShopId || !selectedPersonId || !paymentDate || !amount) {
       toast.error(
-        "Please select a shop, a new owner, and provide a change date"
+        "Please select a shop, a person, provide a payment date, and enter an amount"
       );
       return;
     }
     try {
-      await updateShopOwnerMutation.mutateAsync({
+      const paymentData: AddPaymentByInfoData = {
         shopId: selectedShopId,
-        ownerId: selectedOwnerId,
-        startDate: ownerChangeDate.toISOString(),
-      });
-      // Reset form after successful submission
-      setSelectedShopId("");
-      setSelectedOwnerId("");
-      setOwnerChangeDate(null);
-      setCurrentOwnerName("");
-      toast.success("Shop owner updated successfully");
+        personId: selectedPersonId,
+        date: paymentDate,
+        amount: parseInt(amount, 10),
+      };
+
+      const validatedData = addPaymentByInfoSchema.parse(paymentData);
+      const result = await addPaymentMutation.mutateAsync(validatedData);
+      
+      if (result.success) {
+        toast.success("Payment added successfully");
+        // Reset form after successful submission
+        setSelectedShopId("");
+        setSelectedPersonId("");
+        setPaymentDate(null);
+        setAmount("");
+      } else {
+        toast.error(result.message || "Failed to add payment");
+      }
     } catch (error) {
-      console.error("Error updating shop owner:", error);
-      toast.error("Failed to update shop owner");
+      console.error("Error adding payment:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to add payment");
+      }
     }
   };
 
@@ -93,14 +99,12 @@ export default function UpdateShopOwnerPage() {
       label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
     })) || [];
 
-
-
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Update Shop Owner</h1>
+      <h1 className="text-3xl font-bold mb-8">Add Payment</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Change Shop Owner</CardTitle>
+          <CardTitle>Payment Details</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -114,41 +118,44 @@ export default function UpdateShopOwnerPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currentOwner">Current Owner</Label>
-              <Input
-                id="currentOwner"
-                disabled={true}
-                value={currentOwnerName}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newOwner">New Owner</Label>
+              <Label htmlFor="person">Person</Label>
               <CustomSelect
                 options={personOptions}
-                value={selectedOwnerId}
-                onChange={setSelectedOwnerId}
-                label="New Owner"
+                value={selectedPersonId}
+                onChange={setSelectedPersonId}
+                label="Person"
               />
             </div>
             <JalaliDayCalendar
-              date={ownerChangeDate}
-              setDate={setOwnerChangeDate}
+              date={paymentDate}
+              setDate={setPaymentDate}
             />
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
+            </div>
           </CardContent>
           <CardFooter>
             <Button
               type="submit"
               className="w-full"
               disabled={
-                updateShopOwnerMutation.isPending ||
+                addPaymentMutation.isPending ||
                 !selectedShopId ||
-                !selectedOwnerId ||
-                !ownerChangeDate
+                !selectedPersonId ||
+                !paymentDate ||
+                !amount
               }
             >
-              {updateShopOwnerMutation.isPending
-                ? "Updating Owner..."
-                : "Update Shop Owner"}
+              {addPaymentMutation.isPending
+                ? "Adding Payment..."
+                : "Add Payment"}
             </Button>
           </CardFooter>
         </form>
@@ -156,3 +163,4 @@ export default function UpdateShopOwnerPage() {
     </div>
   );
 }
+

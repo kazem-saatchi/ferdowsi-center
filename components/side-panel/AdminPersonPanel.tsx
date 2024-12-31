@@ -1,4 +1,3 @@
-import React from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
 import { Search, UserCog, UserPlus, Users } from "lucide-react";

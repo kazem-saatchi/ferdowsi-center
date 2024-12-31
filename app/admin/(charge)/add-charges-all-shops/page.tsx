@@ -13,22 +13,11 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { AddChargeAllShopsData } from "@/schema/chargeSchema";
 import DateObject from "react-date-object";
-
-const CustomInput = ({ value, openCalendar, handleValueChange }: any) => {
-  return (
-    <Input
-      onFocus={openCalendar}
-      value={value}
-      onChange={handleValueChange}
-      readOnly
-    />
-  );
-};
+import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 
 export default function AddChargesToAllShopsPage() {
   const [formData, setFormData] = useState({
@@ -101,18 +90,7 @@ export default function AddChargesToAllShopsPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="month">Month</Label>
-              <DatePicker
-                calendar={persian}
-                locale={persian_fa}
-                calendarPosition="bottom-right"
-                onlyMonthPicker
-                onChange={handleDateChange}
-                render={<CustomInput />}
-                format="MMMM YYYY"
-              />
-            </div>
+            <JalaliMonthCalendar handleDateChange={handleDateChange} />
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input

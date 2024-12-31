@@ -42,7 +42,7 @@ export default function AddShopHistoryPage() {
       await addShopHistoryMutation.mutateAsync({
         shopId: selectedShopId,
         personId: selectedPersonId,
-        type: formData.type as 'ownership' | 'activePeriod' | 'deactivePeriod' | 'rental',
+        type: formData.type as 'Ownership' | 'ActiveByOwner' | 'ActiveByRenter' | 'InActive',
         startDate: new Date(formData.startDate).toISOString(),
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
       })

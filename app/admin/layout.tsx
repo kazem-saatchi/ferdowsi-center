@@ -16,6 +16,7 @@ import AdminPersonPanel from "@/components/side-panel/AdminPersonPanel";
 import AdminShopPanel from "@/components/side-panel/AdminShopPanel";
 import AdminHistoryPanel from "@/components/side-panel/AdminHistoryPanel";
 import AdminChargePanel from "@/components/side-panel/AdminChargePanel";
+import AdminPaymentPanel from "@/components/side-panel/AdminPaymentPanel";
 
 export default async function AdminLayout({
   children,
@@ -53,6 +54,8 @@ export default async function AdminLayout({
               <AdminHistoryPanel />
               <Separator />
               <AdminChargePanel />
+              <Separator />
+              <AdminPaymentPanel />
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>

@@ -47,5 +47,6 @@ export const successMSG = {
   chargesFound: "CHarges founded successfully",
 
   paymentCreated: "Payment Added Successfully",
+  paymentDeleted: "Payment Deleted Successfully",
   paymentFinded: "Payment Finded Successfully",
 };
