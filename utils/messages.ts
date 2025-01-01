@@ -24,6 +24,8 @@ export const errorMSG = {
   shopChargeReferenceNotFound: "The Monthly CHarge Not Found",
 
   invalidAmount: "The Amount is invalid",
+
+  paymentNotFound: "Payment Not Found",
 };
 
 export const successMSG = {

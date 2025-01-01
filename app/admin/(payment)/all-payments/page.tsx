@@ -7,9 +7,11 @@ import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaymentTable } from "@/components/payment/PaymentTable";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function AllPaymentsPage() {
-  const { data, isLoading, isError } = useFindAllPayments();
+  const { data, isLoading, isError, error, refetch } = useFindAllPayments();
   const { allPayments, setAllPayments } = useStore(
     useShallow((state) => ({
       allPayments: state.allPayments,
@@ -24,28 +26,16 @@ export default function AllPaymentsPage() {
   }, [data, setAllPayments]);
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>All Payments</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="w-full h-[400px]" />
-        </CardContent>
-      </Card>
-    );
+    return <LoadingComponent text="loading Data" />;
   }
 
   if (isError) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Error</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>An error occurred while fetching payments.</p>
-        </CardContent>
-      </Card>
+      <ErrorComponent
+        error={error}
+        message="an error occured"
+        retry={refetch}
+      />
     );
   }
 
@@ -64,4 +54,3 @@ export default function AllPaymentsPage() {
     </Card>
   );
 }
-

@@ -34,6 +34,7 @@ import addChargeToAllShops from "@/app/api/actions/charge/addChargeAllShops";
 import generateShopChargeReferenceList from "@/app/api/actions/charge/shopChargeReference";
 import { AddPaymentByInfoData } from "@/schema/paymentSchema";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
+import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 
 //------------------PERSON--------------------
 
@@ -422,6 +423,43 @@ export function useAddPaymentByShop() {
         });
         queryClient.refetchQueries({
           queryKey: ["person-payments", variables.personId],
+        });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// delete a payment
+export function useDeletePaymentById() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (paymentId: string) => await deletePaymentById(paymentId),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-payments", data?.data?.shopId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["shop-payments", data?.data?.shopId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["person-payments", data?.data?.personId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["person-payments", data?.data?.personId],
         });
 
         toast.success(data.data?.message);

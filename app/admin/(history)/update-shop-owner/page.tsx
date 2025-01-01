@@ -133,6 +133,7 @@ export default function UpdateShopOwnerPage() {
             <JalaliDayCalendar
               date={ownerChangeDate}
               setDate={setOwnerChangeDate}
+              title="Owner Change Date"
             />
           </CardContent>
           <CardFooter>

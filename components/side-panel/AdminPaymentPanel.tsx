@@ -7,7 +7,7 @@ function AdminPaymentPanel() {
     <>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
-          <Link href="/admin/all-payments-list">
+          <Link href="/admin/all-payments">
             <DollarSign className="mr-2 h-4 w-4" />
             <span>All Payments</span>
           </Link>
@@ -15,7 +15,7 @@ function AdminPaymentPanel() {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
-          <Link href="/admin/find-payment-by-shop">
+          <Link href="/admin/payment-by-shop">
             <Euro className="mr-2 h-4 w-4" />
             <span>Payments By Shop</span>
           </Link>
@@ -23,7 +23,7 @@ function AdminPaymentPanel() {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
-          <Link href="/admin/find-payment-by-person">
+          <Link href="/admin/payment-by-person">
             <UserCog className="mr-2 h-4 w-4" />
             <span>Payments By Person</span>
           </Link>

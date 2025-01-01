@@ -99,6 +99,19 @@ export default function AddPaymentPage() {
       label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
     })) || [];
 
+
+    const formatNumber = (value: string) => {
+      // Remove non-numeric characters
+      const numericValue = value.replace(/\D/g, "");
+      // Format with dots as thousands separators
+      return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+  
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formattedValue = formatNumber(e.target.value);
+      setAmount(formattedValue);
+    };
+
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">Add Payment</h1>
@@ -129,14 +142,15 @@ export default function AddPaymentPage() {
             <JalaliDayCalendar
               date={paymentDate}
               setDate={setPaymentDate}
+              title="Payment Date"
             />
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
               <Input
                 id="amount"
-                type="number"
+                type="text"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleChange}
                 required
               />
             </div>

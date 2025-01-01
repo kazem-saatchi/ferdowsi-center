@@ -10,9 +10,10 @@ import { Dispatch, SetStateAction } from "react";
 interface CalendarProps {
   date: Date | null;
   setDate: Dispatch<SetStateAction<Date | null>>;
+  title: string;
 }
 
-function JalaliDayCalendar({ date, setDate }: CalendarProps) {
+function JalaliDayCalendar({ date, setDate,title }: CalendarProps) {
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
     return (
       <Input
@@ -26,7 +27,7 @@ function JalaliDayCalendar({ date, setDate }: CalendarProps) {
   return (
     <div className="space-y-2">
       <Label htmlFor="DatePicker" className="ml-2">
-        Owner Change Date
+        {title}
       </Label>
       <DatePicker
         id="DatePicker"
