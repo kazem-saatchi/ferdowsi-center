@@ -18,16 +18,22 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
-import { addPaymentByInfoSchema, AddPaymentByInfoData } from '@/schema/paymentSchema';
+import {
+  addPaymentByInfoSchema,
+  AddPaymentByInfoData,
+} from "@/schema/paymentSchema";
+import { formatNumberFromString } from "@/utils/formatNumber";
 
 export default function AddPaymentPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
   const [paymentDate, setPaymentDate] = useState<Date | null>(null);
   const [amount, setAmount] = useState("");
+  const [amountPersian, setAmountPersian] = useState("");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
-  const { data: personsData, isLoading: isLoadingPersons } = useFindAllPersons();
+  const { data: personsData, isLoading: isLoadingPersons } =
+    useFindAllPersons();
   const addPaymentMutation = useAddPaymentByShop();
 
   const { setShopsAll, shopsAll, personsAll, setPersonsAll } = useStore(
@@ -66,7 +72,7 @@ export default function AddPaymentPage() {
 
       const validatedData = addPaymentByInfoSchema.parse(paymentData);
       const result = await addPaymentMutation.mutateAsync(validatedData);
-      
+
       if (result.success) {
         toast.success("Payment added successfully");
         // Reset form after successful submission
@@ -99,18 +105,13 @@ export default function AddPaymentPage() {
       label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
     })) || [];
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const {formattedPersianNumber,formattedNumber} = formatNumberFromString(value);
 
-    const formatNumber = (value: string) => {
-      // Remove non-numeric characters
-      const numericValue = value.replace(/\D/g, "");
-      // Format with dots as thousands separators
-      return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    };
-  
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const formattedValue = formatNumber(e.target.value);
-      setAmount(formattedValue);
-    };
+    setAmountPersian(formattedPersianNumber);
+    setAmount(formattedNumber);
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -149,7 +150,7 @@ export default function AddPaymentPage() {
               <Input
                 id="amount"
                 type="text"
-                value={amount}
+                value={amountPersian}
                 onChange={handleChange}
                 required
               />
@@ -177,4 +178,3 @@ export default function AddPaymentPage() {
     </div>
   );
 }
-
