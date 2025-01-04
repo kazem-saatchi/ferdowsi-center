@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { PersonBalanceData, ShopBalanceData } from "@/schema/balanceSchema";
 import { GetChargeByShopData } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
@@ -11,22 +12,10 @@ interface FindBalanceResponse {
   message: string;
   charges?: Charge[];
   payments?: Payment[];
-  shopBalance?: ShopBalance;
-  personsBalance?: PersonBalance[];
+  shopBalance?: ShopBalanceData;
+  personsBalance?: PersonBalanceData[];
 }
 
-interface ShopBalance {
-  plaque: number;
-  totalCharge: number;
-  totalPayment: number;
-}
-
-interface PersonBalance {
-  personId: string;
-  personName: string;
-  totalCharge: number;
-  totalPayment: number;
-}
 
 async function getAllBalance(
   data: GetChargeByShopData,
@@ -79,7 +68,7 @@ async function getAllBalance(
     distinct: ["personId"], // Ensure personId is unique
   });
 
-  const personsBalance: PersonBalance[] = await Promise.all(
+  const personsBalance: PersonBalanceData[] = await Promise.all(
     uniquePersonIds.map(async (person) => {
       // Fetch charges and payments for the shop
       const [chargeList, paymentList] = await Promise.all([
@@ -117,7 +106,13 @@ async function getAllBalance(
     message: successMSG.chargesFound,
     charges: chargeList,
     payments: paymentList,
-    shopBalance: { plaque: shop?.plaque, totalCharge, totalPayment },
+    shopBalance: {
+      shopId: shop.id,
+      plaque: shop?.plaque,
+      totalCharge,
+      totalPayment,
+    },
+    personsBalance,
   };
 }
 

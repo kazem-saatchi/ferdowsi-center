@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { GetChargeByShopData } from "@/schema/chargeSchema";
+import { ShopBalanceData } from "@/schema/balanceSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -9,19 +9,10 @@ import { Person } from "@prisma/client";
 interface FindBalanceResponse {
   success: boolean;
   message: string;
-  shopsBalance?: ShopBalance[];
+  shopsBalance?: ShopBalanceData[];
 }
 
-interface ShopBalance {
-  plaque: number;
-  totalCharge: number;
-  totalPayment: number;
-}
-
-async function getAllShopsBalance(
-  
-  user: Person
-): Promise<FindBalanceResponse> {
+async function getAllShopsBalance(user: Person): Promise<FindBalanceResponse> {
   // Check authentication
   if (!user || user.role !== "ADMIN") {
     throw new Error(errorMSG.unauthorized);
@@ -31,7 +22,7 @@ async function getAllShopsBalance(
   const shops = await db.shop.findMany();
 
   // Calculate balances for all shops
-  const shopsBalance: ShopBalance[] = await Promise.all(
+  const shopsBalance: ShopBalanceData[] = await Promise.all(
     shops.map(async (shop) => {
       // Fetch charges and payments for the shop
       const [chargeList, paymentList] = await Promise.all([
@@ -57,6 +48,7 @@ async function getAllShopsBalance(
       );
 
       return {
+        shopId: shop.id,
         plaque: shop.plaque,
         totalCharge,
         totalPayment,
@@ -73,6 +65,6 @@ async function getAllShopsBalance(
 
 export default async function findBalanceAllShops() {
   return handleServerAction<FindBalanceResponse>((user) =>
-    getAllShopsBalance( user)
+    getAllShopsBalance(user)
   );
 }

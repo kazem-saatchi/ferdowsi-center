@@ -5,13 +5,15 @@ import { createShopSlice, ShopSlice } from "./shopSlice";
 import { createHistorySlice, HistorySlice } from "./historySlice";
 import { ChargeSlice, createChargeSlice } from "./chargeSlice";
 import { createPaymentSlice, PaymentSlice } from "./paymentSlice";
+import { BalanceSlice, createBalanceSlice } from "./balanceSlice";
 
 // Store Type
 export type StoreType = UserSlice &
   ShopSlice &
   HistorySlice &
   ChargeSlice &
-  PaymentSlice;
+  PaymentSlice &
+  BalanceSlice;
 
 // Store Main State
 export const useStore = create<StoreType>()(
@@ -21,5 +23,6 @@ export const useStore = create<StoreType>()(
     ...createHistorySlice(set, get, store),
     ...createChargeSlice(set, get, store),
     ...createPaymentSlice(set, get, store),
+    ...createBalanceSlice(set, get, store),
   }))
 );

@@ -1,5 +1,7 @@
 "use client";
 
+import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
+import findBalanceByShop from "@/app/api/actions/balance/getShopBalance";
 import findAllCharges from "@/app/api/actions/charge/getAllCharges";
 import findAllChargesReference from "@/app/api/actions/charge/getAllChargesReference";
 import findChargesByPerson from "@/app/api/actions/charge/getChargesByPerson";
@@ -35,7 +37,6 @@ export function useFindAllPersons() {
     queryKey: ["all-persons"],
     queryFn: async () => await findPersonAll(),
   });
-
 }
 export function usePersonsByShop(shopId: string) {
   return useQuery({
@@ -113,7 +114,6 @@ export function useShopHistoryByPerson(personId: string) {
   });
 }
 
-
 //------------------PAYMENT--------------------
 
 export function useFindAllPayments() {
@@ -134,5 +134,21 @@ export function useFindPaymentsByPerson(personId: string) {
   return useQuery({
     queryKey: ["person-payments", personId],
     queryFn: async () => await findPaymentsByPerson(personId),
+  });
+}
+
+//------------------BALANCE--------------------
+
+export function useGetAllShopsBalance() {
+  return useQuery({
+    queryKey: ["all-balances"],
+    queryFn: async () => await findBalanceAllShops(),
+  });
+}
+
+export function useGetShopBalance(shopId: string) {
+  return useQuery({
+    queryKey: ["shop-balance", shopId],
+    queryFn: async () => await findBalanceByShop({ shopId }),
   });
 }
