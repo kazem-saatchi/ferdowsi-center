@@ -16,7 +16,6 @@ interface FindBalanceResponse {
   personsBalance?: PersonBalanceData[];
 }
 
-
 async function getAllBalance(
   data: GetChargeByShopData,
   user: Person
@@ -111,6 +110,7 @@ async function getAllBalance(
       plaque: shop?.plaque,
       totalCharge,
       totalPayment,
+      balance: totalPayment - totalCharge,
     },
     personsBalance,
   };

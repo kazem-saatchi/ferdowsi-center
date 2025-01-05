@@ -6,6 +6,7 @@ export const shopBalanceSchema = z.object({
   plaque: z.number(),
   totalCharge: z.number(),
   totalPayment: z.number(),
+  balance: z.number(),
 });
 
 export type ShopBalanceData = z.infer<typeof shopBalanceSchema>;

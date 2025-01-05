@@ -52,6 +52,7 @@ async function getAllShopsBalance(user: Person): Promise<FindBalanceResponse> {
         plaque: shop.plaque,
         totalCharge,
         totalPayment,
+        balance: totalPayment - totalCharge,
       };
     })
   );
