@@ -10,7 +10,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
 import { useParams } from "next/navigation";
 
-export default function FindChargesByShopPage() {
+export default function FindChargesByShopPageFromParams() {
   const params = useParams();
   const shopId = params.id as string;
   const { data, isLoading, isError, error, refetch } = useFindChargesByShop({

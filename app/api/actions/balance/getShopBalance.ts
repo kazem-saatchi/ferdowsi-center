@@ -96,6 +96,7 @@ async function getAllBalance(
         personName: person.personName,
         totalCharge,
         totalPayment,
+        balance: totalCharge - totalPayment,
       };
     })
   );

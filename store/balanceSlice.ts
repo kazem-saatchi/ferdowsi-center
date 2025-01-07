@@ -5,10 +5,10 @@ import { StateCreator } from "zustand";
 type Balances = {
   allBalances: ShopBalanceData[] | null;
   setAllBalances: (Balances: ShopBalanceData[]) => void;
-  shopBalances: ShopBalanceData[] | null;
-  setShopBalances: (Balances: ShopBalanceData[]) => void;
-  personBalances: PersonBalanceData[] | null;
-  setPersonBalances: (Balances: PersonBalanceData[]) => void;
+  shopBalance: ShopBalanceData | null;
+  setShopBalance: (Balances: ShopBalanceData) => void;
+  personsBalance: PersonBalanceData[] | null;
+  setPersonsBalance: (Balances: PersonBalanceData[]) => void;
   exportAllBalanceToPDF: () => void;
   exportAllBalanceToExcel: () => void;
 };
@@ -23,13 +23,13 @@ export const createBalanceSlice: StateCreator<
 > = (set) => ({
   // State
   allBalances: null,
-  shopBalances: null,
-  personBalances: null,
+  shopBalance: null,
+  personsBalance: null,
 
   // Set utils
   setAllBalances: (Balances) => set({ allBalances: Balances }),
-  setShopBalances: (Balances) => set({ shopBalances: Balances }),
-  setPersonBalances: (Balances) => set({ personBalances: Balances }),
+  setShopBalance: (Balances) => set({ shopBalance: Balances }),
+  setPersonsBalance: (Balances) => set({ personsBalance: Balances }),
   exportAllBalanceToPDF: () =>
     set((state) => {
       if (!state.allBalances || state.allBalances.length === 0) {
@@ -39,7 +39,7 @@ export const createBalanceSlice: StateCreator<
       exportToPDF({
         fileName: "Balance-Report",
         data: state.allBalances,
-        columns: getBalanceColumns(),
+        columns: getBalanceColumnsPdf(),
       });
     }),
   exportAllBalanceToExcel: () =>
@@ -61,4 +61,11 @@ const getBalanceColumns = () => [
   { header: "جمع شارژ", accessor: "totalCharge" },
   { header: "جمع پرداخت", accessor: "totalPayment" },
   { header: "مانده حساب", accessor: "balance" },
+];
+
+const getBalanceColumnsPdf = () => [
+  { header: "Plaque", accessor: "plaque" },
+  { header: "Charge Total ", accessor: "totalCharge" },
+  { header: "Payment Total", accessor: "totalPayment" },
+  { header: "Balance", accessor: "balance" },
 ];

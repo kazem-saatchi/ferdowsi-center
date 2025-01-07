@@ -8,6 +8,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -18,10 +20,19 @@ export default function ShopBalancePage() {
     isError,
   } = useGetShopBalance(selectedShopId);
 
-  const { shopBalances, setShopBalances, setShopsAll, shopsAll } = useStore(
+  const {
+    shopBalance,
+    setShopBalance,
+    personsBalance,
+    setPersonsBalance,
+    setShopsAll,
+    shopsAll,
+  } = useStore(
     useShallow((state) => ({
-      shopBalances: state.shopBalances,
-      setShopBalances: state.setShopBalances,
+      shopBalance: state.shopBalance,
+      setShopBalance: state.setShopBalance,
+      personsBalance: state.personsBalance,
+      setPersonsBalance: state.setPersonsBalance,
       shopsAll: state.shopsAll,
       setShopsAll: state.setshopsAll,
     }))
@@ -35,17 +46,18 @@ export default function ShopBalancePage() {
 
   useEffect(() => {
     if (balanceData?.data?.shopBalance) {
-      setShopBalances([balanceData?.data?.shopBalance]);
+      setShopBalance(balanceData?.data?.shopBalance);
     }
-  }, [balanceData, setShopBalances]);
+    if (balanceData?.data?.personsBalance) {
+      setPersonsBalance(balanceData.data.personsBalance);
+    }
+  }, [balanceData, setShopBalance]);
 
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
       label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
     })) || [];
-
-  const selectedShopBalance = shopBalances?.[0];
 
   return (
     <Card>
@@ -63,33 +75,41 @@ export default function ShopBalancePage() {
           />
         </div>
         {isLoading ? (
-          <Skeleton className="w-full h-[200px]" />
+          <LoadingComponent text="Loading Shop Data" />
         ) : isError ? (
-          <p>An error occurred while fetching the shop balance.</p>
-        ) : selectedShopBalance ? (
+          <ErrorComponentSimple message="An Error Occured" />
+        ) : shopBalance ? (
           <div className="space-y-2">
             <p>
-              <strong>Plaque:</strong> {selectedShopBalance.plaque}
+              <strong>Plaque:</strong> {shopBalance.plaque}
             </p>
             <p>
               <strong>Total Charge:</strong>{" "}
-              {selectedShopBalance.totalCharge.toLocaleString()} Rials
+              {shopBalance.totalCharge.toLocaleString()} Rials
             </p>
             <p>
               <strong>Total Payment:</strong>{" "}
-              {selectedShopBalance.totalPayment.toLocaleString()} Rials
+              {shopBalance.totalPayment.toLocaleString()} Rials
             </p>
             <p>
               <strong>Balance:</strong>{" "}
               {(
-                selectedShopBalance.totalCharge -
-                selectedShopBalance.totalPayment
+                shopBalance.totalCharge - shopBalance.totalPayment
               ).toLocaleString()}{" "}
               Rials
             </p>
           </div>
         ) : (
           <p>No balance information found for this shop.</p>
+        )}
+        {personsBalance && (
+          <div>
+            {personsBalance.map((person) => (
+              <div key={person.personId}>
+                {person.personName} {person.balance}
+              </div>
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>

@@ -16,6 +16,7 @@ export const personBalanceSchema = z.object({
   personName: z.string(),
   totalCharge: z.number(),
   totalPayment: z.number(),
+  balance: z.number(),
 });
 
 export type PersonBalanceData = z.infer<typeof personBalanceSchema>;
