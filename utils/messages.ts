@@ -26,6 +26,8 @@ export const errorMSG = {
   invalidAmount: "The Amount is invalid",
 
   paymentNotFound: "Payment Not Found",
+
+  noRelatedShopFound: "No shops found for the user",
 };
 
 export const successMSG = {

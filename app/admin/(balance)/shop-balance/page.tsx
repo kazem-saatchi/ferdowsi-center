@@ -9,11 +9,25 @@ import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
-  const { data: shopsData } = useFindAllShops();
+  const {
+    data: shopsData,
+    isLoading: isLoadingAllShops,
+    isError: isErrorAllShops,
+    error: errorAllShops,
+    refetch: refetchAllShops,
+  } = useFindAllShops();
   const {
     data: balanceData,
     isLoading,
@@ -72,9 +86,15 @@ export default function ShopBalancePage() {
       <TableBody>
         <TableRow>
           <TableCell className="text-center">{shopBalance?.plaque}</TableCell>
-          <TableCell className="text-center">{shopBalance?.totalCharge.toLocaleString()} Rials</TableCell>
-          <TableCell className="text-center">{shopBalance?.totalPayment.toLocaleString()} Rials</TableCell>
-          <TableCell className="text-center">{shopBalance && (shopBalance?.balance).toLocaleString()} Rials</TableCell>
+          <TableCell className="text-center">
+            {shopBalance?.totalCharge.toLocaleString()} Rials
+          </TableCell>
+          <TableCell className="text-center">
+            {shopBalance?.totalPayment.toLocaleString()} Rials
+          </TableCell>
+          <TableCell className="text-center">
+            {shopBalance && (shopBalance?.balance).toLocaleString()} Rials
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -91,17 +111,38 @@ export default function ShopBalancePage() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {personsBalance && personsBalance.map((person) => (
-          <TableRow key={person.personId}>
-            <TableCell className="text-center">{person.personName}</TableCell>
-            <TableCell className="text-center">{person.totalCharge.toLocaleString()} Rials</TableCell>
-            <TableCell className="text-center">{person.totalPayment.toLocaleString()} Rials</TableCell>
-            <TableCell className="text-center">{person.balance.toLocaleString()} Rials</TableCell>
-          </TableRow>
-        ))}
+        {personsBalance &&
+          personsBalance.map((person) => (
+            <TableRow key={person.personId}>
+              <TableCell className="text-center">{person.personName}</TableCell>
+              <TableCell className="text-center">
+                {person.totalCharge.toLocaleString()} Rials
+              </TableCell>
+              <TableCell className="text-center">
+                {person.totalPayment.toLocaleString()} Rials
+              </TableCell>
+              <TableCell className="text-center">
+                {person.balance.toLocaleString()} Rials
+              </TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   );
+
+  if (isLoadingAllShops) {
+    return <LoadingComponent text="loading Shops Data" />;
+  }
+
+  if (isErrorAllShops) {
+    return (
+      <ErrorComponent
+        error={errorAllShops}
+        message={shopsData?.message || "Something Went Wrong"}
+        retry={refetchAllShops}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -119,7 +160,7 @@ export default function ShopBalancePage() {
               label="Shop"
             />
           </div>
-          {isLoading ? (
+          {isLoading && selectedShopId !== "" ? (
             <LoadingComponent text="Loading Shop Data" />
           ) : isError ? (
             <ErrorComponentSimple message="An Error Occurred" />
@@ -136,12 +177,9 @@ export default function ShopBalancePage() {
           <CardHeader>
             <CardTitle>People's Balances</CardTitle>
           </CardHeader>
-          <CardContent>
-            {renderPersonsBalanceTable()}
-          </CardContent>
+          <CardContent>{renderPersonsBalanceTable()}</CardContent>
         </Card>
       )}
     </div>
   );
 }
-

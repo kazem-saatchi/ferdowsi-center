@@ -107,7 +107,8 @@ export default function AddPaymentPage() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const {formattedPersianNumber,formattedNumber} = formatNumberFromString(value);
+    const { formattedPersianNumber, formattedNumber } =
+      formatNumberFromString(value);
 
     setAmountPersian(formattedPersianNumber);
     setAmount(formattedNumber);
@@ -131,6 +132,34 @@ export default function AddPaymentPage() {
                 label="Shop"
               />
             </div>
+            {selectedShopId !== "" && shopsAll && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="owner">Owner Name</Label>
+                  <Input
+                    id="owner"
+                    type="text"
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.ownerName
+                    }
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="renter">Renter Name</Label>
+                  <Input
+                    id="renter"
+                    type="text"
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.renterName || ""
+                    }
+                    disabled
+                  />
+                </div>
+              </>
+            )}
             <div className="space-y-2">
               <Label htmlFor="person">Person</Label>
               <CustomSelect
@@ -140,6 +169,16 @@ export default function AddPaymentPage() {
                 label="Person"
               />
             </div>
+            {selectedShopId !== "" &&
+              selectedPersonId !== "" &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
+                selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
+                selectedPersonId && (
+                <>
+                  <p className="text-red-400">The selected person in not shop owner or renter</p>
+                </>
+              )}
             <JalaliDayCalendar
               date={paymentDate}
               setDate={setPaymentDate}
