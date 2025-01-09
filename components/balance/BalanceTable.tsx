@@ -6,7 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShopBalanceData } from "@/app/api/schemas/balanceSchema";
+import { ShopBalanceData } from "@/schema/balanceSchema";
+
 
 interface BalanceTableProps {
   balances: ShopBalanceData[];

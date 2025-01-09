@@ -13,11 +13,13 @@ import { format } from "date-fns-jalali";
 import { ShopHistory } from "@prisma/client";
 import { useState } from "react";
 
-const historyTypeColors = {
-  ownership: "bg-blue-500",
-  activePeriod: "bg-green-500",
-  deactivePeriod: "bg-red-500",
-  rental: "bg-yellow-500",
+type HistoryType = "Ownership" | "ActiveByOwner" | "ActiveByRenter" | "InActive";
+
+const historyTypeColors: Record<HistoryType, string> = {
+  Ownership: "bg-blue-500",
+  ActiveByOwner: "bg-green-500",
+  ActiveByRenter: "bg-yellow-500",
+  InActive: "bg-red-500",
 };
 
 interface TableProps {

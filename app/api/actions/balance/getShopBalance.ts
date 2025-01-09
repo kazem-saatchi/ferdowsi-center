@@ -3,6 +3,10 @@
 import { db } from "@/lib/db";
 import { PersonBalanceData, ShopBalanceData } from "@/schema/balanceSchema";
 import { GetChargeByShopData } from "@/schema/chargeSchema";
+import {
+  calculatePersonBalanceByShop,
+  calculateShopBalance,
+} from "@/utils/calculateBalance";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Charge, Payment } from "@prisma/client";
@@ -37,27 +41,11 @@ async function getAllBalance(
     throw new Error(errorMSG.shopNotFound);
   }
 
-  // Get Shop Charges List
-  const chargeList = await db.charge.findMany({
-    where: { shopId: shopId },
-    orderBy: [{ date: "desc" }],
+  // Calculate shop balance from utils
+  const { chargeList, paymentList, shopBalance } = await calculateShopBalance({
+    shopId,
+    plaque: shop.plaque,
   });
-
-  // Get Payment List
-  const paymentList = await db.payment.findMany({
-    where: { shopId: shopId },
-    orderBy: { date: "desc" },
-  });
-
-  const totalCharge = chargeList.reduce(
-    (total, charge) => total + charge.amount,
-    0
-  );
-
-  const totalPayment = paymentList.reduce(
-    (total, payment) => total + payment.amount,
-    0
-  );
 
   //-------------Shop-Persons-Balance-Block-------------
 
@@ -69,35 +57,12 @@ async function getAllBalance(
 
   const personsBalance: PersonBalanceData[] = await Promise.all(
     uniquePersonIds.map(async (person) => {
-      // Fetch charges and payments for the shop
-      const [chargeList, paymentList] = await Promise.all([
-        db.charge.findMany({
-          where: { shopId: shop.id, personId: person.personId },
-          orderBy: [{ date: "desc" }],
-        }),
-        db.payment.findMany({
-          where: { shopId: shop.id, personId: person.personId },
-          orderBy: { date: "desc" },
-        }),
-      ]);
-
-      const totalCharge = chargeList.reduce(
-        (total, charge) => total + charge.amount,
-        0
-      );
-
-      const totalPayment = paymentList.reduce(
-        (total, payment) => total + payment.amount,
-        0
-      );
-
-      return {
+      // calculate person balance from the shop
+      return await calculatePersonBalanceByShop({
         personId: person.personId,
         personName: person.personName,
-        totalCharge,
-        totalPayment,
-        balance: totalCharge - totalPayment,
-      };
+        shopId,
+      });
     })
   );
 
@@ -106,13 +71,7 @@ async function getAllBalance(
     message: successMSG.chargesFound,
     charges: chargeList,
     payments: paymentList,
-    shopBalance: {
-      shopId: shop.id,
-      plaque: shop?.plaque,
-      totalCharge,
-      totalPayment,
-      balance: totalPayment - totalCharge,
-    },
+    shopBalance,
     personsBalance,
   };
 }

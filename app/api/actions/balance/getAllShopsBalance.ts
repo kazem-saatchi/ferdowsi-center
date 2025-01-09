@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ShopBalanceData } from "@/schema/balanceSchema";
+import { calculateShopBalance } from "@/utils/calculateBalance";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -24,36 +25,12 @@ async function getAllShopsBalance(user: Person): Promise<FindBalanceResponse> {
   // Calculate balances for all shops
   const shopsBalance: ShopBalanceData[] = await Promise.all(
     shops.map(async (shop) => {
-      // Fetch charges and payments for the shop
-      const [chargeList, paymentList] = await Promise.all([
-        db.charge.findMany({
-          where: { shopId: shop.id },
-          orderBy: [{ date: "desc" }],
-        }),
-        db.payment.findMany({
-          where: { shopId: shop.id },
-          orderBy: { date: "desc" },
-        }),
-      ]);
-
-      // Calculate totals
-      const totalCharge = chargeList.reduce(
-        (total, charge) => total + charge.amount,
-        0
-      );
-
-      const totalPayment = paymentList.reduce(
-        (total, payment) => total + payment.amount,
-        0
-      );
-
-      return {
+      const { shopBalance } = await calculateShopBalance({
         shopId: shop.id,
         plaque: shop.plaque,
-        totalCharge,
-        totalPayment,
-        balance: totalPayment - totalCharge,
-      };
+      });
+
+      return shopBalance;
     })
   );
 
