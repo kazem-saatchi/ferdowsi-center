@@ -11,22 +11,27 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Shop } from "@prisma/client";
 
-interface PersonBalancesResponse {
+export interface PersonBalancesResponse {
   shops: Shop[];
   message: string;
   shopsBalance: ShopBalanceResponce[];
   shopsBalanceByPerson: PersonBalanceData[];
 }
 
-async function findBalances(user: Person): Promise<PersonBalancesResponse> {
+async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
   // check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
 
-  // find Shops Related to a person
+  // Find shops related to a person (either owned or rented)
   const shops = await db.shop.findMany({
-    where: { ownerId: user.id, OR: [{ renterId: user.id }] },
+    where: {
+      OR: [
+        { ownerId: user.id }, // Owned by the user
+        { renterId: user.id }, // Rented by the user
+      ],
+    },
   });
 
   if (!shops) {
@@ -48,6 +53,7 @@ async function findBalances(user: Person): Promise<PersonBalancesResponse> {
         personId: user.id,
         personName: `${user.firstName} ${user.lastName}`,
         shopId: shop.id,
+        plaque: shop.plaque,
       })
     )
   );
@@ -60,8 +66,8 @@ async function findBalances(user: Person): Promise<PersonBalancesResponse> {
   };
 }
 
-export default async function getBalancesByPerson() {
+export default async function findAllShopsByPerson() {
   return handleServerAction<PersonBalancesResponse>((user) =>
-    findBalances(user)
+    findAllShops(user)
   );
 }

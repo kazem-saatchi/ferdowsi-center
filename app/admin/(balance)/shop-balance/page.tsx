@@ -9,15 +9,9 @@ import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import ErrorComponent from "@/components/ErrorComponent";
+import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
+import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -73,65 +67,8 @@ export default function ShopBalancePage() {
       label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
     })) || [];
 
-  const renderShopBalanceTable = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-center">Plaque</TableHead>
-          <TableHead className="text-center">Total Charge</TableHead>
-          <TableHead className="text-center">Total Payment</TableHead>
-          <TableHead className="text-center">Balance</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell className="text-center">{shopBalance?.plaque}</TableCell>
-          <TableCell className="text-center">
-            {shopBalance?.totalCharge.toLocaleString()} Rials
-          </TableCell>
-          <TableCell className="text-center">
-            {shopBalance?.totalPayment.toLocaleString()} Rials
-          </TableCell>
-          <TableCell className="text-center">
-            {shopBalance && (shopBalance?.balance).toLocaleString()} Rials
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
-  );
-
-  const renderPersonsBalanceTable = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-center">Person Name</TableHead>
-          <TableHead className="text-center">Total Charge</TableHead>
-          <TableHead className="text-center">Total Payment</TableHead>
-          <TableHead className="text-center">Balance</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {personsBalance &&
-          personsBalance.map((person) => (
-            <TableRow key={person.personId}>
-              <TableCell className="text-center">{person.personName}</TableCell>
-              <TableCell className="text-center">
-                {person.totalCharge.toLocaleString()} Rials
-              </TableCell>
-              <TableCell className="text-center">
-                {person.totalPayment.toLocaleString()} Rials
-              </TableCell>
-              <TableCell className="text-center">
-                {person.balance.toLocaleString()} Rials
-              </TableCell>
-            </TableRow>
-          ))}
-      </TableBody>
-    </Table>
-  );
-
   if (isLoadingAllShops) {
-    return <LoadingComponent text="loading Shops Data" />;
+    return <LoadingComponent text="Loading Shops Data" />;
   }
 
   if (isErrorAllShops) {
@@ -165,7 +102,7 @@ export default function ShopBalancePage() {
           ) : isError ? (
             <ErrorComponentSimple message="An Error Occurred" />
           ) : shopBalance ? (
-            renderShopBalanceTable()
+            <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
             <p>No balance information found for this shop.</p>
           )}
@@ -177,7 +114,9 @@ export default function ShopBalancePage() {
           <CardHeader>
             <CardTitle>People's Balances</CardTitle>
           </CardHeader>
-          <CardContent>{renderPersonsBalanceTable()}</CardContent>
+          <CardContent>
+            <PersonsBalanceTable personsBalance={personsBalance} />
+          </CardContent>
         </Card>
       )}
     </div>

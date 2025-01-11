@@ -62,6 +62,7 @@ async function getAllBalance(
         personId: person.personId,
         personName: person.personName,
         shopId,
+        plaque: shop.plaque,
       });
     })
   );

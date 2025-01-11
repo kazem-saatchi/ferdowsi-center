@@ -54,10 +54,12 @@ export async function calculatePersonBalanceByShop({
   personId,
   personName,
   shopId,
+  plaque,
 }: {
   personId: string;
   personName: string;
   shopId: string;
+  plaque: number;
 }): Promise<PersonBalanceData> {
   // Fetch charges and payments for the shop
   const [chargeList, paymentList] = await Promise.all([
@@ -82,6 +84,7 @@ export async function calculatePersonBalanceByShop({
   );
 
   return {
+    plaque,
     shopId,
     personId,
     personName,

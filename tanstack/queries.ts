@@ -17,6 +17,7 @@ import findPersonById from "@/app/api/actions/person/findPersonById";
 import findPersonByShop from "@/app/api/actions/person/findPersonByShop";
 import findAllShops from "@/app/api/actions/shop/allShops";
 import findShopById from "@/app/api/actions/shop/findShopById";
+import findAllShopsByPerson from "@/app/api/actions/user/findAllShopsByPerson";
 import {
   GetChargeByPersonData,
   GetChargeByShopData,
@@ -151,4 +152,13 @@ export function useGetShopBalance(shopId: string) {
     queryKey: ["shop-balance", shopId],
     queryFn: async () => await findBalanceByShop({ shopId }),
   });
+}
+
+//------------------USER--------------------
+
+export function useGetAllShopsByPerson() {
+  return useQuery({
+    queryKey:["person-Shops"],
+    queryFn:async () => await findAllShopsByPerson()
+  })
 }
