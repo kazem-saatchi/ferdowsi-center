@@ -17,6 +17,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
@@ -42,6 +43,8 @@ export default function MyShopsPage() {
           <TableHead className="text-center">Total Shop Balance</TableHead>
           <TableHead className="text-center">My Balance</TableHead>
           <TableHead className="text-center">View Details</TableHead>
+          <TableHead className="text-center">Owner</TableHead>
+
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -70,6 +73,11 @@ export default function MyShopsPage() {
                 <Link href={`/user/shop-detail/${shop.id}`}>
                   <Button>View</Button>
                 </Link>
+              </TableCell>
+              <TableCell className="text-center">
+                  <Badge>
+                    {shop.ownerId}
+                  </Badge>
               </TableCell>
             </TableRow>
           );

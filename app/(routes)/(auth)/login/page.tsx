@@ -14,7 +14,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { loginUser } from "../../api/actions/auth/loginUser";
+import { loginUser } from "../../../api/actions/auth/loginUser";
 
 export default function LoginPage() {
   const router = useRouter();

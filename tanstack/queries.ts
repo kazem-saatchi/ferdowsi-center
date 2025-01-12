@@ -22,6 +22,7 @@ import {
   GetChargeByPersonData,
   GetChargeByShopData,
 } from "@/schema/chargeSchema";
+import { verifyToken } from "@/utils/auth";
 import { useQuery } from "@tanstack/react-query";
 
 //------------------PERSON--------------------
@@ -158,7 +159,14 @@ export function useGetShopBalance(shopId: string) {
 
 export function useGetAllShopsByPerson() {
   return useQuery({
-    queryKey:["person-Shops"],
-    queryFn:async () => await findAllShopsByPerson()
-  })
+    queryKey: ["person-Shops"],
+    queryFn: async () => await findAllShopsByPerson(),
+  });
+}
+
+export function useGetUserInfo() {
+  return useQuery({
+    queryKey: ["user-info"],
+    queryFn: async () => await verifyToken(),
+  });
 }

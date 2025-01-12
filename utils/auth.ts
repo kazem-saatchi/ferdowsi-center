@@ -1,3 +1,5 @@
+'use server'
+
 import { db } from "@/lib/db";
 import { Person } from "@prisma/client";
 import { cookies } from "next/headers";

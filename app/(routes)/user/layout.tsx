@@ -8,12 +8,12 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { verifyToken } from "@/utils/auth";
-import { Home, House } from "lucide-react";
+import { House, User } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
-export default async function AdminLayout({
+export default async function UserServerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -28,16 +28,16 @@ export default async function AdminLayout({
       <div className="flex h-screen w-full">
         <Sidebar side="right">
           <SidebarHeader>
-            <h2 className="text-xl font-bold p-4">Admin Dashboard</h2>
+            <h2 className="text-xl font-bold p-4">{`${person?.firstName} ${person?.lastName}`}</h2>
           </SidebarHeader>
           <SidebarContent>
             <Separator />
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/user/dashboard">
-                    <Home className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                  <Link href="/user/user-info">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>User Info</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

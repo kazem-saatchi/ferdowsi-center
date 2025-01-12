@@ -7,12 +7,11 @@ import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 import LoadingComponent from "@/components/LoadingComponent";
-import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useParams } from "next/navigation";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
-import { error } from "console";
+
 
 export default function ShopBalancePage() {
   const params = useParams();
