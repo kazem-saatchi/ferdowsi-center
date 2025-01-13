@@ -8,10 +8,7 @@ import {
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
-import {
-  differenceInDays,
-  startOfDay,
-} from "date-fns";
+import { differenceInDays, startOfDay } from "date-fns";
 
 interface AddChargeResponse {
   message: string;
@@ -30,8 +27,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
       validation.error.errors.map((err) => err.message).join(", ")
     );
   }
-  const { startDate,endDate, title } = validation?.data;
-
+  const { startDate, endDate, title } = validation?.data;
 
   if (endDate <= startDate) {
     throw new Error(errorMSG.invalidDateRange);
@@ -39,8 +35,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
   // Calculate the number of days (inclusive)
   const totalDays = differenceInDays(endDate, startDate) + 1;
-
-
 
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
@@ -58,7 +52,6 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   if (!relevantHistories.length) {
     throw new Error(errorMSG.noRelevantHistory);
   }
-
 
   const currentTime = new Date().toISOString();
 
@@ -93,23 +86,20 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
       const dailyAmount = shopChargeReference.totalAmount / totalDays;
 
       const historyStartDate = startOfDay(new Date(history.startDate));
-      
+
       const historyEndDate = history.endDate
         ? startOfDay(new Date(history.endDate))
         : endDate;
 
       const chargeStartDate =
-        historyStartDate > startDate
-          ? historyStartDate
-          : startDate;
-      const chargeEndDate =
-        historyEndDate < endDate ? historyEndDate : endDate;
+        historyStartDate > startDate ? historyStartDate : startDate;
+      const chargeEndDate = historyEndDate < endDate ? historyEndDate : endDate;
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 
       if (days > 0) {
         acc.push({
-          title: `Charge for ${history.type}`,
+          title: operation.title,
           amount: days * dailyAmount,
           shopId: history.shopId,
           plaque: history.plaque,
@@ -137,9 +127,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error(errorMSG.noChargeGenerated);
   }
 
-  return {
-    message: successMSG.chargesCreated,
-  };
+  return { success: true, message: successMSG.chargesCreated };
 }
 
 export default async function addChargeToAllShops(data: AddChargeAllShopsData) {

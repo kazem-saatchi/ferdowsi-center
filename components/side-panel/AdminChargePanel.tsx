@@ -54,6 +54,14 @@ function AdminChargePanel() {
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild>
+          <Link href="/admin/add-charge-by-amount">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            <span>Add Charge By Amount</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
       <Separator />
       <SidebarMenuItem>
         <SidebarMenuButton asChild>

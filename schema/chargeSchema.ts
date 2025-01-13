@@ -10,14 +10,15 @@ export const addChargeByShopSchema = z.object({
 
 export type AddChargeByShopData = z.infer<typeof addChargeByShopSchema>;
 //--------------------------------------------------------------------------------------
-export const addChargeByAmount = z.object({
+export const addChargeByAmountSchema = z.object({
   date: z.date(),
   amount: z.number(),
   title: z.string(),
   shopId: z.string(),
+  personId: z.string(),
 });
 
-export type AddChargeByAmount = z.infer<typeof addChargeByAmount>;
+export type AddChargeByAmount = z.infer<typeof addChargeByAmountSchema>;
 //--------------------------------------------------------------------------------------
 export const addChargeAllShopsSchema = z.object({
   startDate: z.date(),
@@ -47,4 +48,15 @@ export const getChargeByPersonSchema = z.object({
 });
 
 export type GetChargeByPersonData = z.infer<typeof getChargeByPersonSchema>;
+//--------------------------------------------------------------------------------------
+export const addAnnualChargeAllShopsSchema = z.object({
+  year: z.string(),
+  title: z.string(),
+  storeMetric: z.number(),
+  officeMetric: z.number(),
+});
+
+export type AddAnnualChargeAllShopsData = z.infer<
+  typeof addAnnualChargeAllShopsSchema
+>;
 //--------------------------------------------------------------------------------------

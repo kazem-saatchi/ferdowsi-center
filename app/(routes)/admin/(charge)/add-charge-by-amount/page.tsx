@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAddChargeByShop } from "@/tanstack/mutations";
-import { useFindAllShops } from "@/tanstack/queries";
+import { useEffect, useState } from "react";
+import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
+import { useAddChargeByAmount } from "@/tanstack/mutations";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardHeader,
@@ -15,37 +13,36 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { CustomSelect } from "@/components/CustomSelect";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import DateObject from "react-date-object";
-import { AddChargeByShopData } from "@/schema/chargeSchema";
-import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
+import { Label } from "@/components/ui/label";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
+import {
+  addChargeByAmountSchema,
+  AddChargeByAmount,
+} from "@/schema/chargeSchema";
+import { formatNumberFromString } from "@/utils/formatNumber";
 
+export default function AddChargeByAmountPage() {
+  const [selectedShopId, setSelectedShopId] = useState("");
+  const [selectedPersonId, setSelectedPersonId] = useState("");
+  const [chargeDate, setChargeDate] = useState<Date | null>(null);
+  const [amount, setAmount] = useState("");
+  const [amountPersian, setAmountPersian] = useState("");
+  const [title, setTitle] = useState("");
 
-
-export default function AddChargeToShopByamount() {
-  const [formData, setFormData] = useState({
-    month: "",
-    shopId: "",
-    title: "",
-  });
-
-  const [dataState, setDataState] = useState<AddChargeByShopData>({
-    startDate: new Date(),
-    endDate: new Date(),
-    title: "",
-    shopId: "",
-  });
-
-  const addChargeMutation = useAddChargeByShop();
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
+  const { data: personsData, isLoading: isLoadingPersons } =
+    useFindAllPersons();
+  const addChargeMutation = useAddChargeByAmount();
 
-  const { setShopsAll, shopsAll } = useStore(
+  const { setShopsAll, shopsAll, personsAll, setPersonsAll } = useStore(
     useShallow((state) => ({
       shopsAll: state.shopsAll,
       setShopsAll: state.setshopsAll,
+      personsAll: state.personsAll,
+      setPersonsAll: state.setPersonAll,
     }))
   );
 
@@ -53,64 +50,50 @@ export default function AddChargeToShopByamount() {
     if (shopsData?.data?.shops) {
       setShopsAll(shopsData.data.shops);
     }
-  }, [shopsData, setShopsAll]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleDateChange = (date: DateObject) => {
-    if (date) {
-      const persianDate = new DateObject(date).convert(persian, persian_fa);
-      const formattedDate = `${persianDate.year}-${String(
-        persianDate.month.number
-      ).padStart(2, "0")}`;
-      const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
-      setFormData((prev) => ({
-        ...prev,
-        title,
-        month: formattedDate,
-      }));
-      const startDate = date.toFirstOfMonth().toDate();
-      const endDate = date.toLastOfMonth().toDate();
-      endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
-      setDataState({
-        startDate,
-        endDate,
-        title,
-        shopId: formData.shopId,
-      });
+    if (personsData?.data?.persons) {
+      setPersonsAll(personsData.data.persons);
     }
-  };
+  }, [shopsData, personsData, setShopsAll, setPersonsAll]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedShopId || !selectedPersonId || !chargeDate || !amount || !title) {
+      toast.error(
+        "Please fill in all fields: shop, person, charge date, amount, and title"
+      );
+      return;
+    }
     try {
-      if (!formData.shopId) {
-        toast.error("Please select a shop");
-        return;
-      }
+      const chargeData: AddChargeByAmount = {
+        shopId: selectedShopId,
+        personId: selectedPersonId,
+        date: chargeDate,
+        amount: parseInt(amount, 10),
+        title: title,
+      };
 
-      const result = await addChargeMutation.mutateAsync(dataState);
+      const validatedData = addChargeByAmountSchema.parse(chargeData);
+      const result = await addChargeMutation.mutateAsync(validatedData);
 
       if (result.success) {
-        toast.success("Charge added successfully");
+        
         // Reset form after successful submission
-        setFormData({
-          month: "",
-          shopId: "",
-          title: "",
-        });
+        setSelectedShopId("");
+        setSelectedPersonId("");
+        setChargeDate(null);
+        setAmount("");
+        setAmountPersian("");
+        setTitle("");
       } else {
         toast.error(result.message || "Failed to add charge");
       }
     } catch (error) {
       console.error("Error adding charge:", error);
-      toast.error("An error occurred while adding the charge");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to add charge");
+      }
     }
   };
 
@@ -120,9 +103,24 @@ export default function AddChargeToShopByamount() {
       label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
     })) || [];
 
+  const personOptions =
+    personsAll?.map((person) => ({
+      id: person.id,
+      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+    })) || [];
+
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const { formattedPersianNumber, formattedNumber } =
+      formatNumberFromString(value);
+
+    setAmountPersian(formattedPersianNumber);
+    setAmount(formattedNumber);
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Charge to Shop</h1>
+      <h1 className="text-3xl font-bold mb-8">Add Charge by Amount</h1>
       <Card>
         <CardHeader>
           <CardTitle>Charge Details</CardTitle>
@@ -130,26 +128,81 @@ export default function AddChargeToShopByamount() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shopId">Shop</Label>
+              <Label htmlFor="shop">Shop</Label>
               <CustomSelect
                 options={shopOptions}
-                value={formData.shopId}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, shopId: value }))
-                }
+                value={selectedShopId}
+                onChange={setSelectedShopId}
                 label="Shop"
               />
             </div>
-            <JalaliMonthCalendar handleDateChange={handleDateChange} />
-       
+            {selectedShopId !== "" && shopsAll && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="owner">Owner Name</Label>
+                  <Input
+                    id="owner"
+                    type="text"
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.ownerName
+                    }
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="renter">Renter Name</Label>
+                  <Input
+                    id="renter"
+                    type="text"
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.renterName || "No renter"
+                    }
+                    disabled
+                  />
+                </div>
+              </>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="person">Person</Label>
+              <CustomSelect
+                options={personOptions}
+                value={selectedPersonId}
+                onChange={setSelectedPersonId}
+                label="Person"
+              />
+            </div>
+            {selectedShopId !== "" &&
+              selectedPersonId !== "" &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
+                selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
+                selectedPersonId && (
+                <p className="text-red-400">The selected person is not the shop owner or renter</p>
+              )}
+            <JalaliDayCalendar
+              date={chargeDate}
+              setDate={setChargeDate}
+              title="Charge Date"
+            />
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                type="text"
+                value={amountPersian}
+                onChange={handleAmountChange}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input
                 id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                disabled
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
@@ -158,9 +211,18 @@ export default function AddChargeToShopByamount() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addChargeMutation.isPending}
+              disabled={
+                addChargeMutation.isPending ||
+                !selectedShopId ||
+                !selectedPersonId ||
+                !chargeDate ||
+                !amount ||
+                !title
+              }
             >
-              {addChargeMutation.isPending ? "Adding Charge..." : "Add Charge"}
+              {addChargeMutation.isPending
+                ? "Adding Charge..."
+                : "Add Charge"}
             </Button>
           </CardFooter>
         </form>
@@ -168,3 +230,4 @@ export default function AddChargeToShopByamount() {
     </div>
   );
 }
+

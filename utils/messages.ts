@@ -48,7 +48,8 @@ export const successMSG = {
   shopHistoryFound: "Shop history Founded successfully.",
 
   chargesCreated: "Charge Generated Successfully",
-  chargesFound: "CHarges founded successfully",
+  chargeCreated: "Charge For a shop created",
+  chargesFound: "Charges founded successfully",
 
   paymentCreated: "Payment Added Successfully",
   paymentDeleted: "Payment Deleted Successfully",

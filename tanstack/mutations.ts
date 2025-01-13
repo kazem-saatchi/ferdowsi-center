@@ -26,6 +26,7 @@ import endShopRenterId from "@/app/api/actions/shop/endShopRenter";
 import updateShopStatus from "@/app/api/actions/shop/updateShopStatus";
 import {
   AddChargeAllShopsData,
+  AddChargeByAmount,
   AddChargeByShopData,
   ShopChargeReferenceData,
 } from "@/schema/chargeSchema";
@@ -35,6 +36,7 @@ import generateShopChargeReferenceList from "@/app/api/actions/charge/shopCharge
 import { AddPaymentByInfoData } from "@/schema/paymentSchema";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
+import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 
 //------------------PERSON--------------------
 
@@ -305,7 +307,7 @@ export function useAddShopHistory() {
 
 //------------------CHARGE--------------------
 
-// add charge
+// add monthly charge to a shop
 export function useAddChargeByShop() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -313,6 +315,40 @@ export function useAddChargeByShop() {
   return useMutation({
     mutationFn: async (data: AddChargeByShopData) =>
       await addChargeByShop(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-charges"] });
+        queryClient.refetchQueries({ queryKey: ["all-charges"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-charges", variables.shopId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["shop-charges", variables.shopId],
+        });
+
+        // i can't refetch person-charges related to this add charge so invalidate all person
+        queryClient.invalidateQueries({ queryKey: ["person-charges"] });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// add charge by amount and id
+export function useAddChargeByAmount() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddChargeByAmount) =>
+      await addChargeByAmount(data),
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges"] });
