@@ -56,6 +56,7 @@ async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
         operationId: operation.id,
         operationName: operation.title,
         daysCount: 365,
+        proprietor:true,
       });
 
       return acc;

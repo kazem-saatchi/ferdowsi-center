@@ -94,6 +94,7 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
           operationId: operation.id,
           operationName: operation.title,
           daysCount: days,
+          proprietor: false,
         });
       }
 

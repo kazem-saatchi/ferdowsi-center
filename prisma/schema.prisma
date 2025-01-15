@@ -97,6 +97,8 @@ model Charge {
   operationId   String
   operationName String
   daysCount     Int
+  proprietor    Boolean @default(false)  //مالکانه 
+  description       String      @default("") @db.VarChar(255)
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])
@@ -108,19 +110,31 @@ model Charge {
 }
 
 model Payment {
-  id            String   @id @unique @default(uuid())
-  amount        Int
-  shopId        String
-  plaque       Int
-  personId      String
-  personName    String
-  date          DateTime
+  id                String   @id @unique @default(uuid())
+  amount            Int
+  shopId            String
+  plaque            Int
+  personId          String
+  personName        String
+  date              DateTime
+  proprietor        Boolean     @default(false) //مالکانه 
+  type              PaymentType @default(CASH)
+  description       String      @default("") @db.VarChar(255)
+  receiptImageUrl   String      @default("")
 
-  shop          Shop    @relation(fields: [shopId],references: [id])
-  person        Person  @relation(fields: [personId],references: [id])
+  shop              Shop    @relation(fields: [shopId],references: [id])
+  person            Person  @relation(fields: [personId],references: [id])
 
   @@index([shopId])
   @@index([personId])
+}
+
+enum PaymentType {
+  CASH
+  CHEQUE
+  POS_MACHINE
+  BANK_TRANSFER
+  OTHER
 }
 
 model Operation {
@@ -153,18 +167,19 @@ model Session {
 }
 
 model ShopChargeReference {
-  id              String   @id @unique @default(uuid())
-  shopId          String   @unique
+  id              String    @id @unique @default(uuid())
+  shopId          String    @unique
   plaque          Int
   area            Float
   constantAmount  Int
   metricAmount    Int
   totalAmount     Int
-  year            Int      @default(2024) // Example default year
+  year            Int       @default(2024) // Example default year
+  proprietor      Boolean   @default(false) //مالکانه 
 
-  createdAt       DateTime @default(now()) 
+  createdAt       DateTime  @default(now()) 
 
-  shop            Shop     @relation(fields: [shopId], references: [id])
+  shop            Shop      @relation(fields: [shopId], references: [id])
 
   @@index([shopId])
   @@index([year])

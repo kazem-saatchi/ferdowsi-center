@@ -16,6 +16,8 @@ export const addChargeByAmountSchema = z.object({
   title: z.string(),
   shopId: z.string(),
   personId: z.string(),
+  proprietor: z.boolean(),
+  description: z.string().max(250),
 });
 
 export type AddChargeByAmount = z.infer<typeof addChargeByAmountSchema>;

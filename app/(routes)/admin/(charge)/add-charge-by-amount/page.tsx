@@ -23,6 +23,7 @@ import {
   AddChargeByAmount,
 } from "@/schema/chargeSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddChargeByAmountPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -31,6 +32,8 @@ export default function AddChargeByAmountPage() {
   const [amount, setAmount] = useState("");
   const [amountPersian, setAmountPersian] = useState("");
   const [title, setTitle] = useState("");
+  const [proprietor, setProprietor] = useState<boolean>(false);
+  const [description, setDescription] = useState<string>("");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
   const { data: personsData, isLoading: isLoadingPersons } =
@@ -57,7 +60,13 @@ export default function AddChargeByAmountPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedShopId || !selectedPersonId || !chargeDate || !amount || !title) {
+    if (
+      !selectedShopId ||
+      !selectedPersonId ||
+      !chargeDate ||
+      !amount ||
+      !title
+    ) {
       toast.error(
         "Please fill in all fields: shop, person, charge date, amount, and title"
       );
@@ -70,13 +79,14 @@ export default function AddChargeByAmountPage() {
         date: chargeDate,
         amount: parseInt(amount, 10),
         title: title,
+        proprietor,
+        description,
       };
 
       const validatedData = addChargeByAmountSchema.parse(chargeData);
       const result = await addChargeMutation.mutateAsync(validatedData);
 
       if (result.success) {
-        
         // Reset form after successful submission
         setSelectedShopId("");
         setSelectedPersonId("");
@@ -84,6 +94,7 @@ export default function AddChargeByAmountPage() {
         setAmount("");
         setAmountPersian("");
         setTitle("");
+        setProprietor(false);
       } else {
         toast.error(result.message || "Failed to add charge");
       }
@@ -128,7 +139,7 @@ export default function AddChargeByAmountPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">مغازه</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
@@ -139,7 +150,7 @@ export default function AddChargeByAmountPage() {
             {selectedShopId !== "" && shopsAll && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="owner">Owner Name</Label>
+                  <Label htmlFor="owner">مالک</Label>
                   <Input
                     id="owner"
                     type="text"
@@ -151,7 +162,7 @@ export default function AddChargeByAmountPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="renter">Renter Name</Label>
+                  <Label htmlFor="renter">مستاجر</Label>
                   <Input
                     id="renter"
                     type="text"
@@ -165,7 +176,7 @@ export default function AddChargeByAmountPage() {
               </>
             )}
             <div className="space-y-2">
-              <Label htmlFor="person">Person</Label>
+              <Label htmlFor="person">نام شخص</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedPersonId}
@@ -179,12 +190,14 @@ export default function AddChargeByAmountPage() {
                 selectedPersonId &&
               shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
                 selectedPersonId && (
-                <p className="text-red-400">The selected person is not the shop owner or renter</p>
+                <p className="text-red-400">
+                  شخص انتخاب شده مالک یا مستاجر ملک مورد نظر نیست
+                </p>
               )}
             <JalaliDayCalendar
               date={chargeDate}
               setDate={setChargeDate}
-              title="Charge Date"
+              title="تاریخ شارژ"
             />
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
@@ -206,6 +219,29 @@ export default function AddChargeByAmountPage() {
                 required
               />
             </div>
+            <div className="flex flex-row gap-2 items-center">
+              <Label htmlFor="proprietor">نوع شارژ</Label>
+              <Button
+                id="proprietor"
+                variant={proprietor ? "destructive" : "outline"}
+                type="button"
+                onClick={() => {
+                  setProprietor((prev) => !prev);
+                }}
+              >
+                {proprietor ? "مالکانه" : "ماهانه"}
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">توضیحات</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              />
+            </div>
           </CardContent>
           <CardFooter>
             <Button
@@ -220,9 +256,7 @@ export default function AddChargeByAmountPage() {
                 !title
               }
             >
-              {addChargeMutation.isPending
-                ? "Adding Charge..."
-                : "Add Charge"}
+              {addChargeMutation.isPending ? "Adding Charge..." : "Add Charge"}
             </Button>
           </CardFooter>
         </form>
@@ -230,4 +264,3 @@ export default function AddChargeByAmountPage() {
     </div>
   );
 }
-

@@ -23,7 +23,8 @@ async function createCharge(data: AddChargeByAmount, user: Person) {
     );
   }
 
-  const { date, amount, shopId, title, personId } = validation.data;
+  const { date, amount, shopId, title, personId, proprietor, description } =
+    validation.data;
 
   const [shop, person] = await Promise.all([
     db.shop.findUnique({ where: { id: shopId } }),
@@ -39,9 +40,9 @@ async function createCharge(data: AddChargeByAmount, user: Person) {
   }
 
   const isoDate = date.toISOString();
-  
-   // Use a transaction to ensure consistency
-   await db.$transaction(async (prisma) => {
+
+  // Use a transaction to ensure consistency
+  await db.$transaction(async (prisma) => {
     const operation = await prisma.operation.create({
       data: { date: isoDate, title },
     });
@@ -58,6 +59,8 @@ async function createCharge(data: AddChargeByAmount, user: Person) {
         personId: person.id,
         personName: `${person.firstName} ${person.lastName}`,
         operationId: operation.id,
+        proprietor,
+        description,
       },
     });
   });

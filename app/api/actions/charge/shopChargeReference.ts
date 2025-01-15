@@ -47,6 +47,7 @@ async function generateShopChargeReference(
         metricAmount: metricValue,
         totalAmount: shop.area * metricValue + constValue,
         year: currentYear,
+        
       };
 
       return chargeObject;
