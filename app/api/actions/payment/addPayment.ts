@@ -32,6 +32,7 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
     description,
     proprietor,
     receiptImageUrl,
+    type,
   } = validation.data;
 
   // Fetch user and shop in parallel
@@ -62,6 +63,7 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
       description,
       proprietor,
       receiptImageUrl,
+      type,
       //   personId: user.id,
       //   shopId: shop.id,
       shop: { connect: { id: shop.id } }, // Connect shop by ID

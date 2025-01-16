@@ -26,14 +26,14 @@ export default function AllPaymentsPage() {
   }, [data, setAllPayments]);
 
   if (isLoading) {
-    return <LoadingComponent text="loading Data" />;
+    return <LoadingComponent text="در حال بارگذاری اطلاعات" />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message="an error occured"
+        message="خطایی رخ داده است"
         retry={refetch}
       />
     );
@@ -42,13 +42,13 @@ export default function AllPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Payments</CardTitle>
+        <CardTitle>لیست تمام پرداختی‌ها</CardTitle>
       </CardHeader>
       <CardContent>
         {allPayments && allPayments.length > 0 ? (
           <PaymentTable payments={allPayments} />
         ) : (
-          <p>No payments found.</p>
+          <p>پرداختی یافت نشد</p>
         )}
       </CardContent>
     </Card>

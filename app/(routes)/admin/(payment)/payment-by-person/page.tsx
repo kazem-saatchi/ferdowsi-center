@@ -46,11 +46,11 @@ export default function PersonPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Person Payments</CardTitle>
+        <CardTitle>جستجوی پرداختی‌ها بر اساس شخص</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="person">Select Person</Label>
+          <Label htmlFor="person">انتخاب شخص</Label>
           <CustomSelect
             options={personOptions}
             value={selectedPersonId}
@@ -61,11 +61,11 @@ export default function PersonPaymentsPage() {
         {isLoading ? (
           <Skeleton className="w-full h-[400px]" />
         ) : isError ? (
-          <p>An error occurred while fetching payments.</p>
+          <p>خطایی رخ داده است</p>
         ) : personPayments && personPayments.length > 0 ? (
           <PaymentTable payments={personPayments} />
         ) : (
-          <p>No payments found for this person.</p>
+          <p>هیچ پرداختی پیدا نشد</p>
         )}
       </CardContent>
     </Card>

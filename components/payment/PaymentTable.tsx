@@ -11,6 +11,7 @@ import { Payment } from "@prisma/client";
 import { format } from "date-fns-jalali";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { Badge } from "../ui/badge";
 
 interface PaymentTableProps {
   payments: Payment[];
@@ -33,27 +34,53 @@ export function PaymentTable({ payments }: PaymentTableProps) {
     });
   };
 
+  const paymentTypeMap = {
+    CASH: "نقدی",
+    CHEQUE: "چک",
+    POS_MACHINE: "کارت خوان",
+    BANK_TRANSFER: "کارت به کارت",
+    OTHER: "سایر روش‌ها",
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Amount</TableHead>
-          <TableHead className="text-center">Shop Plaque</TableHead>
-          <TableHead className="text-center">Person Name</TableHead>
-          <TableHead className="text-center">Date</TableHead>
-          <TableHead className="text-center">Delete</TableHead>
+          <TableHead className="text-center">مبلغ - ریال</TableHead>
+          <TableHead className="text-center">پلاک</TableHead>
+          <TableHead className="text-center">نام</TableHead>
+          <TableHead className="text-center">تاریخ</TableHead>
+          <TableHead className="text-center">نحوه پرداخت</TableHead>
+          <TableHead className="text-center">مالکانه / ماهانه</TableHead>
+          <TableHead className="text-center">تصویر رسید</TableHead>
+          <TableHead className="text-center">حذف</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {payments.map((payment) => (
           <TableRow key={payment.id}>
             <TableCell className="text-center">
-              {payment.amount.toLocaleString()} Rials
+              {payment.amount.toLocaleString()}
             </TableCell>
             <TableCell className="text-center">{payment.plaque}</TableCell>
             <TableCell className="text-center">{payment.personName}</TableCell>
             <TableCell className="text-center">
               {format(new Date(payment.date), "yyyy/MM/dd")}
+            </TableCell>
+            <TableCell className="text-center">
+              {paymentTypeMap[payment.type]}
+            </TableCell>
+            <TableCell className="text-center">
+              <Badge variant={payment.proprietor ? "secondary" : "default"}>
+                {payment.proprietor ? "مالکانه" : "ماهانه"}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-center">
+              {payment.receiptImageUrl !== "" ? (
+                <Button>مشاهده رسید</Button>
+              ) : (
+                <Button disabled variant="secondary">رسید ندارد</Button>
+              )}
             </TableCell>
             <TableCell className="text-center">
               <Button
@@ -63,7 +90,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
               >
                 {deleting && deleteId.some((id) => id === payment.id)
                   ? "..."
-                  : "Delete"}
+                  : "حذف"}
               </Button>
             </TableCell>
           </TableRow>

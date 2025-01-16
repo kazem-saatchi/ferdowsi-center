@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import UploadImage from "@/components/upload-file/UploadImage";
 
 export default function AddPaymentPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -43,6 +44,7 @@ export default function AddPaymentPage() {
   const [receiptImageUrl, setReceiptImageUrl] = useState("");
   const [proprietor, setProprietor] = useState<boolean>(false);
   const [type, setType] = useState<PaymentType>("CASH");
+  const [uploadPage, setUploadPage] = useState<boolean>(false);
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
   const { data: personsData, isLoading: isLoadingPersons } =
@@ -88,17 +90,29 @@ export default function AddPaymentPage() {
       };
 
       const validatedData = addPaymentByInfoSchema.parse(paymentData);
-      const result = await addPaymentMutation.mutateAsync(validatedData);
 
-      if (result.success) {
-        toast.success("Payment added successfully");
-        // Reset form after successful submission
-        setSelectedShopId("");
-        setSelectedPersonId("");
-        setPaymentDate(null);
-        setAmount("");
+      if (type !== "CASH" && type !== "OTHER" && receiptImageUrl === "") {
+        toast.error(
+          "در حالت کارت به کارت، چک و کارتخوان، آپلود عکس رسید الزامی هست"
+        );
       } else {
-        toast.error(result.message || "Failed to add payment");
+        const result = await addPaymentMutation.mutateAsync(validatedData);
+
+        if (result.success) {
+          toast.success("Payment added successfully");
+          // Reset form after successful submission
+          setSelectedShopId("");
+          setSelectedPersonId("");
+          setPaymentDate(null);
+          setAmount("");
+          setAmountPersian("");
+          setType("CASH");
+          setDescription("");
+          setProprietor(false);
+          setUploadPage(false);
+        } else {
+          toast.error(result.message || "Failed to add payment");
+        }
       }
     } catch (error) {
       console.error("Error adding payment:", error);
@@ -133,15 +147,15 @@ export default function AddPaymentPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Payment</h1>
+      <h1 className="text-3xl font-bold mb-8">ثبت پرداختی</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Payment Details</CardTitle>
+          <CardTitle>جزییات پرداخت</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">انتخاب واحد</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
@@ -152,7 +166,7 @@ export default function AddPaymentPage() {
             {selectedShopId !== "" && shopsAll && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="owner">Owner Name</Label>
+                  <Label htmlFor="owner">نام مالک</Label>
                   <Input
                     id="owner"
                     type="text"
@@ -164,7 +178,7 @@ export default function AddPaymentPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="renter">Renter Name</Label>
+                  <Label htmlFor="renter">نام مستاجر</Label>
                   <Input
                     id="renter"
                     type="text"
@@ -178,7 +192,7 @@ export default function AddPaymentPage() {
               </>
             )}
             <div className="space-y-2">
-              <Label htmlFor="person">Person</Label>
+              <Label htmlFor="person">شخص پرداخت کننده</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedPersonId}
@@ -194,17 +208,17 @@ export default function AddPaymentPage() {
                 selectedPersonId && (
                 <>
                   <p className="text-red-400">
-                    The selected person in not shop owner or renter
+                    شخص انتخاب شده ماکت یا مستاجر ملک مورد نظر نیست
                   </p>
                 </>
               )}
             <JalaliDayCalendar
               date={paymentDate}
               setDate={setPaymentDate}
-              title="Payment Date"
+              title="تاریخ پرداخت"
             />
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
+              <Label htmlFor="amount">مبلغ به ریال</Label>
               <Input
                 id="amount"
                 type="text"
@@ -247,7 +261,7 @@ export default function AddPaymentPage() {
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent dir="rtl">
                   <SelectItem value="CASH">نقدی</SelectItem>
                   <SelectItem value="CHEQUE">چک</SelectItem>
                   <SelectItem value="POS_MACHINE">دستگاه کارت خوان</SelectItem>
@@ -256,6 +270,26 @@ export default function AddPaymentPage() {
                 </SelectContent>
               </Select>
             </div>
+            {["BANK_TRANSFER", "CHEQUE", "POS_MACHINE"].includes(type) && (
+              <>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => {
+                    setUploadPage((prev) => !prev);
+                  }}
+                >
+                  آپلود تصویر رسید
+                </Button>
+              </>
+            )}
+            {uploadPage && (
+              <UploadImage
+                shopId={selectedShopId}
+                setUploadPage={setUploadPage}
+                setImageUrl={setReceiptImageUrl}
+              />
+            )}
           </CardContent>
           <CardFooter>
             <Button
@@ -269,9 +303,7 @@ export default function AddPaymentPage() {
                 !amount
               }
             >
-              {addPaymentMutation.isPending
-                ? "Adding Payment..."
-                : "Add Payment"}
+              {addPaymentMutation.isPending ? " در حال ثبت..." : "ثبت پرداختی"}
             </Button>
           </CardFooter>
         </form>

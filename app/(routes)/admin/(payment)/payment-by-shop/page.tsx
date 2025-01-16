@@ -44,11 +44,11 @@ export default function ShopPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Shop Payments</CardTitle>
+        <CardTitle>جستجوی پرداختی ‌ها بر اساس واحد</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="shop">Select Shop</Label>
+          <Label htmlFor="shop">انتخاب واحد</Label>
           <CustomSelect
             options={shopOptions}
             value={selectedShopId}
@@ -59,11 +59,11 @@ export default function ShopPaymentsPage() {
         {isLoading ? (
           <Skeleton className="w-full h-[400px]" />
         ) : isError ? (
-          <p>An error occurred while fetching payments.</p>
+          <p>خطایی رخ داده است</p>
         ) : shopPayments && shopPayments.length > 0 ? (
           <PaymentTable payments={shopPayments} />
         ) : (
-          <p>No payments found for this shop.</p>
+          <p>هیچ پرداختی پیدا نشد</p>
         )}
       </CardContent>
     </Card>
