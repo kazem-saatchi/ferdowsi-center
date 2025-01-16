@@ -24,7 +24,15 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
     );
   }
 
-  const { amount, date, personId, shopId } = validation.data;
+  const {
+    amount,
+    date,
+    personId,
+    shopId,
+    description,
+    proprietor,
+    receiptImageUrl,
+  } = validation.data;
 
   // Fetch user and shop in parallel
   const [user, shop] = await Promise.all([
@@ -51,6 +59,9 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
       personName: `${user.firstName} ${user.lastName}`,
       plaque: shop.plaque,
       date: new Date(date).toISOString(),
+      description,
+      proprietor,
+      receiptImageUrl,
       //   personId: user.id,
       //   shopId: shop.id,
       shop: { connect: { id: shop.id } }, // Connect shop by ID

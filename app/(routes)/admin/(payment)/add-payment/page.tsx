@@ -21,8 +21,17 @@ import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import {
   addPaymentByInfoSchema,
   AddPaymentByInfoData,
+  PaymentType,
 } from "@/schema/paymentSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AddPaymentPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -30,6 +39,10 @@ export default function AddPaymentPage() {
   const [paymentDate, setPaymentDate] = useState<Date | null>(null);
   const [amount, setAmount] = useState("");
   const [amountPersian, setAmountPersian] = useState("");
+  const [description, setDescription] = useState("");
+  const [receiptImageUrl, setReceiptImageUrl] = useState("");
+  const [proprietor, setProprietor] = useState<boolean>(false);
+  const [type, setType] = useState<PaymentType>("CASH");
 
   const { data: shopsData, isLoading: isLoadingShops } = useFindAllShops();
   const { data: personsData, isLoading: isLoadingPersons } =
@@ -68,6 +81,10 @@ export default function AddPaymentPage() {
         personId: selectedPersonId,
         date: paymentDate,
         amount: parseInt(amount, 10),
+        description,
+        receiptImageUrl,
+        proprietor,
+        type,
       };
 
       const validatedData = addPaymentByInfoSchema.parse(paymentData);
@@ -176,7 +193,9 @@ export default function AddPaymentPage() {
               shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
                 selectedPersonId && (
                 <>
-                  <p className="text-red-400">The selected person in not shop owner or renter</p>
+                  <p className="text-red-400">
+                    The selected person in not shop owner or renter
+                  </p>
                 </>
               )}
             <JalaliDayCalendar
@@ -193,6 +212,49 @@ export default function AddPaymentPage() {
                 onChange={handleChange}
                 required
               />
+            </div>
+            <div className="flex flex-row gap-2 items-center">
+              <Label htmlFor="proprietor">نوع شارژ</Label>
+              <Button
+                id="proprietor"
+                variant={proprietor ? "destructive" : "outline"}
+                type="button"
+                onClick={() => {
+                  setProprietor((prev) => !prev);
+                }}
+              >
+                {proprietor ? "مالکانه" : "ماهانه"}
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">توضیحات</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">نوع پرداخت</Label>
+              <Select
+                defaultValue="CASH"
+                onValueChange={(value) => {
+                  setType(value as PaymentType);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CASH">نقدی</SelectItem>
+                  <SelectItem value="CHEQUE">چک</SelectItem>
+                  <SelectItem value="POS_MACHINE">دستگاه کارت خوان</SelectItem>
+                  <SelectItem value="BANK_TRANSFER">کارت به کارت</SelectItem>
+                  <SelectItem value="OTHER">سایر روش ها</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
           <CardFooter>
