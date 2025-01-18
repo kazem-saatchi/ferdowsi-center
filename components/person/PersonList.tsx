@@ -20,16 +20,16 @@ export function PersonList({ persons }: PersonListProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">ID Number</TableHead>
-          <TableHead className="text-center">First Name</TableHead>
-          <TableHead className="text-center">Last Name</TableHead>
-          <TableHead className="text-center">Primary Phone</TableHead>
-          <TableHead className="text-center">Secondary Phone</TableHead>
-          <TableHead className="text-center">Status</TableHead>
-          <TableHead className="text-center">Action</TableHead>
-          <TableHead className="text-center">History</TableHead>
-          <TableHead className="text-center">Charges</TableHead>
-          <TableHead className="text-center">Delete</TableHead>
+          <TableHead className="text-center">کد ملی</TableHead>
+          <TableHead className="text-center">نام</TableHead>
+          <TableHead className="text-center">فامیلی</TableHead>
+          <TableHead className="text-center">شماره موبایل</TableHead>
+          <TableHead className="text-center">شماره موبایل دوم</TableHead>
+          <TableHead className="text-center">وضعیت</TableHead>
+          <TableHead className="text-center">ویرایش اطلاعات</TableHead>
+          <TableHead className="text-center">تاریخچه</TableHead>
+          <TableHead className="text-center">شارژها</TableHead>
+          <TableHead className="text-center">حذف</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -43,21 +43,21 @@ export function PersonList({ persons }: PersonListProps) {
               {person.phoneTwo || "N/A"}
             </TableCell>
             <TableCell className="text-center">
-              {person.isActive ? "Active" : "Inactive"}
+              {person.isActive ? "فعال" : "غیر فعال"}
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/update-person/${person.IdNumber}`}>
-                <Button variant="secondary">edit</Button>
+                <Button variant="secondary">ویرایش</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/history-by-person/${person.id}`}>
-                <Button variant="outline">History</Button>
+                <Button variant="outline">مشاهده</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/find-charge-by-person/${person.id}`}>
-                <Button variant="outline">Charges</Button>
+                <Button variant="outline">مشاهده</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">

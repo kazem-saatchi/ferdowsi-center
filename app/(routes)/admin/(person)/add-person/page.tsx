@@ -52,9 +52,9 @@ export default function AddPersonPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Add New Person</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">ثبت شخص جدید</h2>
         <div className="mb-4">
-          <Label htmlFor="IdNumber">ID Number</Label>
+          <Label htmlFor="IdNumber">کد ملی</Label>
           <Input
             type="text"
             id="IdNumber"
@@ -65,7 +65,7 @@ export default function AddPersonPage() {
           />
         </div>
         <div className="mb-4">
-          <Label htmlFor="firstName">First Name</Label>
+          <Label htmlFor="firstName">نام</Label>
           <Input
             type="text"
             id="firstName"
@@ -76,7 +76,7 @@ export default function AddPersonPage() {
           />
         </div>
         <div className="mb-4">
-          <Label htmlFor="lastName">Last Name</Label>
+          <Label htmlFor="lastName">فامیلی</Label>
           <Input
             type="text"
             id="lastName"
@@ -87,7 +87,7 @@ export default function AddPersonPage() {
           />
         </div>
         <div className="mb-4">
-          <Label htmlFor="phoneOne">Primary Phone</Label>
+          <Label htmlFor="phoneOne">شماره موبایل</Label>
           <Input
             type="tel"
             id="phoneOne"
@@ -98,7 +98,7 @@ export default function AddPersonPage() {
           />
         </div>
         <div className="mb-4">
-          <Label htmlFor="phoneTwo">Secondary Phone (Optional)</Label>
+          <Label htmlFor="phoneTwo">شماره دوم (اختیاری)</Label>
           <Input
             type="tel"
             id="phoneTwo"
@@ -108,7 +108,7 @@ export default function AddPersonPage() {
           />
         </div>
         <div className="mb-6">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">رمز عبور (حداقل 8 حرف)</Label>
           <Input
             type="password"
             id="password"
@@ -119,7 +119,7 @@ export default function AddPersonPage() {
           />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Adding..." : "Add Person"}
+          {isLoading ? "در حال ثبت..." : "ثبت شخص جدید"}
         </Button>
       </form>
     </div>

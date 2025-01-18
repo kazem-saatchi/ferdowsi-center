@@ -37,13 +37,13 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Search Persons</CardTitle>
+        <CardTitle>جستجوی اشخاص</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">نام</Label>
               <Input 
                 id="firstName" 
                 name="firstName" 
@@ -52,7 +52,7 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">فامیلی</Label>
               <Input 
                 id="lastName" 
                 name="lastName" 
@@ -63,7 +63,7 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phoneOne">Primary Phone</Label>
+              <Label htmlFor="phoneOne">شماره موبایل</Label>
               <Input 
                 id="phoneOne" 
                 name="phoneOne" 
@@ -72,7 +72,7 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phoneTwo">Secondary Phone</Label>
+              <Label htmlFor="phoneTwo">شماره دوم</Label>
               <Input 
                 id="phoneTwo" 
                 name="phoneTwo" 
@@ -82,7 +82,7 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="IdNumber">ID Number</Label>
+            <Label htmlFor="IdNumber">کد ملی</Label>
             <Input 
               id="IdNumber" 
               name="IdNumber" 
@@ -97,11 +97,11 @@ export function PersonSearchForm({ onSearch }: PersonSearchFormProps) {
               checked={filters.isActive} 
               onCheckedChange={(checked) => setFilters(prev => ({ ...prev, isActive: checked as boolean }))}
             />
-            <Label htmlFor="isActive">Active Users Only</Label>
+            <Label htmlFor="isActive">جستجوی فقط بین اشخاص فعال</Label>
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full">Search</Button>
+          <Button type="submit" className="w-full">جستجو</Button>
         </CardFooter>
       </form>
     </Card>

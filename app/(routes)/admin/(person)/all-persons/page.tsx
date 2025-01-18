@@ -52,13 +52,13 @@ export default function AllPersonsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Persons</CardTitle>
+        <CardTitle>لیست اشخاص</CardTitle>
       </CardHeader>
       <CardContent>
         {personsAll && personsAll.length > 0 ? (
           <PersonList persons={personsAll} />
         ) : (
-          <p>No persons found.</p>
+          <p>شخصی پیدا نشد</p>
         )}
       </CardContent>
     </Card>

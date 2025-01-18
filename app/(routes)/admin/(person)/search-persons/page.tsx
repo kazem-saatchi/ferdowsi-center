@@ -36,15 +36,14 @@ export default function SearchPersonsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Search Persons</h1>
       <div className="flex flex-col">
         <PersonSearchForm onSearch={handleSearch} />
         <div>
-          {isLoading && <p className="text-center">Loading...</p>}
+          {isLoading && <p className="text-center">در حال بارگذاری...</p>}
           {!isLoading && persons.length > 0 && <PersonList persons={persons} />}
           {!isLoading && persons.length === 0 && (
-            <p className="text-center">
-              No persons found. Try adjusting your search criteria.
+            <p className="text-center mt-4">
+             شخصی یافت نشد
             </p>
           )}
         </div>
