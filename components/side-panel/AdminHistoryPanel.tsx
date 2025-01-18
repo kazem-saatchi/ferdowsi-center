@@ -1,6 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Store, User } from 'lucide-react';
 
 function AdminHistoryPanel() {
   return (
@@ -8,24 +8,24 @@ function AdminHistoryPanel() {
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-shop-history">
-            <ClipboardList className="mr-2 h-4 w-4" />
-            <span>All History</span>
+            <ClipboardList className="ml-2 h-4 w-4" />
+            <span>لیست تمام تاریخچه</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/history-by-shop">
-            <ClipboardList className="mr-2 h-4 w-4" />
-            <span>Shop History</span>
+            <Store className="ml-2 h-4 w-4" />
+            <span>تاریخچه یک واحد</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/history-by-person">
-            <ClipboardList className="mr-2 h-4 w-4" />
-            <span>Person History</span>
+            <User className="ml-2 h-4 w-4" />
+            <span>تاریخچه یک شخص</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -34,3 +34,4 @@ function AdminHistoryPanel() {
 }
 
 export default AdminHistoryPanel;
+

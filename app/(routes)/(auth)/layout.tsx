@@ -10,7 +10,7 @@ export default async function AuthLayout({
   if (person?.role !== "ADMIN" && success) {
     redirect("/user/dashboard");
   } else if (person?.role === "ADMIN" && success) {
-    redirect("/admin/dashboard");
+    redirect("/admin/");
   }
   return <>{children}</>;
 }

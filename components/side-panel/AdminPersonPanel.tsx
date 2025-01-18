@@ -1,6 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { Search, UserCog, UserPlus, Users } from "lucide-react";
+import { Users, UserPlus, Search, UserCog } from 'lucide-react';
 
 function AdminPersonPanel() {
   return (
@@ -8,32 +8,32 @@ function AdminPersonPanel() {
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-persons">
-            <Users className="mr-2 h-4 w-4" />
-            <span>All Persons</span>
+            <Users className="ml-2 h-4 w-4" />
+            <span>لیست تمام اشخاص</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/add-person">
-            <UserPlus className="mr-2 h-4 w-4" />
-            <span>Add Person</span>
+            <UserPlus className="ml-2 h-4 w-4" />
+            <span>ثبت شخص جدید</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/search-persons">
-            <Search className="mr-2 h-4 w-4" />
-            <span>Search Persons</span>
+            <Search className="ml-2 h-4 w-4" />
+            <span>جستجوی اشخاص</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/update-person">
-            <UserCog className="mr-2 h-4 w-4" />
-            <span>Update Person</span>
+            <UserCog className="ml-2 h-4 w-4" />
+            <span>ویرایش اطلاعات شخص</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -42,3 +42,4 @@ function AdminPersonPanel() {
 }
 
 export default AdminPersonPanel;
+

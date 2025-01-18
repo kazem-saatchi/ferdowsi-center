@@ -34,7 +34,7 @@ export default async function AdminLayout({
       <div className="flex h-screen w-full">
         <Sidebar side="right">
           <SidebarHeader>
-            <h2 className="text-xl font-bold p-4">Admin Dashboard</h2>
+            <h2 className="text-xl font-bold p-4">پنل مدیریت</h2>
           </SidebarHeader>
           <SidebarContent>
             <Separator />
@@ -43,7 +43,7 @@ export default async function AdminLayout({
                 <SidebarMenuButton asChild>
                   <Link href="/admin/dashboard">
                     <Home className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span>دشبورد</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

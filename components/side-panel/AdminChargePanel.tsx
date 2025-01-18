@@ -1,14 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import {
-  DollarSign,
-  Euro,
-  FileText,
-  List,
-  PlusCircle,
-  UserCog,
-  Zap,
-} from "lucide-react";
+import { DollarSign, Store, User, Zap, PlusCircle, List, FileText } from 'lucide-react';
 import { Separator } from "../ui/separator";
 
 function AdminChargePanel() {
@@ -17,48 +9,48 @@ function AdminChargePanel() {
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-charges-list">
-            <DollarSign className="mr-2 h-4 w-4" />
-            <span>All Charges</span>
+            <DollarSign className="ml-2 h-4 w-4" />
+            <span>لیست تمام شارژها</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/find-charge-by-shop">
-            <Euro className="mr-2 h-4 w-4" />
-            <span>Charges By Shop</span>
+            <Store className="ml-2 h-4 w-4" />
+            <span>شارژهای یک واحد</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/find-charge-by-person">
-            <UserCog className="mr-2 h-4 w-4" />
-            <span>Charges By Person</span>
+            <User className="ml-2 h-4 w-4" />
+            <span>شارژهای یک شخص</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/add-charges-all-shops">
-            <Zap className="mr-2 h-4 w-4" />
-            <span>Add Charges to All Shops</span>
+            <Zap className="ml-2 h-4 w-4" />
+            <span>ثبت شارژ ماهانه به واحدها</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/add-charge-to-shop">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            <span>Add Charge to Shop</span>
+            <PlusCircle className="ml-2 h-4 w-4" />
+            <span>ثبت شارژ ماهانه یک واحد</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/add-charge-by-amount">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            <span>Add Charge By Amount</span>
+            <DollarSign className="ml-2 h-4 w-4" />
+            <span>ثبت شارژ با مبلغ</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -66,16 +58,16 @@ function AdminChargePanel() {
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-charge-reference">
-            <List className="mr-2 h-4 w-4" />
-            <span>all Charge Reference</span>
+            <List className="ml-2 h-4 w-4" />
+            <span>لیست شارژ ماهانه</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/generate-charge-list">
-            <FileText className="mr-2 h-4 w-4" />
-            <span>generate Charge Reference</span>
+            <FileText className="ml-2 h-4 w-4" />
+            <span>ساخت لیست شارژ ماهانه</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -84,3 +76,4 @@ function AdminChargePanel() {
 }
 
 export default AdminChargePanel;
+

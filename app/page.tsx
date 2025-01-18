@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { Button } from "@/components/ui/button"
+import LoginButton from '@/components/LoginButton'
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8">Ferdowsi Department Store</h1>
+      <h1 className="text-4xl font-bold mb-8">مجتمع تجاری فردوسی</h1>
       <Link href="/login">
-        <Button size="lg">Login</Button>
+      <LoginButton />
       </Link>
     </div>
   )

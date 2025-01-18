@@ -1,6 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { DollarSign, Euro, PlusCircle, UserCog } from "lucide-react";
+import { BarChart2, PieChart } from 'lucide-react';
 
 function AdminBalancePanel() {
   return (
@@ -8,16 +8,16 @@ function AdminBalancePanel() {
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-shops-balance">
-            <DollarSign className="mr-2 h-4 w-4" />
-            <span>All Shops Balance</span>
+            <BarChart2 className="ml-2 h-4 w-4" />
+            <span>حساب همه واحدها</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/shop-balance">
-            <Euro className="mr-2 h-4 w-4" />
-            <span>Balance By Shop</span>
+            <PieChart className="ml-2 h-4 w-4" />
+            <span>حساب یک واحد</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -26,3 +26,4 @@ function AdminBalancePanel() {
 }
 
 export default AdminBalancePanel;
+
