@@ -3,7 +3,7 @@ FROM node:18-alpine AS base
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # # Prisma files must be copied. Comment this line if prisma is not installed
@@ -59,6 +59,9 @@ RUN addgroup --system --gid 1001 nextjs && \
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nextjs .next
+
+# Install OpenSSL in the runner stage
+RUN apk add --no-cache openssl
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

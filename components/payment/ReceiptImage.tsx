@@ -11,6 +11,8 @@ function ReceiptImage({ viewPage, src }: ImageProps) {
     <Image
       alt="receipt image"
       src={src}
+      width="400"
+      height="400"
       onClick={() => {
         viewPage(false);
       }}
