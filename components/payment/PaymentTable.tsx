@@ -24,7 +24,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
   const [deleting, setDeleting] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<string[]>([]);
   const [viewImage, setViewImage] = useState<boolean>(false);
-  const [viewImageSrc, setViewImageSRC] = useState<string>("");
+  const [viewImageSrc, setViewImageSrc] = useState<string>("");
 
   const handleDelete = async (paymentId: string) => {
     setDeleting(true);
@@ -86,7 +86,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                   <Button
                     onClick={() => {
                       setViewImage(true);
-                      setViewImageSRC(payment.receiptImageUrl);
+                      setViewImageSrc(payment.receiptImageUrl);
                     }}
                   >
                     مشاهده رسید
@@ -120,3 +120,4 @@ export function PaymentTable({ payments }: PaymentTableProps) {
     </>
   );
 }
+
