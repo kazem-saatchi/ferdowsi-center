@@ -1,3 +1,8 @@
 {
-  "port": 3000
+  "app": "ferdowsi-center",
+  "port": 3000,
+  "build": {
+    "location": "germany"
+  },
+  "disks": []
 }
