@@ -19,16 +19,17 @@ export function ShopsTable({ shops }: ShopsTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Plaque</TableHead>
-          <TableHead className="text-center">Area (sq m)</TableHead>
-          <TableHead className="text-center">Floor</TableHead>
-          <TableHead className="text-center">Owner</TableHead>
-          <TableHead className="text-center">Renter</TableHead>
-          <TableHead className="text-center">Status</TableHead>
-          <TableHead className="text-center">Type</TableHead>
-          <TableHead className="text-center">History</TableHead>
-          <TableHead className="text-center">Charges</TableHead>
-          <TableHead className="text-center">Actions</TableHead>
+          <TableHead className="text-center">پلاک</TableHead>
+          <TableHead className="text-center">مساحت (متر مربع)</TableHead>
+          <TableHead className="text-center">طبقه</TableHead>
+          <TableHead className="text-center">مالک</TableHead>
+          <TableHead className="text-center">مستاجر</TableHead>
+          <TableHead className="text-center">وضعیت</TableHead>
+          <TableHead className="text-center">تجاری / اداری</TableHead>
+          <TableHead className="text-center">تاریخچه</TableHead>
+          <TableHead className="text-center">شارژها</TableHead>
+          <TableHead className="text-center">مانده حساب</TableHead>
+          <TableHead className="text-center">ویرایش</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -42,27 +43,36 @@ export function ShopsTable({ shops }: ShopsTableProps) {
               {shop.renterName || "N/A"}
             </TableCell>
             <TableCell className="text-center">
-              {shop.isActive ? "Active" : "Inactive"}
+              {shop.isActive ? "فعال" : "غیرفعال"}
             </TableCell>
-            <TableCell className="text-center">{shop.type}</TableCell>
+            <TableCell className="text-center">
+              {shop.type === "STORE" ? "تجاری" : "اداری"}
+            </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/history-by-shop/${shop.id}`} passHref>
                 <Button variant="secondary" size="sm">
-                  History
+                  مشاهده
                 </Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/find-charge-by-shop/${shop.id}`} passHref>
                 <Button variant="secondary" size="sm">
-                  Charges
+                  مشاهده
+                </Button>
+              </Link>
+            </TableCell>
+            <TableCell className="text-center">
+              <Link href={`/admin/shop-balance/${shop.id}`} passHref>
+                <Button variant="secondary" size="sm">
+                  مشاهده
                 </Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/edit-shop/${shop.id}`} passHref>
                 <Button variant="outline" size="sm">
-                  Edit
+                  ویرایش
                 </Button>
               </Link>
             </TableCell>

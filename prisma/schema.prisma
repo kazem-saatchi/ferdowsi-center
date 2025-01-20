@@ -55,6 +55,8 @@ model Person {
 
 enum Role {
   ADMIN
+  MANAGER
+  STAFF
   USER
 }
 

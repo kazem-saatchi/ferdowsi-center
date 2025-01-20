@@ -1,19 +1,19 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { ShoppingBag, ToggleLeft, UserCheck, UserX, PlusSquare, List, Edit } from 'lucide-react';
+import {
+  ShoppingBag,
+  ToggleLeft,
+  UserCheck,
+  UserX,
+  PlusSquare,
+  List,
+  Edit,
+} from "lucide-react";
 import { Separator } from "../ui/separator";
 
 function AdminShopPanel() {
   return (
     <>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <Link href="/admin/add-shop">
-            <PlusSquare className="ml-2 h-4 w-4" />
-            <span>افزودن واحد جدید</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <Link href="/admin/all-shops">
@@ -24,9 +24,17 @@ function AdminShopPanel() {
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
+          <Link href="/admin/add-shop">
+            <PlusSquare className="ml-2 h-4 w-4" />
+            <span>افزودن واحد جدید</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild>
           <Link href="/admin/edit-shop">
             <Edit className="ml-2 h-4 w-4" />
-            <span>ویرایش اطلاعات</span>
+            <span>ویرایش اطلاعات واحد</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -68,4 +76,3 @@ function AdminShopPanel() {
 }
 
 export default AdminShopPanel;
-

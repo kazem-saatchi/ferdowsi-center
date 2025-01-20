@@ -43,3 +43,10 @@ export const findPersonByFilterSchema = z.object({
 
 export type FindPersonByFilterData = z.infer<typeof findPersonByFilterSchema>;
 //--------------------------------------------------------------------------------------
+export const updatePersonRoleSchema = z.object({
+  userId:z.string(),
+  role:z.enum(["ADMIN","MANAGER","STAFF","USER"])
+})
+
+export type updatePersonRoleData = z.infer<typeof updatePersonRoleSchema>;
+//--------------------------------------------------------------------------------------

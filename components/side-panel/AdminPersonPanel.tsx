@@ -1,6 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { Users, UserPlus, Search, UserCog } from 'lucide-react';
+import { Users, UserPlus, Search, UserCog, UserCheck } from "lucide-react";
 
 function AdminPersonPanel() {
   return (
@@ -37,9 +37,16 @@ function AdminPersonPanel() {
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild>
+          <Link href="/admin/update-person-role">
+            <UserCheck className="ml-2 h-4 w-4" />
+            <span>تغییر نقش شخص</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
     </>
   );
 }
 
 export default AdminPersonPanel;
-

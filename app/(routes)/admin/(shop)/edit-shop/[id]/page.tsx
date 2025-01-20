@@ -19,7 +19,7 @@ import { useUpateShopInfo } from "@/tanstack/mutations";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 
-export default function EditShopPage() {
+export default function EditShopPageById() {
   const params = useParams();
   const router = useRouter();
   const shopId = params.id as string;

@@ -3,7 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
-import { AddPersonData, updatePersonData } from "@/schema/userSchemas";
+import {
+  AddPersonData,
+  updatePersonData,
+  updatePersonRoleData,
+} from "@/schema/userSchemas";
 import addPerson from "@/app/api/actions/person/addPerson";
 import { toast } from "sonner";
 import updatePersonInfo from "@/app/api/actions/person/updatePerson";
@@ -37,6 +41,7 @@ import { AddPaymentByInfoData } from "@/schema/paymentSchema";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
+import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
 
 //------------------PERSON--------------------
 
@@ -72,10 +77,37 @@ export function useUpatePerson() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({
-          queryKey: ["person", variables.IdNumber],
+          queryKey: ["person", data.data?.personId],
         });
         queryClient.refetchQueries({
-          queryKey: ["person", variables.IdNumber],
+          queryKey: ["person", data.data?.personId],
+        });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// Update Person Role
+export function useUpatePersonRole() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: updatePersonRoleData) =>
+      await updatePersonRole(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({
+          queryKey: ["person", variables.userId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["person", variables.userId],
         });
         toast.success(data.data?.message);
       } else {
