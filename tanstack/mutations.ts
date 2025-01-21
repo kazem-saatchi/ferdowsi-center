@@ -42,6 +42,7 @@ import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
+import { logoutUser } from "@/app/api/actions/auth/logoutUser";
 
 //------------------PERSON--------------------
 
@@ -540,3 +541,4 @@ export function useDeletePaymentById() {
     },
   });
 }
+

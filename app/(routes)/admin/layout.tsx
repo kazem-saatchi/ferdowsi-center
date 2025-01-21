@@ -18,6 +18,7 @@ import AdminHistoryPanel from "@/components/side-panel/AdminHistoryPanel";
 import AdminChargePanel from "@/components/side-panel/AdminChargePanel";
 import AdminPaymentPanel from "@/components/side-panel/AdminPaymentPanel";
 import AdminBalancePanel from "@/components/side-panel/AdminBalancePanel";
+import LogoutButton from "@/components/LogoutButton";
 
 export default async function AdminLayout({
   children,
@@ -25,6 +26,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const { success, person } = await verifyToken();
+
   if (person?.role !== "ADMIN" || !success) {
     redirect("/");
   }
@@ -34,7 +36,10 @@ export default async function AdminLayout({
       <div className="flex h-screen w-full">
         <Sidebar side="right">
           <SidebarHeader>
-            <h2 className="text-xl font-bold p-4">پنل مدیریت</h2>
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="text-xl font-bold p-4">پنل مدیریت</h2>
+              <LogoutButton />
+            </div>
           </SidebarHeader>
           <SidebarContent>
             <Separator />

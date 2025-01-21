@@ -37,9 +37,6 @@ export async function loginUser(data: LoginData): Promise<LoginResponse> {
       data: { idNumber: user.IdNumber, personId: user.id },
     });
 
-    if (session) {
-    }
-
     // Store token in Cookie
     const cookieStore = cookies();
     const expireTime = 30 * 24 * 60 * 60; // 30 days
