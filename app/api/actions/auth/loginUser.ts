@@ -12,7 +12,7 @@ interface LoginData {
 interface LoginResponse {
   success: boolean;
   message: string;
-  role?: "ADMIN" | "USER";
+  role?: "ADMIN" | "USER" | "MANAGER" | "STAFF";
 }
 
 export async function loginUser(data: LoginData): Promise<LoginResponse> {
