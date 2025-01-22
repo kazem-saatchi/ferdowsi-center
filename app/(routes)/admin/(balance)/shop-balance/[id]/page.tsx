@@ -63,17 +63,17 @@ export default function ShopBalanceById() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Shop Balance</CardTitle>
+          <CardTitle>مانده حساب واحد</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
-            <LoadingComponent text="Loading Shop Data" />
+            <LoadingComponent text="در حال دریافت اطلاعات" />
           ) : isError ? (
-            <ErrorComponentSimple message="An Error Occurred" />
+            <ErrorComponentSimple message="خطایی رخ داده است" />
           ) : shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>No balance information found for this shop.</p>
+            <p>هیچ اطلاعاتی یافت نشد</p>
           )}
         </CardContent>
       </Card>
@@ -81,7 +81,7 @@ export default function ShopBalanceById() {
       {personsBalance && personsBalance.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>People's Balances</CardTitle>
+            <CardTitle>مانده حساب اشخاص</CardTitle>
           </CardHeader>
           <CardContent>
             <PersonsBalanceTable personsBalance={personsBalance} />

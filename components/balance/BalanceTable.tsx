@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ShopBalanceData } from "@/schema/balanceSchema";
-
+import { labels } from "@/utils/label";
 
 interface BalanceTableProps {
   balances: ShopBalanceData[];
@@ -18,10 +18,10 @@ export function BalanceTable({ balances }: BalanceTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Plaque</TableHead>
-          <TableHead className="text-center">Total Charge</TableHead>
-          <TableHead className="text-center">Total Payment</TableHead>
-          <TableHead className="text-center">Balance</TableHead>
+          <TableHead className="text-center">{labels.plaque}</TableHead>
+          <TableHead className="text-center">{labels.totalCharge}</TableHead>
+          <TableHead className="text-center">{labels.totalPayment}</TableHead>
+          <TableHead className="text-center">{labels.totalBalance}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -29,14 +29,13 @@ export function BalanceTable({ balances }: BalanceTableProps) {
           <TableRow key={balance.shopId}>
             <TableCell className="text-center">{balance.plaque}</TableCell>
             <TableCell className="text-center">
-              {balance.totalCharge.toLocaleString()} Rials
+              {balance.totalCharge.toLocaleString()}
             </TableCell>
             <TableCell className="text-center">
-              {balance.totalPayment.toLocaleString()} Rials
+              {balance.totalPayment.toLocaleString()}
             </TableCell>
             <TableCell className="text-center">
               {(balance.totalCharge - balance.totalPayment).toLocaleString()}{" "}
-              Rials
             </TableCell>
           </TableRow>
         ))}

@@ -1,3 +1,5 @@
+import { labels } from "@/utils/label";
+import { Label } from "@radix-ui/react-label";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 
@@ -21,7 +23,7 @@ function ReceiptImage({ viewPage, src }: ImageProps) {
           className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           onClick={() => viewPage(false)}
         >
-          بستن
+          {labels.close}
         </button>
       </div>
     </div>

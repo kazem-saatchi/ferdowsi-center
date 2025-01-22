@@ -85,11 +85,11 @@ export default function ShopBalancePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Shop Balance</CardTitle>
+          <CardTitle>حساب یک واحد</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="shop">Select Shop</Label>
+            <Label htmlFor="shop">انتخاب واحد</Label>
             <CustomSelect
               options={shopOptions}
               value={selectedShopId}
@@ -98,13 +98,13 @@ export default function ShopBalancePage() {
             />
           </div>
           {isLoading && selectedShopId !== "" ? (
-            <LoadingComponent text="Loading Shop Data" />
+            <LoadingComponent text="درحال دریافت اطلاعات" />
           ) : isError ? (
-            <ErrorComponentSimple message="An Error Occurred" />
+            <ErrorComponentSimple message="خطایی رخ داده است" />
           ) : shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>No balance information found for this shop.</p>
+            <p>هیچ اطلاعاتی یافت نشد</p>
           )}
         </CardContent>
       </Card>
@@ -112,7 +112,7 @@ export default function ShopBalancePage() {
       {personsBalance && personsBalance.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>People's Balances</CardTitle>
+            <CardTitle>حساب اشخاص مرتبط</CardTitle>
           </CardHeader>
           <CardContent>
             <PersonsBalanceTable personsBalance={personsBalance} />

@@ -10,6 +10,7 @@ import { Person } from "@prisma/client";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import DeletePerson from "./DeletePerson";
+import { labels } from "@/utils/label";
 
 interface PersonListProps {
   persons: Person[];
@@ -20,16 +21,16 @@ export function PersonList({ persons }: PersonListProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">کد ملی</TableHead>
-          <TableHead className="text-center">نام</TableHead>
-          <TableHead className="text-center">فامیلی</TableHead>
-          <TableHead className="text-center">شماره موبایل</TableHead>
-          <TableHead className="text-center">شماره موبایل دوم</TableHead>
-          <TableHead className="text-center">وضعیت</TableHead>
-          <TableHead className="text-center">ویرایش اطلاعات</TableHead>
-          <TableHead className="text-center">تاریخچه</TableHead>
-          <TableHead className="text-center">شارژها</TableHead>
-          <TableHead className="text-center">حذف</TableHead>
+          <TableHead className="text-center">{labels.nationalId}</TableHead>
+          <TableHead className="text-center">{labels.name}</TableHead>
+          <TableHead className="text-center">{labels.lastName}</TableHead>
+          <TableHead className="text-center">{labels.mobile}</TableHead>
+          <TableHead className="text-center">{labels.secondMobile}</TableHead>
+          <TableHead className="text-center">{labels.status}</TableHead>
+          <TableHead className="text-center">{labels.editInfo}</TableHead>
+          <TableHead className="text-center">{labels.histories}</TableHead>
+          <TableHead className="text-center">{labels.charges}</TableHead>
+          <TableHead className="text-center">{labels.delete}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -40,24 +41,24 @@ export function PersonList({ persons }: PersonListProps) {
             <TableCell className="text-center">{person.lastName}</TableCell>
             <TableCell className="text-center">{person.phoneOne}</TableCell>
             <TableCell className="text-center">
-              {person.phoneTwo || "N/A"}
+              {person.phoneTwo || labels.notAvailable}
             </TableCell>
             <TableCell className="text-center">
-              {person.isActive ? "فعال" : "غیر فعال"}
+              {person.isActive ? labels.active : labels.inactive}
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/update-person/${person.IdNumber}`}>
-                <Button variant="secondary">ویرایش</Button>
+                <Button variant="secondary">{labels.edit}</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/history-by-person/${person.id}`}>
-                <Button variant="outline">مشاهده</Button>
+                <Button variant="outline">{labels.view}</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/find-charge-by-person/${person.id}`}>
-                <Button variant="outline">مشاهده</Button>
+                <Button variant="outline">{labels.view}</Button>
               </Link>
             </TableCell>
             <TableCell className="text-center">

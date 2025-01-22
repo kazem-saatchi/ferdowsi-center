@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
 import ReceiptImage from "./ReceiptImage";
+import { labels } from "@/utils/label";
 
 interface PaymentTableProps {
   payments: Payment[];
@@ -50,14 +51,16 @@ export function PaymentTable({ payments }: PaymentTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-center">مبلغ - ریال</TableHead>
-            <TableHead className="text-center">پلاک</TableHead>
-            <TableHead className="text-center">نام</TableHead>
-            <TableHead className="text-center">تاریخ</TableHead>
-            <TableHead className="text-center">نحوه پرداخت</TableHead>
-            <TableHead className="text-center">مالکانه / ماهانه</TableHead>
-            <TableHead className="text-center">تصویر رسید</TableHead>
-            <TableHead className="text-center">حذف</TableHead>
+            <TableHead className="text-center">{labels.amount}</TableHead>
+            <TableHead className="text-center">{labels.plaque}</TableHead>
+            <TableHead className="text-center">{labels.personName}</TableHead>
+            <TableHead className="text-center">{labels.date}</TableHead>
+            <TableHead className="text-center">{labels.paymentType}</TableHead>
+            <TableHead className="text-center">
+              {labels.paymentCategory}
+            </TableHead>
+            <TableHead className="text-center">{labels.receiptImage}</TableHead>
+            <TableHead className="text-center">{labels.delete}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -78,7 +81,9 @@ export function PaymentTable({ payments }: PaymentTableProps) {
               </TableCell>
               <TableCell className="text-center">
                 <Badge variant={payment.proprietor ? "secondary" : "default"}>
-                  {payment.proprietor ? "مالکانه" : "ماهانه"}
+                  {payment.proprietor
+                    ? labels.proprietorCharge
+                    : labels.monthlyCharge}
                 </Badge>
               </TableCell>
               <TableCell className="text-center">
@@ -89,11 +94,11 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                       setViewImageSrc(payment.receiptImageUrl);
                     }}
                   >
-                    مشاهده رسید
+                    {labels.viewReceipt}
                   </Button>
                 ) : (
                   <Button disabled variant="secondary">
-                    رسید ندارد
+                    {labels.noReceipt}
                   </Button>
                 )}
               </TableCell>
@@ -106,8 +111,8 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                   variant="destructive"
                 >
                   {deleting && deleteId.some((id) => id === payment.id)
-                    ? "..."
-                    : "حذف"}
+                    ? labels.deleting
+                    : labels.delete}
                 </Button>
               </TableCell>
             </TableRow>
@@ -120,4 +125,3 @@ export function PaymentTable({ payments }: PaymentTableProps) {
     </>
   );
 }
-

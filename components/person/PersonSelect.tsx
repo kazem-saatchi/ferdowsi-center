@@ -12,6 +12,7 @@ import {
 import { Person } from "@prisma/client";
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
+import { labels } from "@/utils/label";
 
 interface PersonSelectProps {
   property: string;
@@ -67,10 +68,10 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Select {label}</DialogTitle>
+            <DialogTitle>{labels.select} {label}</DialogTitle>
           </DialogHeader>
           <Input
-            placeholder="Search persons..."
+            placeholder={labels.searchPersonPlaceHolder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

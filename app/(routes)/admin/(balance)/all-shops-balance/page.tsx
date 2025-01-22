@@ -33,14 +33,14 @@ export default function AllShopsBalancePage() {
   }, [data, setAllBalances]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading..." />;
+    return <LoadingComponent text="در حال دریافت اطلاعات" />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message="Error on Getting Data"
+        message="خطایی رخ داده است"
         retry={refetch}
       />
     );
@@ -49,17 +49,17 @@ export default function AllShopsBalancePage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Shops Balance</CardTitle>
+        <CardTitle>مانده حساب همه واحدها</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-row items-center justify-start gap-2">
-          <Button onClick={exportAllBalanceToPdf}>Download PDF</Button>
-          <Button onClick={exportAllBalanceToExcel}>Download EXCEL</Button>
+          <Button onClick={exportAllBalanceToPdf}>دانلود به صورت PDF</Button>
+          <Button onClick={exportAllBalanceToExcel}>دانلود به صورت EXCEL</Button>
         </div>
         {allBalances && allBalances.length > 0 ? (
           <BalanceTable balances={allBalances} />
         ) : (
-          <p>No balance information found.</p>
+          <p>اطلاعاتی یافت نشد</p>
         )}
       </CardContent>
     </Card>

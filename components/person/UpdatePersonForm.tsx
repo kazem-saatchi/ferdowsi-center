@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +12,12 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import updatePersonInfo from "@/app/api/actions/person/updatePerson";
+
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
+
+import { labels } from "@/utils/label";
+import { useUpatePerson } from "@/tanstack/mutations";
 
 interface UpdatePersonFormProps {
   initialData: {
@@ -30,8 +31,9 @@ interface UpdatePersonFormProps {
 }
 
 export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
-  const router = useRouter();
+  const updatePersonMutation = useUpatePerson();
   const [formData, setFormData] = useState(initialData);
+  const [updating, setUpdating] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -42,30 +44,25 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setUpdating(true);
     e.preventDefault();
-    try {
-      const result = await updatePersonInfo(formData);
-      if (result.message) {
-        toast.success(result.message);
-      }
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "An error occurred while updating the person"
-      );
-    }
+
+    updatePersonMutation.mutate(formData, {
+      onSettled: () => {
+        setUpdating(false);
+      },
+    });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Update Person</CardTitle>
+        <CardTitle>{labels.updatePerson}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="IdNumber">ID Number</Label>
+            <Label htmlFor="IdNumber">{labels.nationalId}</Label>
             <Input
               id="IdNumber"
               name="IdNumber"
@@ -75,7 +72,7 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName">{labels.name}</Label>
             <Input
               id="firstName"
               name="firstName"
@@ -85,7 +82,7 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="lastName">{labels.lastName}</Label>
             <Input
               id="lastName"
               name="lastName"
@@ -95,7 +92,7 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phoneOne">Primary Phone</Label>
+            <Label htmlFor="phoneOne">{labels.mobile}</Label>
             <Input
               id="phoneOne"
               name="phoneOne"
@@ -105,7 +102,7 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phoneTwo">Secondary Phone</Label>
+            <Label htmlFor="phoneTwo">{labels.secondMobile}</Label>
             <Input
               id="phoneTwo"
               name="phoneTwo"
@@ -125,12 +122,12 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
                 }))
               }
             />
-            <Label htmlFor="isActive">Active</Label>
+            <Label htmlFor="isActive">{labels.active}</Label>
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full">
-            Update Person
+          <Button type="submit" className="w-full" disabled={updating}>
+            {updating ? labels.updatingInfo : labels.updateInfo}
           </Button>
         </CardFooter>
       </form>

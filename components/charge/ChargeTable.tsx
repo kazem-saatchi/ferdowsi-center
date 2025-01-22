@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatNumber } from "@/utils/formatNumber";
+import { labels } from "@/utils/label";
 import { Charge } from "@prisma/client";
 import { format } from "date-fns";
 
@@ -19,13 +20,13 @@ export function ChargeTable({ charges }: ChargeTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Title</TableHead>
-          <TableHead className="text-center">Amount</TableHead>
-          <TableHead className="text-center">Shop Plaque</TableHead>
-          <TableHead className="text-center">Person Name</TableHead>
-          <TableHead className="text-center">Date</TableHead>
-          <TableHead className="text-center">Operation Name</TableHead>
-          <TableHead className="text-center">Days Count</TableHead>
+          <TableHead className="text-center">{labels.title}</TableHead>
+          <TableHead className="text-center">{labels.amount}</TableHead>
+          <TableHead className="text-center">{labels.plaque}</TableHead>
+          <TableHead className="text-center">{labels.personName}</TableHead>
+          <TableHead className="text-center">{labels.date}</TableHead>
+          <TableHead className="text-center">{labels.operationName}</TableHead>
+          <TableHead className="text-center">{labels.daysCount}t</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
