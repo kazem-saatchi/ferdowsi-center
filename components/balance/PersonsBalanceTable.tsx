@@ -6,11 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PersonBalanceData } from "@/schema/balanceSchema";
+import { PersonBalanceByShopData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
 
 interface PersonBalanceProps {
-  personsBalance: PersonBalanceData[];
+  personsBalance: PersonBalanceByShopData[];
 }
 
 function PersonsBalanceTable({ personsBalance }: PersonBalanceProps) {
@@ -30,13 +30,13 @@ function PersonsBalanceTable({ personsBalance }: PersonBalanceProps) {
             <TableRow key={person.personId}>
               <TableCell className="text-center">{person.personName}</TableCell>
               <TableCell className="text-center">
-                {person.totalCharge.toLocaleString()} 
+                {person.totalCharge.toLocaleString()}
               </TableCell>
               <TableCell className="text-center">
-                {person.totalPayment.toLocaleString()} 
+                {person.totalPayment.toLocaleString()}
               </TableCell>
               <TableCell className="text-center">
-                {person.balance.toLocaleString()} 
+                {person.balance.toLocaleString()}
               </TableCell>
             </TableRow>
           ))}

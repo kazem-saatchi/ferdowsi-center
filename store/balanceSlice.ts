@@ -1,14 +1,22 @@
-import { PersonBalanceData, ShopBalanceData } from "@/schema/balanceSchema";
+import {
+  PersonBalanceByShopData,
+  PersonBalanceData,
+  ShopBalanceData,
+} from "@/schema/balanceSchema";
 import { exportToExcel, exportToPDF } from "@/utils/tableExport";
 import { StateCreator } from "zustand";
 
 type Balances = {
   allBalances: ShopBalanceData[] | null;
-  setAllBalances: (Balances: ShopBalanceData[]) => void;
+  setAllBalances: (balances: ShopBalanceData[]) => void;
   shopBalance: ShopBalanceData | null;
-  setShopBalance: (Balances: ShopBalanceData) => void;
-  personsBalance: PersonBalanceData[] | null;
-  setPersonsBalance: (Balances: PersonBalanceData[]) => void;
+  setShopBalance: (balances: ShopBalanceData) => void;
+  personBalance: PersonBalanceData | null;
+  setPersonBalance: (balance: PersonBalanceData) => void;
+  shopsBalance: ShopBalanceData[] | null;
+  setShopsBalance: (balances: ShopBalanceData[]) => void;
+  personsBalance: PersonBalanceByShopData[] | null;
+  setPersonsBalance: (Balances: PersonBalanceByShopData[]) => void;
   exportAllBalanceToPDF: () => void;
   exportAllBalanceToExcel: () => void;
 };
@@ -24,11 +32,15 @@ export const createBalanceSlice: StateCreator<
   // State
   allBalances: null,
   shopBalance: null,
+  personBalance: null,
+  shopsBalance: null,
   personsBalance: null,
 
   // Set utils
-  setAllBalances: (Balances) => set({ allBalances: Balances }),
-  setShopBalance: (Balances) => set({ shopBalance: Balances }),
+  setAllBalances: (balances) => set({ allBalances: balances }),
+  setShopBalance: (balances) => set({ shopBalance: balances }),
+  setPersonBalance: (balance) => set({ personBalance: balance }),
+  setShopsBalance: (balances) => set({ shopsBalance: balances }),
   setPersonsBalance: (Balances) => set({ personsBalance: Balances }),
   exportAllBalanceToPDF: () =>
     set((state) => {

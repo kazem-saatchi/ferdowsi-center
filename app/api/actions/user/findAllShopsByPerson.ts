@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { PersonBalanceData } from "@/schema/balanceSchema";
+import { PersonBalanceByShopData } from "@/schema/balanceSchema";
 import {
   calculatePersonBalanceByShop,
   calculateShopBalance,
@@ -15,7 +15,7 @@ export interface PersonBalancesResponse {
   shops: Shop[];
   message: string;
   shopsBalance: ShopBalanceResponce[];
-  shopsBalanceByPerson: PersonBalanceData[];
+  shopsBalanceByPerson: PersonBalanceByShopData[];
 }
 
 async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
@@ -47,7 +47,7 @@ async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
     )
   );
 
-  const shopsBalanceByPerson: PersonBalanceData[] = await Promise.all(
+  const shopsBalanceByPerson: PersonBalanceByShopData[] = await Promise.all(
     shops.map((shop) =>
       calculatePersonBalanceByShop({
         personId: user.id,

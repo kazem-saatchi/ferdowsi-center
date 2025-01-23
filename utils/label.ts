@@ -30,42 +30,47 @@ export const labels = {
   paymentCategory: "مالکانه / ماهانه",
   receiptImage: "تصویر رسید",
   delete: "حذف",
-  deleting:"در حال حذف",
+  deleting: "در حال حذف",
 
-  proprietorCharge:"مالکانه",
-  monthlyCharge:"ماهانه",
+  proprietorCharge: "مالکانه",
+  monthlyCharge: "ماهانه",
 
-  viewReceipt:"مشاهده رسید",
-  noReceipt:"بدون رسید",
+  viewReceipt: "مشاهده رسید",
+  noReceipt: "بدون رسید",
 
-  close:"بستن صفحه",
+  close: "بستن صفحه",
 
-  nationalId:"کد ملی",
-  name:"نام",
-  lastName:"فامیلی",
-  mobile:"شماره موبایل",
-  secondMobile:"شماره تماس دوم",
+  nationalId: "کد ملی",
+  name: "نام",
+  lastName: "فامیلی",
+  mobile: "شماره موبایل",
+  secondMobile: "شماره تماس دوم",
 
-  editInfo:"ویرایش اطلاعات",
-  histories:"تاریخچه",
-  charges:"شارژها",
-  balance:"مانده حساب",
-  notAvailable:"ثبت نشده",
+  editInfo: "ویرایش اطلاعات",
+  histories: "تاریخچه",
+  charges: "شارژها",
+  balance: "مانده حساب",
+  notAvailable: "ثبت نشده",
 
-  edit:"ویرایش",
-  view:"مشاهده",
+  edit: "ویرایش",
+  view: "مشاهده",
 
-  searchByPerson:"جسنجوی اشخاص",
-  searchOnlyActivePersons:"جستجوی فقط بین اشخاص فعال",
-  search:"جستجو",
+  searchByPerson: "جسنجوی اشخاص",
+  searchOnlyActivePersons: "جستجوی فقط بین اشخاص فعال",
+  search: "جستجو",
 
-  select:"انتخاب",
-  searchPersonPlaceHolder:"جستجوی اشخاص ...",
+  select: "انتخاب",
+  searchPersonPlaceHolder: "جستجوی اشخاص ...",
 
-  updatePerson:"ویرایش اطلاعات",
-  updateInfo:"ثبت تغییرات",
-  updatingInfo:"در حال ثبت تغییرات"
+  updatePerson: "ویرایش اطلاعات",
+  updateInfo: "ثبت تغییرات",
+  updatingInfo: "در حال ثبت تغییرات",
 
-
-  
+  areaM2: "مساحت (متر مربع)",
+  floorNumber: "طبقه",
+  ownerName: "مالک",
+  renterName: "مستاجر",
+  storeOrOffice: "تجاری / اداری",
+  store: "تجاری",
+  office: "اداری",
 };

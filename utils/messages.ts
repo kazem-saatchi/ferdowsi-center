@@ -67,7 +67,7 @@ export const errorMSG = {
   personIdNotFound: "شخصی با این شناسه یافت نشد.",
   shopIdNotFound: "فروشگاهی با این شناسه یافت نشد.",
   noPersonsFound: "هیچ شخصی مطابق با فیلترهای داده شده یافت نشد.",
-  errorOnUpdatePerson:"ثبت تغییرات ناموفق بود",
+  errorOnUpdatePerson: "ثبت تغییرات ناموفق بود",
   ownerNotFound: "مالک یافت نشد.",
   renterNotFound: "مستاجر یافت نشد.",
   shopNotFound: "فروشگاه مشخص شده وجود ندارد.",
@@ -112,4 +112,6 @@ export const successMSG = {
   paymentCreated: "پرداخت با موفقیت اضافه شد.",
   paymentDeleted: "پرداخت با موفقیت حذف شد.",
   paymentFinded: "پرداخت با موفقیت یافت شد.",
+
+  balancesFound: "حساب با موفقیت یافت شد",
 };

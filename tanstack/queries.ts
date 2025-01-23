@@ -1,6 +1,7 @@
 "use client";
 
 import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
+import findBalanceByPerson from "@/app/api/actions/balance/getPersonBalance";
 import findBalanceByShop from "@/app/api/actions/balance/getShopBalance";
 import findAllCharges from "@/app/api/actions/charge/getAllCharges";
 import findAllChargesReference from "@/app/api/actions/charge/getAllChargesReference";
@@ -152,6 +153,13 @@ export function useGetShopBalance(shopId: string) {
   return useQuery({
     queryKey: ["shop-balance", shopId],
     queryFn: async () => await findBalanceByShop({ shopId }),
+  });
+}
+
+export function useGetPersonBalance(personId: string) {
+  return useQuery({
+    queryKey: ["person-balance", personId],
+    queryFn: async () => await findBalanceByPerson({ personId }),
   });
 }
 

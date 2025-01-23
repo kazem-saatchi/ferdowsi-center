@@ -36,7 +36,7 @@ async function getAllShopsBalance(user: Person): Promise<FindBalanceResponse> {
 
   return {
     success: true,
-    message: successMSG.chargesFound,
+    message: successMSG.balancesFound,
     shopsBalance,
   };
 }
