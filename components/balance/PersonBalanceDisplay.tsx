@@ -19,12 +19,6 @@ import { Person } from "@prisma/client";
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
 
-interface PersonBalanceDisplayProps {
-  person: Person;
-  personBalance: PersonBalanceResponce;
-  shopsBalance?: ShopBalanceResponce[];
-  personBalanceByShops?: PersonBalanceByShopData[];
-}
 
 export function PersonBalanceDisplay() {
   const { personBalance, shopsBalance, personBalanceByShops, userInfo } =

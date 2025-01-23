@@ -10,6 +10,10 @@ type Charges = {
   setPersonCharges: (charges: Charge[]) => void;
   allChargesReference: ShopChargeReference[] | null;
   setAllChargesReference: (chargeReference: ShopChargeReference[]) => void;
+  allAnnualChargesReference: ShopChargeReference[] | null;
+  setAllAnnualChargesReference: (
+    chargeReference: ShopChargeReference[]
+  ) => void;
 };
 
 export type ChargeSlice = Charges;
@@ -25,6 +29,7 @@ export const createChargeSlice: StateCreator<
   shopCharges: null,
   personCharges: null,
   allChargesReference: null,
+  allAnnualChargesReference: null,
 
   // Set utils
   setAllCharges: (charges) => set({ allCharges: charges }),
@@ -32,4 +37,6 @@ export const createChargeSlice: StateCreator<
   setPersonCharges: (charges) => set({ personCharges: charges }),
   setAllChargesReference: (chargeList) =>
     set({ allChargesReference: chargeList }),
+  setAllAnnualChargesReference: (chargeList) =>
+    set({ allAnnualChargesReference: chargeList }),
 });

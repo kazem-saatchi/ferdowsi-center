@@ -73,4 +73,31 @@ export const labels = {
   storeOrOffice: "تجاری / اداری",
   store: "تجاری",
   office: "اداری",
+
+  // New translations for Charge Reference
+  chargeReferenceList: "لیست شارژ مرجع",
+  monthlyChargeList: "لیست شارژ ماهانه",
+  proprietorChargeList: "لیست شارژ مالکانه",
+  viewMonthlyList: "مشاهده لیست ماهانه",
+  viewProprietorList: "مشاهده لیست مالکانه",
+  loadingData: "درحال دریافت اطلاعات",
+  errorOccurred: "خطایی رخ داده است",
+
+  // New labels for GenerateShopAnnualChargeReferencePage
+  generateShopsAnnualChargeReference: "ایجاد مرجع شارژ سالانه مغازه‌ها",
+  chargeReferenceDetails: "جزئیات مرجع شارژ",
+  shopMetricValue: "مقدار متریک مغازه",
+  officeMetricValue: "مقدار متریک دفتر",
+  generating: "در حال ایجاد...",
+  generateChargeReference: "ایجاد مرجع شارژ",
+
+  // New labels for GenerateShopChargeReferencePage
+  generateShopChargeReference: "ایجاد مرجع شارژ مغازه",
+  shopConstantValue: "مقدار ثابت مغازه",
+  officeConstantValue: "مقدار ثابت دفتر",
+
+  // Common labels
+  successMessage: "مرجع شارژ مغازه با موفقیت ایجاد شد",
+  errorMessage: "خطا در ایجاد مرجع شارژ مغازه",
+  generalErrorMessage: "خطایی هنگام ایجاد مرجع شارژ مغازه رخ داد",
 };

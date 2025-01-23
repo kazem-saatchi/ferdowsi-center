@@ -4,7 +4,7 @@ import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
 import findBalanceByPerson from "@/app/api/actions/balance/getPersonBalance";
 import findBalanceByShop from "@/app/api/actions/balance/getShopBalance";
 import findAllCharges from "@/app/api/actions/charge/getAllCharges";
-import findAllChargesReference from "@/app/api/actions/charge/getAllChargesReference";
+import findAllChargesReference from "@/app/api/actions/reference/getAllChargesReference";
 import findChargesByPerson from "@/app/api/actions/charge/getChargesByPerson";
 import findChargesByShop from "@/app/api/actions/charge/getChargesByShop";
 import findAllShopHistory from "@/app/api/actions/history/getAllHistory";

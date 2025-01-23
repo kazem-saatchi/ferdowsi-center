@@ -6,7 +6,7 @@ import {
   ShopChargeReferenceSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 
 async function generateShopChargeReference(
@@ -47,7 +47,6 @@ async function generateShopChargeReference(
         metricAmount: metricValue,
         totalAmount: shop.area * metricValue + constValue,
         year: currentYear,
-        
       };
 
       return chargeObject;
@@ -56,7 +55,10 @@ async function generateShopChargeReference(
   // Transaction: Clear old references for these shops and insert new ones
   await db.$transaction(async (prisma) => {
     await prisma.shopChargeReference.deleteMany({
-      where: { shopId: { in: shopsList.map((shop) => shop.id) } },
+      where: {
+        shopId: { in: shopsList.map((shop) => shop.id) },
+        proprietor: false,
+      },
     });
 
     await prisma.shopChargeReference.createMany({

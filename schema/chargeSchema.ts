@@ -39,6 +39,15 @@ export const ShopChargeReferenceSchema = z.object({
 
 export type ShopChargeReferenceData = z.infer<typeof ShopChargeReferenceSchema>;
 //--------------------------------------------------------------------------------------
+export const ShopAnnualChargeReferenceSchema = z.object({
+  storeMetric: z.number(),
+  officeMetric: z.number(),
+});
+
+export type ShopAnnualChargeReferenceData = z.infer<
+  typeof ShopAnnualChargeReferenceSchema
+>;
+//--------------------------------------------------------------------------------------
 export const getChargeByShopSchema = z.object({
   shopId: z.string(),
 });

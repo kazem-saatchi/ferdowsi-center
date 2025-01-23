@@ -23,7 +23,7 @@ model Shop {
   owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
 
-  chargeData    ShopChargeReference?
+  chargeData    ShopChargeReference[]
   histories     ShopHistory[]
   charges       Charge[]
   payments      Payment[]
@@ -32,6 +32,7 @@ model Shop {
 enum ShopType {
   STORE
   OFFICE
+  KIOSK //مشاعات
 }
 
 model Person {
@@ -92,7 +93,7 @@ model Charge {
   title         String
   amount        Int
   shopId        String
-  plaque       Int
+  plaque        Int
   personId      String
   personName    String
   date          DateTime
@@ -170,7 +171,7 @@ model Session {
 
 model ShopChargeReference {
   id              String    @id @unique @default(uuid())
-  shopId          String    @unique
+  shopId          String    
   plaque          Int
   area            Float
   constantAmount  Int
@@ -185,4 +186,5 @@ model ShopChargeReference {
 
   @@index([shopId])
   @@index([year])
+  @@unique([shopId,proprietor])
 }

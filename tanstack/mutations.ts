@@ -32,17 +32,19 @@ import {
   AddChargeAllShopsData,
   AddChargeByAmount,
   AddChargeByShopData,
+  ShopAnnualChargeReferenceData,
   ShopChargeReferenceData,
 } from "@/schema/chargeSchema";
 import addChargeByShop from "@/app/api/actions/charge/addChargeByShop";
 import addChargeToAllShops from "@/app/api/actions/charge/addChargeAllShops";
-import generateShopChargeReferenceList from "@/app/api/actions/charge/shopChargeReference";
+import generateShopChargeReferenceList from "@/app/api/actions/reference/shopChargeReference";
 import { AddPaymentByInfoData } from "@/schema/paymentSchema";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
-import { logoutUser } from "@/app/api/actions/auth/logoutUser";
+import generateAnnualShopChargeReferenceList from "@/app/api/actions/reference/shopAnnualChargeReference";
+
 
 //------------------PERSON--------------------
 
@@ -441,7 +443,7 @@ export function useAddChargeAllShop() {
   });
 }
 
-// generate charge reference
+// generate charge reference Monthly
 export function useCreateChargeReference() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -449,6 +451,30 @@ export function useCreateChargeReference() {
   return useMutation({
     mutationFn: async (data: ShopChargeReferenceData) =>
       await generateShopChargeReferenceList(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-charges-reference"] });
+        queryClient.refetchQueries({ queryKey: ["all-charges-reference"] });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// generate charge reference Yearly
+export function useCreateAnnualChargeReference() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: ShopAnnualChargeReferenceData) =>
+      await generateAnnualShopChargeReferenceList(data),
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges-reference"] });
