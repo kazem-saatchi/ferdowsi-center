@@ -114,4 +114,6 @@ export const successMSG = {
   paymentFinded: "پرداخت با موفقیت یافت شد.",
 
   balancesFound: "حساب با موفقیت یافت شد",
+
+  costAdded: "هزینه با موفقیت اضافه شد",
 };

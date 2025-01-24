@@ -188,3 +188,25 @@ model ShopChargeReference {
   @@index([year])
   @@unique([shopId,proprietor])
 }
+
+model Costs {
+  id            String   @id @unique @default(uuid())
+  title         String
+  amount        Int
+  date          DateTime
+  description   String?  @db.VarChar(255)
+  category      Category
+  billImage     String
+  proprietor    Boolean   @default(false) //مالکانه 
+
+  createdAt     DateTime @default(now())
+}
+
+enum Category {
+  ELECTRICITY   // قبض برق
+  WATER         // قبض آب
+  GAS           // قبض گاز
+  ELEVATOR      // تعمیرات آسانسور
+  ESCALATOR     // تعمیرات پله برقی
+  CHILLER       // تعمیرات موتورخانه
+}
