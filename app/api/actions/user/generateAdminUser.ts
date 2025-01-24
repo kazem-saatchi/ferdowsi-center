@@ -5,10 +5,6 @@ import { AddPersonData, addPersonSchema } from "@/schema/userSchemas";
 import { hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";
 
-interface AddPersonResponse {
-  id: string;
-  message: string;
-}
 
 export default async function createAdmin() {
   const data: AddPersonData = {

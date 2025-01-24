@@ -8,6 +8,7 @@ import { useStore } from "@/store/store";
 import { useFindAllShops } from "@/tanstack/queries";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { labels } from "@/utils/label";
 
 export default function AllShopsPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllShops();
@@ -27,7 +28,7 @@ export default function AllShopsPage() {
   }, [data]);
 
   if (isLoading) {
-    return <LoadingComponent text="loading data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
@@ -43,13 +44,13 @@ export default function AllShopsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Shops</CardTitle>
+        <CardTitle>{labels.allShops}</CardTitle>
       </CardHeader>
       <CardContent>
         {shopsAll && shopsAll.length > 0 ? (
           <ShopsTable shops={shopsAll} />
         ) : (
-          <p>No shops found.</p>
+          <p>{labels.noDataFound}</p>
         )}
       </CardContent>
     </Card>

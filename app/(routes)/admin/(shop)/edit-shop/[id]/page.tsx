@@ -13,11 +13,11 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { toast } from "sonner";
 import { useFindShopById } from "@/tanstack/queries";
 import { useUpateShopInfo } from "@/tanstack/mutations";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { labels } from "@/utils/label";
 
 export default function EditShopPageById() {
   const params = useParams();
@@ -89,15 +89,15 @@ export default function EditShopPageById() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Edit Shop</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.editShopInfo}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Shop Details</CardTitle>
+          <CardTitle>{labels.shopDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="plaque">Plaque Number</Label>
+              <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
               <Input
                 id="plaque"
                 name="plaque"
@@ -108,7 +108,7 @@ export default function EditShopPageById() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="area">Area (sq m)</Label>
+              <Label htmlFor="area">{labels.areaM2}</Label>
               <Input
                 id="area"
                 name="area"
@@ -120,7 +120,7 @@ export default function EditShopPageById() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="floor">Floor</Label>
+              <Label htmlFor="floor">{labels.floorNumber}</Label>
               <Input
                 id="floor"
                 name="floor"
@@ -131,17 +131,17 @@ export default function EditShopPageById() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Owner</Label>
+              <Label>{labels.ownerName}</Label>
               <Input value={data.data.shop.ownerName} disabled />
             </div>
             <div className="space-y-2">
-              <Label>Renter</Label>
-              <Input value={data.data.shop.renterName || "N/A"} disabled />
+              <Label>{labels.renterName}</Label>
+              <Input value={data.data.shop.renterName || labels.notAvailable} disabled />
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isUpdating}>
-              {isUpdating ? "Updating Shop..." : "Update Shop"}
+              {isUpdating ? labels.updatingShopInfo : labels.updateShopInfo}
             </Button>
           </CardFooter>
         </form>

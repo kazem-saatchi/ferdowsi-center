@@ -55,7 +55,7 @@ export const labels = {
   edit: "ویرایش",
   view: "مشاهده",
 
-  searchByPerson: "جسنجوی اشخاص",
+  searchByPerson: "جستجوی اشخاص",
   searchOnlyActivePersons: "جستجوی فقط بین اشخاص فعال",
   search: "جستجو",
 
@@ -73,7 +73,7 @@ export const labels = {
   storeOrOffice: "تجاری / اداری",
   store: "تجاری",
   office: "اداری",
-  kiost: "مشاعات",
+  kiosk: "مشاعات",
 
   // Add new labels for shop history
   addShopHistory: "ثبت تاریخچه واحد",
@@ -253,4 +253,23 @@ export const labels = {
   // Add new labels
   findChargesByShop: "جستجوی شارژها بر اساس واحد",
   loadingShopData: "در حال بارگذاری اطلاعات واحد",
+  allShops: "همه واحدها",
+
+  // Add new labels for add shop page
+  addNewShop: "ثبت واحد جدید",
+  shopDetails: "مشخصات واحد",
+  addingShop: "در حال ثبت واحد...",
+  plaqueNumber: "شماره پلاک",
+
+  editShopInfo: "ویرایش اطلاعات واحد",
+  selectShopForEdit: "انتخاب واحد",
+  pleaseSelectShopForEdit: "لطفاً یک واحد را برای ویرایش انتخاب کنید",
+  updatingShopInfo: "در حال به‌روزرسانی...",
+  updateShopInfo: "به‌روزرسانی اطلاعات واحد",
+  shopUpdateSuccess: "اطلاعات واحد با موفقیت به‌روزرسانی شد",
+  shopUpdateError: "خطا در به‌روزرسانی اطلاعات واحد",
+
+  // Add these new labels
+  somethingWentWrong: "خطایی رخ داده است",
+  shopNotFound: "واحد یافت نشد",
 };

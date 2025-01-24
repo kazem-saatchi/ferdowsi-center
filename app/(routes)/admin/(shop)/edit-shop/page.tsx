@@ -15,6 +15,7 @@ import { useShallow } from "zustand/react/shallow"
 import { CustomSelect } from "@/components/CustomSelect"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
+import { labels } from "@/utils/label"
 
 export default function EditShopPage() {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null)
@@ -74,7 +75,7 @@ export default function EditShopPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedShopId) {
-      toast.error("لطفاً یک مغازه را انتخاب کنید")
+      toast.error(labels.pleaseSelectShop)
       return
     }
     try {
@@ -86,52 +87,52 @@ export default function EditShopPage() {
         type: shopType,
       })
       if (result.success) {
-        toast.success("اطلاعات مغازه با موفقیت به‌روزرسانی شد")
+        toast.success(labels.shopUpdateSuccess)
       } else {
-        toast.error(result.message || "خطا در به‌روزرسانی اطلاعات مغازه")
+        toast.error(result.message || labels.shopUpdateError)
       }
     } catch (error) {
       console.error("Error updating shop:", error)
-      toast.error("خطا در به‌روزرسانی اطلاعات مغازه")
+      toast.error(labels.shopUpdateError)
     }
   }
 
-  if (isLoading) return <LoadingComponent text="در حال بارگذاری اطلاعات" />
+  if (isLoading) return <LoadingComponent text={labels.loadingData} />
 
   if (isError)
-    return <ErrorComponent error={error as Error} message={data?.message || "خطایی رخ داده است"} retry={refetch} />
+    return <ErrorComponent error={error as Error} message={data?.message || labels.errorOccurred} retry={refetch} />
 
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `مغازه ${shop.plaque} (طبقه ${shop.floor})`,
+      label: `${labels.shop} ${shop.plaque} (${labels.floorNumber} ${shop.floor})`,
     })) || []
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">ویرایش اطلاعات مغازه</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.editShopInfo}</h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>انتخاب مغازه</CardTitle>
+          <CardTitle>{labels.selectShopForEdit}</CardTitle>
         </CardHeader>
         <CardContent>
           <CustomSelect
             options={shopOptions}
             value={selectedShopId || ""}
             onChange={(value) => setSelectedShopId(value)}
-            label="مغازه"
+            label={labels.shop}
           />
         </CardContent>
       </Card>
       {selectedShop ? (
         <Card>
           <CardHeader>
-            <CardTitle>جزئیات مغازه</CardTitle>
+            <CardTitle>{labels.shopDetails}</CardTitle>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="plaque">شماره پلاک</Label>
+                <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
                 <Input
                   id="plaque"
                   name="plaque"
@@ -142,7 +143,7 @@ export default function EditShopPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="area">مساحت (متر مربع)</Label>
+                <Label htmlFor="area">{labels.areaM2}</Label>
                 <Input
                   id="area"
                   name="area"
@@ -154,11 +155,11 @@ export default function EditShopPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="floor">طبقه</Label>
+                <Label htmlFor="floor">{labels.floorNumber}</Label>
                 <Input id="floor" name="floor" type="number" value={formData.floor} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="type">نوع مغازه</Label>
+                <Label htmlFor="type">{labels.storeOrOffice}</Label>
                 <Select value={shopType} onValueChange={(value: "STORE" | "OFFICE") => setShopType(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="انتخاب نوع مغازه" />
@@ -180,13 +181,13 @@ export default function EditShopPage() {
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full" disabled={updateShopMutation.isPending}>
-                {updateShopMutation.isPending ? "در حال به‌روزرسانی..." : "به‌روزرسانی اطلاعات مغازه"}
+                {updateShopMutation.isPending ? labels.updatingShopInfo : labels.updateShopInfo}
               </Button>
             </CardFooter>
           </form>
         </Card>
       ) : (
-        <p className="text-center text-gray-500">لطفاً یک مغازه را برای ویرایش انتخاب کنید.</p>
+        <p className="text-center text-gray-500">{labels.pleaseSelectShopForEdit}</p>
       )}
     </div>
   )

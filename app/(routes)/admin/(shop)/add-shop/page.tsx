@@ -19,6 +19,8 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { labels } from "@/utils/label";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
@@ -67,17 +69,19 @@ export default function AddShopPage() {
     }
   };
 
+  if (isLoading) return <LoadingComponent text={labels.loadingData} />;
+
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add New Shop</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addNewShop}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Shop Details</CardTitle>
+          <CardTitle>{labels.shopDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="plaque">Plaque Number</Label>
+              <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
               <Input
                 id="plaque"
                 name="plaque"
@@ -94,7 +98,7 @@ export default function AddShopPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="area">Area (sq m)</Label>
+              <Label htmlFor="area">{labels.areaM2}</Label>
               <Input
                 id="area"
                 name="area"
@@ -112,7 +116,7 @@ export default function AddShopPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="floor">Floor</Label>
+              <Label htmlFor="floor">{labels.floorNumber}</Label>
               <Input
                 id="floor"
                 name="floor"
@@ -129,7 +133,7 @@ export default function AddShopPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ownerId">Owner</Label>
+              <Label htmlFor="ownerId">{labels.owner}</Label>
               <PersonSelect property="ownerId" label="Owner" />
               {formErrors.ownerId && (
                 <span className="text-red-500 text-sm">
@@ -138,7 +142,7 @@ export default function AddShopPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="renterId">Renter (Optional)</Label>
+              <Label htmlFor="renterId">{`${labels.renter} (${labels.optional})`}</Label>
               <PersonSelect property="renterId" label="Renter" />
               {formErrors.renterId && (
                 <span className="text-red-500 text-sm">
@@ -147,16 +151,41 @@ export default function AddShopPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shopType">Type</Label>
-              <RadioGroup property="shopType" defaultValue="STORE" dir="rtl">
-                <div className="flex items-center space-x-2" onClick={()=>setNewShop("type","STORE")}>
+              <Label htmlFor="shopType">{labels.type}</Label>
+              <RadioGroup
+                property="shopType"
+                defaultValue="STORE"
+                dir="rtl"
+                className="flex flex-row gap-2 items-center
+                "
+              >
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                  onClick={() => setNewShop("type", "STORE")}
+                >
                   <RadioGroupItem value="STORE" id="r1" />
-                  <Label htmlFor="r1">STORE</Label>
-                </div>
-                <div className="flex items-center space-x-2" onClick={()=>setNewShop("type","OFFICE")}>
-                  <RadioGroupItem value="oFFICE" id="r2" />
-                  <Label htmlFor="r2">OFFICE</Label>
-                </div>
+                  <Label htmlFor="r1">{labels.store}</Label>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                  onClick={() => setNewShop("type", "OFFICE")}
+                >
+                  <RadioGroupItem value="OFFICE" id="r2" />
+                  <Label htmlFor="r2">{labels.office}</Label>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                  onClick={() => setNewShop("type", "KIOSK")}
+                >
+                  <RadioGroupItem value="KIOSK" id="r3" />
+                  <Label htmlFor="r3">{labels.kiosk}</Label>
+                </Button>
               </RadioGroup>
             </div>
           </CardContent>
@@ -166,7 +195,7 @@ export default function AddShopPage() {
               className="w-full"
               disabled={addShopMutation.isPending}
             >
-              {saving ? "Adding Shop..." : "Add Shop"}
+              {saving ? labels.addingShop : labels.addNewShop}
             </Button>
           </CardFooter>
         </form>

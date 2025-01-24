@@ -47,7 +47,9 @@ export function ShopsTable({ shops }: ShopsTableProps) {
               {shop.isActive ? labels.active : labels.inactive}
             </TableCell>
             <TableCell className="text-center">
-              {shop.type === "STORE" ? labels.store : labels.office}
+              {shop.type === "STORE" && labels.store}
+              {shop.type === "OFFICE" && labels.office}
+              {shop.type === "KIOSK" && labels.kiosk}
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/history-by-shop/${shop.id}`} passHref>
