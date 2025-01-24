@@ -249,4 +249,8 @@ export const labels = {
   // Add new label for all charges page
   allChargesTitle: "همه شارژها",
   chargesNotFound: "شارژی یافت نشد",
+  personCharges: "شارژهای شخص",
+  // Add new labels
+  findChargesByShop: "جستجوی شارژها بر اساس واحد",
+  loadingShopData: "در حال بارگذاری اطلاعات واحد",
 };

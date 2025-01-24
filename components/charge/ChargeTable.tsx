@@ -26,7 +26,7 @@ export function ChargeTable({ charges }: ChargeTableProps) {
           <TableHead className="text-center">{labels.personName}</TableHead>
           <TableHead className="text-center">{labels.date}</TableHead>
           <TableHead className="text-center">{labels.operationName}</TableHead>
-          <TableHead className="text-center">{labels.daysCount}t</TableHead>
+          <TableHead className="text-center">{labels.daysCount}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

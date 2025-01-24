@@ -9,6 +9,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
 import { useParams } from "next/navigation";
+import { labels } from "@/utils/label";
 
 export default function FindChargesByPersonPage() {
   const params = useParams();
@@ -32,14 +33,14 @@ export default function FindChargesByPersonPage() {
   }, [data, setShopCharges]);
 
   if (isLoading) {
-    return <LoadingComponent text="loading Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || "Something Went Wrong"}
+        message={data?.message || labels.generalErrorMessage}
         retry={refetch}
       />
     );
@@ -48,13 +49,13 @@ export default function FindChargesByPersonPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Person Charges</CardTitle>
+        <CardTitle>{labels.personCharges}</CardTitle>
       </CardHeader>
       <CardContent>
         {shopCharges && shopCharges.length > 0 ? (
           <ChargeTable charges={shopCharges} />
         ) : (
-          <p>No charges found.</p>
+          <p>{labels.chargesNotFound}</p>
         )}
       </CardContent>
     </Card>

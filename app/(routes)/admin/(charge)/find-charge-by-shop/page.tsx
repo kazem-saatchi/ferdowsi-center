@@ -10,6 +10,8 @@ import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
 import { CustomSelect } from "@/components/CustomSelect";
+import { Separator } from "@/components/ui/separator";
+import { labels } from "@/utils/label";
 
 export default function FindChargesByShopPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -54,14 +56,14 @@ export default function FindChargesByShopPage() {
     })) || [];
 
   if (isLoading) {
-    return <LoadingComponent text="loading Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || "Something Went Wrong"}
+        message={data?.message || labels.generalErrorMessage}
         retry={refetch}
       />
     );
@@ -70,20 +72,21 @@ export default function FindChargesByShopPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Charges</CardTitle>
+        <CardTitle>{labels.findChargesByShop}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <Label htmlFor="shop">Select Shop</Label>
+          <Label htmlFor="shop">{labels.selectShop}</Label>
           <CustomSelect
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
-            label="Shop"
+            label={labels.shop}
           />
         </div>
+        <Separator className="my-4" />
         {loadingShopData && selectedShopId !== "" && (
-          <LoadingComponent text="Loading Shop Data" />
+          <LoadingComponent text={labels.loadingShopData} />
         )}
         {!loadingShopData && shopCharges && shopCharges.length > 0 && (
           <ChargeTable charges={shopCharges} />
