@@ -52,8 +52,8 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
   }
 
   // Retrieve the shop's charge reference
-  const shopChargeReference = await db.shopChargeReference.findUnique({
-    where: { shopId },
+  const shopChargeReference = await db.shopChargeReference.findFirst({
+    where: { shopId, proprietor: false },
   });
 
   if (!shopChargeReference) {

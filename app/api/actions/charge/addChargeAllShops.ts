@@ -63,7 +63,9 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error(errorMSG.unknownError);
   }
 
-  const shopsChargeList = await db.shopChargeReference.findMany();
+  const shopsChargeList = await db.shopChargeReference.findMany({
+    where: { proprietor: false },
+  });
 
   if (!shopsChargeList.length) {
     throw new Error("No shop charge references found in the database.");

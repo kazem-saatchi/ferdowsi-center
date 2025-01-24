@@ -36,7 +36,7 @@ export default function EditShopPage() {
     floor: "",
   })
 
-  const [shopType, setShopType] = useState<"STORE" | "OFFICE">("STORE")
+  const [shopType, setShopType] = useState<"STORE" | "OFFICE" | "KIOSK">("STORE")
 
   useEffect(() => {
     if (data?.data?.shops) {

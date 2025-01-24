@@ -33,7 +33,7 @@ export default function EditShopPageById() {
     floor: "",
   });
 
-  const [shopType, setShopType] = useState<"STORE" | "OFFICE">("STORE");
+  const [shopType, setShopType] = useState<"STORE" | "OFFICE" | "KIOSK">("STORE");
 
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
