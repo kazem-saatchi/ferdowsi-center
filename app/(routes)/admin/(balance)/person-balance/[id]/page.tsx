@@ -8,6 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { labels } from "@/utils/label";
 
 export default function PersonBalanceByIdPage() {
   const params = useParams();
@@ -42,19 +43,19 @@ export default function PersonBalanceByIdPage() {
   }, [data, setPersonBalance, setPersonsBalance]);
 
   if (isLoading)
-    return <LoadingComponent text="در حال بارگذاری اطلاعات مالی" />;
+    return <LoadingComponent text={labels.loadingFinancialData} />;
   if (isError)
     return (
       <ErrorComponent
         error={error as Error}
-        message="خطا در دریافت اطلاعات مالی"
+        message={labels.errorLoadingFinancial}
         retry={refetch}
       />
     );
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">اطلاعات مالی شخص</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.personFinancialInfo}</h1>
       {data?.data && data?.data.personBalance && <PersonBalanceDisplay />}
     </div>
   );

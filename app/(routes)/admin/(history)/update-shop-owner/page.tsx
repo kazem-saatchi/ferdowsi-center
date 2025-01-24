@@ -18,6 +18,7 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
+import { labels } from "@/utils/label";
 
 export default function UpdateShopOwnerPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -58,9 +59,7 @@ export default function UpdateShopOwnerPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedOwnerId || !ownerChangeDate) {
-      toast.error(
-        "Please select a shop, a new owner, and provide a change date"
-      );
+      toast.error(labels.selectRequiredFields);
       return;
     }
     try {
@@ -74,10 +73,10 @@ export default function UpdateShopOwnerPage() {
       setSelectedOwnerId("");
       setOwnerChangeDate(null);
       setCurrentOwnerName("");
-      toast.success("Shop owner updated successfully");
+      
     } catch (error) {
       console.error("Error updating shop owner:", error);
-      toast.error("Failed to update shop owner");
+      toast.error(labels.ownerUpdateError);
     }
   };
 
@@ -93,28 +92,26 @@ export default function UpdateShopOwnerPage() {
       label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
     })) || [];
 
-
-
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Update Shop Owner</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.updateShopOwner}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Change Shop Owner</CardTitle>
+          <CardTitle>{labels.changeShopOwner}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currentOwner">Current Owner</Label>
+              <Label htmlFor="currentOwner">{labels.currentOwner}</Label>
               <Input
                 id="currentOwner"
                 disabled={true}
@@ -122,18 +119,18 @@ export default function UpdateShopOwnerPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newOwner">New Owner</Label>
+              <Label htmlFor="newOwner">{labels.newOwner}</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedOwnerId}
                 onChange={setSelectedOwnerId}
-                label="New Owner"
+                label={labels.newOwner}
               />
             </div>
             <JalaliDayCalendar
               date={ownerChangeDate}
               setDate={setOwnerChangeDate}
-              title="Owner Change Date"
+              title={labels.ownerChangeDate}
             />
           </CardContent>
           <CardFooter>
@@ -148,8 +145,8 @@ export default function UpdateShopOwnerPage() {
               }
             >
               {updateShopOwnerMutation.isPending
-                ? "Updating Owner..."
-                : "Update Shop Owner"}
+                ? labels.updatingOwner
+                : labels.updateShopOwner}
             </Button>
           </CardFooter>
         </form>

@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { labels } from "@/utils/label";
 
 export default function UpdateShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -60,7 +61,7 @@ export default function UpdateShopRenterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedRenterId || !renterChangeDate) {
-      toast.error("Please select a shop, a new renter, and provide a change date");
+      toast.error(labels.selectRequiredFieldsRenter);
       return;
     }
     try {
@@ -74,10 +75,9 @@ export default function UpdateShopRenterPage() {
       setSelectedRenterId("");
       setRenterChangeDate(null);
       setCurrentRenterName("");
-      toast.success("Shop renter updated successfully");
     } catch (error) {
       console.error("Error updating shop renter:", error);
-      toast.error("Failed to update shop renter");
+      toast.error(labels.renterUpdateError);
     }
   };
 
@@ -104,24 +104,24 @@ export default function UpdateShopRenterPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Update Shop Renter</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.updateShopRenter}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Change Shop Renter</CardTitle>
+          <CardTitle>{labels.changeShopRenter}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currentRenter">Current Renter</Label>
+              <Label htmlFor="currentRenter">{labels.currentRenter}</Label>
               <Input
                 id="currentRenter"
                 disabled={true}
@@ -129,16 +129,16 @@ export default function UpdateShopRenterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newRenter">New Renter</Label>
+              <Label htmlFor="newRenter">{labels.newRenter}</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedRenterId}
                 onChange={setSelectedRenterId}
-                label="New Renter"
+                label={labels.newOwner}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="renterChangeDate">Renter Change Date</Label>
+              <Label htmlFor="renterChangeDate" className="ml-2">{labels.renterChangeDate}</Label>
               <DatePicker
                 calendar={persian}
                 locale={persian_fa}
@@ -168,8 +168,8 @@ export default function UpdateShopRenterPage() {
               }
             >
               {updateShopRenterMutation.isPending
-                ? "Updating Renter..."
-                : "Update Shop Renter"}
+                ? labels.updatingRenter
+                : labels.changeShopRenter}
             </Button>
           </CardFooter>
         </form>

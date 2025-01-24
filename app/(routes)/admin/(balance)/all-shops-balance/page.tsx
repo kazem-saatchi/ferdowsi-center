@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { Button } from "@/components/ui/button";
+import { labels } from "@/utils/label";
 
 export default function AllShopsBalancePage() {
   const { data, isLoading, isError, error, refetch } = useGetAllShopsBalance();
@@ -33,14 +34,14 @@ export default function AllShopsBalancePage() {
   }, [data, setAllBalances]);
 
   if (isLoading) {
-    return <LoadingComponent text="در حال دریافت اطلاعات" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message="خطایی رخ داده است"
+        message={labels.errorOccurred}
         retry={refetch}
       />
     );
@@ -49,17 +50,17 @@ export default function AllShopsBalancePage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>مانده حساب همه واحدها</CardTitle>
+        <CardTitle>{labels.allShopsBalance}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-row items-center justify-start gap-2">
-          <Button onClick={exportAllBalanceToPdf}>دانلود به صورت PDF</Button>
-          <Button onClick={exportAllBalanceToExcel}>دانلود به صورت EXCEL</Button>
+        <div className="flex flex-row items-center justify-start gap-2 mb-4">
+          <Button onClick={exportAllBalanceToPdf}>{labels.downloadAsPDF}</Button>
+          <Button onClick={exportAllBalanceToExcel}>{labels.downloadAsExcel}</Button>
         </div>
         {allBalances && allBalances.length > 0 ? (
           <BalanceTable balances={allBalances} />
         ) : (
-          <p>اطلاعاتی یافت نشد</p>
+          <p>{labels.noDataFound}</p>
         )}
       </CardContent>
     </Card>

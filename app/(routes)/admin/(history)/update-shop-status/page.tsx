@@ -14,6 +14,7 @@ import { useShallow } from 'zustand/react/shallow'
 import DatePicker from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
 import persian_fa from "react-date-object/locales/persian_fa"
+import { labels } from '@/utils/label'
 
 export default function UpdateShopStatusPage() {
   const [selectedShopId, setSelectedShopId] = useState('')
@@ -40,7 +41,7 @@ export default function UpdateShopStatusPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedShopId || !statusChangeDate) {
-      toast.error('Please select a shop and provide a status change date')
+      toast.error(labels.selectShopAndDate)
       return
     }
     try {
@@ -49,10 +50,10 @@ export default function UpdateShopStatusPage() {
         newStatus: selectedShop?.isActive ? "INACTIVATE" : "ACTIVATE",
         date: statusChangeDate.toISOString(),
       })
-      toast.success(`Shop status updated successfully`)
+      toast.success(labels.shopStatusUpdateSuccess)
     } catch (error) {
       console.error('Error updating shop status:', error)
-      toast.error('Failed to update shop status')
+      toast.error(labels.shopStatusUpdateError)
     }
   }
 
@@ -74,26 +75,26 @@ export default function UpdateShopStatusPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Update Shop Status</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.updateShopStatus}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Change Shop Active Status</CardTitle>
+          <CardTitle>{labels.changeShopActiveStatus}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             {selectedShop && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="ownerName">Owner Name</Label>
+                  <Label htmlFor="ownerName">{labels.ownerName}</Label>
                   <Input
                     id="ownerName"
                     value={selectedShop.ownerName}
@@ -101,23 +102,23 @@ export default function UpdateShopStatusPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="renterName">Renter Name</Label>
+                  <Label htmlFor="renterName">{labels.renterName}</Label>
                   <Input
                     id="renterName"
-                    value={selectedShop.renterName || 'N/A'}
+                    value={selectedShop.renterName || labels.notAvailable}
                     disabled
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="currentStatus">Current Status</Label>
+                  <Label htmlFor="currentStatus">{labels.status}</Label>
                   <Input
                     id="currentStatus"
-                    value={selectedShop.isActive ? 'Active' : 'Inactive'}
+                    value={selectedShop.isActive ? labels.active : labels.inactive}
                     disabled
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="statusChangeDate">Status Change Date</Label>
+                  <Label htmlFor="statusChangeDate" className="ml-2">{labels.statusChangeDate}</Label>
                   <DatePicker
                     calendar={persian}
                     locale={persian_fa}
@@ -144,10 +145,10 @@ export default function UpdateShopStatusPage() {
               disabled={updateShopStatusMutation.isPending || !selectedShopId || !statusChangeDate}
             >
               {updateShopStatusMutation.isPending
-                ? 'Updating Status...'
+                ? labels.updatingStatus
                 : selectedShop?.isActive
-                ? 'Deactivate Shop'
-                : 'Activate Shop'}
+                ? labels.deactivateShop
+                : labels.activateShop}
             </Button>
           </CardFooter>
         </form>

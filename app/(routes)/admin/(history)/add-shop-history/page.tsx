@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from 'sonner'
 import { CustomSelect } from '@/components/CustomSelect'
+import { labels } from '@/utils/label'
 
 export default function AddShopHistoryPage() {
   const [selectedShopId, setSelectedShopId] = useState('')
@@ -71,47 +72,47 @@ export default function AddShopHistoryPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Shop History</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addShopHistory}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Shop History Details</CardTitle>
+          <CardTitle>{labels.shopHistoryDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="person">Person</Label>
+              <Label htmlFor="person">{labels.person}</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedPersonId}
                 onChange={setSelectedPersonId}
-                label="Person"
+                label={labels.person}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
+              <Label htmlFor="type">{labels.type}</Label>
               <Select name="type" value={formData.type} onValueChange={(value) => handleChange({ target: { name: 'type', value } } as any)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
+                  <SelectValue placeholder={labels.selectType} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ownership">Ownership</SelectItem>
-                  <SelectItem value="activePeriod">Active Period</SelectItem>
-                  <SelectItem value="deactivePeriod">Deactive Period</SelectItem>
-                  <SelectItem value="rental">Rental</SelectItem>
+                  <SelectItem value="ownership">{labels.ownership}</SelectItem>
+                  <SelectItem value="activePeriod">{labels.activePeriod}</SelectItem>
+                  <SelectItem value="deactivePeriod">{labels.deactivePeriod}</SelectItem>
+                  <SelectItem value="rental">{labels.rental}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{labels.startDate}</Label>
               <Input 
                 id="startDate" 
                 name="startDate" 
@@ -122,7 +123,7 @@ export default function AddShopHistoryPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date (Optional)</Label>
+              <Label htmlFor="endDate">{`${labels.endDate} (${labels.optional})`}</Label>
               <Input 
                 id="endDate" 
                 name="endDate" 
@@ -138,7 +139,7 @@ export default function AddShopHistoryPage() {
               className="w-full"
               disabled={addShopHistoryMutation.isPending || !selectedShopId || !selectedPersonId}
             >
-              {addShopHistoryMutation.isPending ? 'Adding History...' : 'Add Shop History'}
+              {addShopHistoryMutation.isPending ? labels.addingHistory : labels.addShopHistory}
             </Button>
           </CardFooter>
         </form>

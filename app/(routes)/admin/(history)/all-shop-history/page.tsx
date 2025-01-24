@@ -9,6 +9,7 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import HistoryTable from "@/components/history/HistoryTable";
+import { labels } from "@/utils/label";
 
 export default function AllShopHistoryPage() {
   const { data, isLoading, isError, error, refetch } = useShopHistoryAll();
@@ -28,7 +29,7 @@ export default function AllShopHistoryPage() {
   }, [data]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading shop history..." />;
+    return <LoadingComponent text={labels.loadingShopHistory} />;
   }
 
   if (isError) {
@@ -42,13 +43,13 @@ export default function AllShopHistoryPage() {
   }
 
   if (!allHistories) {
-    return <ErrorComponentSimple message="Histories Not Found" />;
+    return <ErrorComponentSimple message={labels.historiesNotFound} />;
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Shop History</CardTitle>
+        <CardTitle>{labels.allShopHistory}</CardTitle>
       </CardHeader>
       <CardContent>
         <HistoryTable allHistories={allHistories} />

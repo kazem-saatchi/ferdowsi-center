@@ -18,6 +18,7 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { AddChargeAllShopsData } from "@/schema/chargeSchema";
 import DateObject from "react-date-object";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
+import { labels } from "@/utils/label";
 
 export default function AddChargesToAllShopsPage() {
   const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ export default function AddChargesToAllShopsPage() {
       const result = await addChargeAllShopMutation.mutateAsync(dataState);
 
       if (result.success) {
-        toast.success("Charges added successfully to all shops");
+        toast.success(labels.chargesAddedSuccess);
         // Reset form after successful submission
         setFormData({
           month: "",
@@ -73,26 +74,26 @@ export default function AddChargesToAllShopsPage() {
           title: "",
         });
       } else {
-        toast.error(result.message || "Failed to add charges");
+        toast.error(result.message || labels.failedToAddCharges);
       }
     } catch (error) {
       console.error("Error adding charges:", error);
-      toast.error("An error occurred while adding charges");
+      toast.error(labels.failedToAddCharges);
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Charges to All Shops</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addChargesToAllShops}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Charge Details</CardTitle>
+          <CardTitle>{labels.chargeDetailsTitle}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <JalaliMonthCalendar handleDateChange={handleDateChange} />
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{labels.title}</Label>
               <Input
                 id="title"
                 name="title"
@@ -109,8 +110,8 @@ export default function AddChargesToAllShopsPage() {
               disabled={addChargeAllShopMutation.isPending}
             >
               {addChargeAllShopMutation.isPending
-                ? "Adding Charges..."
-                : "Add Charges to All Shops"}
+                ? labels.addingChargesToAllShops
+                : labels.addChargesToAllShops}
             </Button>
           </CardFooter>
         </form>

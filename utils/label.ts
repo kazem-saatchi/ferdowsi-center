@@ -11,8 +11,8 @@ export const labels = {
   operationName: "موضوع",
   daysCount: "تعداد روز",
 
-  shopId: "آی-دی واحد",
-  personId: "آی-دی شخص",
+  shopId: "واحد",
+  personId: "شخص",
   type: "نوع",
   startDate: "تاریخ شروع",
   endDate: "تاریخ پایان",
@@ -73,6 +73,21 @@ export const labels = {
   storeOrOffice: "تجاری / اداری",
   store: "تجاری",
   office: "اداری",
+  kiost: "مشاعات",
+
+  // Add new labels for shop history
+  addShopHistory: "ثبت تاریخچه واحد",
+  shopHistoryDetails: "جزئیات تاریخچه واحد",
+  ownership: "مالکیت",
+  activePeriod: "دوره فعال",
+  deactivePeriod: "دوره غیرفعال",
+  rental: "اجاره",
+  addingHistory: "در حال ثبت تاریخچه...",
+  selectType: "انتخاب نوع",
+  shop: "واحد",
+  person: "شخص",
+
+  optional: "اختیاری",
 
   // New translations for Charge Reference
   chargeReferenceList: "لیست شارژ مرجع",
@@ -100,4 +115,138 @@ export const labels = {
   successMessage: "مرجع شارژ مغازه با موفقیت ایجاد شد",
   errorMessage: "خطا در ایجاد مرجع شارژ مغازه",
   generalErrorMessage: "خطایی هنگام ایجاد مرجع شارژ مغازه رخ داد",
+  
+  // Add new label for all shop history page
+  allShopHistory: "تاریخچه همه واحدها",
+  loadingShopHistory: "در حال بارگذاری تاریخچه واحدها...",
+  historiesNotFound: "تاریخچه‌ای یافت نشد",
+  shopHistory: "تاریخچه واحد",
+  personHistory: "تاریخچه شخص",
+
+  removeShopRenter: "حذف مستاجر واحد",
+  endRentalAgreement: "پایان قرارداد اجاره",
+  noCurrentRenter: "مستاجری ندارد",
+  removingRenter: "در حال حذف مستاجر...",
+  removeRenter: "حذف مستاجر",
+
+  // Add new labels for update shop owner page
+  updateShopOwner: "تغییر مالک واحد",
+  changeShopOwner: "تغییر مالک",
+  currentOwner: "مالک فعلی",
+  newOwner: "مالک جدید",
+  ownerChangeDate: "تاریخ تغییر مالکیت",
+  updatingOwner: "در حال تغییر مالک...",
+  selectRequiredFields: "لطفا واحد، مالک جدید و تاریخ تغییر را انتخاب کنید",
+  ownerUpdateSuccess: "مالک واحد با موفقیت تغییر کرد",
+  ownerUpdateError: "خطا در تغییر مالک واحد",
+
+  // Add new labels for update shop renter page
+  updateShopRenter: "تغییر مستاجر واحد",
+  changeShopRenter: "تغییر مستاجر",
+  currentRenter: "مستاجر فعلی",
+  renterChangeDate: "تاریخ تغییر مستاجر",
+  updatingRenter: "در حال تغییر مستاجر...",
+  selectRequiredFieldsRenter: "لطفا واحد، مستاجر جدید و تاریخ تغییر را انتخاب کنید",
+  renterUpdateSuccess: "مستاجر واحد با موفقیت تغییر کرد",
+  renterUpdateError: "خطا در تغییر مستاجر واحد",
+  newRenter: "مستاجر جدید",
+
+  // Add new labels for update shop status page
+  updateShopStatus: "تغییر وضعیت واحد",
+  changeShopActiveStatus: "تغییر وضعیت فعال بودن واحد",
+  statusChangeDate: "تاریخ تغییر وضعیت",
+  updatingStatus: "در حال تغییر وضعیت...",
+  activateShop: "فعال کردن واحد",
+  deactivateShop: "غیرفعال کردن واحد",
+  selectShopAndDate: "لطفا واحد و تاریخ تغییر را انتخاب کنید",
+  shopStatusUpdateSuccess: "وضعیت واحد با موفقیت تغییر کرد",
+  shopStatusUpdateError: "خطا در تغییر وضعیت واحد",
+
+  // Add new labels for payment page
+  addPayment: "ثبت پرداختی",
+  paymentDetails: "جزییات پرداخت",
+  selectUnit: "انتخاب واحد",
+  payingPerson: "شخص پرداخت کننده",
+  personNotOwnerOrRenter: "شخص انتخاب شده مالک یا مستاجر ملک مورد نظر نیست",
+  paymentDate: "تاریخ پرداخت",
+  amountInRials: "مبلغ به ریال",
+  chargeType: "نوع شارژ",
+  description: "توضیحات",
+  paymentMethod: "نوع پرداخت",
+  cash: "نقدی",
+  cheque: "چک",
+  posDevice: "دستگاه کارت خوان",
+  bankTransfer: "کارت به کارت",
+  otherMethods: "سایر روش ها",
+  uploadReceiptImage: "آپلود تصویر رسید",
+  receiptRequired: "در حالت کارت به کارت، چک و کارتخوان، آپلود عکس رسید الزامی هست",
+  submitting: "در حال ثبت...",
+  submit: "ثبت پرداختی",
+  paymentAddedSuccess: "پرداختی با موفقیت ثبت شد",
+  paymentAddedError: "خطا در ثبت پرداختی",
+  selectRequiredFieldsPayment: "لطفا واحد، شخص پرداخت کننده، تاریخ پرداخت و مبلغ را انتخاب کنید",
+  
+  allPaymentsList: "لیست تمام پرداختی‌ها",
+  paymentsNotFound: "پرداختی یافت نشد",
+  loadingPayments: "در حال بارگذاری اطلاعات",
+  errorLoadingPayments: "خطایی رخ داده است",
+
+  searchPaymentsByPerson: "جستجوی پرداختی‌ها بر اساس شخص",
+  selectPerson: "انتخاب شخص",
+
+  searchPaymentsByShop: "جستجوی پرداختی‌ها بر اساس واحد",
+  
+  // Add new labels for balance page
+  allShopsBalance: "مانده حساب همه واحدها",
+  downloadAsPDF: "دانلود به صورت PDF",
+  downloadAsExcel: "دانلود به صورت EXCEL",
+  noDataFound: "اطلاعاتی یافت نشد",
+  
+  // Add new labels for person balance page
+  personBalanceInfo: "اطلاعات مالی شخص",
+  loadingPersonsData: "در حال بارگذاری اطلاعات اشخاص",
+  errorLoadingPersons: "خطا در دریافت اطلاعات اشخاص",
+  loadingFinancialData: "در حال بارگذاری اطلاعات مالی",
+  errorLoadingFinancial: "خطا در دریافت اطلاعات مالی",
+  personFinancialInfo: "اطلاعات مالی شخص",
+  
+  // Add new labels
+  shopBalanceTitle: "حساب یک واحد",
+  selectShop: "انتخاب واحد",
+  relatedPersonsBalance: "حساب اشخاص مرتبط",
+  noInformationFound: "هیچ اطلاعاتی یافت نشد",
+  loadingShopsData: "در حال بارگذاری اطلاعات واحدها",
+  unitAccountBalance: "مانده حساب واحد",
+  personsAccountBalance: "مانده حساب اشخاص",
+
+  // Add new labels
+  addChargeByAmount: "ثبت شارژ بر اساس مبلغ",
+  chargeDetails: "جزئیات شارژ",
+  owner: "مالک",
+  renter: "مستاجر",
+  noRenter: "بدون مستاجر",
+  chargeDate: "تاریخ شارژ",
+  addingCharge: "در حال ثبت شارژ...",
+  addCharge: "ثبت شارژ",
+  fillRequiredFields: "لطفا تمامی فیلدهای الزامی را پر کنید: واحد، شخص، تاریخ شارژ، مبلغ و عنوان",
+  failedToAddCharge: "خطا در ثبت شارژ",
+
+  // Add new labels for add charge to shop page
+  addChargeToShop: "ثبت شارژ برای واحد",
+  chargeMonth: "ماه شارژ",
+  addingChargeToShop: "در حال ثبت شارژ...",
+  pleaseSelectShop: "لطفا یک واحد را انتخاب کنید",
+  chargeAddedSuccess: "شارژ با موفقیت ثبت شد",
+  errorAddingCharge: "خطایی در ثبت شارژ رخ داد",
+
+  // Add new labels for add charges to all shops page
+  addChargesToAllShops: "ثبت شارژ برای همه واحدها",
+  addingChargesToAllShops: "در حال ثبت شارژ...",
+  chargesAddedSuccess: "شارژ با موفقیت برای همه واحدها ثبت شد",
+  failedToAddCharges: "خطا در ثبت شارژ برای همه واحدها",
+  chargeDetailsTitle: "جزئیات شارژ",
+  
+  // Add new label for all charges page
+  allChargesTitle: "همه شارژها",
+  chargesNotFound: "شارژی یافت نشد",
 };

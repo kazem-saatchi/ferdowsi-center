@@ -24,6 +24,7 @@ import {
 } from "@/schema/chargeSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
 import { Textarea } from "@/components/ui/textarea";
+import { labels } from "@/utils/label";
 
 export default function AddChargeByAmountPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -60,16 +61,8 @@ export default function AddChargeByAmountPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !selectedShopId ||
-      !selectedPersonId ||
-      !chargeDate ||
-      !amount ||
-      !title
-    ) {
-      toast.error(
-        "Please fill in all fields: shop, person, charge date, amount, and title"
-      );
+    if (!selectedShopId || !selectedPersonId || !chargeDate || !amount || !title) {
+      toast.error(labels.fillRequiredFields);
       return;
     }
     try {
@@ -96,14 +89,14 @@ export default function AddChargeByAmountPage() {
         setTitle("");
         setProprietor(false);
       } else {
-        toast.error(result.message || "Failed to add charge");
+        toast.error(result.message || labels.failedToAddCharge);
       }
     } catch (error) {
       console.error("Error adding charge:", error);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to add charge");
+        toast.error(labels.failedToAddCharge);
       }
     }
   };
@@ -131,76 +124,65 @@ export default function AddChargeByAmountPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Charge by Amount</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addChargeByAmount}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Charge Details</CardTitle>
+          <CardTitle>{labels.chargeDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">مغازه</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             {selectedShopId !== "" && shopsAll && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="owner">مالک</Label>
+                  <Label htmlFor="owner">{labels.owner}</Label>
                   <Input
                     id="owner"
                     type="text"
-                    value={
-                      shopsAll.find((shop) => shop.id === selectedShopId)
-                        ?.ownerName
-                    }
+                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.ownerName}
                     disabled
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="renter">مستاجر</Label>
+                  <Label htmlFor="renter">{labels.renter}</Label>
                   <Input
                     id="renter"
                     type="text"
-                    value={
-                      shopsAll.find((shop) => shop.id === selectedShopId)
-                        ?.renterName || "No renter"
-                    }
+                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.renterName || labels.noRenter}
                     disabled
                   />
                 </div>
               </>
             )}
             <div className="space-y-2">
-              <Label htmlFor="person">نام شخص</Label>
+              <Label htmlFor="person">{labels.personName}</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedPersonId}
                 onChange={setSelectedPersonId}
-                label="Person"
+                label={labels.person}
               />
             </div>
-            {selectedShopId !== "" &&
-              selectedPersonId !== "" &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
-                selectedPersonId &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
-                selectedPersonId && (
-                <p className="text-red-400">
-                  شخص انتخاب شده مالک یا مستاجر ملک مورد نظر نیست
-                </p>
+            {selectedShopId !== "" && selectedPersonId !== "" && 
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !== selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !== selectedPersonId && (
+                <p className="text-red-400">{labels.personNotOwnerOrRenter}</p>
               )}
             <JalaliDayCalendar
               date={chargeDate}
               setDate={setChargeDate}
-              title="تاریخ شارژ"
+              title={labels.chargeDate}
             />
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
+              <Label htmlFor="amount">{labels.amount}</Label>
               <Input
                 id="amount"
                 type="text"
@@ -210,7 +192,7 @@ export default function AddChargeByAmountPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{labels.title}</Label>
               <Input
                 id="title"
                 type="text"
@@ -220,26 +202,22 @@ export default function AddChargeByAmountPage() {
               />
             </div>
             <div className="flex flex-row gap-2 items-center">
-              <Label htmlFor="proprietor">نوع شارژ</Label>
+              <Label htmlFor="proprietor">{labels.paymentCategory}</Label>
               <Button
                 id="proprietor"
                 variant={proprietor ? "destructive" : "outline"}
                 type="button"
-                onClick={() => {
-                  setProprietor((prev) => !prev);
-                }}
+                onClick={() => setProprietor((prev) => !prev)}
               >
-                {proprietor ? "مالکانه" : "ماهانه"}
+                {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
               </Button>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">توضیحات</Label>
+              <Label htmlFor="description">{labels.description}</Label>
               <Textarea
                 id="description"
                 value={description}
-                onChange={(event) => {
-                  setDescription(event.target.value);
-                }}
+                onChange={(event) => setDescription(event.target.value)}
               />
             </div>
           </CardContent>
@@ -247,16 +225,9 @@ export default function AddChargeByAmountPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={
-                addChargeMutation.isPending ||
-                !selectedShopId ||
-                !selectedPersonId ||
-                !chargeDate ||
-                !amount ||
-                !title
-              }
+              disabled={addChargeMutation.isPending || !selectedShopId || !selectedPersonId || !chargeDate || !amount || !title}
             >
-              {addChargeMutation.isPending ? "Adding Charge..." : "Add Charge"}
+              {addChargeMutation.isPending ? labels.addingCharge : labels.addCharge}
             </Button>
           </CardFooter>
         </form>

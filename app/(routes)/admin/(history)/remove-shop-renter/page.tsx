@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { labels } from "@/utils/label";
 
 export default function RemoveShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -46,7 +47,7 @@ export default function RemoveShopRenterPage() {
   useEffect(() => {
     if (selectedShopId && shopsAll) {
       const selectedShop = shopsAll.find(shop => shop.id === selectedShopId);
-      setCurrentRenterName(selectedShop?.renterName || "No current renter");
+      setCurrentRenterName(selectedShop?.renterName || labels.noCurrentRenter);
       setCurrentRenterId(selectedShop?.renterId || "");
     }
   }, [selectedShopId, shopsAll]);
@@ -93,24 +94,24 @@ export default function RemoveShopRenterPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Remove Shop Renter</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.removeShopRenter}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>End Rental Agreement</CardTitle>
+          <CardTitle>{labels.endRentalAgreement}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">Shop</Label>
+              <Label htmlFor="shop">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currentRenter">Current Renter</Label>
+              <Label htmlFor="currentRenter">{labels.renterName}</Label>
               <Input
                 id="currentRenter"
                 disabled={true}
@@ -118,7 +119,7 @@ export default function RemoveShopRenterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">Rental End Date</Label>
+              <Label htmlFor="endDate">{labels.endDate}</Label>
               <DatePicker
                 calendar={persian}
                 locale={persian_fa}
@@ -148,8 +149,8 @@ export default function RemoveShopRenterPage() {
               }
             >
               {endShopRenterMutation.isPending
-                ? "Removing Renter..."
-                : "Remove Renter"}
+                ? labels.removingRenter
+                : labels.removeRenter}
             </Button>
           </CardFooter>
         </form>

@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PaymentTable } from "@/components/payment/PaymentTable";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { labels } from "@/utils/label";
 
 export default function AllPaymentsPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllPayments();
@@ -26,14 +27,14 @@ export default function AllPaymentsPage() {
   }, [data, setAllPayments]);
 
   if (isLoading) {
-    return <LoadingComponent text="در حال بارگذاری اطلاعات" />;
+    return <LoadingComponent text={labels.loadingPayments} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message="خطایی رخ داده است"
+        message={labels.errorLoadingPayments}
         retry={refetch}
       />
     );
@@ -42,13 +43,13 @@ export default function AllPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>لیست تمام پرداختی‌ها</CardTitle>
+        <CardTitle>{labels.allPaymentsList}</CardTitle>
       </CardHeader>
       <CardContent>
         {allPayments && allPayments.length > 0 ? (
           <PaymentTable payments={allPayments} />
         ) : (
-          <p>پرداختی یافت نشد</p>
+          <p>{labels.paymentsNotFound}</p>
         )}
       </CardContent>
     </Card>

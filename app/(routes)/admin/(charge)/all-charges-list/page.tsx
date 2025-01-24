@@ -7,6 +7,7 @@ import { ChargeTable } from "@/components/charge/ChargeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { labels } from "@/utils/label";
 
 export default function AllChargesPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllCharges();
@@ -19,14 +20,14 @@ export default function AllChargesPage() {
   }, [data, setAllCharges]);
 
   if (isLoading) {
-    return <LoadingComponent text="loading Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || "Something Went Wrong"}
+        message={data?.message || labels.errorOccurred}
         retry={refetch}
       />
     );
@@ -35,13 +36,13 @@ export default function AllChargesPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Charges</CardTitle>
+        <CardTitle>{labels.allChargesTitle}</CardTitle>
       </CardHeader>
       <CardContent>
         {allCharges && allCharges.length > 0 ? (
           <ChargeTable charges={allCharges} />
         ) : (
-          <p>No charges found.</p>
+          <p>{labels.chargesNotFound}</p>
         )}
       </CardContent>
     </Card>

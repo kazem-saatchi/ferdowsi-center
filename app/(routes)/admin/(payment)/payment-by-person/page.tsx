@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
+import { labels } from "@/utils/label";
 
 export default function PersonPaymentsPage() {
   const [selectedPersonId, setSelectedPersonId] = useState("");
@@ -46,26 +47,26 @@ export default function PersonPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>جستجوی پرداختی‌ها بر اساس شخص</CardTitle>
+        <CardTitle>{labels.searchPaymentsByPerson}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="person">انتخاب شخص</Label>
+          <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect
             options={personOptions}
             value={selectedPersonId}
             onChange={setSelectedPersonId}
-            label="Person"
+            label={labels.person}
           />
         </div>
         {isLoading ? (
           <Skeleton className="w-full h-[400px]" />
         ) : isError ? (
-          <p>خطایی رخ داده است</p>
+          <p>{labels.errorOccurred}</p>
         ) : personPayments && personPayments.length > 0 ? (
           <PaymentTable payments={personPayments} />
         ) : (
-          <p>هیچ پرداختی پیدا نشد</p>
+          <p>{labels.paymentsNotFound}</p>
         )}
       </CardContent>
     </Card>

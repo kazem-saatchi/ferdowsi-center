@@ -10,6 +10,7 @@ import React, { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import HistoryTable from "@/components/history/HistoryTable";
+import { labels } from "@/utils/label";
 
 function HistoryByShop() {
   const params = useParams();
@@ -33,7 +34,7 @@ function HistoryByShop() {
   }, [data]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading shop history..." />;
+    return <LoadingComponent text={labels.loadingShopHistory} />;
   }
 
   if (isError) {
@@ -47,13 +48,13 @@ function HistoryByShop() {
   }
 
   if (!shopHistories) {
-    return <ErrorComponentSimple message="Histories Not Found" />;
+    return <ErrorComponentSimple message={labels.historiesNotFound} />;
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Shop {shopHistories[0].plaque} History</CardTitle>
+        <CardTitle>{`${labels.shopHistory} ${shopHistories[0].plaque}`}</CardTitle>
       </CardHeader>
       <CardContent>
         <HistoryTable allHistories={shopHistories} />

@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UploadImage from "@/components/upload-file/UploadImage";
+import { labels } from "@/utils/label";
 
 export default function AddPaymentPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -72,9 +73,7 @@ export default function AddPaymentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedPersonId || !paymentDate || !amount) {
-      toast.error(
-        "Please select a shop, a person, provide a payment date, and enter an amount"
-      );
+      toast.error(labels.selectRequiredFieldsPayment);
       return;
     }
     try {
@@ -92,14 +91,12 @@ export default function AddPaymentPage() {
       const validatedData = addPaymentByInfoSchema.parse(paymentData);
 
       if (type !== "CASH" && type !== "OTHER" && receiptImageUrl === "") {
-        toast.error(
-          "در حالت کارت به کارت، چک و کارتخوان، آپلود عکس رسید الزامی هست"
-        );
+        toast.error(labels.receiptRequired);
       } else {
         const result = await addPaymentMutation.mutateAsync(validatedData);
 
         if (result.success) {
-          toast.success("Payment added successfully");
+          toast.success(labels.paymentAddedSuccess);
           // Reset form after successful submission
           setSelectedShopId("");
           setSelectedPersonId("");
@@ -111,7 +108,7 @@ export default function AddPaymentPage() {
           setProprietor(false);
           setUploadPage(false);
         } else {
-          toast.error(result.message || "Failed to add payment");
+          toast.error(result.message || labels.paymentAddedError);
         }
       }
     } catch (error) {
@@ -119,7 +116,7 @@ export default function AddPaymentPage() {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to add payment");
+        toast.error(labels.paymentAddedError);
       }
     }
   };
@@ -147,15 +144,15 @@ export default function AddPaymentPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">ثبت پرداختی</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addPayment}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>جزییات پرداخت</CardTitle>
+          <CardTitle>{labels.paymentDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">انتخاب واحد</Label>
+              <Label htmlFor="shop">{labels.selectUnit}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
@@ -166,33 +163,27 @@ export default function AddPaymentPage() {
             {selectedShopId !== "" && shopsAll && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="owner">نام مالک</Label>
+                  <Label htmlFor="owner">{labels.ownerName}</Label>
                   <Input
                     id="owner"
                     type="text"
-                    value={
-                      shopsAll.find((shop) => shop.id === selectedShopId)
-                        ?.ownerName
-                    }
+                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.ownerName}
                     disabled
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="renter">نام مستاجر</Label>
+                  <Label htmlFor="renter">{labels.renterName}</Label>
                   <Input
                     id="renter"
                     type="text"
-                    value={
-                      shopsAll.find((shop) => shop.id === selectedShopId)
-                        ?.renterName || ""
-                    }
+                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.renterName || ""}
                     disabled
                   />
                 </div>
               </>
             )}
             <div className="space-y-2">
-              <Label htmlFor="person">شخص پرداخت کننده</Label>
+              <Label htmlFor="person">{labels.payingPerson}</Label>
               <CustomSelect
                 options={personOptions}
                 value={selectedPersonId}
@@ -200,25 +191,18 @@ export default function AddPaymentPage() {
                 label="Person"
               />
             </div>
-            {selectedShopId !== "" &&
-              selectedPersonId !== "" &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
-                selectedPersonId &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
-                selectedPersonId && (
-                <>
-                  <p className="text-red-400">
-                    شخص انتخاب شده ماکت یا مستاجر ملک مورد نظر نیست
-                  </p>
-                </>
+            {selectedShopId !== "" && selectedPersonId !== "" && 
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !== selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !== selectedPersonId && (
+                <p className="text-red-400">{labels.personNotOwnerOrRenter}</p>
               )}
             <JalaliDayCalendar
               date={paymentDate}
               setDate={setPaymentDate}
-              title="تاریخ پرداخت"
+              title={labels.paymentDate}
             />
             <div className="space-y-2">
-              <Label htmlFor="amount">مبلغ به ریال</Label>
+              <Label htmlFor="amount">{labels.amountInRials}</Label>
               <Input
                 id="amount"
                 type="text"
@@ -228,60 +212,50 @@ export default function AddPaymentPage() {
               />
             </div>
             <div className="flex flex-row gap-2 items-center">
-              <Label htmlFor="proprietor">نوع شارژ</Label>
+              <Label htmlFor="proprietor">{labels.chargeType}</Label>
               <Button
                 id="proprietor"
                 variant={proprietor ? "destructive" : "outline"}
                 type="button"
-                onClick={() => {
-                  setProprietor((prev) => !prev);
-                }}
+                onClick={() => setProprietor((prev) => !prev)}
               >
-                {proprietor ? "مالکانه" : "ماهانه"}
+                {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
               </Button>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">توضیحات</Label>
+              <Label htmlFor="description">{labels.description}</Label>
               <Textarea
                 id="description"
                 value={description}
-                onChange={(event) => {
-                  setDescription(event.target.value);
-                }}
+                onChange={(event) => setDescription(event.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">نوع پرداخت</Label>
+              <Label htmlFor="type">{labels.paymentMethod}</Label>
               <Select
                 defaultValue="CASH"
-                onValueChange={(value) => {
-                  setType(value as PaymentType);
-                }}
+                onValueChange={(value) => setType(value as PaymentType)}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
                 <SelectContent dir="rtl">
-                  <SelectItem value="CASH">نقدی</SelectItem>
-                  <SelectItem value="CHEQUE">چک</SelectItem>
-                  <SelectItem value="POS_MACHINE">دستگاه کارت خوان</SelectItem>
-                  <SelectItem value="BANK_TRANSFER">کارت به کارت</SelectItem>
-                  <SelectItem value="OTHER">سایر روش ها</SelectItem>
+                  <SelectItem value="CASH">{labels.cash}</SelectItem>
+                  <SelectItem value="CHEQUE">{labels.cheque}</SelectItem>
+                  <SelectItem value="POS_MACHINE">{labels.posDevice}</SelectItem>
+                  <SelectItem value="BANK_TRANSFER">{labels.bankTransfer}</SelectItem>
+                  <SelectItem value="OTHER">{labels.otherMethods}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {["BANK_TRANSFER", "CHEQUE", "POS_MACHINE"].includes(type) && (
-              <>
-                <Button
-                  variant="secondary"
-                  type="button"
-                  onClick={() => {
-                    setUploadPage((prev) => !prev);
-                  }}
-                >
-                  آپلود تصویر رسید
-                </Button>
-              </>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => setUploadPage((prev) => !prev)}
+              >
+                {labels.uploadReceiptImage}
+              </Button>
             )}
             {uploadPage && (
               <UploadImage
@@ -295,15 +269,9 @@ export default function AddPaymentPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={
-                addPaymentMutation.isPending ||
-                !selectedShopId ||
-                !selectedPersonId ||
-                !paymentDate ||
-                !amount
-              }
+              disabled={addPaymentMutation.isPending || !selectedShopId || !selectedPersonId || !paymentDate || !amount}
             >
-              {addPaymentMutation.isPending ? " در حال ثبت..." : "ثبت پرداختی"}
+              {addPaymentMutation.isPending ? labels.submitting : labels.submit}
             </Button>
           </CardFooter>
         </form>

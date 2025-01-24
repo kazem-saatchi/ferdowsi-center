@@ -22,8 +22,7 @@ import { useShallow } from "zustand/react/shallow";
 import DateObject from "react-date-object";
 import { AddChargeByShopData } from "@/schema/chargeSchema";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
-
-
+import { labels } from "@/utils/label";
 
 export default function AddChargeToShopPage() {
   const [formData, setFormData] = useState({
@@ -91,14 +90,14 @@ export default function AddChargeToShopPage() {
     e.preventDefault();
     try {
       if (!formData.shopId) {
-        toast.error("Please select a shop");
+        toast.error(labels.pleaseSelectShop);
         return;
       }
 
       const result = await addChargeMutation.mutateAsync(dataState);
 
       if (result.success) {
-        toast.success("Charge added successfully");
+        toast.success(labels.chargeAddedSuccess);
         // Reset form after successful submission
         setFormData({
           month: "",
@@ -106,11 +105,11 @@ export default function AddChargeToShopPage() {
           title: "",
         });
       } else {
-        toast.error(result.message || "Failed to add charge");
+        toast.error(result.message || labels.failedToAddCharge);
       }
     } catch (error) {
       console.error("Error adding charge:", error);
-      toast.error("An error occurred while adding the charge");
+      toast.error(labels.errorAddingCharge);
     }
   };
 
@@ -122,28 +121,28 @@ export default function AddChargeToShopPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Add Charge to Shop</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addChargeToShop}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Charge Details</CardTitle>
+          <CardTitle>{labels.chargeDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shopId">Shop</Label>
+              <Label htmlFor="shopId">{labels.shop}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={formData.shopId}
                 onChange={(value) =>
                   setFormData((prev) => ({ ...prev, shopId: value }))
                 }
-                label="Shop"
+                label={labels.shop}
               />
             </div>
             <JalaliMonthCalendar handleDateChange={handleDateChange} />
        
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{labels.title}</Label>
               <Input
                 id="title"
                 name="title"
@@ -160,7 +159,7 @@ export default function AddChargeToShopPage() {
               className="w-full"
               disabled={addChargeMutation.isPending}
             >
-              {addChargeMutation.isPending ? "Adding Charge..." : "Add Charge"}
+              {addChargeMutation.isPending ? labels.addingChargeToShop : labels.addCharge}
             </Button>
           </CardFooter>
         </form>

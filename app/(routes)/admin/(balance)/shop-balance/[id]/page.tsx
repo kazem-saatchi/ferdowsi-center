@@ -13,6 +13,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 import { useParams } from "next/navigation";
+import { labels } from "@/utils/label";
 
 export default function ShopBalanceById() {
   const params = useParams();
@@ -46,7 +47,7 @@ export default function ShopBalanceById() {
   }, [balanceData, setShopBalance, setPersonsBalance]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading Shops Data" />;
+    return <LoadingComponent text={labels.loadingShopsData} />;
   }
 
   if (isError) {
@@ -63,17 +64,17 @@ export default function ShopBalanceById() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>مانده حساب واحد</CardTitle>
+          <CardTitle>{labels.unitAccountBalance}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
-            <LoadingComponent text="در حال دریافت اطلاعات" />
+            <LoadingComponent text={labels.loadingData} />
           ) : isError ? (
-            <ErrorComponentSimple message="خطایی رخ داده است" />
+            <ErrorComponentSimple message={labels.errorOccurred} />
           ) : shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>هیچ اطلاعاتی یافت نشد</p>
+            <p>{labels.noInformationFound}</p>
           )}
         </CardContent>
       </Card>
@@ -81,7 +82,7 @@ export default function ShopBalanceById() {
       {personsBalance && personsBalance.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>مانده حساب اشخاص</CardTitle>
+            <CardTitle>{labels.personsAccountBalance}</CardTitle>
           </CardHeader>
           <CardContent>
             <PersonsBalanceTable personsBalance={personsBalance} />

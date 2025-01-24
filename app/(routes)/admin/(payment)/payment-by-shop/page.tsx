@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
+import { labels } from "@/utils/label";
 
 export default function ShopPaymentsPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -44,11 +45,11 @@ export default function ShopPaymentsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>جستجوی پرداختی ‌ها بر اساس واحد</CardTitle>
+        <CardTitle>{labels.searchPaymentsByShop}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="shop">انتخاب واحد</Label>
+          <Label htmlFor="shop">{labels.selectUnit}</Label>
           <CustomSelect
             options={shopOptions}
             value={selectedShopId}
@@ -59,11 +60,11 @@ export default function ShopPaymentsPage() {
         {isLoading ? (
           <Skeleton className="w-full h-[400px]" />
         ) : isError ? (
-          <p>خطایی رخ داده است</p>
+          <p>{labels.errorLoadingPayments}</p>
         ) : shopPayments && shopPayments.length > 0 ? (
           <PaymentTable payments={shopPayments} />
         ) : (
-          <p>هیچ پرداختی پیدا نشد</p>
+          <p>{labels.paymentsNotFound}</p>
         )}
       </CardContent>
     </Card>

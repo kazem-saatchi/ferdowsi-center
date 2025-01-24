@@ -12,6 +12,7 @@ import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import ErrorComponent from "@/components/ErrorComponent";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
+import { labels } from "@/utils/label";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -85,11 +86,11 @@ export default function ShopBalancePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>حساب یک واحد</CardTitle>
+          <CardTitle>{labels.shopBalanceTitle}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="shop">انتخاب واحد</Label>
+            <Label htmlFor="shop">{labels.selectShop}</Label>
             <CustomSelect
               options={shopOptions}
               value={selectedShopId}
@@ -98,13 +99,13 @@ export default function ShopBalancePage() {
             />
           </div>
           {isLoading && selectedShopId !== "" ? (
-            <LoadingComponent text="درحال دریافت اطلاعات" />
+            <LoadingComponent text={labels.loadingData} />
           ) : isError ? (
-            <ErrorComponentSimple message="خطایی رخ داده است" />
+            <ErrorComponentSimple message={labels.errorOccurred} />
           ) : shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>هیچ اطلاعاتی یافت نشد</p>
+            <p>{labels.noInformationFound}</p>
           )}
         </CardContent>
       </Card>
@@ -112,7 +113,7 @@ export default function ShopBalancePage() {
       {personsBalance && personsBalance.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>حساب اشخاص مرتبط</CardTitle>
+            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
           </CardHeader>
           <CardContent>
             <PersonsBalanceTable personsBalance={personsBalance} />

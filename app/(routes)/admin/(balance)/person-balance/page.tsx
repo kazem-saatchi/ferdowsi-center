@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomSelect } from "@/components/CustomSelect";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { labels } from "@/utils/label";
 
 export default function PersonBalancePage() {
   const [selectedPersonId, setSelectedPersonId] = useState<string>("");
@@ -68,39 +69,39 @@ export default function PersonBalancePage() {
     })) || [];
 
   if (personsIsLoading)
-    return <LoadingComponent text="در حال بارگذاری اطلاعات اشخاص" />;
+    return <LoadingComponent text={labels.loadingPersonsData} />;
   if (personsIsError)
     return (
       <ErrorComponent
         error={personsError as Error}
-        message="خطا در دریافت اطلاعات اشخاص"
+        message={labels.errorLoadingPersons}
         retry={personsRefetch}
       />
     );
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">اطلاعات مالی شخص</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.personBalanceInfo}</h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>انتخاب شخص</CardTitle>
+          <CardTitle>{labels.selectPerson}</CardTitle>
         </CardHeader>
         <CardContent>
           <CustomSelect
             options={personOptions}
             value={selectedPersonId}
             onChange={setSelectedPersonId}
-            label="شخص"
+            label={labels.person}
           />
         </CardContent>
       </Card>
       {selectedPersonId !== "" && isLoading && (
-        <LoadingComponent text="در حال بارگذاری اطلاعات مالی" />
+        <LoadingComponent text={labels.loadingFinancialData} />
       )}
       {selectedPersonId !== "" && isError && (
         <ErrorComponent
           error={error}
-          message="خطلا در دریافت اطلاعات مالی"
+          message={labels.errorLoadingFinancial}
           retry={refetch}
         />
       )}
