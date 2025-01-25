@@ -1,39 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAddCost } from "@/tanstack/mutations"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { CustomSelect } from "@/components/CustomSelect"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar"
-import { addCostSchema, type AddCostData } from "@/schema/costSchema"
-import { formatNumberFromString } from "@/utils/formatNumber"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import UploadImage from "@/components/upload-file/UploadImage"
-import { labels } from "@/utils/label"
+import { useState } from "react";
+import { useAddCost } from "@/tanstack/mutations";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
+import { addCostSchema, type AddCostData } from "@/schema/costSchema";
+import { formatNumberFromString } from "@/utils/formatNumber";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import UploadImage from "@/components/upload-file/UploadImage";
+import { labels } from "@/utils/label";
 
 export default function AddCostPage() {
-  const [title, setTitle] = useState("")
-  const [amount, setAmount] = useState("")
-  const [amountPersian, setAmountPersian] = useState("")
-  const [costDate, setCostDate] = useState<Date | null>(null)
-  const [description, setDescription] = useState("")
-  const [category, setCategory] = useState<string>("")
-  const [billImageUrl, setBillImageUrl] = useState("")
-  const [proprietor, setProprietor] = useState<boolean>(false)
-  const [uploadPage, setUploadPage] = useState<boolean>(false)
+  // Extract the type of the `category` field
+  type CategoryType = AddCostData["category"];
 
-  const addCostMutation = useAddCost()
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [amountPersian, setAmountPersian] = useState("");
+  const [costDate, setCostDate] = useState<Date | null>(null);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<CategoryType>("OTHER");
+  const [billImageUrl, setBillImageUrl] = useState("");
+  const [proprietor, setProprietor] = useState<boolean>(false);
+  const [uploadPage, setUploadPage] = useState<boolean>(false);
+
+  const addCostMutation = useAddCost();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!title || !amount || !costDate || !category) {
       // Note: We're not using toast here as per the user's request
-      console.error(labels.fillRequiredFields)
-      return
+      console.error(labels.selectRequiredFieldsCost);
+      return;
     }
     try {
       const costData: AddCostData = {
@@ -41,77 +56,107 @@ export default function AddCostPage() {
         amount: Number.parseInt(amount, 10),
         date: costDate,
         description,
-        category: category as any, // This needs to be properly typed based on the schema
+        category: category,
         billImage: billImageUrl,
         proprietor,
+      };
+
+      const validatedData = addCostSchema.parse(costData);
+      const result = await addCostMutation.mutateAsync(validatedData);
+      if (result.success) {
+        // Reset form after successful submission
+        setTitle("");
+        setAmount("");
+        setAmountPersian("");
+        setCostDate(null);
+        setDescription("");
+        setCategory("OTHER");
+        setBillImageUrl("");
+        setProprietor(false);
+        setUploadPage(false);
       }
-
-      const validatedData = addCostSchema.parse(costData)
-      await addCostMutation.mutateAsync(validatedData)
-
-      // Reset form after successful submission
-      setTitle("")
-      setAmount("")
-      setAmountPersian("")
-      setCostDate(null)
-      setDescription("")
-      setCategory("")
-      setBillImageUrl("")
-      setProprietor(false)
-      setUploadPage(false)
     } catch (error) {
-      console.error("Error adding cost:", error)
+      console.error(labels.costAddedError, error);
     }
-  }
+  };
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    const { formattedPersianNumber, formattedNumber } = formatNumberFromString(value)
+    const { value } = event.target;
+    const { formattedPersianNumber, formattedNumber } =
+      formatNumberFromString(value);
 
-    setAmountPersian(formattedPersianNumber)
-    setAmount(formattedNumber)
-  }
+    setAmountPersian(formattedPersianNumber);
+    setAmount(formattedNumber);
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addChargeByAmount}</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addCost}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>{labels.chargeDetails}</CardTitle>
+          <CardTitle>{labels.costDetails}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="amount">{labels.amountInRials}</Label>
-              <Input id="amount" type="text" value={amountPersian} onChange={handleAmountChange} required />
+              <Input
+                id="amount"
+                type="text"
+                value={amountPersian}
+                onChange={handleAmountChange}
+                required
+              />
             </div>
-            <JalaliDayCalendar date={costDate} setDate={setCostDate} title={labels.chargeDate} />
+            <JalaliDayCalendar
+              date={costDate}
+              setDate={setCostDate}
+              title={labels.costDate}
+            />
             <div className="space-y-2">
               <Label htmlFor="description">{labels.description}</Label>
-              <Textarea id="description" value={description} onChange={(event) => setDescription(event.target.value)} />
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">{labels.type}</Label>
-              <Select onValueChange={setCategory}>
+              <Label htmlFor="category">{labels.costCategory}</Label>
+              <Select
+                onValueChange={(value) => setCategory(value as CategoryType)}
+                dir="rtl"
+                defaultValue="OTHER"
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder={labels.selectType} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ELECTRICITY">{labels.electricity}</SelectItem>
+                  <SelectItem value="ELECTRICITY">
+                    {labels.electricity}
+                  </SelectItem>
                   <SelectItem value="WATER">{labels.water}</SelectItem>
                   <SelectItem value="GAS">{labels.gas}</SelectItem>
                   <SelectItem value="ELEVATOR">{labels.elevator}</SelectItem>
                   <SelectItem value="ESCALATOR">{labels.escalator}</SelectItem>
                   <SelectItem value="CHILLER">{labels.chiller}</SelectItem>
+                  <SelectItem value="CLEANING">{labels.cleaning}</SelectItem>
+                  <SelectItem value="SECURITY">{labels.security}</SelectItem>
+                  <SelectItem value="OTHER">{labels.other}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-row gap-2 items-center">
-              <Label htmlFor="proprietor">{labels.chargeType}</Label>
+              <Label htmlFor="proprietor">{labels.costFrom}</Label>
               <Button
                 id="proprietor"
                 variant={proprietor ? "destructive" : "outline"}
@@ -121,8 +166,12 @@ export default function AddCostPage() {
                 {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
               </Button>
             </div>
-            <Button variant="secondary" type="button" onClick={() => setUploadPage((prev) => !prev)}>
-              {labels.uploadReceiptImage}
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => setUploadPage((prev) => !prev)}
+            >
+              {labels.uploadBillImage}
             </Button>
             {uploadPage && (
               <UploadImage
@@ -134,13 +183,18 @@ export default function AddCostPage() {
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={addCostMutation.isPending}>
-              {addCostMutation.isPending ? labels.addingCharge : labels.addCharge}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={addCostMutation.isPending}
+            >
+              {addCostMutation.isPending
+                ? labels.addingCost
+                : labels.addCostButton}
             </Button>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
+  );
 }
-

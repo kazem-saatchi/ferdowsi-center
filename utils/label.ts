@@ -1,3 +1,6 @@
+import allCosts from "@/app/api/actions/cost/allCosts";
+import { add } from "date-fns";
+
 export const labels = {
   plaque: "پلاک",
   totalCharge: "کل جمع شارژ (ریال)",
@@ -282,10 +285,35 @@ export const labels = {
   shopNotFound: "واحد یافت نشد",
 
   // cost labels
-  electricity:"برق",
-  water:"آب",
-  gas:"گاز",
-  elevator:"آسانسور",
-  escalator:"پله برقی",
-  chiller:"چیلر",
+  electricity: "برق",
+  water: "آب",
+  gas: "گاز",
+  elevator: "آسانسور",
+  escalator: "پله برقی",
+  chiller: "چیلر",
+  cleaning: "نظافت",
+  security: "امنیت",
+  other: "سایر",
+
+  // Add new labels for add cost page
+  addCost: "ثبت هزینه",
+  costDetails: "جزئیات ثبت هزینه",
+  addingCost: "در حال ثبت هزینه...",
+  addCostButton: "ثبت هزینه",
+  costAddedSuccess: "هزینه با موفقیت ثبت شد",
+  costAddedError: "خطا در ثبت هزینه",
+  selectRequiredFieldsCost:
+    "لطفا عنوان، مبلغ، تاریخ، توضیحات و نوع هزینه را انتخاب کنید",
+  costDate: "تاریخ",
+  costFrom: "هزینه از",
+  costCategory: "دسته بندی",
+  uploadBillImage: "آپلود تصویر رسید",
+
+  allCostsTitle: "همه هزینه‌ها",
+  addNewCost: "ثبت هزینه جدید",
+  costsNotFound: "هزینه‌ای یافت نشد",
+  noDescription: "بدون توضیحات",
+  noImage: "بدون تصویر",
+  all:"همه",
+  
 };

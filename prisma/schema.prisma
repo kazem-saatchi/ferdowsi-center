@@ -210,6 +210,9 @@ enum Category {
   ELEVATOR      // تعمیرات آسانسور
   ESCALATOR     // تعمیرات پله برقی
   CHILLER       // تعمیرات موتورخانه
+  CLEANING      // خدمات نظافت
+  SECURITY      // خدمات نگهبانی
+  OTHER         // سایر خدمات  
 }
 
 model Income {

@@ -25,6 +25,7 @@ import {
 } from "@/schema/chargeSchema";
 import { verifyToken } from "@/utils/auth";
 import { useQuery } from "@tanstack/react-query";
+import allCosts from "@/app/api/actions/cost/allCosts";
 
 //------------------PERSON--------------------
 
@@ -176,5 +177,15 @@ export function useGetUserInfo() {
   return useQuery({
     queryKey: ["user-info"],
     queryFn: async () => await verifyToken(),
+  });
+}
+
+//------------------COST--------------------
+
+// get all costs data
+export function useGetAllCosts() {
+  return useQuery({
+    queryKey: ["all-costs"],
+    queryFn: async () => await allCosts(),
   });
 }

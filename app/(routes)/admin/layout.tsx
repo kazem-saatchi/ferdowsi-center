@@ -20,6 +20,7 @@ import AdminChargePanel from "@/components/side-panel/AdminChargePanel";
 import AdminPaymentPanel from "@/components/side-panel/AdminPaymentPanel";
 import AdminBalancePanel from "@/components/side-panel/AdminBalancePanel";
 import LogoutButton from "@/components/LogoutButton";
+import AdminCostPanel from "@/components/side-panel/AdminCostPanel";
 
 export default async function AdminLayout({
   children,
@@ -58,18 +59,23 @@ export default async function AdminLayout({
               <Separator />
               <AdminShopPanel />
               <Separator />
-              <AdminHistoryPanel />
-              <Separator />
               <AdminChargePanel />
               <Separator />
               <AdminPaymentPanel />
               <Separator />
               <AdminBalancePanel />
+              <Separator />
+              <AdminHistoryPanel />
+              <Separator />
+              <AdminCostPanel />
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
         <main className="flex-1 overflow-y-auto no-scrollbar items-center justify-center bg-neutral-100 m-2 rounded-md border-2 relative">
-          <SidebarTrigger className="absolute top-2 right-2  w-8 h-8" variant="outline" />
+          <SidebarTrigger
+            className="absolute top-2 right-2  w-8 h-8"
+            variant="outline"
+          />
           <div className="p-8 pt-12">{children}</div>
         </main>
       </div>
