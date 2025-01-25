@@ -167,7 +167,10 @@ export default function AddPaymentPage() {
                   <Input
                     id="owner"
                     type="text"
-                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.ownerName}
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.ownerName
+                    }
                     disabled
                   />
                 </div>
@@ -176,7 +179,10 @@ export default function AddPaymentPage() {
                   <Input
                     id="renter"
                     type="text"
-                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.renterName || ""}
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.renterName || ""
+                    }
                     disabled
                   />
                 </div>
@@ -191,9 +197,12 @@ export default function AddPaymentPage() {
                 label="Person"
               />
             </div>
-            {selectedShopId !== "" && selectedPersonId !== "" && 
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !== selectedPersonId &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !== selectedPersonId && (
+            {selectedShopId !== "" &&
+              selectedPersonId !== "" &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
+                selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
+                selectedPersonId && (
                 <p className="text-red-400">{labels.personNotOwnerOrRenter}</p>
               )}
             <JalaliDayCalendar
@@ -242,8 +251,12 @@ export default function AddPaymentPage() {
                 <SelectContent dir="rtl">
                   <SelectItem value="CASH">{labels.cash}</SelectItem>
                   <SelectItem value="CHEQUE">{labels.cheque}</SelectItem>
-                  <SelectItem value="POS_MACHINE">{labels.posDevice}</SelectItem>
-                  <SelectItem value="BANK_TRANSFER">{labels.bankTransfer}</SelectItem>
+                  <SelectItem value="POS_MACHINE">
+                    {labels.posDevice}
+                  </SelectItem>
+                  <SelectItem value="BANK_TRANSFER">
+                    {labels.bankTransfer}
+                  </SelectItem>
                   <SelectItem value="OTHER">{labels.otherMethods}</SelectItem>
                 </SelectContent>
               </Select>
@@ -259,9 +272,10 @@ export default function AddPaymentPage() {
             )}
             {uploadPage && (
               <UploadImage
-                shopId={selectedShopId}
+                fileName={selectedShopId}
                 setUploadPage={setUploadPage}
                 setImageUrl={setReceiptImageUrl}
+                folderName="payment-image"
               />
             )}
           </CardContent>
@@ -269,7 +283,13 @@ export default function AddPaymentPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addPaymentMutation.isPending || !selectedShopId || !selectedPersonId || !paymentDate || !amount}
+              disabled={
+                addPaymentMutation.isPending ||
+                !selectedShopId ||
+                !selectedPersonId ||
+                !paymentDate ||
+                !amount
+              }
             >
               {addPaymentMutation.isPending ? labels.submitting : labels.submit}
             </Button>

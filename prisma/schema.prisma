@@ -189,15 +189,16 @@ model ShopChargeReference {
   @@unique([shopId,proprietor])
 }
 
-model Costs {
+model Cost {
   id            String   @id @unique @default(uuid())
   title         String
   amount        Int
   date          DateTime
-  description   String?  @db.VarChar(255)
+  description   String  @db.VarChar(255) @default("")
   category      Category
-  billImage     String
-  proprietor    Boolean   @default(false) //مالکانه 
+  billImage     String    @default("")
+  proprietor    Boolean   @default(false) //مالکانه
+  name          String    @default("") // نام فرد یا شرکت
 
   createdAt     DateTime @default(now())
 }
@@ -209,4 +210,17 @@ enum Category {
   ELEVATOR      // تعمیرات آسانسور
   ESCALATOR     // تعمیرات پله برقی
   CHILLER       // تعمیرات موتورخانه
+}
+
+model Income {
+  id            String   @id @unique @default(uuid())
+  title         String
+  amount        Int
+  date          DateTime
+  description   String  @db.VarChar(255) @default("")
+  billImage     String    @default("")
+  proprietor    Boolean   @default(false) //مالکانه
+  name          String    @default("") // نام فرد یا شرکت
+
+  createdAt     DateTime @default(now())
 }

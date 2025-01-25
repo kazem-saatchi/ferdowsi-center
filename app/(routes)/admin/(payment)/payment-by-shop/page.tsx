@@ -10,12 +10,26 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import { labels } from "@/utils/label";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function ShopPaymentsPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
-  const { data: shopsData } = useFindAllShops();
-  const { data: paymentsData, isLoading, isError } = useFindPaymentsByShop(selectedShopId);
-  
+  const {
+    data: shopsData,
+    isLoading: shopsIsLoading,
+    isError: shopsIsError,
+    error: shopsError,
+    refetch: shopsRefetch,
+  } = useFindAllShops();
+  const {
+    data: paymentsData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useFindPaymentsByShop(selectedShopId);
+
   const { shopPayments, setShopPayments, setShopsAll, shopsAll } = useStore(
     useShallow((state) => ({
       shopPayments: state.shopPayments,
@@ -37,10 +51,23 @@ export default function ShopPaymentsPage() {
     }
   }, [paymentsData, setShopPayments]);
 
-  const shopOptions = shopsAll?.map((shop) => ({
-    id: shop.id,
-    label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
-  })) || [];
+  const shopOptions =
+    shopsAll?.map((shop) => ({
+      id: shop.id,
+      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+    })) || [];
+
+  if (shopsIsLoading) {
+    <LoadingComponent text={labels.loadingShopData} />;
+  }
+
+  if (shopsIsError) {
+    <ErrorComponent
+      error={shopsError}
+      message={labels.errorLoadingShops}
+      retry={shopsRefetch}
+    />;
+  }
 
   return (
     <Card>
@@ -57,17 +84,25 @@ export default function ShopPaymentsPage() {
             label="Shop"
           />
         </div>
-        {isLoading ? (
-          <Skeleton className="w-full h-[400px]" />
-        ) : isError ? (
-          <p>{labels.errorLoadingPayments}</p>
-        ) : shopPayments && shopPayments.length > 0 ? (
-          <PaymentTable payments={shopPayments} />
+        {selectedShopId !== "" && isLoading ? (
+          <LoadingComponent text={labels.loadingData} />
         ) : (
+          isError && (
+            <ErrorComponent
+              error={error}
+              message={labels.errorOccurred}
+              retry={refetch}
+            />
+          )
+        )}
+
+        {selectedShopId !== "" && shopPayments && shopPayments.length > 0 && (
+          <PaymentTable payments={shopPayments} />
+        )}
+        {selectedShopId !== "" && shopPayments && shopPayments.length === 0 && (
           <p>{labels.paymentsNotFound}</p>
         )}
       </CardContent>
     </Card>
   );
 }
-

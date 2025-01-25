@@ -11,6 +11,9 @@ export const labels = {
   operationName: "موضوع",
   daysCount: "تعداد روز",
 
+  constAmount: "مبلغ ثابت",
+  metricAmount: "مبلغ متری",
+
   shopId: "واحد",
   personId: "شخص",
   type: "نوع",
@@ -115,7 +118,7 @@ export const labels = {
   successMessage: "مرجع شارژ مغازه با موفقیت ایجاد شد",
   errorMessage: "خطا در ایجاد مرجع شارژ مغازه",
   generalErrorMessage: "خطایی هنگام ایجاد مرجع شارژ مغازه رخ داد",
-  
+
   // Add new label for all shop history page
   allShopHistory: "تاریخچه همه واحدها",
   loadingShopHistory: "در حال بارگذاری تاریخچه واحدها...",
@@ -146,7 +149,8 @@ export const labels = {
   currentRenter: "مستاجر فعلی",
   renterChangeDate: "تاریخ تغییر مستاجر",
   updatingRenter: "در حال تغییر مستاجر...",
-  selectRequiredFieldsRenter: "لطفا واحد، مستاجر جدید و تاریخ تغییر را انتخاب کنید",
+  selectRequiredFieldsRenter:
+    "لطفا واحد، مستاجر جدید و تاریخ تغییر را انتخاب کنید",
   renterUpdateSuccess: "مستاجر واحد با موفقیت تغییر کرد",
   renterUpdateError: "خطا در تغییر مستاجر واحد",
   newRenter: "مستاجر جدید",
@@ -179,13 +183,15 @@ export const labels = {
   bankTransfer: "کارت به کارت",
   otherMethods: "سایر روش ها",
   uploadReceiptImage: "آپلود تصویر رسید",
-  receiptRequired: "در حالت کارت به کارت، چک و کارتخوان، آپلود عکس رسید الزامی هست",
+  receiptRequired:
+    "در حالت کارت به کارت، چک و کارتخوان، آپلود عکس رسید الزامی هست",
   submitting: "در حال ثبت...",
   submit: "ثبت پرداختی",
   paymentAddedSuccess: "پرداختی با موفقیت ثبت شد",
   paymentAddedError: "خطا در ثبت پرداختی",
-  selectRequiredFieldsPayment: "لطفا واحد، شخص پرداخت کننده، تاریخ پرداخت و مبلغ را انتخاب کنید",
-  
+  selectRequiredFieldsPayment:
+    "لطفا واحد، شخص پرداخت کننده، تاریخ پرداخت و مبلغ را انتخاب کنید",
+
   allPaymentsList: "لیست تمام پرداختی‌ها",
   paymentsNotFound: "پرداختی یافت نشد",
   loadingPayments: "در حال بارگذاری اطلاعات",
@@ -195,13 +201,13 @@ export const labels = {
   selectPerson: "انتخاب شخص",
 
   searchPaymentsByShop: "جستجوی پرداختی‌ها بر اساس واحد",
-  
+
   // Add new labels for balance page
   allShopsBalance: "مانده حساب همه واحدها",
   downloadAsPDF: "دانلود به صورت PDF",
   downloadAsExcel: "دانلود به صورت EXCEL",
   noDataFound: "اطلاعاتی یافت نشد",
-  
+
   // Add new labels for person balance page
   personBalanceInfo: "اطلاعات مالی شخص",
   loadingPersonsData: "در حال بارگذاری اطلاعات اشخاص",
@@ -209,7 +215,7 @@ export const labels = {
   loadingFinancialData: "در حال بارگذاری اطلاعات مالی",
   errorLoadingFinancial: "خطا در دریافت اطلاعات مالی",
   personFinancialInfo: "اطلاعات مالی شخص",
-  
+
   // Add new labels
   shopBalanceTitle: "حساب یک واحد",
   selectShop: "انتخاب واحد",
@@ -218,6 +224,7 @@ export const labels = {
   loadingShopsData: "در حال بارگذاری اطلاعات واحدها",
   unitAccountBalance: "مانده حساب واحد",
   personsAccountBalance: "مانده حساب اشخاص",
+  errorLoadingShops: "خطا در بارگذاری اطلاعات واحدها",
 
   // Add new labels
   addChargeByAmount: "ثبت شارژ بر اساس مبلغ",
@@ -228,7 +235,8 @@ export const labels = {
   chargeDate: "تاریخ شارژ",
   addingCharge: "در حال ثبت شارژ...",
   addCharge: "ثبت شارژ",
-  fillRequiredFields: "لطفا تمامی فیلدهای الزامی را پر کنید: واحد، شخص، تاریخ شارژ، مبلغ و عنوان",
+  fillRequiredFields:
+    "لطفا تمامی فیلدهای الزامی را پر کنید: واحد، شخص، تاریخ شارژ، مبلغ و عنوان",
   failedToAddCharge: "خطا در ثبت شارژ",
 
   // Add new labels for add charge to shop page
@@ -245,7 +253,7 @@ export const labels = {
   chargesAddedSuccess: "شارژ با موفقیت برای همه واحدها ثبت شد",
   failedToAddCharges: "خطا در ثبت شارژ برای همه واحدها",
   chargeDetailsTitle: "جزئیات شارژ",
-  
+
   // Add new label for all charges page
   allChargesTitle: "همه شارژها",
   chargesNotFound: "شارژی یافت نشد",
@@ -272,4 +280,12 @@ export const labels = {
   // Add these new labels
   somethingWentWrong: "خطایی رخ داده است",
   shopNotFound: "واحد یافت نشد",
+
+  // cost labels
+  electricity:"برق",
+  water:"آب",
+  gas:"گاز",
+  elevator:"آسانسور",
+  escalator:"پله برقی",
+  chiller:"چیلر",
 };

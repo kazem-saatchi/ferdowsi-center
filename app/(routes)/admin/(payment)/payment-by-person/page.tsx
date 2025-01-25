@@ -6,26 +6,39 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PaymentTable } from "@/components/payment/PaymentTable";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import { labels } from "@/utils/label";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function PersonPaymentsPage() {
   const [selectedPersonId, setSelectedPersonId] = useState("");
-  const { data: personsData } = useFindAllPersons();
-  const { data: paymentsData, isLoading, isError } = useFindPaymentsByPerson(selectedPersonId);
-  
-  
 
-  const { personPayments, setPersonPayments, setPersonsAll, personsAll } = useStore(
-    useShallow((state) => ({
-      personPayments: state.personPayments,
-      setPersonPayments: state.setPersonPayments,
-      personsAll: state.personsAll,
-      setPersonsAll: state.setPersonAll,
-    }))
-  );
+  const {
+    data: personsData,
+    isLoading: personsIsLoading,
+    isError: personsIsError,
+    error: personsError,
+    refetch: personsRefetch,
+  } = useFindAllPersons();
+  const {
+    data: paymentsData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useFindPaymentsByPerson(selectedPersonId);
+
+  const { personPayments, setPersonPayments, setPersonsAll, personsAll } =
+    useStore(
+      useShallow((state) => ({
+        personPayments: state.personPayments,
+        setPersonPayments: state.setPersonPayments,
+        personsAll: state.personsAll,
+        setPersonsAll: state.setPersonAll,
+      }))
+    );
 
   useEffect(() => {
     if (personsData?.data?.persons) {
@@ -39,10 +52,25 @@ export default function PersonPaymentsPage() {
     }
   }, [paymentsData, setPersonPayments]);
 
-  const personOptions = personsAll?.map((person) => ({
-    id: person.id,
-    label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
-  })) || [];
+  const personOptions =
+    personsAll?.map((person) => ({
+      id: person.id,
+      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+    })) || [];
+
+  if (personsIsLoading) {
+    return <LoadingComponent text={labels.loadingPersonsData} />;
+  }
+
+  if (personsIsError) {
+    return (
+      <ErrorComponent
+        error={personsError}
+        message={labels.errorLoadingPersons}
+        retry={personsRefetch}
+      />
+    );
+  }
 
   return (
     <Card>
@@ -59,17 +87,26 @@ export default function PersonPaymentsPage() {
             label={labels.person}
           />
         </div>
-        {isLoading ? (
-          <Skeleton className="w-full h-[400px]" />
-        ) : isError ? (
-          <p>{labels.errorOccurred}</p>
-        ) : personPayments && personPayments.length > 0 ? (
-          <PaymentTable payments={personPayments} />
+        {selectedPersonId !== "" && isLoading ? (
+          <LoadingComponent text={labels.loadingData} />
         ) : (
-          <p>{labels.paymentsNotFound}</p>
+          isError && (
+            <ErrorComponent
+              error={error}
+              message={labels.errorOccurred}
+              retry={refetch}
+            />
+          )
         )}
+        {selectedPersonId !== "" &&
+          personPayments &&
+          personPayments.length > 0 && (
+            <PaymentTable payments={personPayments} />
+          )}
+        {selectedPersonId !== "" &&
+          personPayments &&
+          personPayments.length === 0 && <p>{labels.paymentsNotFound}</p>}
       </CardContent>
     </Card>
   );
 }
-

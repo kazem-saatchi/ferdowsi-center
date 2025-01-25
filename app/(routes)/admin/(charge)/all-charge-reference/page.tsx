@@ -103,12 +103,12 @@ export default function ChargeReferenceListPage() {
               </TableHead>
               <TableHead className="text-center">
                 <Button variant="ghost" onClick={() => handleSort("constantAmount")}>
-                  {labels.amount} <ArrowUpDown className="ml-2 h-4 w-4" />
+                  {labels.constAmount} <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead className="text-center">
                 <Button variant="ghost" onClick={() => handleSort("metricAmount")}>
-                  {labels.amount} <ArrowUpDown className="ml-2 h-4 w-4" />
+                  {labels.metricAmount} <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
               <TableHead className="text-center">

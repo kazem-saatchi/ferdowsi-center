@@ -14,15 +14,15 @@ import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import React, { useState, ChangeEvent, Dispatch, SetStateAction } from "react";
-import { toast } from "sonner";
 
 interface UploadImageProps {
-  shopId: string;
+  fileName: string;
+  folderName: string;
   setUploadPage: Dispatch<SetStateAction<boolean>>;
   setImageUrl: Dispatch<SetStateAction<string>>;
 }
 
-function UploadImage({ shopId, setImageUrl, setUploadPage }: UploadImageProps) {
+function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: UploadImageProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
@@ -64,7 +64,7 @@ function UploadImage({ shopId, setImageUrl, setUploadPage }: UploadImageProps) {
 
       // Get pre-signed URLs from the server
       const { success, message, publicUrl, uploadUrl } =
-        await generateUploadUrl(shopId, file.type, "payment-image");
+        await generateUploadUrl(fileName, file.type, folderName);
 
       if (!success || !uploadUrl || !publicUrl) {
         throw new Error(message);
