@@ -1,6 +1,13 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
-import { Users, UserPlus, Search, UserCog, UserCheck } from "lucide-react";
+import {
+  Users,
+  UserPlus,
+  Search,
+  UserCog,
+  UserCheck,
+  Sheet,
+} from "lucide-react";
 
 function AdminPersonPanel() {
   return (
@@ -42,6 +49,14 @@ function AdminPersonPanel() {
           <Link href="/admin/update-person-role">
             <UserCheck className="ml-2 h-4 w-4" />
             <span>تغییر نقش شخص</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild>
+          <Link href="/admin/add-persons">
+            <Sheet className="ml-2 h-4 w-4" />
+            <span>ثبت اشخاص با excel</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
