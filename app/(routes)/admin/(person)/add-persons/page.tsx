@@ -1,44 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { toast } from "sonner"
-import { UploadFile } from "@/components/upload-file/UploadFile"
-import { PreviewTable } from "@/components/upload-file/PreviewTable"
-import { parseFile } from "@/utils/fileParser"
+import { toast } from "sonner";
+import { FileUpload } from "@/components/upload-file/UploadFile";
+import { PreviewTable } from "@/components/upload-file/PreviewTable";
+import { useAddPersonsFromFile } from "@/tanstack/mutations";
 
 function UploadPersons() {
-  const [file, setFile] = useState<File | null>(null)
-  const [previewData, setPreviewData] = useState<any[]>([])
+  //Tanstack Mutation
+  const mutationAddPersons = useAddPersonsFromFile();
 
-  const handleFileChange = async (selectedFile: File) => {
-    setFile(selectedFile)
-    const data = await parseFile(selectedFile)
-    setPreviewData(data.slice(0, 5)) // Preview first 5 rows
-  }
+  const [file, setFile] = useState<File | null>(null);
+  const [parsedData, setParsedData] = useState<any[]>([]);
+  const [previewData, setPreviewData] = useState<any[]>([]);
+
+  const handleFileChange = (selectedFile: File, data: any[]) => {
+    setFile(selectedFile);
+    setParsedData(data);
+    setPreviewData(data); // Preview first 5 rows
+  };
 
   const handleUpload = async () => {
-    if (!file) return toast.error("Please select a file.")
-    const formData = new FormData()
-    formData.append("file", file)
+    if (parsedData.length === 0) return toast.error("No data to upload.");
 
-    try {
-      const response = await fetch("/api/upload-persons", {
-        method: "POST",
-        body: formData,
-      })
-
-      const result = await response.json()
-      if (response.ok) {
-        toast.success(`Successfully added ${result.count} persons!`)
-      } else {
-        toast.error(`Error: ${result.message}`)
-      }
-    } catch (error) {
-      toast.error("An error occurred while uploading the file.")
-    }
-  }
+    mutationAddPersons.mutate(parsedData);
+  };
 
   return (
     <Card className="w-full mx-auto">
@@ -46,12 +34,11 @@ function UploadPersons() {
         <CardTitle>Upload Persons</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <UploadFile onFileChange={handleFileChange} onUpload={handleUpload} />
+        <FileUpload onFileChange={handleFileChange} onUpload={handleUpload} />
         {previewData.length > 0 && <PreviewTable data={previewData} />}
       </CardContent>
     </Card>
-  )
+  );
 }
 
-export default UploadPersons
-
+export default UploadPersons;

@@ -4,7 +4,7 @@ import { z } from "zod";
 export const addPersonSchema = z.object({
   phoneOne: z.string(),
   phoneTwo: z.string().nullable(),
-  IdNumber: z.string().length(10),
+  IdNumber: z.string(),
   firstName: z.string(),
   lastName: z.string(),
   password: z.string().min(5),

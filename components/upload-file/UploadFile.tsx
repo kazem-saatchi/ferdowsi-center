@@ -1,22 +1,59 @@
+"use client"
+
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Upload } from "lucide-react"
+import { toast } from "sonner"
+import * as XLSX from "xlsx"
 
 interface FileUploadProps {
-  onFileChange: (file: File) => void
+  onFileChange: (file: File, data: any[]) => void
   onUpload: () => void
 }
 
-export function UploadFile({ onFileChange, onUpload }: FileUploadProps) {
+export function FileUpload({ onFileChange, onUpload }: FileUploadProps) {
   const [fileName, setFileName] = useState<string>("")
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
       const file = event.target.files[0]
       setFileName(file.name)
-      onFileChange(file)
+
+      try {
+        const data = await parseFile(file)
+        onFileChange(file, data)
+      } catch (error) {
+        toast.error("Error parsing file. Please try again.")
+      }
     }
+  }
+
+  const parseFile = (file: File): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        const data = e.target?.result
+        try {
+          const workbook = XLSX.read(data, { type: "binary" })
+          const sheetName = workbook.SheetNames[0]
+          const sheet = workbook.Sheets[sheetName]
+          const parsedData = XLSX.utils.sheet_to_json(sheet)
+          resolve(parsedData)
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      reader.onerror = (error) => reject(error)
+
+      if (file.name.endsWith(".csv")) {
+        reader.readAsText(file)
+      } else {
+        reader.readAsBinaryString(file)
+      }
+    })
   }
 
   return (
