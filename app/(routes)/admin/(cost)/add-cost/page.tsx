@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
-import { addCostSchema, type AddCostData } from "@/schema/costSchema";
+import { addCostSchema, type AddCostData } from "@/schema/cost-IncomeSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
 import { Textarea } from "@/components/ui/textarea";
 import {

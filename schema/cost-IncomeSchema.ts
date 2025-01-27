@@ -23,3 +23,15 @@ export const addCostSchema = z.object({
 
 export type AddCostData = z.infer<typeof addCostSchema>;
 //--------------------------------------------------------------------------------------
+export const addIncomeSchema = z.object({
+  title: z.string(),
+  amount: z.number().int(),
+  date: z.date(),
+  description: z.string().max(255).optional(),
+  billImage: z.string(),
+  proprietor: z.boolean().default(false),
+  name: z.string(),
+});
+
+export type AddIncomeData = z.infer<typeof addIncomeSchema>;
+//--------------------------------------------------------------------------------------

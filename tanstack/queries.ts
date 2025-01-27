@@ -25,7 +25,7 @@ import {
 } from "@/schema/chargeSchema";
 import { verifyToken } from "@/utils/auth";
 import { useQuery } from "@tanstack/react-query";
-import allCosts from "@/app/api/actions/cost/allCosts";
+import allCosts from "@/app/api/actions/cost-income/allCosts";
 
 //------------------PERSON--------------------
 

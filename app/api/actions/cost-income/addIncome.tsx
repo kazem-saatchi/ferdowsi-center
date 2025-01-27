@@ -1,47 +1,47 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { AddCostData, addCostSchema } from "@/schema/costSchema";
+import { AddIncomeData, addIncomeSchema } from "@/schema/cost-IncomeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-interface AddCostResponse {
-  costId: string;
+interface AddIncomeResponse {
+  incomeId: string;
   message: string;
 }
 
-async function addCostData(data: AddCostData, person: Person): Promise<AddCostResponse> {
+async function addIncomeData(data: AddIncomeData, person: Person): Promise<AddIncomeResponse> {
     if (person.role !== "ADMIN") {
       throw new Error(errorMSG.noPermission);
     }
   
-    const validation = addCostSchema.safeParse(data);
+    const validation = addIncomeSchema.safeParse(data);
     if (!validation.success) {
       throw new Error(
         validation.error.errors.map((err) => err.message).join(", ")
       );
     }
   
-    const newCost = await db.cost.create({
+    const newIncome = await db.income.create({
       data: {
         title: validation.data.title,
         amount: validation.data.amount,
         date: validation.data.date,
         description: validation.data.description,
-        category: validation.data.category,
         billImage: validation.data.billImage,
         proprietor: validation.data.proprietor,
+        name:validation.data.name
       },
     });
   
     return {
-      costId: newCost.id,
-      message: successMSG.costAdded,
+      incomeId: newIncome.id,
+      message: successMSG.incomeAdded,
     };
   }
   
 
-export default async function addCost(data: AddCostData) {
-  return handleServerAction<AddCostResponse>((user) => addCostData(data, user));
+export default async function addIncome(data: AddIncomeData) {
+  return handleServerAction<AddIncomeResponse>((user) => addIncomeData(data, user));
 }

@@ -1,4 +1,4 @@
-import allCosts from "@/app/api/actions/cost/allCosts";
+import allCosts from "@/app/api/actions/cost-income/allCosts";
 import { add } from "date-fns";
 
 export const labels = {
@@ -314,6 +314,5 @@ export const labels = {
   costsNotFound: "هزینه‌ای یافت نشد",
   noDescription: "بدون توضیحات",
   noImage: "بدون تصویر",
-  all:"همه",
-  
+  all: "همه",
 };

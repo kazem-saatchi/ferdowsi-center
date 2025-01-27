@@ -116,4 +116,5 @@ export const successMSG = {
   balancesFound: "حساب با موفقیت یافت شد",
 
   costAdded: "هزینه با موفقیت اضافه شد",
+  incomeAdded:"درآمد با موفقیت اضافه شد"
 };

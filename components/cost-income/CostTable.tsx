@@ -14,7 +14,7 @@ import { labels } from "@/utils/label";
 import { Cost } from "@prisma/client";
 import { Textarea } from "../ui/textarea";
 import ReceiptImage from "../payment/ReceiptImage";
-import { AddCostData } from "@/schema/costSchema";
+import { AddCostData } from "@/schema/cost-IncomeSchema";
 import {
   Select,
   SelectContent,

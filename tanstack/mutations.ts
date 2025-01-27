@@ -44,10 +44,9 @@ import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
 import generateAnnualShopChargeReferenceList from "@/app/api/actions/reference/shopAnnualChargeReference";
-import { AddCostData } from "@/schema/costSchema";
-import addCost from "@/app/api/actions/cost/addCost";
+import { AddCostData } from "@/schema/cost-IncomeSchema";
+import addCost from "@/app/api/actions/cost-income/addCost";
 import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
-
 
 //------------------PERSON--------------------
 
