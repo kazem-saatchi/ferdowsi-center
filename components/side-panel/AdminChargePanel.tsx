@@ -59,7 +59,7 @@ function AdminChargePanel() {
         <SidebarMenuButton asChild>
           <Link href="/admin/add-charge-by-amount">
             <DollarSign className="ml-2 h-4 w-4" />
-            <span>ثبت شارژ با مبلغ</span>
+            <span>ثبت شارژ یک واحد با مبلغ</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

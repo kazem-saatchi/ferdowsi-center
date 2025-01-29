@@ -44,9 +44,10 @@ import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
 import generateAnnualShopChargeReferenceList from "@/app/api/actions/reference/shopAnnualChargeReference";
-import { AddCostData } from "@/schema/cost-IncomeSchema";
+import { AddCostData, AddIncomeData } from "@/schema/cost-IncomeSchema";
 import addCost from "@/app/api/actions/cost-income/addCost";
 import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
+import addIncome from "@/app/api/actions/cost-income/addIncome";
 
 //------------------PERSON--------------------
 
@@ -592,7 +593,7 @@ export function useDeletePaymentById() {
   });
 }
 
-//------------------COST--------------------
+//------------------COST-INCOME--------------------
 
 // add cost
 export function useAddCost() {
@@ -605,6 +606,28 @@ export function useAddCost() {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-costs"] });
         queryClient.refetchQueries({ queryKey: ["all-costs"] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// add income
+export function useAddIncome() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddIncomeData) => await addIncome(data),
+    onSuccess: (data) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-incomes"] });
+        queryClient.refetchQueries({ queryKey: ["all-incomes"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

@@ -56,7 +56,7 @@ function AdminPersonPanel() {
         <SidebarMenuButton asChild>
           <Link href="/admin/add-persons">
             <Sheet className="ml-2 h-4 w-4" />
-            <span>ثبت اشخاص با excel</span>
+            <span>ثبت اشخاص با فایل</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

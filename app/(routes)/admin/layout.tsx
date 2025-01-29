@@ -20,7 +20,7 @@ import AdminChargePanel from "@/components/side-panel/AdminChargePanel";
 import AdminPaymentPanel from "@/components/side-panel/AdminPaymentPanel";
 import AdminBalancePanel from "@/components/side-panel/AdminBalancePanel";
 import LogoutButton from "@/components/LogoutButton";
-import AdminCostPanel from "@/components/side-panel/AdminCostPanel";
+import AdminCostPanel from "@/components/side-panel/AdminCostIncomePanel";
 
 export default async function AdminLayout({
   children,

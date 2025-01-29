@@ -315,4 +315,14 @@ export const labels = {
   noDescription: "بدون توضیحات",
   noImage: "بدون تصویر",
   all: "همه",
+
+  addIncome:"",
+  incomeDetails:"",
+  incomeAddedError:"",
+  selectRequiredFieldsIncome:
+    "لطفا عنوان، مبلغ، تاریخ، توضیحات و نوع درآمد را انتخاب کنید",
+    proprietorIncome:"",
+    addingIncome:"",
+    addIncomeButton:"",
+    incomeDate:"",
 };
