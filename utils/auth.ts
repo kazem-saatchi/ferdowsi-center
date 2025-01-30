@@ -26,6 +26,10 @@ export async function verifyToken(): Promise<AuthResult> {
       return { success: false, message: errorMSG.unauthorized };
     }
 
+    if(session.expireAt.getTime() - new Date().getTime() <= 0) {
+      return {success:false, message:errorMSG.sessionExpired}
+    }
+
     const person = await db.person.findUnique({
       where: { id: session.personId },
     });

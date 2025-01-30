@@ -316,13 +316,13 @@ export const labels = {
   noImage: "بدون تصویر",
   all: "همه",
 
-  addIncome:"",
-  incomeDetails:"",
-  incomeAddedError:"",
+  addIncome:"ثبت درآمد",
+  incomeDetails:"جزییات",
+  incomeAddedError:"خطا در ثبت درآمد",
   selectRequiredFieldsIncome:
     "لطفا عنوان، مبلغ، تاریخ، توضیحات و نوع درآمد را انتخاب کنید",
-    proprietorIncome:"",
-    addingIncome:"",
-    addIncomeButton:"",
-    incomeDate:"",
+    proprietorIncome:"درآمد مالکانه",
+    addingIncome:"ثبت درآمد",
+    addIncomeButton:"درحال ثبت درآمد",
+    incomeDate:"تاریخ",
 };

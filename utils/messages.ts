@@ -58,6 +58,7 @@
 
 export const errorMSG = {
   unauthorized: "دسترسی غیرمجاز. لطفاً وارد شوید.",
+  sessionExpired:"لطفا ابتدا وارد حساب کاربری شوید",
   noPermission: "شما مجوز انجام این عمل را ندارید.",
   invalidInput: "داده‌های ورودی نامعتبر است.",
   userNotFound: "کاربر یافت نشد.",

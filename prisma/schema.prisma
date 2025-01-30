@@ -165,6 +165,7 @@ model Session {
   personId    String   
   idNumber    String
   createdAt   DateTime @default(now())
+  expireAt    DateTime
 
   @@index([personId]) 
 }

@@ -33,13 +33,19 @@ export async function loginUser(data: LoginData): Promise<LoginResponse> {
       return { success: false, message: "Invalid password" };
     }
 
+    const expireTime = 30 * 24 * 60 * 60; // 30 days
+    const expireAt = Date.now() + expireTime;
+
     const session = await db.session.create({
-      data: { idNumber: user.IdNumber, personId: user.id },
+      data: {
+        idNumber: user.IdNumber,
+        personId: user.id,
+        expireAt: new Date(expireAt).toISOString(),
+      },
     });
 
     // Store token in Cookie
     const cookieStore = cookies();
-    const expireTime = 30 * 24 * 60 * 60; // 30 days
     cookieStore.set("token", session.id, {
       httpOnly: true,
       maxAge: expireTime,
