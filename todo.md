@@ -8,5 +8,12 @@ $2a$10$MYfablteqPQvFWw4.OqJ7.mQwmlQeJtWBrtIkkKqafd4cfulxv3lu
 [] add edit charge api's
 [] add api for adding charge by date amount and title, like annual charge and previuos balance
 [] add type of payment like cash or bank cheque
+[] find a way to add log to api's
+[] view logs
+[] view logs by shop
+[] view logs by person
+[] view logs by user
+[] back-up data - import/export data
+[] use bank api to get transactions data
 
  
