@@ -5,4 +5,7 @@
 
 */
 -- AlterTable
+ALTER TABLE "Person" ADD COLUMN     "address" TEXT;
+
+-- AlterTable
 ALTER TABLE "Session" ADD COLUMN     "expireAt" TIMESTAMP(3) NOT NULL;

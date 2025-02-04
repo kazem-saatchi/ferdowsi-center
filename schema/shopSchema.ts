@@ -2,14 +2,12 @@ import { z } from "zod";
 
 //--------------------------------------------------------------------------------------
 export const addShopSchema = z.object({
-  plaque: z
-    .number()
-    .min(1, { message: "Plaque must be a positive number greater than zero." }),
+  plaque: z.number(),
   area: z
     .number()
     .min(1, { message: "Area must be a positive number greater than zero." }),
   floor: z.number().int({ message: "Floor must be an integer." }),
-  type: z.enum(["STORE","OFFICE","KIOSK"]),
+  type: z.enum(["STORE", "OFFICE", "KIOSK"]),
   ownerId: z.string().uuid({ message: "Owner ID must be a valid UUID." }),
   renterId: z
     .string()
@@ -71,7 +69,7 @@ export type EndShopRenterData = z.infer<typeof endShopRenter>;
 //--------------------------------------------------------------------------------------
 export const updateShopStatusSchema = z.object({
   shopId: z.string(),
-  newStatus: z.enum(["ACTIVATE","INACTIVATE"]),
+  newStatus: z.enum(["ACTIVATE", "INACTIVATE"]),
   date: z.string().datetime(),
 });
 

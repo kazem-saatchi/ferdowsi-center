@@ -34,7 +34,7 @@ export async function loginUser(data: LoginData): Promise<LoginResponse> {
     }
 
     const expireTime = 30 * 24 * 60 * 60; // 30 days
-    const expireAt = Date.now() + expireTime;
+    const expireAt = Date.now() + expireTime * 1000;
 
     const session = await db.session.create({
       data: {

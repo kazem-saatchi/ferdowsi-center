@@ -45,6 +45,7 @@ model Person {
   password      String
   isActive      Boolean @default(true)
   role          Role @default(USER)
+  address       String?
 
   ownedShops    Shop[] @relation("ShopOwner")
   rentedShops   Shop[] @relation("ShopRenter")
