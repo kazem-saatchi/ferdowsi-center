@@ -48,6 +48,8 @@ import { AddCostData, AddIncomeData } from "@/schema/cost-IncomeSchema";
 import addCost from "@/app/api/actions/cost-income/addCost";
 import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
 import addIncome from "@/app/api/actions/cost-income/addIncome";
+import addPersonsShops from "@/app/api/actions/import/addPersonsShopsFromFile";
+import { AddPersonsShopsData } from "@/schema/importSchema";
 
 //------------------PERSON--------------------
 
@@ -628,6 +630,37 @@ export function useAddIncome() {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-incomes"] });
         queryClient.refetchQueries({ queryKey: ["all-incomes"] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+//------------------IMPORT-EXPORT--------------------
+
+// Add Persons and Shops from File
+export function useAddPersonsShops() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddPersonsShopsData[]) =>
+      await addPersonsShops(data),
+    onSuccess: (data) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-persons"] });
+        queryClient.refetchQueries({ queryKey: ["all-persons"] });
+
+        queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+        queryClient.refetchQueries({ queryKey: ["all-shops"] });
+
+        queryClient.invalidateQueries({ queryKey: ["all-histories"] });
+        queryClient.refetchQueries({ queryKey: ["all-histories"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
