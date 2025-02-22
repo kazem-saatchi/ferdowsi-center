@@ -40,11 +40,10 @@ export default function MyShopsPage() {
       <TableHeader>
         <TableRow>
           <TableHead className="text-center">Plaque</TableHead>
+          <TableHead className="text-center">Owner</TableHead>
           <TableHead className="text-center">Total Shop Balance</TableHead>
           <TableHead className="text-center">My Balance</TableHead>
           <TableHead className="text-center">View Details</TableHead>
-          <TableHead className="text-center">Owner</TableHead>
-
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -60,6 +59,9 @@ export default function MyShopsPage() {
             <TableRow key={shop.id}>
               <TableCell className="text-center">{shop.plaque}</TableCell>
               <TableCell className="text-center">
+                <Badge>{shop.ownerName}</Badge>
+              </TableCell>
+              <TableCell className="text-center">
                 {shopBalance
                   ? `${shopBalance.shopBalance.balance.toLocaleString()} Rials`
                   : "N/A"}
@@ -73,11 +75,6 @@ export default function MyShopsPage() {
                 <Link href={`/user/shop-detail/${shop.id}`}>
                   <Button>View</Button>
                 </Link>
-              </TableCell>
-              <TableCell className="text-center">
-                  <Badge>
-                    {shop.ownerId}
-                  </Badge>
               </TableCell>
             </TableRow>
           );

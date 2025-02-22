@@ -7,7 +7,7 @@ import { useGetUserInfo } from "@/tanstack/queries";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-export default async function UserClientLayout({
+export default function UserClientLayout({
   children,
 }: {
   children: React.ReactNode;
