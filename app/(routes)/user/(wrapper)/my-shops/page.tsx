@@ -47,7 +47,7 @@ export default function MyShopsPage() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {personShopsBalance?.shops.map((shop) => {
+        {personShopsBalance?.shopsOwned.map((shop) => {
           const shopBalance = personShopsBalance.shopsBalance.find(
             (balance) => balance.shopBalance.shopId === shop.id
           );
@@ -99,7 +99,7 @@ export default function MyShopsPage() {
         <CardTitle>My Shops and Balances</CardTitle>
       </CardHeader>
       <CardContent>
-        {personShopsBalance && personShopsBalance.shops.length > 0 ? (
+        {personShopsBalance && personShopsBalance.shopsOwned.length > 0 ? (
           renderShopsTable()
         ) : (
           <p>You don't have any shops associated with your account.</p>

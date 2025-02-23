@@ -12,7 +12,8 @@ import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Shop } from "@prisma/client";
 
 export interface PersonBalancesResponse {
-  shops: Shop[];
+  shopsOwned: Shop[];
+  shopsRented: Shop[];
   message: string;
   shopsBalance: ShopBalanceResponce[];
   shopsBalanceByPerson: PersonBalanceByShopData[];
@@ -25,21 +26,38 @@ async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
   }
 
   // Find shops related to a person (either owned or rented)
-  const shops = await db.shop.findMany({
-    where: {
-      OR: [
-        { ownerId: user.id }, // Owned by the user
-        { renterId: user.id }, // Rented by the user
-      ],
-    },
+  // const shops = await db.shop.findMany({
+  //   where: {
+  //     OR: [
+  //       { ownerId: user.id }, // Owned by the user
+  //       { renterId: user.id }, // Rented by the user
+  //     ],
+  //   },
+  // });
+
+  // if (!shops) {
+  //   throw new Error(errorMSG.shopIdNotFound);
+  // }
+
+  const shopsOwned = await db.shop.findMany({
+    where: { ownerId: user.id }, // Owned by the user
   });
 
-  if (!shops) {
-    throw new Error(errorMSG.shopIdNotFound);
-  }
+  const shopsRented = await db.shop.findMany({
+    where: { renterId: user.id }, // Owned by the user
+  });
 
-  const shopsBalance: ShopBalanceResponce[] = await Promise.all(
-    shops.map(async (shop) =>
+  const shopsOwnedBalance: ShopBalanceResponce[] = await Promise.all(
+    shopsOwned.map(async (shop) =>
+      calculateShopBalance({
+        shopId: shop.id,
+        plaque: shop.plaque,
+      })
+    )
+  );
+
+  const shopsRentedBalance: ShopBalanceResponce[] = await Promise.all(
+    shopsRented.map(async (shop) =>
       calculateShopBalance({
         shopId: shop.id,
         plaque: shop.plaque,
@@ -48,7 +66,7 @@ async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
   );
 
   const shopsBalanceByPerson: PersonBalanceByShopData[] = await Promise.all(
-    shops.map((shop) =>
+    [...shopsOwned, ...shopsRented].map((shop) =>
       calculatePersonBalanceByShop({
         personId: user.id,
         personName: `${user.firstName} ${user.lastName}`,
@@ -60,8 +78,9 @@ async function findAllShops(user: Person): Promise<PersonBalancesResponse> {
 
   return {
     message: successMSG.shopsFound,
-    shops: shops,
-    shopsBalance,
+    shopsOwned,
+    shopsRented,
+    shopsBalance: [...shopsOwnedBalance, ...shopsRentedBalance],
     shopsBalanceByPerson,
   };
 }
