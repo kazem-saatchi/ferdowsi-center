@@ -9,16 +9,24 @@ datasource db {
 }
 
 model Shop {
-  id            String @id @unique @default(uuid())
-  plaque        Int @unique
+  id            String  @id @unique @default(uuid())
+  plaque        Int     @unique
   area          Float
   floor         Int
   type          ShopType
   ownerId       String
   renterId      String?
   isActive      Boolean @default(true)
-  ownerName     String @default("")
-  renterName    String? 
+  ownerName     String  @default("")
+  renterName    String?
+
+  isForRent     Boolean @default(false)
+  rentAmount    Int     @default(0)
+  rentMortgage  Int     @default(0)
+
+  isForSell     Boolean @default(false)
+  sellAmount    Int     @default(0)
+
 
   owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
