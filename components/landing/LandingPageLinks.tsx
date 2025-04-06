@@ -5,24 +5,17 @@ import { Button } from "../ui/button";
 function LandingPageLinks() {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <Link href="/shops">
-        <Button className="w-96" variant="outline">
-          راهنمای مشاغل
-        </Button>
-      </Link>
-      <Link href="/login">
-        <LoginButton />
-      </Link>
-      <Link href="/divar">
-        <Button className="w-96" variant="outline">
-          فروش و اجاره واحدها
-        </Button>
-      </Link>
-      <Link href="/contact-us">
-        <Button className="w-96" variant="outline">
-          ارتباط با مدیریت
-        </Button>
-      </Link>
+      <Button className="w-96" variant="outline" asChild>
+        <Link href="/shops">راهنمای مشاغل</Link>
+      </Button>
+      <LoginButton />
+
+      <Button className="w-96" variant="outline" asChild>
+        <Link href="/divar">فروش و اجاره واحدها</Link>
+      </Button>
+      <Button className="w-96" variant="outline" asChild>
+        <Link href="/contact-us">ارتباط با مدیریت</Link>
+      </Button>
     </div>
   );
 }

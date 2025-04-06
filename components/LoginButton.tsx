@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 function LoginButton() {
   const [login, setLogin] = useState<boolean>(false);
@@ -14,8 +15,11 @@ function LoginButton() {
         setLogin(true);
       }}
       disabled={login}
+      asChild
     >
-      {login ? "در حال ورود ..." : "ورود به حساب کاربری"}
+      <Link href="/login">
+        {login ? "در حال ورود ..." : "ورود به حساب کاربری"}
+      </Link>
     </Button>
   );
 }

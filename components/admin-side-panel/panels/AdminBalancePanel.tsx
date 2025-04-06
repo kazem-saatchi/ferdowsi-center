@@ -1,6 +1,6 @@
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import Link from "next/link";
-import { BarChart2, PieChart, UserPlus } from 'lucide-react';
+import { BarChart2, PieChart, UserPlus } from "lucide-react";
 
 function AdminBalancePanel() {
   return (
@@ -34,4 +34,3 @@ function AdminBalancePanel() {
 }
 
 export default AdminBalancePanel;
-

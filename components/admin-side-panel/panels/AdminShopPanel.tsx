@@ -1,4 +1,4 @@
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import Link from "next/link";
 import {
   ShoppingBag,
@@ -9,7 +9,7 @@ import {
   List,
   Edit,
 } from "lucide-react";
-import { Separator } from "../ui/separator";
+import { Separator } from "../../ui/separator";
 
 function AdminShopPanel() {
   return (

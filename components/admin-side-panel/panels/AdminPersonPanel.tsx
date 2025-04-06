@@ -1,4 +1,4 @@
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import Link from "next/link";
 import {
   Users,

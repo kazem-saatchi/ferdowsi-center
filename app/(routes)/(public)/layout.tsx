@@ -12,13 +12,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl">
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <div className="relative flex min-h-screen flex-col">
-     
-          <main className="flex-1">{children}</main>
-        </div>
-      </body>
-    </html>
+    <div className="relative flex flex-1 min-h-screen flex-col">{children}</div>
   );
 }

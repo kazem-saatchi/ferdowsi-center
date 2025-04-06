@@ -1,6 +1,6 @@
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import Link from "next/link";
-import { ClipboardList, Store, User } from 'lucide-react';
+import { ClipboardList, Store, User } from "lucide-react";
 
 function AdminHistoryPanel() {
   return (
@@ -34,4 +34,3 @@ function AdminHistoryPanel() {
 }
 
 export default AdminHistoryPanel;
-
