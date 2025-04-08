@@ -1,7 +1,6 @@
 import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import Link from "next/link";
 import { FileChartColumn } from "lucide-react";
-import { Separator } from "../../ui/separator";
 
 function AdminImportPanel() {
   return (

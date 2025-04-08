@@ -13,22 +13,17 @@ import {
 import { Home, Shield } from "lucide-react";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
-import AdminPersonPanel from "./panels/AdminPersonPanel";
-import AdminShopPanel from "./panels/AdminShopPanel";
-import AdminChargePanel from "./panels/AdminChargePanel";
-import AdminPaymentPanel from "./panels/AdminPaymentPanel";
-import AdminBalancePanel from "./panels/AdminBalancePanel";
-import AdminHistoryPanel from "./panels/AdminHistoryPanel";
-import AdminCostPanel from "./panels/AdminCostIncomePanel";
 import AdminImportPanel from "./panels/AdminImportPanel";
 import LogoutButton from "../LogoutButton";
 import { cn } from "@/lib/utils";
+import SidebarItemsMap from "./panels/SidebarItemMap";
+import { adminMenuData } from "./panels/menuData";
 
 function AdminSidebar() {
   const { open } = useSidebar();
   return (
     <Sidebar side="right" variant="floating">
-      <SidebarHeader className="border-4 rounded-t-md">
+      <SidebarHeader className="">
         <div className="flex flex-row items-center justify-start">
           <Shield />
           <span
@@ -50,19 +45,26 @@ function AdminSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <Separator />
-          <AdminPersonPanel />
+
+          <SidebarItemsMap menuData={adminMenuData.person} />
           <Separator />
-          <AdminShopPanel />
+
+          <SidebarItemsMap menuData={adminMenuData.shop} />
           <Separator />
-          <AdminChargePanel />
+
+          <SidebarItemsMap menuData={adminMenuData.charge} />
           <Separator />
-          <AdminPaymentPanel />
+
+          <SidebarItemsMap menuData={adminMenuData.payment} />
           <Separator />
-          <AdminBalancePanel />
+
+          <SidebarItemsMap menuData={adminMenuData.balance} />
           <Separator />
-          <AdminHistoryPanel />
+
+          <SidebarItemsMap menuData={adminMenuData.history} />
           <Separator />
-          <AdminCostPanel />
+
+          <SidebarItemsMap menuData={adminMenuData.cost} />
           <Separator />
           <AdminImportPanel />
         </SidebarMenu>
