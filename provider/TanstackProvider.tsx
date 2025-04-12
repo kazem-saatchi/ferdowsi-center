@@ -10,13 +10,13 @@ function TanstackProvider({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            retry: 5,
+            retry: 2,
             retryDelay: 1000,
-            staleTime:1 * 60 * 60 * 1000, // 1 hour
+            staleTime: 1 * 60 * 60 * 1000, // 1 hour
+            gcTime: 1 * 60 * 60 * 1000, // 1 hour
             refetchOnMount: false,
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
-            gcTime: 1 * 60 * 60 * 1000, // 1 hour
           },
         },
       })
