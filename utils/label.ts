@@ -8,6 +8,9 @@ export const labels = {
   totalBalance: "مانده حساب کل",
   personName: "نام شخص",
 
+  bankCardMonthly: "شماره حساب شارژ ماهانه",
+  bankCardYearly: "شماره حساب شارژ مالکانه",
+
   title: "عنوان",
   amount: "مبلغ - ریال",
   date: "تاریخ",
@@ -316,13 +319,13 @@ export const labels = {
   noImage: "بدون تصویر",
   all: "همه",
 
-  addIncome:"ثبت درآمد",
-  incomeDetails:"جزییات",
-  incomeAddedError:"خطا در ثبت درآمد",
+  addIncome: "ثبت درآمد",
+  incomeDetails: "جزییات",
+  incomeAddedError: "خطا در ثبت درآمد",
   selectRequiredFieldsIncome:
     "لطفا عنوان، مبلغ، تاریخ، توضیحات و نوع درآمد را انتخاب کنید",
-    proprietorIncome:"درآمد مالکانه",
-    addingIncome:"ثبت درآمد",
-    addIncomeButton:"درحال ثبت درآمد",
-    incomeDate:"تاریخ",
+  proprietorIncome: "درآمد مالکانه",
+  addingIncome: "ثبت درآمد",
+  addIncomeButton: "درحال ثبت درآمد",
+  incomeDate: "تاریخ",
 };

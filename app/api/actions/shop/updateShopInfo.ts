@@ -33,6 +33,8 @@ async function updateShop(data: UpdateShopInfoData, user: Person) {
       plaque: validation.data.plaque,
       area: validation.data.area,
       floor: validation.data.floor,
+      bankCardMonthly: validation.data.bankCardMonthly,
+      bankCardYearly: validation.data.bankCardYearly,
     },
   });
 

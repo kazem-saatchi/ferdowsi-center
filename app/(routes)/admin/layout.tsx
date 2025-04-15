@@ -12,8 +12,10 @@ export default async function AdminLayout({
 }) {
   const { success, person } = await verifyToken();
 
-  if (person?.role !== "ADMIN" || !success) {
+  if (!success) {
     redirect("/");
+  } else if (person?.role !== "ADMIN") {
+    redirect("/user");
   }
 
   return (

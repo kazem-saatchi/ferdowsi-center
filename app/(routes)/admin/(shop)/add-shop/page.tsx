@@ -21,6 +21,7 @@ import { addShopSchema } from "@/schema/shopSchema";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labels } from "@/utils/label";
 import LoadingComponent from "@/components/LoadingComponent";
+import BankCardOTP from "@/components/shop/BankCardOTP";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
@@ -149,6 +150,14 @@ export default function AddShopPage() {
                   {formErrors.renterId?._errors[0]}
                 </span>
               )}
+            </div>
+            <div className="space-y-2 ">
+              <Label htmlFor="bankCardMonthly">{labels.bankCardMonthly}</Label>
+              <BankCardOTP title="bankCardMonthly" />
+            </div>
+            <div className="space-y-2 ">
+              <Label htmlFor="bankCardYearly">{labels.bankCardYearly}</Label>
+              <BankCardOTP title="bankCardYearly" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="shopType">{labels.type}</Label>

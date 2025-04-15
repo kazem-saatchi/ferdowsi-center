@@ -13,6 +13,8 @@ export const addShopSchema = z.object({
     .string()
     .uuid({ message: "Renter ID must be a valid UUID." })
     .nullable(),
+  bankCardMonthly: z.string(),
+  bankCardYearly: z.string(),
 });
 
 export type AddShopData = z.infer<typeof addShopSchema>;

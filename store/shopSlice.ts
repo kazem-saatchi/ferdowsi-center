@@ -23,14 +23,7 @@ export const createShopSlice: StateCreator<
   // States
   shopById: null,
   shopsAll: null,
-  newShop: {
-    plaque: 0,
-    area: 0,
-    floor: 1,
-    type: "STORE",
-    ownerId: "",
-    renterId: null,
-  },
+  newShop: newShopDefault,
 
   // Set Utils
   setshopById: (shop) => set({ shopById: shop }),
@@ -41,13 +34,17 @@ export const createShopSlice: StateCreator<
     }),
   resetNewShop: () =>
     set({
-      newShop: {
-        plaque: 0,
-        area: 0,
-        floor: 1,
-        type: "STORE",
-        ownerId: "",
-        renterId: null,
-      },
+      newShop: newShopDefault,
     }),
 });
+
+const newShopDefault: AddShopData = {
+  plaque: 0,
+  area: 0,
+  floor: 1,
+  type: "STORE",
+  ownerId: "",
+  renterId: null,
+  bankCardMonthly: "",
+  bankCardYearly: "",
+};

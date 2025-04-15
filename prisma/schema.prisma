@@ -27,6 +27,8 @@ model Shop {
   isForSell     Boolean @default(false)
   sellAmount    Int     @default(0)
 
+  bankCardMonthly String
+  bankCardYearly  String
 
   owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])

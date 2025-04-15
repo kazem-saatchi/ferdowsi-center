@@ -1,18 +1,7 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import {SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { verifyToken } from "@/utils/auth";
-import { House, User } from "lucide-react";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+
 import UserSidePanel from "@/components/user-side-panel/UserSidePanel";
 
 export default async function UserServerLayout({

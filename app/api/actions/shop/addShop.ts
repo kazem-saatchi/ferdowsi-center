@@ -65,6 +65,8 @@ async function createShop(data: AddShopData, person: Person) {
         renterId: validation.data.renterId || null,
         ownerName: `${owner.firstName} ${owner.lastName}`,
         renterName: renter ? `${renter.firstName} ${renter.lastName}` : null,
+        bankCardMonthly:validation.data.bankCardMonthly,
+        bankCardYearly:validation.data.bankCardYearly,
       },
     });
 
