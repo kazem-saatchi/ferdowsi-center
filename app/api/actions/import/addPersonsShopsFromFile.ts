@@ -26,6 +26,18 @@ async function addPersonsAndShops(
 
   // a constant date for shop start date
   const currentDate = "2024-01-01T00:00:00.000Z";
+  const todayDate = new Date().toISOString();
+
+  const pastBalanceTitle = "بدهی قبلی";
+  const pastBalanceDescription =
+    "این مبلغ از سیستم حسابداری قبلی وارد شده است.";
+
+  const operation = await db.operation.create({
+    data: {
+      date: todayDate,
+      title: "ثبت اطلاعات اولیه از فایل",
+    },
+  });
 
   for (const row of data) {
     await db.$transaction(
@@ -35,7 +47,6 @@ async function addPersonsAndShops(
           let owner = await prisma.person.findUnique({
             where: { IdNumber: row.ownerIdNumber.toString() },
           });
-
 
           // Hash password for Owner
           const ownerHashedPassword: string = await hashPassword(
@@ -106,6 +117,66 @@ async function addPersonsAndShops(
               renterName: renter
                 ? `${renter.firstName} ${renter.lastName}`
                 : null,
+              bankCardMonthly: row.bankCardMonthly,
+              bankCardYearly: row.bankCardYearly,
+            },
+          });
+
+          // Add Owner Monthly Balance
+          const ownerCharge = await prisma.charge.create({
+            data: {
+              amount: row.ownerBalance,
+              date: todayDate,
+              daysCount: 0,
+              title: pastBalanceTitle,
+              operationName: operation.title,
+              plaque: newShop.plaque,
+              shopId: newShop.id,
+              personId: owner.id,
+              personName: `${owner.firstName} ${owner.lastName}`,
+              operationId: operation.id,
+              proprietor: false,
+              description: pastBalanceDescription,
+            },
+          });
+
+          let renterCharge = null;
+
+          // Add Renter Monthly Balance if Exist
+          if (renter) {
+            renterCharge = await prisma.charge.create({
+              data: {
+                amount: row.renterBalance,
+                date: todayDate,
+                daysCount: 0,
+                title: pastBalanceTitle,
+                operationName: operation.title,
+                plaque: newShop.plaque,
+                shopId: newShop.id,
+                personId: renter.id,
+                personName: `${renter.firstName} ${renter.lastName}`,
+                operationId: operation.id,
+                proprietor: false,
+                description: pastBalanceDescription,
+              },
+            });
+          }
+
+          // Add Owner Proprietor Balance
+          const proprietorBalance = await prisma.charge.create({
+            data: {
+              amount: row.ownershipBalance,
+              date: todayDate,
+              daysCount: 0,
+              title: pastBalanceTitle,
+              operationName: operation.title,
+              plaque: newShop.plaque,
+              shopId: newShop.id,
+              personId: owner.id,
+              personName: `${owner.firstName} ${owner.lastName}`,
+              operationId: operation.id,
+              proprietor: true,
+              description: pastBalanceDescription,
             },
           });
 
@@ -139,10 +210,9 @@ async function addPersonsAndShops(
           console.error("Failed to add row:", error);
         }
       },
-      { timeout: 30_000 } // Increases timeout to 30 seconds
+      { timeout: 60_000 } // Increases timeout to 60 seconds
     );
   }
-
 
   return {
     message: `تعداد ${addedShops} واحد اضافه شد.

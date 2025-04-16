@@ -20,8 +20,12 @@ export const addPersonsShopsSchema = z.object({
   renterFirstName: z.string(),
   renterLastName: z.string(),
   renterAddress: z.string(),
+  ownerBalance: z.number(),
+  renterBalance: z.number(),
+  ownershipBalance: z.number(),
+  bankCardMonthly: z.string(),
+  bankCardYearly: z.string(),
 });
 
 export type AddPersonsShopsData = z.infer<typeof addPersonsShopsSchema>;
 //--------------------------------------------------------------------------------------
-

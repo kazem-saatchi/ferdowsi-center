@@ -31,9 +31,13 @@ export default function EditShopPageById() {
     plaque: "",
     area: "",
     floor: "",
+    bankCardMonthly: "",
+    bankCardYearly: "",
   });
 
-  const [shopType, setShopType] = useState<"STORE" | "OFFICE" | "KIOSK">("STORE");
+  const [shopType, setShopType] = useState<"STORE" | "OFFICE" | "KIOSK">(
+    "STORE"
+  );
 
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
@@ -43,6 +47,8 @@ export default function EditShopPageById() {
         plaque: data?.data.shop.plaque.toString(),
         area: data?.data.shop.area.toString(),
         floor: data?.data.shop.floor.toString(),
+        bankCardMonthly: data?.data.shop.bankCardMonthly,
+        bankCardYearly: data?.data.shop.bankCardYearly,
       });
       setShopType(data.data.shop.type);
     }
@@ -66,6 +72,8 @@ export default function EditShopPageById() {
         area: parseFloat(formData.area),
         floor: parseInt(formData.floor),
         type: shopType,
+        bankCardMonthly: formData.bankCardMonthly,
+        bankCardYearly: formData.bankCardYearly,
       });
       router.push("/admin/all-shops");
     } catch (error) {
@@ -136,7 +144,10 @@ export default function EditShopPageById() {
             </div>
             <div className="space-y-2">
               <Label>{labels.renterName}</Label>
-              <Input value={data.data.shop.renterName || labels.notAvailable} disabled />
+              <Input
+                value={data.data.shop.renterName || labels.notAvailable}
+                disabled
+              />
             </div>
           </CardContent>
           <CardFooter>
