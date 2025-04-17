@@ -106,12 +106,22 @@ export function useUpatePerson() {
     mutationFn: async (data: updatePersonData) => await updatePersonInfo(data),
     onSuccess: (data, variables) => {
       if (data.success) {
+        console.log("personId", data.data?.personId);
         queryClient.invalidateQueries({
           queryKey: ["person", data.data?.personId],
         });
         queryClient.refetchQueries({
           queryKey: ["person", data.data?.personId],
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ["all-persons"],
+        });
+
+        queryClient.refetchQueries({
+          queryKey: ["all-persons"],
+        });
+
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

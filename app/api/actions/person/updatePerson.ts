@@ -40,7 +40,7 @@ async function updatePerson(data: updatePersonData, person: Person) {
   });
 
   return {
-    personId: updatedPerson.id,
+    personId: updatedPerson.IdNumber,
     message: successMSG.personUpdated,
     lastName: updatedPerson.lastName,
   };

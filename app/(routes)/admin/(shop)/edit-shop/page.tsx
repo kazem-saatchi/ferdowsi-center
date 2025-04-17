@@ -29,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { labels } from "@/utils/label";
 import BankCardOTPForm from "@/components/shop/BankCardOTPForm";
+import { Separator } from "@/components/ui/separator";
 
 export default function EditShopPage() {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
@@ -97,6 +98,19 @@ export default function EditShopPage() {
     }));
   };
 
+  const handleChangeOTP = ({
+    value,
+    name,
+  }: {
+    value: string;
+    name: string;
+  }) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId) {
@@ -142,9 +156,9 @@ export default function EditShopPage() {
     })) || [];
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">{labels.editShopInfo}</h1>
-      <Card className="mb-8">
+    <div className="max-w-[600px] mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-8">{labels.editShopInfo}</h1>
+      <Card className="mb-4">
         <CardHeader>
           <CardTitle>{labels.selectShopForEdit}</CardTitle>
         </CardHeader>
@@ -157,6 +171,7 @@ export default function EditShopPage() {
           />
         </CardContent>
       </Card>
+      <Separator className="mb-4"/>
       {selectedShop ? (
         <Card>
           <CardHeader>
@@ -205,7 +220,7 @@ export default function EditShopPage() {
                 <BankCardOTPForm
                   title="bankCardMonthly"
                   value={formData.bankCardMonthly}
-                  handleChange={handleChange}
+                  handleChange={handleChangeOTP}
                 />
               </div>
               <div className="space-y-2 ">
@@ -213,12 +228,13 @@ export default function EditShopPage() {
                 <BankCardOTPForm
                   title="bankCardYearly"
                   value={formData.bankCardYearly}
-                  handleChange={handleChange}
+                  handleChange={handleChangeOTP}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-72">
                 <Label htmlFor="type">{labels.storeOrOffice}</Label>
                 <Select
+                  dir="rtl"
                   value={shopType}
                   onValueChange={(value: "STORE" | "OFFICE") =>
                     setShopType(value)

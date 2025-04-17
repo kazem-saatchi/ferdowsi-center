@@ -16,7 +16,6 @@ import {
   Search,
   UserCog,
   UserCheck,
-  Sheet,
   ShoppingBag,
   ToggleLeft,
   UserX,
@@ -63,7 +62,7 @@ export const adminMenuData: AdminMenuCollection = {
       {
         id: 2,
         name: "حساب یک واحد",
-        href: "/shops-balance",
+        href: "/shop-balance",
         icon: PieChart,
       },
       {
@@ -244,12 +243,6 @@ export const adminMenuData: AdminMenuCollection = {
         name: "تغییر نقش شخص",
         href: "/update-person-role",
         icon: UserCheck,
-      },
-      {
-        id: 6,
-        name: "ثبت اشخاص با فایل",
-        href: "/add-persons",
-        icon: Sheet,
       },
     ],
   },

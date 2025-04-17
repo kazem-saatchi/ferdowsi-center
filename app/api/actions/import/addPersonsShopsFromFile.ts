@@ -203,11 +203,11 @@ async function addPersonsAndShops(
           await prisma.shopHistory.createMany({
             data: historyEntries,
           });
-
+          console.log(`shop ${newShop.plaque} added successfully`);
           addedShops++;
         } catch (error) {
           failedShops++;
-          console.error("Failed to add row:", error);
+          console.error("Failed to add plaque:",row.plaque, error);
         }
       },
       { timeout: 60_000 } // Increases timeout to 60 seconds

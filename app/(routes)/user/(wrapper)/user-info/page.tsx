@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { labels } from "@/utils/label";
 
 function UserInfoPage() {
   const { userInfo } = useStore(
@@ -28,7 +28,7 @@ function UserInfoPage() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>User Information</CardTitle>
+        <CardTitle>{labels.userInfo}</CardTitle>
       </CardHeader>
       <CardContent>
         {userInfo && (
@@ -36,49 +36,59 @@ function UserInfoPage() {
             <TableBody>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  ID Number
+                  {labels.idNumber}
                 </TableHead>
                 <TableCell>{userInfo.IdNumber}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  First Name
+                  {labels.firstName}
                 </TableHead>
                 <TableCell>{userInfo.firstName}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  Last Name
+                  {labels.lastName}
                 </TableHead>
                 <TableCell>{userInfo.lastName}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  Primary Phone
+                  {labels.primaryPhone}
                 </TableHead>
                 <TableCell>{formatPhoneNumber(userInfo.phoneOne)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  Secondary Phone
+                  {labels.secondaryPhone}
                 </TableHead>
                 <TableCell>{formatPhoneNumber(userInfo.phoneTwo)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead className="font-medium text-center">
-                  Status
+                  {labels.status}
                 </TableHead>
                 <TableCell>
                   <Badge
                     variant={userInfo.isActive ? "default" : "destructive"}
                   >
-                    {userInfo.isActive ? "Active" : "Inactive"}
+                    {userInfo.isActive ? labels.active : labels.inactive}
                   </Badge>
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableHead className="font-medium text-center">Role</TableHead>
-                <TableCell>{userInfo.role}</TableCell>
+                <TableHead className="font-medium text-center">
+                  {labels.role}
+                </TableHead>
+                <TableCell>
+                  {userInfo.role === "ADMIN"
+                    ? labels.admin
+                    : userInfo.role === "MANAGER"
+                    ? labels.manager
+                    : userInfo.role === "STAFF"
+                    ? labels.staff
+                    : labels.user}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

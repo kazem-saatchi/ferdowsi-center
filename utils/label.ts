@@ -1,6 +1,3 @@
-import allCosts from "@/app/api/actions/cost-income/allCosts";
-import { add } from "date-fns";
-
 export const labels = {
   plaque: "پلاک",
   totalCharge: "کل جمع شارژ (ریال)",
@@ -328,4 +325,16 @@ export const labels = {
   addingIncome: "ثبت درآمد",
   addIncomeButton: "درحال ثبت درآمد",
   incomeDate: "تاریخ",
+
+  //user route labels
+  userInfo: "اطلاعات کاربر",
+  idNumber: "کد ملی",
+  firstName: "نام",
+  primaryPhone: "شماره تماس",
+  secondaryPhone: "شماره دوم",
+  role: "جایگاه",
+  admin: "مدیر سایت",
+  manager: "هیئت مدیره",
+  staff: "کارمند",
+  user: "کاربر عمومی",
 };

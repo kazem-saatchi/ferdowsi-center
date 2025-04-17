@@ -15,6 +15,7 @@ function UploadPersons() {
   const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<any[]>([]);
   const [previewData, setPreviewData] = useState<any[]>([]);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const handleFileChange = (selectedFile: File, data: any[]) => {
     setFile(selectedFile);
@@ -24,8 +25,13 @@ function UploadPersons() {
 
   const handleUpload = async () => {
     if (parsedData.length === 0) return toast.error("No data to upload.");
+    setUploading(true);
 
-    mutationAddPersonsShops.mutate(parsedData);
+    mutationAddPersonsShops.mutate(parsedData, {
+      onSettled: () => {
+        setUploading(false);
+      },
+    });
   };
 
   return (
@@ -34,7 +40,11 @@ function UploadPersons() {
         <CardTitle>Upload Persons</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <FileUpload onFileChange={handleFileChange} onUpload={handleUpload} />
+        <FileUpload
+          onFileChange={handleFileChange}
+          onUpload={handleUpload}
+          loading={uploading}
+        />
         {previewData.length > 0 && <PreviewTable data={previewData} />}
       </CardContent>
     </Card>

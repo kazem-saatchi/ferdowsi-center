@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useGetShopBalance } from "@/tanstack/queries";
+import { useFindShopById, useGetShopBalance } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -11,7 +11,8 @@ import ErrorComponent from "@/components/ErrorComponent";
 import { useParams } from "next/navigation";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
-
+import ShopInfo from "@/components/shop/ShopInfo";
+import { Separator } from "@/components/ui/separator";
 
 export default function ShopBalancePage() {
   const params = useParams();
@@ -24,6 +25,8 @@ export default function ShopBalancePage() {
     refetch,
     error,
   } = useGetShopBalance(shopId);
+
+  const { data: shopInfo, isLoading: shopIsLoading } = useFindShopById(shopId);
 
   const { shopBalance, setShopBalance, personsBalance, setPersonsBalance } =
     useStore(
@@ -71,18 +74,25 @@ export default function ShopBalancePage() {
             <p>No balance information found for this shop.</p>
           )}
         </CardContent>
-      </Card>
 
-      {personsBalance && personsBalance.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>People's Balances</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PersonsBalanceTable personsBalance={personsBalance} />
-          </CardContent>
-        </Card>
-      )}
+        {personsBalance && personsBalance.length > 0 && (
+          <>
+            <CardHeader>
+              <CardTitle>People's Balances</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PersonsBalanceTable personsBalance={personsBalance} />
+            </CardContent>
+          </>
+        )}
+
+        {shopInfo && shopInfo.data?.shop && (
+          <>
+            <Separator />
+            <ShopInfo isLoading={shopIsLoading} shop={shopInfo.data?.shop} />
+          </>
+        )}
+      </Card>
     </div>
   );
 }

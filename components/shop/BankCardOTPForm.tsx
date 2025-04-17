@@ -8,7 +8,7 @@ import {
 interface CardFormProps {
   title: string;
   value: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: ({ value, name }: { value: string; name: string }) => void;
 }
 
 function BankCardOTPForm({ title, value, handleChange }: CardFormProps) {
@@ -20,9 +20,9 @@ function BankCardOTPForm({ title, value, handleChange }: CardFormProps) {
         maxLength={16}
         value={value}
         onChange={(value) => {
-          handleChange;
+          handleChange({ value, name: title });
         }}
-        containerClassName="w-full mx-auto justify-around"
+        containerClassName="w-full mx-auto justify-start items-center gap-1 lg:gap-0"
       >
         <InputOTPGroup className="w-24 sm:w-28">
           <InputOTPSlot index={0} className="" />

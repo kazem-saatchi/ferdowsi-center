@@ -24,13 +24,13 @@ export default async function AdminLayout({
         <AdminSidebar />
         <div
           className={cn(
-            "flex flex-row flex-1 items-start justify-start",
+            "flex flex-col lg:flex-row flex-1 items-start justify-start",
             "overflow-y-auto no-scrollbar",
-            " bg-neutral-100 m-2 rounded-md border-2 relative"
+            "bg-neutral-100 m-2 rounded-md border-2 relative"
           )}
         >
-          <SidebarTrigger className=" mt-2 mr-2 w-8 h-8" variant="outline" />
-          <div className="p-4 w-full items-center">{children}</div>
+          <SidebarTrigger className="mt-2 mr-2 w-8 h-8" variant="outline" />
+          <div className="px-1 py-2 md:px-4 w-full items-center">{children}</div>
         </div>
       </div>
     </SidebarProvider>
