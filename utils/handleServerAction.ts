@@ -5,7 +5,7 @@ import { verifyToken } from "./auth";
 import { errorMSG, successMSG } from "./messages";
 
 // utils/handleServerAction.ts
-interface ActionResponse<T> {
+export interface ActionResponse<T> {
   success: boolean;
   message: string;
   data?: T;

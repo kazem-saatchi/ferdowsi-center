@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 interface PreviewTableProps {
   data: any[];
@@ -20,9 +21,11 @@ export function PreviewTable({ data }: PreviewTableProps) {
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
-          <TableRow className="text-center">
+          <TableRow>
             {headers.map((header) => (
-              <TableHead key={header}>{header}</TableHead>
+              <TableHead key={header} className={cn("text-center text-xs")}>
+                {header}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
@@ -30,8 +33,15 @@ export function PreviewTable({ data }: PreviewTableProps) {
           {data.map((row, index) => (
             <TableRow key={index}>
               {headers.map((header) => (
-                <TableCell key={header} className="text-center">
-                  {row[header]}
+                <TableCell
+                  key={header}
+                  className={cn(
+                    "text-center text-xs",
+                    row[header]===undefined && "bg-red-500 text-white",
+                    row[header]===0 && "bg-yellow-300 text-white",
+                  )}
+                >
+                  {row[header] !== undefined ? row[header] : "Empty"}
                 </TableCell>
               ))}
             </TableRow>

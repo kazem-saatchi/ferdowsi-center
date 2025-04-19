@@ -11,21 +11,23 @@ interface AddPersonsShopsResponse {
   message: string;
   addedShops: number;
   failedShops: number;
+  processed: number;
 }
 
-async function addPersonsAndShops(
+async function addPersonsAndShopsInternal(
   data: AddPersonsShopsData[],
   admin: { role: string }
-) {
+): Promise<Omit<AddPersonsShopsResponse, "message">> {
   if (admin.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
   let addedShops = 0;
   let failedShops = 0;
+  const processedCount = data.length; // Track the size of the input chunk
 
   // a constant date for shop start date
-  const currentDate = "2024-01-01T00:00:00.000Z";
+  const startDate = "2024-01-01T00:00:00.000Z";
   const todayDate = new Date().toISOString();
 
   const pastBalanceTitle = "بدهی قبلی";
@@ -35,7 +37,7 @@ async function addPersonsAndShops(
   const operation = await db.operation.create({
     data: {
       date: todayDate,
-      title: "ثبت اطلاعات اولیه از فایل",
+      title: `ثبت اطلاعات اولیه از فایل - `,
     },
   });
 
@@ -188,7 +190,7 @@ async function addPersonsAndShops(
               personId: newShop.ownerId,
               personName: newShop.ownerName,
               type: "Ownership",
-              startDate: currentDate,
+              startDate: startDate,
             },
             {
               shopId: newShop.id,
@@ -196,7 +198,7 @@ async function addPersonsAndShops(
               personId: newShop.renterId || newShop.ownerId,
               personName: newShop.renterName || newShop.ownerName,
               type: newShop.renterId ? "ActiveByRenter" : "ActiveByOwner",
-              startDate: currentDate,
+              startDate: startDate,
             },
           ];
 
@@ -207,7 +209,7 @@ async function addPersonsAndShops(
           addedShops++;
         } catch (error) {
           failedShops++;
-          console.error("Failed to add plaque:",row.plaque, error);
+          console.error("Failed to add plaque:", row.plaque, error);
         }
       },
       { timeout: 60_000 } // Increases timeout to 60 seconds
@@ -215,15 +217,18 @@ async function addPersonsAndShops(
   }
 
   return {
-    message: `تعداد ${addedShops} واحد اضافه شد.
-    تعداد ${failedShops} ناموفق بود`,
     addedShops,
     failedShops,
+    processed: processedCount,
   };
 }
 
 export default async function addPersonsShops(data: AddPersonsShopsData[]) {
-  return handleServerAction<AddPersonsShopsResponse>((user) =>
-    addPersonsAndShops(data, user)
-  );
+  // Wrap with handleServerAction, which adds success/data structure
+  return handleServerAction(async (user) => {
+    const result = await addPersonsAndShopsInternal(data, user); // Call the internal logic
+    // Construct the final message based on chunk results
+    const message = `Chunk processed: ${result.addedShops} added, ${result.failedShops} failed out of ${result.processed}.`;
+    return { ...result, message };
+  });
 }

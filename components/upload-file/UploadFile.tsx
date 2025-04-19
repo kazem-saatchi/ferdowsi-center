@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
   onFileChange: (file: File, data: any[]) => void;
@@ -75,16 +76,25 @@ export function FileUpload({
         />
         <label
           htmlFor="file-upload"
-          className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+          className={cn(
+            "cursor-pointer inline-flex items-center justify-center rounded-md",
+            "text-sm font-medium ring-offset-background transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+          )}
         >
-          Choose File
+          انتخاب فایل
         </label>
         <span className="text-sm text-gray-500">
-          {fileName || "No file chosen"}
+          {fileName || "فایلی انتخاب نشده است"}
         </span>
       </div>
-      <Button onClick={onUpload} className="w-full" disabled={loading}>
-        <Upload className="mr-2 h-4 w-4" />{" "}
+      <Button
+        onClick={onUpload}
+        className="w-full"
+        disabled={loading || !fileName}
+      >
+        <Upload className="mr-2 h-4 w-4" />
         {loading ? "در حال بارگذاری" : "بارگذاری اطلاعات"}
       </Button>
     </div>

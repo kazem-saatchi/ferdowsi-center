@@ -50,6 +50,7 @@ import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
 import addIncome from "@/app/api/actions/cost-income/addIncome";
 import addPersonsShops from "@/app/api/actions/import/addPersonsShopsFromFile";
 import { AddPersonsShopsData } from "@/schema/importSchema";
+import { ActionResponse } from "@/utils/handleServerAction";
 
 //------------------PERSON--------------------
 
@@ -654,30 +655,50 @@ export function useAddIncome() {
 //------------------IMPORT-EXPORT--------------------
 
 // Add Persons and Shops from File
+// export function useAddPersonsShops() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
+
+//   return useMutation({
+//     mutationFn: async (data: AddPersonsShopsData[]) =>
+//       await addPersonsShops(data),
+//     onSuccess: (data) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-persons"] });
+//         queryClient.refetchQueries({ queryKey: ["all-persons"] });
+
+//         queryClient.invalidateQueries({ queryKey: ["all-shops"] });
+//         queryClient.refetchQueries({ queryKey: ["all-shops"] });
+
+//         queryClient.invalidateQueries({ queryKey: ["all-histories"] });
+//         queryClient.refetchQueries({ queryKey: ["all-histories"] });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
+interface AddPersonsShopsResponse {
+  message: string;
+  addedShops: number;
+  failedShops: number;
+  processed: number;
+}
+
 export function useAddPersonsShops() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: AddPersonsShopsData[]) =>
-      await addPersonsShops(data),
-    onSuccess: (data) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-persons"] });
-        queryClient.refetchQueries({ queryKey: ["all-persons"] });
-
-        queryClient.invalidateQueries({ queryKey: ["all-shops"] });
-        queryClient.refetchQueries({ queryKey: ["all-shops"] });
-
-        queryClient.invalidateQueries({ queryKey: ["all-histories"] });
-        queryClient.refetchQueries({ queryKey: ["all-histories"] });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
+  return useMutation<
+    ActionResponse<AddPersonsShopsResponse>, // Type of the data returned by the mutationFn
+    Error, // Type of error
+    AddPersonsShopsData[] // Type of variables passed to mutate/mutateAsync
+  >({
+    mutationFn: async (data: AddPersonsShopsData[]) => {
+      return await addPersonsShops(data);
     },
   });
 }
