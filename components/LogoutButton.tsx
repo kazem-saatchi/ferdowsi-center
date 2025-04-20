@@ -14,6 +14,7 @@ function LogoutButton() {
         queryClient.clear();
         logoutUser();
       }}
+      className="w-full"
     >
       <LogOut className="h-4 w-4" />
       خروج

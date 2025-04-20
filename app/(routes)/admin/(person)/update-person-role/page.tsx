@@ -23,6 +23,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { updatePersonRoleSchema } from "@/schema/userSchemas";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 export default function UpdatePersonRolePage() {
   const [selectedPersonId, setSelectedPersonId] = useState("");
@@ -89,6 +91,9 @@ export default function UpdatePersonRolePage() {
         <CardHeader>
           <CardTitle>به‌روزرسانی نقش شخص</CardTitle>
         </CardHeader>
+
+        <Separator className="mt-2 mb-4" />
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -103,20 +108,27 @@ export default function UpdatePersonRolePage() {
               />
             </div>
             {selectedPerson && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">نقش فعلی</label>
-                <p>
+              <div className="flex flex-row items-center justify-start gap-3 h-10">
+                <Label className="">نقش فعلی</Label>
+                <span className="font-bold border rounded-md p-2">
                   {roleOptions.find(
                     (role) => role.value === selectedPerson.role
                   )?.label || selectedPerson.role}
-                </p>
+                </span>
               </div>
             )}
+
+            <Separator />
+
             <div className="space-y-2">
               <label htmlFor="role" className="text-sm font-medium">
                 نقش جدید
               </label>
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <Select
+                value={selectedRole}
+                onValueChange={setSelectedRole}
+                dir="rtl"
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="انتخاب نقش جدید" />
                 </SelectTrigger>

@@ -28,7 +28,7 @@ async function updatePerson(data: updatePersonData, person: Person) {
 
   // Check for duplicate IdNumber
   const updatedPerson = await db.person.update({
-    where: { IdNumber: validation.data.IdNumber },
+    where: { id: validation.data.id },
     data: {
       IdNumber: validation.data.IdNumber,
       firstName: validation.data.firstName,

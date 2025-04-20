@@ -2,10 +2,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function ErrorComponentSimple({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center h-screen  bg-neutral-100 dark:bg-neutral-900">
+    <div className="flex flex-col items-center justify-center h-screen ">
       <Alert
         variant="destructive"
-        className="max-w-md dark:bg-neutral-800 dark:text-red-400"
+        className="max-w-md "
       >
         <AlertTitle className="text-lg">خطا</AlertTitle>
         <AlertDescription>{message}</AlertDescription>

@@ -109,7 +109,10 @@ function UploadPersons() {
 
       // Final summary after loop finishes
       toast.info(
-        `Upload finished. Total processed: ${currentProcessed}/${totalRecords}. Added: ${cumulativeAdded}, Failed: ${cumulativeFailed}.`
+        `بارگذاری به پایان رسید
+         -Total processed: ${currentProcessed}/${totalRecords} 
+         -Added: ${cumulativeAdded} 
+         -Failed: ${cumulativeFailed}`
       );
 
       // Invalidate queries *after* all chunks are processed

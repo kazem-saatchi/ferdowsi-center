@@ -28,6 +28,7 @@ export const updatePersonSchema = addPersonSchema
   })
   .extend({
     isActive: z.boolean(),
+    id: z.string(),
   });
 
 export type updatePersonData = z.infer<typeof updatePersonSchema>;
@@ -44,9 +45,9 @@ export const findPersonByFilterSchema = z.object({
 export type FindPersonByFilterData = z.infer<typeof findPersonByFilterSchema>;
 //--------------------------------------------------------------------------------------
 export const updatePersonRoleSchema = z.object({
-  userId:z.string(),
-  role:z.enum(["ADMIN","MANAGER","STAFF","USER"])
-})
+  userId: z.string(),
+  role: z.enum(["ADMIN", "MANAGER", "STAFF", "USER"]),
+});
 
 export type updatePersonRoleData = z.infer<typeof updatePersonRoleSchema>;
 //--------------------------------------------------------------------------------------

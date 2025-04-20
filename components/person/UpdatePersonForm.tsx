@@ -13,14 +13,12 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useStore } from "@/store/store";
-import { useShallow } from "zustand/react/shallow";
-
 import { labels } from "@/utils/label";
 import { useUpatePerson } from "@/tanstack/mutations";
 
 interface UpdatePersonFormProps {
   initialData: {
+    id: string;
     IdNumber: string;
     firstName: string;
     lastName: string;
@@ -68,7 +66,6 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
               name="IdNumber"
               value={formData.IdNumber}
               onChange={handleChange}
-              disabled
             />
           </div>
           <div className="space-y-2">

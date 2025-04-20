@@ -18,7 +18,7 @@ export default async function UserServerLayout({
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <UserSidePanel person={person} />
-        <main className="flex-1 overflow-y-auto no-scrollbar items-center justify-center bg-neutral-100 m-2 rounded-md border-2 relative">
+        <main className="flex-1 overflow-y-auto no-scrollbar items-center justify-center  m-2 rounded-md border-2 relative">
           <SidebarTrigger
             className="absolute top-2 right-2 w-8 h-8"
             variant="outline"

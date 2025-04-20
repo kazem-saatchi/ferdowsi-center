@@ -31,7 +31,7 @@ export function PersonList({ persons }: PersonListProps) {
           <TableHead className="text-center">{labels.histories}</TableHead>
           <TableHead className="text-center">{labels.charges}</TableHead>
           <TableHead className="text-center">{labels.balance}</TableHead>
-          <TableHead className="text-center">{labels.delete}</TableHead>
+          {/* <TableHead className="text-center">{labels.delete}</TableHead> */}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -67,9 +67,9 @@ export function PersonList({ persons }: PersonListProps) {
                 <Button variant="outline">{labels.view}</Button>
               </Link>
             </TableCell>
-            <TableCell className="text-center">
+            {/* <TableCell className="text-center">
               <DeletePerson id={person.id} />
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

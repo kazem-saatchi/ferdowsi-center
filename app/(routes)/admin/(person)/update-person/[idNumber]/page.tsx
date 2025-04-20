@@ -55,6 +55,7 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
   }
 
   const initialData = {
+    id: personById.id,
     IdNumber: personById.IdNumber,
     firstName: personById.firstName,
     lastName: personById.lastName,

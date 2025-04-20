@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labels } from "@/utils/label";
 import LoadingComponent from "@/components/LoadingComponent";
 import BankCardOTP from "@/components/shop/BankCardOTP";
+import ShopFloorSelect from "@/components/shop/ShopFloorSelect";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
@@ -118,7 +119,7 @@ export default function AddShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="floor">{labels.floorNumber}</Label>
-              <Input
+              {/* <Input
                 id="floor"
                 name="floor"
                 type="number"
@@ -126,6 +127,10 @@ export default function AddShopPage() {
                 onChange={(event) => {
                   setNewShop("floor", parseInt(event.target.value));
                 }}
+              /> */}
+              <ShopFloorSelect
+                floorValue={newShop.floor}
+                setFloorValue={setNewShop}
               />
               {formErrors.floor && (
                 <span className="text-red-500 text-sm">

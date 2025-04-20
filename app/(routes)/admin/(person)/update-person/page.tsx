@@ -1,50 +1,58 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { UpdatePersonForm } from "@/components/person/UpdatePersonForm"
-import { useFindAllPersons } from "@/tanstack/queries"
-import { useStore } from "@/store/store"
-import { useShallow } from "zustand/react/shallow"
-import LoadingComponent from "@/components/LoadingComponent"
-import ErrorComponent from "@/components/ErrorComponent"
-import { CustomSelect } from "@/components/CustomSelect"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import type { Person } from "@prisma/client"
+import { useState, useEffect } from "react";
+import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
+import { useFindAllPersons } from "@/tanstack/queries";
+import { useStore } from "@/store/store";
+import { useShallow } from "zustand/react/shallow";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
+import { CustomSelect } from "@/components/CustomSelect";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Person } from "@prisma/client";
 
 export default function UpdatePersonPage() {
-  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null)
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null)
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
-  const { data, error, isError, isLoading, refetch } = useFindAllPersons()
+  const { data, error, isError, isLoading, refetch } = useFindAllPersons();
 
   const { personsAll, setPersonsAll } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
       setPersonsAll: state.setPersonAll,
-    })),
-  )
+    }))
+  );
 
   useEffect(() => {
     if (data?.data?.persons) {
-      setPersonsAll(data.data.persons)
+      setPersonsAll(data.data.persons);
     }
-  }, [data, setPersonsAll])
+  }, [data, setPersonsAll]);
 
   useEffect(() => {
     if (personsAll && selectedPersonId) {
-      const selected = personsAll.find((person) => person.id === selectedPersonId)
-      setSelectedPerson(selected || null)
+      const selected = personsAll.find(
+        (person) => person.id === selectedPersonId
+      );
+      setSelectedPerson(selected || null);
     } else {
-      setSelectedPerson(null)
+      setSelectedPerson(null);
     }
-  }, [selectedPersonId, personsAll])
+  }, [selectedPersonId, personsAll]);
 
   if (isLoading) {
-    return <LoadingComponent text="در حال بارگذاری" />
+    return <LoadingComponent text="در حال بارگذاری" />;
   }
 
   if (isError) {
-    return <ErrorComponent error={error as Error} retry={refetch} message="خطایی هنگام بارگذاری اطلاعات رخ داد." />
+    return (
+      <ErrorComponent
+        error={error as Error}
+        retry={refetch}
+        message="خطایی هنگام بارگذاری اطلاعات رخ داد."
+      />
+    );
   }
 
   if (!personsAll || personsAll.length === 0) {
@@ -54,13 +62,13 @@ export default function UpdatePersonPage() {
         retry={refetch}
         message="خطایی هنگام بارگذاری اطلاعات رخ داد."
       />
-    )
+    );
   }
 
   const personOptions = personsAll.map((person) => ({
     id: person.id,
     label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
-  }))
+  }));
 
   return (
     <div className="container mx-auto py-8">
@@ -82,6 +90,7 @@ export default function UpdatePersonPage() {
         <UpdatePersonForm
           key={selectedPerson.id}
           initialData={{
+            id: selectedPerson.id,
             IdNumber: selectedPerson.IdNumber,
             firstName: selectedPerson.firstName,
             lastName: selectedPerson.lastName,
@@ -91,9 +100,10 @@ export default function UpdatePersonPage() {
           }}
         />
       ) : (
-        <p className="text-center text-gray-500">لطفاً یک شخص را برای ویرایش انتخاب کنید.</p>
+        <p className="text-center text-gray-500">
+          لطفاً یک شخص را برای ویرایش انتخاب کنید.
+        </p>
       )}
     </div>
-  )
+  );
 }
-

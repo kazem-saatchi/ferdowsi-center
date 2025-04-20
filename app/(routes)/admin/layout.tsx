@@ -26,7 +26,7 @@ export default async function AdminLayout({
           className={cn(
             "flex flex-col lg:flex-row flex-1 items-start justify-start",
             "overflow-y-auto no-scrollbar",
-            "bg-neutral-100 m-2 rounded-md border-2 relative"
+            " m-2 rounded-md border-2 relative"
           )}
         >
           <SidebarTrigger className="mt-2 mr-2 w-8 h-8" variant="outline" />
