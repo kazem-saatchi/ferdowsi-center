@@ -156,18 +156,17 @@ export default function EditShopPage() {
     })) || [];
 
   return (
-    <div className="max-w-[600px] mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-8">{labels.editShopInfo}</h1>
+    <div className="max-w-2xl mx-auto">
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>{labels.selectShopForEdit}</CardTitle>
+          <CardTitle>{labels.editShopInfo}</CardTitle>
         </CardHeader>
         <CardContent>
           <CustomSelect
             options={shopOptions}
             value={selectedShopId || ""}
             onChange={(value) => setSelectedShopId(value)}
-            label={labels.shop}
+            label={labels.selectShop}
           />
         </CardContent>
       </Card>

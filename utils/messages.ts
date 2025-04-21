@@ -61,6 +61,7 @@ export const errorMSG = {
   sessionExpired: "لطفا ابتدا وارد حساب کاربری شوید",
   noPermission: "شما مجوز انجام این عمل را ندارید.",
   invalidInput: "داده‌های ورودی نامعتبر است.",
+  invalidPassword: "رمز عبور فعلی اشتباه است",
   userNotFound: "کاربر یافت نشد.",
   unknownError: "یک خطای ناشناخته رخ داد.",
   duplicateId: "شماره شناسایی قبلاً وجود دارد.",
@@ -87,6 +88,7 @@ export const errorMSG = {
   paymentNotFound: "پرداخت یافت نشد.",
 
   noRelatedShopFound: "هیچ فروشگاهی برای کاربر یافت نشد.",
+  somethingWentWrong: "خطایی پیش آمده است",
 };
 
 export const successMSG = {
@@ -97,6 +99,7 @@ export const successMSG = {
   userVerified: "کاربر با موفقیت تأیید شد.",
   actionSucceeded: "عملیات با موفقیت انجام شد.",
   personsFound: "اشخاص با موفقیت یافت شدند.",
+  passwordUpdted: "رمز عبور شما با موفقیت تغییر یافت",
 
   shopAdded: "فروشگاه با موفقیت اضافه شد.",
   shopsFound: "فروشگاه‌ها با موفقیت یافت شدند.",
@@ -119,5 +122,5 @@ export const successMSG = {
   costAdded: "هزینه با موفقیت اضافه شد",
   incomeAdded: "درآمد با موفقیت اضافه شد",
 
-  personsAndShopsAdded: "اشخاص و فروشگاه ها با موفقیت اضافه شد",
+  personsAndShopsAdded: "اشخاص و فروشگاهها با موفقیت اضافه شد",
 };

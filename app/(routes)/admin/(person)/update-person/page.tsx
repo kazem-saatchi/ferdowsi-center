@@ -10,6 +10,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Person } from "@prisma/client";
+import { labels } from "@/utils/label";
 
 export default function UpdatePersonPage() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -71,18 +72,17 @@ export default function UpdatePersonPage() {
   }));
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">به‌روزرسانی اطلاعات شخص</h1>
+    <div className="mx-auto max-w-3xl">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>انتخاب شخص</CardTitle>
+          <CardTitle>{labels.selectPerson}</CardTitle>
         </CardHeader>
         <CardContent>
           <CustomSelect
             options={personOptions}
             value={selectedPersonId || ""}
             onChange={(value) => setSelectedPersonId(value)}
-            label="شخص"
+            label={labels.searchByPerson}
           />
         </CardContent>
       </Card>
@@ -101,7 +101,7 @@ export default function UpdatePersonPage() {
         />
       ) : (
         <p className="text-center text-gray-500">
-          لطفاً یک شخص را برای ویرایش انتخاب کنید.
+          {labels.pleaseSelectAPerson}
         </p>
       )}
     </div>

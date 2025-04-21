@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import {
-  updatePersonRoleData,
+  UpdatePersonRoleData,
   updatePersonRoleSchema,
 } from "@/schema/userSchemas";
 import { handleServerAction } from "@/utils/handleServerAction";
@@ -14,7 +14,7 @@ interface updatePersonResponse {
   message: string;
 }
 
-async function updatePerson(data: updatePersonRoleData, person: Person) {
+async function updatePerson(data: UpdatePersonRoleData, person: Person) {
   // Only admins or authorized roles can update new people
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
@@ -42,7 +42,7 @@ async function updatePerson(data: updatePersonRoleData, person: Person) {
   };
 }
 
-export default async function updatePersonRole(data: updatePersonRoleData) {
+export default async function updatePersonRole(data: UpdatePersonRoleData) {
   return handleServerAction<updatePersonResponse>((user) =>
     updatePerson(data, user)
   );

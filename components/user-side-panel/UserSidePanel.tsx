@@ -5,18 +5,19 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
-import { House, User } from "lucide-react";
+import { House, User, ShieldPlus } from "lucide-react";
 import { Person } from "@prisma/client";
+import UserPanelFooter from "./UserPanelFooter";
+import UserPanelHeader from "./UserPanelHeader";
 
-function UserSidePanel({ person }: { person?: Person }) {
+function UserSidePanel() {
   return (
-    <Sidebar side="right">
-      <SidebarHeader>
-        <h2 className="text-xl font-bold p-4">{`${person?.firstName} ${person?.lastName}`}</h2>
-      </SidebarHeader>
+    <Sidebar side="right" variant="floating">
+      <UserPanelHeader />
       <SidebarContent>
         <Separator />
         <SidebarMenu>
@@ -25,6 +26,14 @@ function UserSidePanel({ person }: { person?: Person }) {
               <Link href="/user/user-info">
                 <User className="mr-2 h-4 w-4" />
                 <span> اطلاعات کاربر </span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/user/update-password">
+                <ShieldPlus className="mr-2 h-4 w-4" />
+                <span> تغییر رمز عبور </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -39,6 +48,7 @@ function UserSidePanel({ person }: { person?: Person }) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
+      <UserPanelFooter />
     </Sidebar>
   );
 }

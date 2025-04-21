@@ -30,7 +30,7 @@ export default async function AdminLayout({
           )}
         >
           <SidebarTrigger className="mt-2 mr-2 w-8 h-8" variant="outline" />
-          <div className="px-1 py-2 md:px-4 w-full items-center">{children}</div>
+          <div className="px-1 py-10 md:px-2 w-full items-center">{children}</div>
         </div>
       </div>
     </SidebarProvider>

@@ -75,10 +75,9 @@ export default function AddShopPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addNewShop}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>{labels.shopDetails}</CardTitle>
+          <CardTitle>{labels.addNewShop}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

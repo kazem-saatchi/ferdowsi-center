@@ -53,7 +53,7 @@ export default function UpdateShopRenterPage() {
 
   useEffect(() => {
     if (selectedShopId && shopsAll) {
-      const selectedShop = shopsAll.find(shop => shop.id === selectedShopId);
+      const selectedShop = shopsAll.find((shop) => shop.id === selectedShopId);
       setCurrentRenterName(selectedShop?.renterName || "");
     }
   }, [selectedShopId, shopsAll]);
@@ -81,15 +81,17 @@ export default function UpdateShopRenterPage() {
     }
   };
 
-  const shopOptions = shopsAll?.map((shop) => ({
-    id: shop.id,
-    label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
-  })) || [];
+  const shopOptions =
+    shopsAll?.map((shop) => ({
+      id: shop.id,
+      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+    })) || [];
 
-  const personOptions = personsAll?.map((person) => ({
-    id: person.id,
-    label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
-  })) || [];
+  const personOptions =
+    personsAll?.map((person) => ({
+      id: person.id,
+      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+    })) || [];
 
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
     return (
@@ -104,10 +106,9 @@ export default function UpdateShopRenterPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.updateShopRenter}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>{labels.changeShopRenter}</CardTitle>
+          <CardTitle>{labels.updateShopRenter}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -138,7 +139,9 @@ export default function UpdateShopRenterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="renterChangeDate" className="ml-2">{labels.renterChangeDate}</Label>
+              <Label htmlFor="renterChangeDate" className="ml-2">
+                {labels.renterChangeDate}
+              </Label>
               <DatePicker
                 calendar={persian}
                 locale={persian_fa}
@@ -177,4 +180,3 @@ export default function UpdateShopRenterPage() {
     </div>
   );
 }
-

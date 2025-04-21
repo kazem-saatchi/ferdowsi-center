@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { updatePersonData, updatePersonSchema } from "@/schema/userSchemas";
+import { UpdatePersonData, updatePersonSchema } from "@/schema/userSchemas";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -12,7 +12,7 @@ interface updatePersonResponse {
   message: string;
 }
 
-async function updatePerson(data: updatePersonData, person: Person) {
+async function updatePerson(data: UpdatePersonData, person: Person) {
   // Only admins or authorized roles can update new people
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
@@ -46,7 +46,7 @@ async function updatePerson(data: updatePersonData, person: Person) {
   };
 }
 
-export default async function updatePersonInfo(data: updatePersonData) {
+export default async function updatePersonInfo(data: UpdatePersonData) {
   return handleServerAction<updatePersonResponse>((user) =>
     updatePerson(data, user)
   );

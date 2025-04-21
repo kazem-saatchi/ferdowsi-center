@@ -18,6 +18,8 @@ import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { labels } from "@/utils/label";
+import { errorMSG } from "@/utils/messages";
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
@@ -84,25 +86,23 @@ export default function MyShopsPage() {
   );
 
   if (isLoading) {
-    return <LoadingComponent text="Loading Your Shops Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
-    return (
-      <ErrorComponentSimple message="An Error Occurred While Fetching Your Shops" />
-    );
+    return <ErrorComponentSimple message={errorMSG.somethingWentWrong} />;
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Shops and Balances</CardTitle>
+        <CardTitle>{labels.myShops}</CardTitle>
       </CardHeader>
       <CardContent>
         {personShopsBalance && personShopsBalance.shopsOwned.length > 0 ? (
           renderShopsTable()
         ) : (
-          <p>You don't have any shops associated with your account.</p>
+          <p>{labels.youDontHaveAnyShop}</p>
         )}
       </CardContent>
     </Card>

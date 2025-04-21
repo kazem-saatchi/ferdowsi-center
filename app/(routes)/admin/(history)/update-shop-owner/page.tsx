@@ -94,10 +94,9 @@ export default function UpdateShopOwnerPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.updateShopOwner}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>{labels.changeShopOwner}</CardTitle>
+          <CardTitle>{labels.updateShopOwner}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

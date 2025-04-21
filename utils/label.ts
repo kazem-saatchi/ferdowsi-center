@@ -68,6 +68,9 @@ export const labels = {
   select: "انتخاب",
   searchPersonPlaceHolder: "جستجوی اشخاص ...",
 
+  pleaseSelectAPerson: "لطفاً یک شخص را برای ویرایش انتخاب کنید.",
+
+  selectPerson:"انتخاب شخص",
   updatePerson: "ویرایش اطلاعات",
   updateInfo: "ثبت تغییرات",
   updatingInfo: "در حال ثبت تغییرات",
@@ -201,7 +204,6 @@ export const labels = {
   errorLoadingPayments: "خطایی رخ داده است",
 
   searchPaymentsByPerson: "جستجوی پرداختی‌ها بر اساس شخص",
-  selectPerson: "انتخاب شخص",
 
   searchPaymentsByShop: "جستجوی پرداختی‌ها بر اساس واحد",
 
@@ -337,4 +339,18 @@ export const labels = {
   manager: "هیئت مدیره",
   staff: "کارمند",
   user: "کاربر عمومی",
+
+  // update password
+  updatePassword: "تغییر رمز عبور",
+  currentPassword: "رمز فعلی",
+  newPassword: "رمز عبور جدید",
+  confirmPassword: "تکرار رمز عبور جدید",
+  currentPasswordDescription: "رمز عبور فعلی را وارد کنید",
+  newPasswordDescription: "رمز عبور جدید را وارد کنید",
+  confrimPasswordDescription: "رمز عبور جدید را دوباره وارد کنید",
+  updatingPassword: "در حال بروز رسانی",
+
+  // My Shops
+  myShops: "لیست واحدهای من",
+  youDontHaveAnyShop: " با این حساب کاربری واحدی ثبت نشده است. ",
 };

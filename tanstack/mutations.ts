@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 
 import {
   AddPersonData,
-  updatePersonData,
-  updatePersonRoleData,
+  UpdatePersonData,
+  UpdatePersonPasswordData,
+  UpdatePersonRoleData,
 } from "@/schema/userSchemas";
 import addPerson from "@/app/api/actions/person/addPerson";
 import { toast } from "sonner";
@@ -51,6 +52,7 @@ import addIncome from "@/app/api/actions/cost-income/addIncome";
 import addPersonsShops from "@/app/api/actions/import/addPersonsShopsFromFile";
 import { AddPersonsShopsData } from "@/schema/importSchema";
 import { ActionResponse } from "@/utils/handleServerAction";
+import updateUserPassword from "@/app/api/actions/user/updatePersonPassword";
 
 //------------------PERSON--------------------
 
@@ -104,7 +106,7 @@ export function useUpatePerson() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async (data: updatePersonData) => await updatePersonInfo(data),
+    mutationFn: async (data: UpdatePersonData) => await updatePersonInfo(data),
     onSuccess: (data, variables) => {
       if (data.success) {
         console.log("personId", data.data?.personId);
@@ -140,7 +142,7 @@ export function useUpatePersonRole() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: async (data: updatePersonRoleData) =>
+    mutationFn: async (data: UpdatePersonRoleData) =>
       await updatePersonRole(data),
     onSuccess: (data, variables) => {
       if (data.success) {
@@ -172,6 +174,27 @@ export function useDeletePerson() {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-persons"] });
         queryClient.refetchQueries({ queryKey: ["all-persons"] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// Update User Password
+export function useUpdatePassword() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: UpdatePersonPasswordData) =>
+      await updateUserPassword(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

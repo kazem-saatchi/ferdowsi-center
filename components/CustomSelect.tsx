@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { labels } from "@/utils/label";
 
 interface SelectOption {
   id: string;
@@ -53,19 +54,19 @@ export function CustomSelect({
         className="w-full justify-start text-left font-normal"
         type="button"
       >
-        {selectedOption ? selectedOption.label : `Select ${label}`}
+        {selectedOption ? selectedOption.label : `${label}`}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Select {label}</DialogTitle>
+        <DialogContent className="sm:max-w-[425px]" dir="rtl">
+          <DialogHeader className="h-4">
+            <DialogTitle></DialogTitle>
           </DialogHeader>
           <Input
-            placeholder={`Search ${label}...`}
+            placeholder={`${labels.search}...`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="mt-4 max-h-[300px] overflow-y-auto">
+          <div className="mt-4 max-h-[400px] overflow-y-auto no-scrollbar">
             {filteredOptions.map((option) => (
               <Button
                 key={option.id}

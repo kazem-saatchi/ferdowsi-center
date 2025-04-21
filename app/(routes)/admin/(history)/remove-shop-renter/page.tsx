@@ -94,7 +94,6 @@ export default function RemoveShopRenterPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.removeShopRenter}</h1>
       <Card>
         <CardHeader>
           <CardTitle>{labels.endRentalAgreement}</CardTitle>
@@ -119,7 +118,7 @@ export default function RemoveShopRenterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">{labels.endDate}</Label>
+              <Label htmlFor="endDate" className="ml-2">{labels.endDate}</Label>
               <DatePicker
                 calendar={persian}
                 locale={persian_fa}

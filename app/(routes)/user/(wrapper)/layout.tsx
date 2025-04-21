@@ -4,8 +4,12 @@ import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useStore } from "@/store/store";
 import { useGetUserInfo } from "@/tanstack/queries";
+import { labels } from "@/utils/label";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import UserSidePanel from "@/components/user-side-panel/UserSidePanel";
+
 
 export default function UserClientLayout({
   children,
@@ -26,7 +30,7 @@ export default function UserClientLayout({
   }, [data, setUserInfo]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading User Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
@@ -38,6 +42,18 @@ export default function UserClientLayout({
       />
     );
   }
-
-  return <>{children}</>;
+  return (
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <UserSidePanel />
+        <main className="flex-1 overflow-y-auto no-scrollbar items-center justify-center  m-2 rounded-md border-2 relative">
+          <SidebarTrigger
+            className="absolute top-2 right-2 w-8 h-8"
+            variant="outline"
+          />
+          <div className="p-8 pt-12">{children}</div>
+        </main>
+      </div>
+    </SidebarProvider>
+  );
 }

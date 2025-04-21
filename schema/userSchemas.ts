@@ -20,7 +20,7 @@ export const findPersonByIdSchema = addPersonSchema.omit({
   phoneTwo: true,
 });
 
-export type findPersonByIdData = z.infer<typeof findPersonByIdSchema>;
+export type FindPersonByIdData = z.infer<typeof findPersonByIdSchema>;
 //--------------------------------------------------------------------------------------
 export const updatePersonSchema = addPersonSchema
   .omit({
@@ -31,7 +31,7 @@ export const updatePersonSchema = addPersonSchema
     id: z.string(),
   });
 
-export type updatePersonData = z.infer<typeof updatePersonSchema>;
+export type UpdatePersonData = z.infer<typeof updatePersonSchema>;
 //--------------------------------------------------------------------------------------
 export const findPersonByFilterSchema = z.object({
   firstName: z.string().optional(),
@@ -49,5 +49,13 @@ export const updatePersonRoleSchema = z.object({
   role: z.enum(["ADMIN", "MANAGER", "STAFF", "USER"]),
 });
 
-export type updatePersonRoleData = z.infer<typeof updatePersonRoleSchema>;
+export type UpdatePersonRoleData = z.infer<typeof updatePersonRoleSchema>;
+//--------------------------------------------------------------------------------------
+export const updatePersonPassword = z.object({
+  userId: z.string(),
+  password: z.string().min(8),
+  currentPassword: z.string(),
+});
+
+export type UpdatePersonPasswordData = z.infer<typeof updatePersonPassword>;
 //--------------------------------------------------------------------------------------
