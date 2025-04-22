@@ -239,3 +239,42 @@ model Income {
 
   createdAt     DateTime @default(now())
 }
+
+// model BankTransaction {
+//   id              String   @id @default(uuid())
+//   accountNumber   String    // Bank account number (e.g., "1234-5678-9012-3456")
+//   amount          Decimal     
+//   type            TransactionType // INCOME or PAYMENT
+//   category        TransactionCategory // More specific category
+//   description     String?
+//   reference       String?  // External reference number
+//   date            DateTime @default(now()) // Transaction date
+//   createdAt       DateTime @default(now()) // When record was created
+  
+
+//   @@index([accountNumber])
+//   @@index([date])
+// }
+
+// enum TransactionType {
+//   INCOME
+//   PAYMENT
+// }
+
+// enum TransactionCategory {
+//   // Income categories
+//   RENT
+//   SALES
+//   INTEREST
+//   TRANSFER
+//   OTHER_INCOME
+  
+//   // Payment categories
+//   SUPPLIES
+//   MAINTENANCE
+//   SALARY
+//   UTILITIES
+//   TAX
+//   FEE
+//   OTHER_PAYMENT
+// }

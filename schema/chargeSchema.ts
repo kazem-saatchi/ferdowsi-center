@@ -35,6 +35,7 @@ export const ShopChargeReferenceSchema = z.object({
   storeMetric: z.number(),
   officeConst: z.number(),
   officeMetric: z.number(),
+  savingPercent:z.number(),
 });
 
 export type ShopChargeReferenceData = z.infer<typeof ShopChargeReferenceSchema>;

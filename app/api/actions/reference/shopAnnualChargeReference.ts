@@ -6,13 +6,18 @@ import {
   ShopAnnualChargeReferenceSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
-import { successMSG } from "@/utils/messages";
+import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 
 async function generateShopAnnualChargeReference(
   data: ShopAnnualChargeReferenceData,
   person: Person
 ) {
+  // Only admins or authorized roles
+  if (person.role !== "ADMIN") {
+    throw new Error(errorMSG.noPermission);
+  }
+
   // Validate input
   const validation = ShopAnnualChargeReferenceSchema.safeParse(data);
   if (!validation.success) {
@@ -43,14 +48,13 @@ async function generateShopAnnualChargeReference(
         area: shop.area,
         constantAmount: 0,
         metricAmount: metricValue,
-        totalAmount: shop.area * metricValue,
+        totalAmount: Math.floor((shop.area * metricValue) / 100000) * 100000,
         year: currentYear,
         proprietor: true,
       };
 
       return chargeObject;
     });
-
 
   // Transaction: Clear old references for these shops and insert new ones
   await db.$transaction(async (prisma) => {

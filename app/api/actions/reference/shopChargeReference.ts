@@ -6,13 +6,18 @@ import {
   ShopChargeReferenceSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
-import { successMSG } from "@/utils/messages";
+import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 
 async function generateShopChargeReference(
   data: ShopChargeReferenceData,
   person: Person
 ) {
+  // Only admins or authorized roles
+  if (person.role !== "ADMIN") {
+    throw new Error(errorMSG.noPermission);
+  }
+
   // Validate input
   const validation = ShopChargeReferenceSchema.safeParse(data);
   if (!validation.success) {
@@ -21,7 +26,7 @@ async function generateShopChargeReference(
     );
   }
 
-  const { officeConst, officeMetric, storeConst, storeMetric } =
+  const { officeConst, officeMetric, storeConst, storeMetric, savingPercent } =
     validation.data;
 
   // Fetch all active shops
@@ -45,7 +50,12 @@ async function generateShopChargeReference(
         area: shop.area,
         constantAmount: constValue,
         metricAmount: metricValue,
-        totalAmount: shop.area * metricValue + constValue,
+        totalAmount:
+          Math.round(
+            ((shop.area * metricValue + constValue) *
+              (1 + savingPercent / 100)) /
+              100000
+          ) * 100000,
         year: currentYear,
       };
 

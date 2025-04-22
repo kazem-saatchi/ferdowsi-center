@@ -17,6 +17,8 @@ export const labels = {
   constAmount: "مبلغ ثابت",
   metricAmount: "مبلغ متری",
 
+  rialAllert: "تمامی مقادیر به ریال می‌باشد",
+
   shopId: "واحد",
   personId: "شخص",
   type: "نوع",
@@ -70,7 +72,7 @@ export const labels = {
 
   pleaseSelectAPerson: "لطفاً یک شخص را برای ویرایش انتخاب کنید.",
 
-  selectPerson:"انتخاب شخص",
+  selectPerson: "انتخاب شخص",
   updatePerson: "ویرایش اطلاعات",
   updateInfo: "ثبت تغییرات",
   updatingInfo: "در حال ثبت تغییرات",
@@ -116,9 +118,10 @@ export const labels = {
   generateChargeReference: "ایجاد مرجع شارژ",
 
   // New labels for GenerateShopChargeReferencePage
-  generateShopChargeReference: "ایجاد مرجع شارژ مغازه",
+  generateShopChargeReference: "ایجاد مرجع شارژ ماهانه",
   shopConstantValue: "مقدار ثابت مغازه",
   officeConstantValue: "مقدار ثابت دفتر",
+  savingPercentValue:"درصد افزایش",
 
   // Common labels
   successMessage: "مرجع شارژ مغازه با موفقیت ایجاد شد",
