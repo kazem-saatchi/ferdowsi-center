@@ -7,6 +7,10 @@ export const shopBalanceSchema = z.object({
   totalCharge: z.number(),
   totalPayment: z.number(),
   balance: z.number(),
+  totalChargeMonthly: z.number(),
+  totalChargeYearly: z.number(),
+  totalPaymentMonthly: z.number(),
+  totalPaymentYearly: z.number(),
 });
 
 export type ShopBalanceData = z.infer<typeof shopBalanceSchema>;
@@ -29,4 +33,14 @@ export const personBalanceSchema = personBalanceByShopSchema.omit({
 });
 
 export type PersonBalanceData = z.infer<typeof personBalanceSchema>;
+//--------------------------------------------------------------------------------------
+export const chargePaymentSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  title: z.string(),
+  date: z.date(),
+  proprietor: z.boolean(),
+});
+
+export type ChargePaymentData = z.infer<typeof chargePaymentSchema>;
 //--------------------------------------------------------------------------------------

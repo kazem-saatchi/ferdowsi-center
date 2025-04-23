@@ -3,6 +3,8 @@ export const labels = {
   totalCharge: "کل جمع شارژ (ریال)",
   totalPayment: "کل جمع پرداخت (ریال)",
   totalBalance: "مانده حساب کل",
+  totalBalanceMonthly:"مانده حساب شارژ ماهانه",
+  totalBalanceYearly:"ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
 
   bankCardMonthly: "شماره حساب شارژ ماهانه",

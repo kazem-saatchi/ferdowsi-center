@@ -19,8 +19,12 @@ function ShopBalanceTable({ shopBalance }: ShopBalanceProps) {
       <TableHeader>
         <TableRow>
           <TableHead className="text-center">{labels.plaque}</TableHead>
-          <TableHead className="text-center">{labels.totalCharge}</TableHead>
-          <TableHead className="text-center">{labels.totalPayment}</TableHead>
+          <TableHead className="text-center">
+            {labels.totalBalanceMonthly}
+          </TableHead>
+          <TableHead className="text-center">
+            {labels.totalBalanceYearly}
+          </TableHead>
           <TableHead className="text-center">{labels.totalBalance}</TableHead>
         </TableRow>
       </TableHeader>
@@ -28,13 +32,17 @@ function ShopBalanceTable({ shopBalance }: ShopBalanceProps) {
         <TableRow>
           <TableCell className="text-center">{shopBalance?.plaque}</TableCell>
           <TableCell className="text-center">
-            {shopBalance?.totalCharge.toLocaleString()}
+            {(
+              shopBalance?.totalChargeMonthly - shopBalance.totalPaymentMonthly
+            ).toLocaleString()}
           </TableCell>
           <TableCell className="text-center">
-            {shopBalance?.totalPayment.toLocaleString()}
+            {(
+              shopBalance?.totalChargeYearly - shopBalance.totalPaymentYearly
+            ).toLocaleString()}
           </TableCell>
           <TableCell className="text-center">
-            {shopBalance && (shopBalance?.balance).toLocaleString()}
+            {shopBalance?.balance.toLocaleString()}
           </TableCell>
         </TableRow>
       </TableBody>

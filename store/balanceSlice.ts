@@ -1,8 +1,10 @@
 import {
+  ChargePaymentData,
   PersonBalanceByShopData,
   PersonBalanceData,
   ShopBalanceData,
 } from "@/schema/balanceSchema";
+import { PersonInfoSafe } from "@/schema/userSchemas";
 import { exportToExcel, exportToPDF } from "@/utils/tableExport";
 import { StateCreator } from "zustand";
 
@@ -17,9 +19,19 @@ type Balances = {
   setShopsBalance: (balances: ShopBalanceData[]) => void;
   personsBalance: PersonBalanceByShopData[] | null;
   setPersonsBalance: (Balances: PersonBalanceByShopData[]) => void;
+  shopOwnerBalanceData: OwnerRenterBalance | null;
+  shopRenterBalanceData: OwnerRenterBalance | null;
+  setShopOwnerBalance: (data: OwnerRenterBalance) => void;
+  setShopRenterBalance: (data: OwnerRenterBalance) => void;
   exportAllBalanceToPDF: () => void;
   exportAllBalanceToExcel: () => void;
 };
+
+export interface OwnerRenterBalance {
+  person: PersonInfoSafe;
+  chargeList: ChargePaymentData[];
+  paymentList: ChargePaymentData[];
+}
 
 export type BalanceSlice = Balances;
 
@@ -35,6 +47,8 @@ export const createBalanceSlice: StateCreator<
   personBalance: null,
   shopsBalance: null,
   personsBalance: null,
+  shopOwnerBalanceData: null,
+  shopRenterBalanceData: null,
 
   // Set utils
   setAllBalances: (balances) => set({ allBalances: balances }),
@@ -66,6 +80,9 @@ export const createBalanceSlice: StateCreator<
         columns: getBalanceColumns(),
       });
     }),
+
+  setShopOwnerBalance: (data) => set({ shopOwnerBalanceData: { ...data } }),
+  setShopRenterBalance: (data) => set({ shopRenterBalanceData: { ...data } }),
 });
 
 const getBalanceColumns = () => [

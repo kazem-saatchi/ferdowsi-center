@@ -13,6 +13,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 import { labels } from "@/utils/label";
+import OwnerRenterBalanceTable from "@/components/balance/OwnerRenterBalanceTable";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -36,6 +37,10 @@ export default function ShopBalancePage() {
     setPersonsBalance,
     setShopsAll,
     shopsAll,
+    setShopOwnerBalance,
+    setShopRenterBalance,
+    shopOwnerBalanceData,
+    shopRenterBalanceData,
   } = useStore(
     useShallow((state) => ({
       shopBalance: state.shopBalance,
@@ -44,6 +49,10 @@ export default function ShopBalancePage() {
       setPersonsBalance: state.setPersonsBalance,
       shopsAll: state.shopsAll,
       setShopsAll: state.setshopsAll,
+      shopOwnerBalanceData: state.shopOwnerBalanceData,
+      shopRenterBalanceData: state.shopRenterBalanceData,
+      setShopOwnerBalance: state.setShopOwnerBalance,
+      setShopRenterBalance: state.setShopRenterBalance,
     }))
   );
 
@@ -59,6 +68,28 @@ export default function ShopBalancePage() {
     }
     if (balanceData?.data?.personsBalance) {
       setPersonsBalance(balanceData.data.personsBalance);
+    }
+    if (
+      balanceData?.data?.ownerChargeList &&
+      balanceData?.data?.ownerPaymentList &&
+      balanceData.data.owner
+    ) {
+      setShopOwnerBalance({
+        person: balanceData.data.owner,
+        chargeList: balanceData?.data?.ownerChargeList,
+        paymentList: balanceData?.data?.ownerPaymentList,
+      });
+    }
+    if (
+      balanceData?.data?.renterChargeList &&
+      balanceData?.data?.renterPaymentList &&
+      balanceData.data.renter
+    ) {
+      setShopRenterBalance({
+        person: balanceData.data.renter,
+        chargeList: balanceData?.data?.renterChargeList,
+        paymentList: balanceData?.data?.renterPaymentList,
+      });
     }
   }, [balanceData, setShopBalance, setPersonsBalance]);
 
@@ -110,7 +141,23 @@ export default function ShopBalancePage() {
         </CardContent>
       </Card>
 
-      {personsBalance && personsBalance.length > 0 && (
+      {shopOwnerBalanceData && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OwnerRenterBalanceTable
+              ownerData={shopOwnerBalanceData}
+              renterData={
+                shopRenterBalanceData ? shopRenterBalanceData : undefined
+              }
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* {personsBalance && personsBalance.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
@@ -119,7 +166,7 @@ export default function ShopBalancePage() {
             <PersonsBalanceTable personsBalance={personsBalance} />
           </CardContent>
         </Card>
-      )}
+      )} */}
     </div>
   );
 }

@@ -59,3 +59,11 @@ export const updatePersonPassword = z.object({
 
 export type UpdatePersonPasswordData = z.infer<typeof updatePersonPassword>;
 //--------------------------------------------------------------------------------------
+export const personInfoSafeSchema = addPersonSchema.omit({
+  IdNumber: true,
+  password: true,
+  phoneTwo: true,
+});
+
+export type PersonInfoSafe = z.infer<typeof personInfoSafeSchema>;
+//--------------------------------------------------------------------------------------

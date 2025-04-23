@@ -18,6 +18,8 @@ export interface PersonBalanceResponce {
   personBalance: PersonBalanceData;
 }
 
+  //-------------Calculate-Shop-Balance-------------
+
 export async function calculateShopBalance({
   plaque,
   shopId,
@@ -47,6 +49,22 @@ export async function calculateShopBalance({
     0
   );
 
+  const totalChargeMonthly = chargeList
+    .filter((charge) => !charge.proprietor)
+    .reduce((total, charge) => total + charge.amount, 0);
+
+  const totalChargeYearly = chargeList
+    .filter((charge) => charge.proprietor)
+    .reduce((total, charge) => total + charge.amount, 0);
+
+  const totalPaymentMonthly = paymentList
+    .filter((payment) => !payment.proprietor)
+    .reduce((total, payment) => total + payment.amount, 0);
+
+  const totalPaymentYearly = paymentList
+    .filter((payment) => payment.proprietor)
+    .reduce((total, payment) => total + payment.amount, 0);
+
   return {
     chargeList,
     paymentList,
@@ -56,9 +74,16 @@ export async function calculateShopBalance({
       totalCharge,
       totalPayment,
       balance: totalCharge - totalPayment,
+      totalChargeMonthly,
+      totalChargeYearly,
+      totalPaymentMonthly,
+      totalPaymentYearly,
     },
   };
 }
+
+
+  //-------------Calculate-Person-Balance-------------
 
 export async function calculatePersonBalance({
   personId,
@@ -145,3 +170,4 @@ export async function calculatePersonBalanceByShop({
     balance: totalCharge - totalPayment,
   };
 }
+
