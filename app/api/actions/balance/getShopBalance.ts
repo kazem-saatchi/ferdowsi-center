@@ -52,6 +52,7 @@ async function getAllBalance(
     throw new Error(errorMSG.shopNotFound);
   }
 
+
   const owner: PersonInfoSafe | null = await db.person.findUnique({
     where: { id: shop.ownerId },
     select: { firstName: true, lastName: true, phoneOne: true },

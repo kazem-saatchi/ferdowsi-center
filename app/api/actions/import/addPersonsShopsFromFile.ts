@@ -31,6 +31,7 @@ async function addPersonsAndShopsInternal(
   const todayDate = new Date().toISOString();
 
   const pastBalanceTitle = "بدهی قبلی";
+  const pastPropreitorBalanceTitle = "بدهی قبلی مالکانه";
   const pastBalanceDescription =
     "این مبلغ از سیستم حسابداری قبلی وارد شده است.";
 
@@ -170,7 +171,7 @@ async function addPersonsAndShopsInternal(
               amount: row.ownershipBalance,
               date: todayDate,
               daysCount: 0,
-              title: pastBalanceTitle,
+              title: pastPropreitorBalanceTitle,
               operationName: operation.title,
               plaque: newShop.plaque,
               shopId: newShop.id,

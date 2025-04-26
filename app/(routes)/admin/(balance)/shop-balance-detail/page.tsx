@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useGetShopBalance, useFindAllShops } from "@/tanstack/queries";
-import { useStore } from "@/store/store";
-import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { BalanceDetailTable } from "@/components/balance/BalanceDetaiTable";
 import { CustomSelect } from "@/components/CustomSelect";
-import { Label } from "@/components/ui/label";
-import LoadingComponent from "@/components/LoadingComponent";
-import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import ErrorComponent from "@/components/ErrorComponent";
-import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
-import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
+import ErrorComponentSimple from "@/components/ErrorComponentSimple";
+import LoadingComponent from "@/components/LoadingComponent";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useStore } from "@/store/store";
+import { useFindAllShops, useGetShopBalance } from "@/tanstack/queries";
 import { labels } from "@/utils/label";
-import OwnerRenterBalanceTable from "@/components/balance/OwnerRenterBalanceTable";
+import React, { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
-export default function ShopBalancePage() {
+export default function ShopBalanceDetailPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const {
     data: shopsData,
@@ -24,11 +22,13 @@ export default function ShopBalancePage() {
     error: errorAllShops,
     refetch: refetchAllShops,
   } = useFindAllShops();
-  
+
   const {
     data: balanceData,
     isLoading,
+    error,
     isError,
+    refetch,
   } = useGetShopBalance(selectedShopId);
 
   const {
@@ -103,7 +103,7 @@ export default function ShopBalancePage() {
     })) || [];
 
   if (isLoadingAllShops) {
-    return <LoadingComponent text="Loading Shops Data" />;
+    return <LoadingComponent text={labels.loadingShopsData} />;
   }
 
   if (isErrorAllShops) {
@@ -117,7 +117,7 @@ export default function ShopBalancePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle>{labels.shopBalanceTitle}</CardTitle>
@@ -132,44 +132,23 @@ export default function ShopBalancePage() {
               label="Shop"
             />
           </div>
+
           {isLoading && selectedShopId !== "" ? (
             <LoadingComponent text={labels.loadingData} />
           ) : isError ? (
             <ErrorComponentSimple message={labels.errorOccurred} />
-          ) : shopBalance ? (
-            <ShopBalanceTable shopBalance={shopBalance} />
+          ) : shopBalance &&
+            balanceData?.data?.charges &&
+            balanceData?.data?.payments  ? (
+            <BalanceDetailTable
+              charges={balanceData?.data?.charges}
+              payments={balanceData?.data?.payments}
+            />
           ) : (
             <p>{labels.noInformationFound}</p>
           )}
         </CardContent>
       </Card>
-
-      {shopOwnerBalanceData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <OwnerRenterBalanceTable
-              ownerData={shopOwnerBalanceData}
-              renterData={
-                shopRenterBalanceData ? shopRenterBalanceData : undefined
-              }
-            />
-          </CardContent>
-        </Card>
-      )}
-
-      {/* {personsBalance && personsBalance.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PersonsBalanceTable personsBalance={personsBalance} />
-          </CardContent>
-        </Card>
-      )} */}
     </div>
   );
 }

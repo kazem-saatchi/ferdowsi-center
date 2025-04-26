@@ -21,6 +21,7 @@ import {
   UserX,
   PlusSquare,
   Edit,
+  BookText,
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -67,6 +68,12 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 3,
+        name: "ریز حساب واحد",
+        href: "/shop-balance-detail",
+        icon: BookText,
+      },
+      {
+        id: 4,
         name: "حساب یک شخص",
         href: "/person-balance",
         icon: UserPlus,

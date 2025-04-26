@@ -35,6 +35,14 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
     type,
   } = validation.data;
 
+  const titleMap = {
+    CASH: "پرداخت نقدی",
+    CHEQUE: "پرداخت با چک",
+    POS_MACHINE: "پرداخت بوسیله کارتخوان",
+    BANK_TRANSFER: "پرداخت کارت به کارت",
+    OTHER: "روش پرداخت نامعلوم",
+  };
+
   // Fetch user and shop in parallel
   const [user, shop] = await Promise.all([
     db.person.findUnique({ where: { id: personId } }),
@@ -64,6 +72,7 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
       proprietor,
       receiptImageUrl,
       type,
+      title:titleMap[type] || "روش پرداخت نامعلوم",
       //   personId: user.id,
       //   shopId: shop.id,
       shop: { connect: { id: shop.id } }, // Connect shop by ID

@@ -21,8 +21,8 @@ type Balances = {
   setPersonsBalance: (Balances: PersonBalanceByShopData[]) => void;
   shopOwnerBalanceData: OwnerRenterBalance | null;
   shopRenterBalanceData: OwnerRenterBalance | null;
-  setShopOwnerBalance: (data: OwnerRenterBalance) => void;
-  setShopRenterBalance: (data: OwnerRenterBalance) => void;
+  setShopOwnerBalance: (data: OwnerRenterBalance | null) => void;
+  setShopRenterBalance: (data: OwnerRenterBalance | null) => void;
   exportAllBalanceToPDF: () => void;
   exportAllBalanceToExcel: () => void;
 };
@@ -81,8 +81,8 @@ export const createBalanceSlice: StateCreator<
       });
     }),
 
-  setShopOwnerBalance: (data) => set({ shopOwnerBalanceData: { ...data } }),
-  setShopRenterBalance: (data) => set({ shopRenterBalanceData: { ...data } }),
+  setShopOwnerBalance: (data) => set({ shopOwnerBalanceData: data }),
+  setShopRenterBalance: (data) => set({ shopRenterBalanceData: data }),
 });
 
 const getBalanceColumns = () => [
