@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
+
 // Extend the jsPDF type to include autoTable
 declare module 'jspdf' {
   interface jsPDF {

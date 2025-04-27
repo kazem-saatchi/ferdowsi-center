@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { comparePassword } from "@/utils/hashPassword";
+import { labels } from "@/utils/label";
 import { cookies } from "next/headers";
 
 interface LoginData {
@@ -23,14 +24,14 @@ export async function loginUser(data: LoginData): Promise<LoginResponse> {
     });
 
     if (!user) {
-      return { success: false, message: "User not found" };
+      return { success: false, message: labels.userNotFound };
     }
 
     // Compare passwords
     const isPasswordValid = await comparePassword(data.password, user.password);
 
     if (!isPasswordValid) {
-      return { success: false, message: "Invalid password" };
+      return { success: false, message: labels.invalidPassword };
     }
 
     const expireTime = 30 * 24 * 60 * 60; // 30 days
@@ -51,9 +52,9 @@ export async function loginUser(data: LoginData): Promise<LoginResponse> {
       maxAge: expireTime,
     });
 
-    return { success: true, message: "Login successful", role: user.role };
+    return { success: true, message: labels.loginSuccessful, role: user.role };
   } catch (error) {
     console.error("Login error:", error);
-    return { success: false, message: "An error occurred during login" };
+    return { success: false, message: labels.errorOnLogin };
   }
 }

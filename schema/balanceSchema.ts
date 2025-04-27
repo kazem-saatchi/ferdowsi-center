@@ -44,3 +44,12 @@ export const chargePaymentSchema = z.object({
 
 export type ChargePaymentData = z.infer<typeof chargePaymentSchema>;
 //--------------------------------------------------------------------------------------
+export const shopsBalanceSchema = z.object({
+  plaque: z.number(),
+  balance: z.number(),
+  ownerName: z.string(),
+  renterName: z.string().nullable(),
+});
+
+export type ShopsBalanceData = z.infer<typeof shopsBalanceSchema>;
+//--------------------------------------------------------------------------------------

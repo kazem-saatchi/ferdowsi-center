@@ -10,6 +10,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { Button } from "@/components/ui/button";
 import { labels } from "@/utils/label";
+import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 
 export default function AllShopsBalancePage() {
   const { data, isLoading, isError, error, refetch } = useGetAllShopsBalance();
@@ -47,6 +48,8 @@ export default function AllShopsBalancePage() {
     );
   }
 
+  console.log("all shops balance", allBalances);
+
   return (
     <Card>
       <CardHeader>
@@ -54,11 +57,15 @@ export default function AllShopsBalancePage() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
-          <Button onClick={exportAllBalanceToPdf}>{labels.downloadAsPDF}</Button>
-          <Button onClick={exportAllBalanceToExcel}>{labels.downloadAsExcel}</Button>
+          <Button onClick={exportAllBalanceToPdf}>
+            {labels.downloadAsPDF}
+          </Button>
+          <Button onClick={exportAllBalanceToExcel}>
+            {labels.downloadAsExcel}
+          </Button>
         </div>
         {allBalances && allBalances.length > 0 ? (
-          <BalanceTable balances={allBalances} />
+          <ShopsBalanceTable shopsBlances={allBalances} />
         ) : (
           <p>{labels.noDataFound}</p>
         )}

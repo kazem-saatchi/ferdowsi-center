@@ -3,14 +3,15 @@ import {
   PersonBalanceByShopData,
   PersonBalanceData,
   ShopBalanceData,
+  ShopsBalanceData,
 } from "@/schema/balanceSchema";
 import { PersonInfoSafe } from "@/schema/userSchemas";
 import { exportToExcel, exportToPDF } from "@/utils/tableExport";
 import { StateCreator } from "zustand";
 
 type Balances = {
-  allBalances: ShopBalanceData[] | null;
-  setAllBalances: (balances: ShopBalanceData[]) => void;
+  allBalances: ShopsBalanceData[] | null;
+  setAllBalances: (balances: ShopsBalanceData[]) => void;
   shopBalance: ShopBalanceData | null;
   setShopBalance: (balances: ShopBalanceData) => void;
   personBalance: PersonBalanceData | null;
@@ -87,14 +88,14 @@ export const createBalanceSlice: StateCreator<
 
 const getBalanceColumns = () => [
   { header: "پلاک", accessor: "plaque" },
-  { header: "جمع شارژ", accessor: "totalCharge" },
-  { header: "جمع پرداخت", accessor: "totalPayment" },
+  { header: "نام مالک", accessor: "ownerName" },
+  { header: "نام مستاجر ", accessor: "renterName" },
   { header: "مانده حساب", accessor: "balance" },
 ];
 
 const getBalanceColumnsPdf = () => [
   { header: "Plaque", accessor: "plaque" },
-  { header: "Charge Total ", accessor: "totalCharge" },
-  { header: "Payment Total", accessor: "totalPayment" },
+  { header: "Owner Name", accessor: "ownerName" },
+  { header: "Renter Name", accessor: "renterName" },
   { header: "Balance", accessor: "balance" },
 ];

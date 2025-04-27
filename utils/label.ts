@@ -10,6 +10,14 @@ export const labels = {
   bankCardMonthly: "شماره حساب شارژ ماهانه",
   bankCardYearly: "شماره حساب شارژ مالکانه",
 
+  userNotFound:"کاربری پیدا نشد",
+  invalidPassword:"نام کاربری یا رمز عبور اشتباه است",
+  loginSuccessful:"با موفقیت وارد شدید",
+  errorOnLogin:"خطایی رخ داده است",
+
+  charge:"شارژ",
+  payment:"پرداخت",
+
   title: "عنوان",
   amount: "مبلغ - ریال",
   date: "تاریخ",

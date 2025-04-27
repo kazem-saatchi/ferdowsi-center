@@ -10,6 +10,7 @@ import {
 import { ChargePaymentData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
 import { Charge, Payment } from "@prisma/client";
+import { Separator } from "../ui/separator";
 
 interface BalanceTableProps {
   charges: Charge[];
@@ -65,17 +66,17 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Type</TableHead>
-          <TableHead className="text-center">Title</TableHead>
-          <TableHead className="text-center">Date</TableHead>
-          <TableHead className="text-center">Amount</TableHead>
+          <TableHead className="text-center">{labels.type}</TableHead>
+          <TableHead className="text-center">{labels.title}</TableHead>
+          <TableHead className="text-center">{labels.date}</TableHead>
+          <TableHead className="text-center">{labels.amount}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {balanceData.map((item) => (
           <TableRow key={`${item.type}-${item.id}`}>
             <TableCell className="text-center capitalize">
-              {item.type}
+              {item.type === "charge" ? labels.charge : labels.payment}
             </TableCell>
             <TableCell className="text-center">{item.title}</TableCell>
             <TableCell className="text-center">
@@ -86,19 +87,22 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
                 item.type === "charge" ? "text-red-500" : "text-green-500"
               }`}
             >
-              {item.type === "charge" ? "+" : "-"}
+              {/* {item.type === "charge" ? "+" : "-"} */}
               {item.amount.toLocaleString()}
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
+
       <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3} className="text-right font-medium">
-            Total Balance
+        <TableRow >
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell className="text-center font-medium border-2">
+            {labels.totalBalance}
           </TableCell>
           <TableCell
-            className={`text-center font-bold ${
+            className={`text-center font-bold border-2 ${
               totalBalance.balance > 0
                 ? "text-red-500"
                 : totalBalance.balance < 0
