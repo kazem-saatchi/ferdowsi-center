@@ -4,16 +4,17 @@ import { useEffect } from "react";
 import { useGetAllShopsBalance } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { BalanceTable } from "@/components/balance/BalanceTable";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { Button } from "@/components/ui/button";
 import { labels } from "@/utils/label";
-import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
+import { ShopsBalanceYearlyTable } from "@/components/balance/ShopsBalanceYearlyTable";
 
-export default function AllShopsBalancePage() {
-  const { data, isLoading, isError, error, refetch } = useGetAllShopsBalance();
+export default function AllShopsYearlyBalancePage() {
+  const proprietor: boolean = true;
+  const { data, isLoading, isError, error, refetch } =
+    useGetAllShopsBalance(proprietor);
   const {
     allBalances,
     setAllBalances,
@@ -53,7 +54,7 @@ export default function AllShopsBalancePage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{labels.allShopsBalance}</CardTitle>
+        <CardTitle>{labels.allShopsYearlyBalance}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
@@ -65,7 +66,7 @@ export default function AllShopsBalancePage() {
           </Button>
         </div>
         {allBalances && allBalances.length > 0 ? (
-          <ShopsBalanceTable shopsBlances={allBalances} />
+          <ShopsBalanceYearlyTable shopsBlances={allBalances} />
         ) : (
           <p>{labels.noDataFound}</p>
         )}

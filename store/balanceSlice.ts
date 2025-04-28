@@ -66,7 +66,7 @@ export const createBalanceSlice: StateCreator<
       exportToPDF({
         fileName: "Balance-Report",
         data: state.allBalances,
-        columns: getBalanceColumnsPdf(),
+        columns: getBalanceColumns(),
       });
     }),
   exportAllBalanceToExcel: () =>
@@ -87,15 +87,15 @@ export const createBalanceSlice: StateCreator<
 });
 
 const getBalanceColumns = () => [
-  { header: "پلاک", accessor: "plaque" },
-  { header: "نام مالک", accessor: "ownerName" },
-  { header: "نام مستاجر ", accessor: "renterName" },
   { header: "مانده حساب", accessor: "balance" },
+  { header: "نام مستاجر ", accessor: "renterName" },
+  { header: "نام مالک", accessor: "ownerName" },
+  { header: "پلاک", accessor: "plaque" },
 ];
 
-const getBalanceColumnsPdf = () => [
-  { header: "Plaque", accessor: "plaque" },
-  { header: "Owner Name", accessor: "ownerName" },
-  { header: "Renter Name", accessor: "renterName" },
-  { header: "Balance", accessor: "balance" },
-];
+// const getBalanceColumnsPdf = () => [
+//   { header: "Plaque", accessor: "plaque" },
+//   { header: "Owner Name", accessor: "ownerName" },
+//   { header: "Renter Name", accessor: "renterName" },
+//   { header: "Balance", accessor: "balance" },
+// ];

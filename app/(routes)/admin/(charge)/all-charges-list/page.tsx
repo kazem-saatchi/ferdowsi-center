@@ -11,7 +11,11 @@ import { labels } from "@/utils/label";
 
 export default function AllChargesPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllCharges();
-  const { allCharges, setAllCharges } = useStore();
+  const {
+    allCharges,
+    setAllCharges,
+    
+  } = useStore();
 
   useEffect(() => {
     if (data?.data?.charges) {
@@ -39,6 +43,7 @@ export default function AllChargesPage() {
         <CardTitle>{labels.allChargesTitle}</CardTitle>
       </CardHeader>
       <CardContent>
+       
         {allCharges && allCharges.length > 0 ? (
           <ChargeTable charges={allCharges} />
         ) : (

@@ -15,14 +15,14 @@ interface BalanceTableProps {
   shopsBlances: ShopsBalanceData[];
 }
 
-export function ShopsBalanceTable({ shopsBlances }: BalanceTableProps) {
+export function ShopsBalanceYearlyTable({ shopsBlances }: BalanceTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="text-center">{labels.plaque}</TableHead>
           <TableHead className="text-center">{labels.ownerName}</TableHead>
-          <TableHead className="text-center">{labels.renterName}</TableHead>
+          {/* <TableHead className="text-center">{labels.renterName}</TableHead> */}
           <TableHead className="text-center">{labels.totalBalance}</TableHead>
           <TableHead className="text-center">{labels.status}</TableHead>
         </TableRow>
@@ -38,9 +38,7 @@ export function ShopsBalanceTable({ shopsBlances }: BalanceTableProps) {
           >
             <TableCell className="text-center">{shop.plaque}</TableCell>
             <TableCell className="text-center">{shop.ownerName}</TableCell>
-            <TableCell className="text-center">
-              {shop.renterName ? shop.renterName : "------"}
-            </TableCell>
+            
             <TableCell className="text-center">
               {formatNumber(shop.balance)}
             </TableCell>

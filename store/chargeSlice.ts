@@ -1,5 +1,11 @@
 import { StateCreator } from "zustand";
 import { Charge, ShopChargeReference } from "@prisma/client";
+import { exportToExcel, exportToPDF } from "@/utils/tableExport";
+
+import { getYear } from "date-fns-jalali";
+
+// Get current Persian year
+const currentYear = getYear(new Date());
 
 type Charges = {
   allCharges: Charge[] | null;
@@ -14,6 +20,8 @@ type Charges = {
   setAllAnnualChargesReference: (
     chargeReference: ShopChargeReference[]
   ) => void;
+  exportChargeListToPDF: () => void;
+  exportChargeListToExcel: () => void;
 };
 
 export type ChargeSlice = Charges;
@@ -39,4 +47,35 @@ export const createChargeSlice: StateCreator<
     set({ allChargesReference: chargeList }),
   setAllAnnualChargesReference: (chargeList) =>
     set({ allAnnualChargesReference: chargeList }),
+
+  exportChargeListToPDF: () =>
+    set((state) => {
+      if (!state.allChargesReference || state.allChargesReference.length === 0) {
+        console.error("No Charge data to export");
+        return;
+      }
+      exportToPDF({
+        fileName: `لیست شارژ ${currentYear}`,
+        data: state.allChargesReference,
+        columns: getBalanceColumns(),
+      });
+    }),
+  exportChargeListToExcel: () =>
+    set((state) => {
+      if (!state.allChargesReference || state.allChargesReference.length === 0) {
+        console.error("No Charge data to export");
+        return;
+      }
+      exportToExcel({
+        fileName: `لیست شارژ ${currentYear}`,
+        data: state.allChargesReference,
+        columns: getBalanceColumns(),
+      });
+    }),
 });
+
+const getBalanceColumns = () => [
+  { header: "مبلغ شارژ", accessor: "totalAmount" },
+  { header: "مساحت", accessor: "area" },
+  { header: "پلاک", accessor: "plaque" },
+];

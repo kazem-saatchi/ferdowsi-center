@@ -9,7 +9,6 @@ import {
 import { formatNumber } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
 import { Charge } from "@prisma/client";
-import { format } from "date-fns";
 
 interface ChargeTableProps {
   charges: Charge[];

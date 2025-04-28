@@ -172,25 +172,27 @@ export async function calculatePersonBalanceByShop({
 }
 
 // More efficient version using transaction
-export async function calculateAllShopsBalance(): Promise<ShopsBalanceData[]> {
+export async function calculateAllShopMonthlyBalance(
+  proprietor: boolean
+): Promise<ShopsBalanceData[]> {
   const BATCH_SIZE = 10;
   const allShops = await db.shop.findMany();
   const results: ShopsBalanceData[] = [];
-  
+
   for (let i = 0; i < allShops.length; i += BATCH_SIZE) {
     const batch = allShops.slice(i, i + BATCH_SIZE);
-    
+
     const batchResults = await db.$transaction(
       async (tx) => {
         return Promise.all(
           batch.map(async (shop) => {
             const [charges, payments] = await Promise.all([
               tx.charge.aggregate({
-                where: { shopId: shop.id },
+                where: { shopId: shop.id, proprietor },
                 _sum: { amount: true },
               }),
               tx.payment.aggregate({
-                where: { shopId: shop.id },
+                where: { shopId: shop.id, proprietor },
                 _sum: { amount: true },
               }),
             ]);
@@ -211,7 +213,11 @@ export async function calculateAllShopsBalance(): Promise<ShopsBalanceData[]> {
     );
 
     results.push(...batchResults);
-    console.log(`Processed batch ${i / BATCH_SIZE + 1} of ${Math.ceil(allShops.length / BATCH_SIZE)}`);
+    console.log(
+      `Processed batch ${i / BATCH_SIZE + 1} of ${Math.ceil(
+        allShops.length / BATCH_SIZE
+      )}`
+    );
   }
 
   return results;

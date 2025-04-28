@@ -56,24 +56,30 @@ export const adminMenuData: AdminMenuCollection = {
     items: [
       {
         id: 1,
-        name: "حساب همه واحدها",
-        href: "/all-shops-balance",
+        name: "مانده حساب شارژ ماهانه",
+        href: "/all-shops-monthly-balance",
         icon: BarChart2,
       },
       {
         id: 2,
+        name: "مانده حساب شارژ مالکانه",
+        href: "/all-shops-yearly-balance",
+        icon: BarChart2,
+      },
+      {
+        id: 3,
         name: "حساب یک واحد",
         href: "/shop-balance",
         icon: PieChart,
       },
       {
-        id: 3,
+        id: 4,
         name: "ریز حساب واحد",
         href: "/shop-balance-detail",
         icon: BookText,
       },
       {
-        id: 4,
+        id: 5,
         name: "حساب یک شخص",
         href: "/person-balance",
         icon: UserPlus,
@@ -87,7 +93,7 @@ export const adminMenuData: AdminMenuCollection = {
     items: [
       {
         id: 1,
-        name: "لیست تمام شارژها",
+        name: "لیست شارژها ثبت شده",
         href: "/all-charges-list",
         icon: DollarSign,
       },
@@ -123,19 +129,19 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 7,
-        name: "لیست شارژ ماهانه",
+        name: "لیست شارژ مرجع ماهانه / مالکانه",
         href: "/all-charge-reference",
         icon: List,
       },
       {
         id: 8,
-        name: "ساخت لیست شارژ ماهانه",
+        name: "ساخت لیست مرجع شارژ ماهانه",
         href: "/generate-charge-list",
         icon: FileText,
       },
       {
         id: 9,
-        name: "ساخت لیست شارژ مالکانه",
+        name: "ساخت لیست مرجع شارژ مالکانه",
         href: "/generate-annual-charge-list",
         icon: House,
       },

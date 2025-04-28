@@ -221,7 +221,8 @@ export const labels = {
   searchPaymentsByShop: "جستجوی پرداختی‌ها بر اساس واحد",
 
   // Add new labels for balance page
-  allShopsBalance: "مانده حساب همه واحدها",
+  allShopsMonthlyBalance: "حساب ماهانه همه واحدها",
+  allShopsYearlyBalance: "حساب مالکانه همه واحدها",
   downloadAsPDF: "دانلود به صورت PDF",
   downloadAsExcel: "دانلود به صورت EXCEL",
   noDataFound: "اطلاعاتی یافت نشد",

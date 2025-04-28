@@ -143,10 +143,10 @@ export function useFindPaymentsByPerson(personId: string) {
 
 //------------------BALANCE--------------------
 
-export function useGetAllShopsBalance() {
+export function useGetAllShopsBalance(proprietor:boolean) {
   return useQuery({
-    queryKey: ["all-balances"],
-    queryFn: async () => await findBalanceAllShops(),
+    queryKey: ["all-balances",proprietor ? "yearly" : "monthly"],
+    queryFn: async () => await findBalanceAllShops(proprietor),
   });
 }
 
