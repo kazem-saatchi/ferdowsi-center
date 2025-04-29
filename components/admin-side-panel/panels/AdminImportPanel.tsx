@@ -9,7 +9,10 @@ function AdminImportPanel() {
         <SidebarMenuButton asChild>
           <Link href="/admin/import-persons-shops">
             <FileChartColumn className="ml-2 h-4 w-4" />
-            <span>ثبت اشخاص و واحدها با فایل</span>
+            <span>
+              ثبت اشخاص و واحدها با فایل
+
+            </span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

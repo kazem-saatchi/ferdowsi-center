@@ -22,6 +22,8 @@ import {
   PlusSquare,
   Edit,
   BookText,
+  FileChartColumn,
+  Banknote,
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -31,7 +33,8 @@ type AdminMenuKeys =
   | "history"
   | "payment"
   | "person"
-  | "shop";
+  | "shop"
+  | "import";
 type AdminMenuCollection = Record<AdminMenuKeys, MenuData>;
 
 export type MenuData = {
@@ -305,6 +308,25 @@ export const adminMenuData: AdminMenuCollection = {
         name: "فعال / غیر فعال کردن یک واحد",
         href: "/update-shop-status",
         icon: ToggleLeft,
+      },
+    ],
+  },
+  import: {
+    title: "بارگذاری اطلاعات",
+    baseUrl: "/admin",
+    icon: DollarSign,
+    items: [
+      {
+        id: 1,
+        name: "ثبت اشخاص و واحدها با فایل",
+        href: "/import-shops-data",
+        icon: FileChartColumn,
+      },
+      {
+        id: 2,
+        name: "ثبت اطلاعات بانک",
+        href: "/import-bank-data",
+        icon: Banknote,
       },
     ],
   },

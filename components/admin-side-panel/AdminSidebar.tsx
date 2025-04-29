@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarMenu,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarMenu } from "@/components/ui/sidebar";
 import { Separator } from "../ui/separator";
 import AdminImportPanel from "./panels/AdminImportPanel";
 import SidebarItemsMap from "./panels/SidebarItemMap";
@@ -36,13 +32,12 @@ function AdminSidebar() {
           <Separator />
           <SidebarItemsMap menuData={adminMenuData.cost} />
           <Separator />
-          <AdminImportPanel />
+          <SidebarItemsMap menuData={adminMenuData.import} />
         </SidebarMenu>
       </SidebarContent>
-     <AdminPanelFooter />
+      <AdminPanelFooter />
     </Sidebar>
   );
 }
 
 export default AdminSidebar;
-

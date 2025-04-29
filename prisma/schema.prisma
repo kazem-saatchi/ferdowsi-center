@@ -241,41 +241,46 @@ model Income {
   createdAt     DateTime @default(now())
 }
 
-// model BankTransaction {
-//   id              String   @id @default(uuid())
-//   accountNumber   String    // Bank account number (e.g., "1234-5678-9012-3456")
-//   amount          Decimal     
-//   type            TransactionType // INCOME or PAYMENT
-//   category        TransactionCategory // More specific category
-//   description     String?
-//   reference       String?  // External reference number
-//   date            DateTime @default(now()) // Transaction date
-//   createdAt       DateTime @default(now()) // When record was created
+model BankTransaction {
+  id                String   @id @default(uuid())
+  recieverAccount   String     // Bank account number (e.g., "1234-5678-9012-3456")
+  senderAccount     String?    // Bank account number (e.g., "1234-5678-9012-3456")
+  amount            Int     
+  balance           Int       
+  type              TransactionType // INCOME or PAYMENT
+  category          TransactionCategory // More specific category
+  description       String
+  reference         String?  // External reference number
+  date              DateTime @default(now()) // Transaction date
+  createdAt         DateTime @default(now()) // When record was created
+
   
 
-//   @@index([accountNumber])
-//   @@index([date])
-// }
+  @@index([recieverAccount])
+  @@index([date])
+}
 
-// enum TransactionType {
-//   INCOME
-//   PAYMENT
-// }
+enum TransactionType {
+  INCOME
+  PAYMENT
+}
 
-// enum TransactionCategory {
-//   // Income categories
-//   RENT
-//   SALES
-//   INTEREST
-//   TRANSFER
-//   OTHER_INCOME
+enum TransactionCategory {
+  // Income categories
+  KIOSK
+  MONTHLY
+  YEARLY
+  RENT
+  SELL
+  ADVERTISMENT
+  OTHER_INCOME
   
-//   // Payment categories
-//   SUPPLIES
-//   MAINTENANCE
-//   SALARY
-//   UTILITIES
-//   TAX
-//   FEE
-//   OTHER_PAYMENT
-// }
+  // Payment categories
+  SUPPLIES
+  MAINTENANCE
+  SALARY
+  UTILITIES
+  TAX
+  FEE
+  OTHER_PAYMENT
+}

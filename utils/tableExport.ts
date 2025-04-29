@@ -22,17 +22,6 @@ interface ExportOptions {
   data: any[];
 }
 
-// Format numbers with thousand separators and handle negatives
-const formatBalance = (value: number | string) => {
-  const num = typeof value === "string" ? parseFloat(value) : value;
-  const absoluteValue = Math.abs(num);
-  const formatted = absoluteValue.toLocaleString("en-US");
-  return num < 0
-    ? `بدهکار ${formatted}`
-    : num == 0
-    ? "تسویه"
-    : `بستانکار ${formatted}`; // Or use color
-};
 
 export const exportToPDF = ({ fileName, columns, data }: ExportOptions) => {
   // 1. Initialize jsPDF
