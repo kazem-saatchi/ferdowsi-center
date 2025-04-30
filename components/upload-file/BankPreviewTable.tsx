@@ -7,10 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/utils/formatNumber";
+import { format } from "date-fns-jalali";
 
-interface BankTransaction {
+export interface BankTransaction {
   date: string;
-  time: string; // Keep as simple string
+  // time: string; // Keep as simple string
   description: string;
   transactionId: string;
   inputAmount: string;
@@ -19,7 +21,7 @@ interface BankTransaction {
   branch: string;
 }
 
-type HeaderLabels = {
+export type BankDataHeaderLabels = {
   [key in keyof BankTransaction]: string;
 };
 
@@ -30,9 +32,9 @@ interface PreviewTableProps {
 export function BankPreviewTable({ data }: PreviewTableProps) {
   if (data.length === 0) return null;
 
-  const headerLabels: HeaderLabels = {
+  const headerLabels: BankDataHeaderLabels = {
     date: "تاریخ",
-    time: "ساعت",
+    // time: "ساعت",
     description: "توضیحات",
     transactionId: "کد گردش",
     inputAmount: "واریز",
@@ -78,10 +80,17 @@ export function BankPreviewTable({ data }: PreviewTableProps) {
             >
               {headers.map((header) => (
                 <TableCell key={header} className={cn("text-center text-xs")}>
-                  {header === "time"
-                    ? // Display raw time string without processing
-                      row[header]
-                    : row[header] || "—"}
+                  {header === "date" &&
+                    format(new Date(row[header]), "yyyy/MM/dd")}
+                  {header === "description" && row[header]}
+                  {header === "transactionId" && row[header]}
+                  {header === "inputAmount" &&
+                    formatNumber(parseInt(row[header]))}
+                  {header === "outputAmount" &&
+                    formatNumber(parseInt(row[header]))}
+                  {header === "balanceAmount" &&
+                    formatNumber(parseInt(row[header]))}
+                  {header === "branch" && row[header]}
                 </TableCell>
               ))}
             </TableRow>

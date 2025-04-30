@@ -6,9 +6,9 @@ interface ExcelRow {
   [index: number]: any;
 }
 
-export interface BankTransaction {
+interface BankTransaction {
   date: string; // Changed from Date to string
-  time: string;
+  // time: string;
   description: string;
   transactionId: number;
   inputAmount: number;
@@ -127,7 +127,7 @@ export const parseBankFile = async (file: File): Promise<BankTransaction[]> => {
 
         result.push({
           date: isoDate, // Now a string
-          time: String(row[2] || ""),
+          // time: String(row[2] || ""),
           description: String(row[3] || ""),
           transactionId: parseNumber(row[4]),
           inputAmount: parseNumber(row[5]),

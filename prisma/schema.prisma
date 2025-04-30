@@ -9,34 +9,36 @@ datasource db {
 }
 
 model Shop {
-  id            String  @id @unique @default(uuid())
-  plaque        Int     @unique
-  area          Float
-  floor         Int
-  type          ShopType
-  ownerId       String
-  renterId      String?
-  isActive      Boolean @default(true)
-  ownerName     String  @default("")
-  renterName    String?
+  id                  String  @id @unique @default(uuid())
+  plaque              Int     @unique
+  area                Float
+  floor               Int
+  type                ShopType
+  ownerId             String
+  renterId            String?
+  isActive            Boolean @default(true)
+  ownerName           String  @default("")
+  renterName          String?
 
-  isForRent     Boolean @default(false)
-  rentAmount    Int     @default(0)
-  rentMortgage  Int     @default(0)
+  isForRent           Boolean @default(false)
+  rentAmount          Int     @default(0)
+  rentMortgage        Int     @default(0)
 
-  isForSell     Boolean @default(false)
-  sellAmount    Int     @default(0)
+  isForSell           Boolean @default(false)
+  sellAmount          Int     @default(0)
 
-  bankCardMonthly String
-  bankCardYearly  String
+  bankCardMonthly     String
+  bankCardYearly      String
 
-  owner         Person  @relation("ShopOwner", fields: [ownerId], references: [id])
-  renter        Person? @relation("ShopRenter", fields: [renterId], references: [id])
+  owner               Person  @relation("ShopOwner", fields: [ownerId], references: [id])
+  renter              Person? @relation("ShopRenter", fields: [renterId], references: [id])
 
-  chargeData    ShopChargeReference[]
-  histories     ShopHistory[]
-  charges       Charge[]
-  payments      Payment[]
+  kioskRentAmount     Int?      // For Kiost Monthly Rent Only
+
+  chargeData          ShopChargeReference[]
+  histories           ShopHistory[]
+  charges             Charge[]
+  payments            Payment[]
 }
 
 enum ShopType {
@@ -225,7 +227,10 @@ enum Category {
   CHILLER       // تعمیرات موتورخانه
   CLEANING      // خدمات نظافت
   SECURITY      // خدمات نگهبانی
-  OTHER         // سایر خدمات  
+  SALARY        // حقوق کارمندان        
+  UTILITIES     // تجهیزات
+  TAX           // مالیات
+  OTHER_PAYMENT // سایر خدمات 
 }
 
 model Income {
@@ -243,7 +248,7 @@ model Income {
 
 model BankTransaction {
   id                String   @id @default(uuid())
-  recieverAccount   String     // Bank account number (e.g., "1234-5678-9012-3456")
+  recieverAccount   String?     // Bank account number (e.g., "1234-5678-9012-3456")
   senderAccount     String?    // Bank account number (e.g., "1234-5678-9012-3456")
   amount            Int     
   balance           Int       
@@ -254,10 +259,19 @@ model BankTransaction {
   date              DateTime @default(now()) // Transaction date
   createdAt         DateTime @default(now()) // When record was created
 
+  // New reference fields
+  referenceId       String?
+  referenceType     ReferenceType?
   
-
   @@index([recieverAccount])
   @@index([date])
+  @@index([referenceId]) // Important for lookups
+}
+
+enum ReferenceType {
+  PAYMENT
+  COST
+  INCOME
 }
 
 enum TransactionType {
@@ -267,20 +281,27 @@ enum TransactionType {
 
 enum TransactionCategory {
   // Income categories
-  KIOSK
-  MONTHLY
-  YEARLY
-  RENT
-  SELL
-  ADVERTISMENT
-  OTHER_INCOME
+  KIOSK         // درآمد مشاعات
+  MONTHLY       // درآمد شارژ ماهانه
+  YEARLY        // درآمد شارژ مالکانه
+  RENT          // درآمد از اجاره
+  SELL          // دزآمد فروش
+  ADVERTISMENT  // درآمد تبلیغات
+  CONTRACT_FEE   // درآمد
+  OTHER_INCOME  // سایر درآمدها
   
   // Payment categories
-  SUPPLIES
-  MAINTENANCE
-  SALARY
-  UTILITIES
-  TAX
-  FEE
-  OTHER_PAYMENT
+  ELECTRICITY   // قبض برق
+  WATER         // قبض آب
+  GAS           // قبض گاز
+  ELEVATOR      // تعمیرات آسانسور
+  ESCALATOR     // تعمیرات پله برقی
+  CHILLER       // تعمیرات موتورخانه
+  CLEANING      // خدمات نظافت
+  SECURITY      // خدمات نگهبانی
+  SALARY        // حقوق کارمندان        
+  UTILITIES     // تجهیزات
+  TAX           // مالیات
+  OTHER_PAYMENT // سایر خدمات 
+  
 }

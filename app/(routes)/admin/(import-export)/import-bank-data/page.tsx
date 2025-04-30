@@ -7,12 +7,15 @@ import { AddPersonsShopsData } from "@/schema/importSchema";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { BankDataUpload } from "@/components/upload-file/UploadBankFile";
-import { BankPreviewTable } from "@/components/upload-file/BankPreviewTable";
+import {
+  BankPreviewTable,
+  BankTransaction,
+} from "@/components/upload-file/BankPreviewTable";
+import { parseBankData } from "@/components/upload-file/parseBankData";
 
 export default function UploadBankData() {
   const [file, setFile] = React.useState<File | null>(null);
-  const [parsedData, setParsedData] = React.useState<AddPersonsShopsData[]>([]);
-  const [previewData, setPreviewData] = React.useState<any[]>([]);
+  const [parsedData, setParsedData] = React.useState<BankTransaction[]>([]);
 
   const mutationAddPersonsShops = useAddPersonsShops();
   const { isUploading, progress, uploadStats, uploadData, resetUpload } =
@@ -24,7 +27,6 @@ export default function UploadBankData() {
   const handleFileChange = (selectedFile: File, data: any[]) => {
     setFile(selectedFile);
     setParsedData(data);
-    setPreviewData(data);
     resetUpload();
   };
 
@@ -33,7 +35,8 @@ export default function UploadBankData() {
       toast.error("لطفا ابتدا یک فایل معتبر انتخاب و بارگذاری کنید.");
       return;
     }
-    uploadData(parsedData);
+    console.log("bank transfer", parseBankData(parsedData));
+    // uploadData(parsedData);
   };
 
   return (
@@ -70,8 +73,8 @@ export default function UploadBankData() {
           </div>
         )}
 
-        {previewData.length > 0 && !isUploading && (
-          <BankPreviewTable data={previewData} />
+        {parsedData.length > 0 && !isUploading && (
+          <BankPreviewTable data={parsedData} />
         )}
       </CardContent>
     </Card>
