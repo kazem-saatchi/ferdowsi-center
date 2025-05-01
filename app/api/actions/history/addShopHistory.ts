@@ -54,6 +54,7 @@ async function addShopHistoryEntry(
       // personId:person.id,
       shop: { connect: { id: shop.id } },
       person: { connect: { id: person.id } },
+      shopType:shop.type,
     },
   });
 

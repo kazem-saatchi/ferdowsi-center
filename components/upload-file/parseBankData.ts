@@ -3,7 +3,7 @@ import { BankTransaction } from "./BankPreviewTable";
 interface BankCardTransfer {
   refrenceId: string;
   senderCard: string;
-  recieverCard: string;
+  receiverCard: string;
   amount: number;
   date: string;
 }
@@ -26,7 +26,7 @@ export function parseBankData(data: BankTransaction[]): BankCardTransfer[] {
           return {
             refrenceId: row.transactionId,
             senderCard: extractedNumber[0],
-            recieverCard: extractedNumber[1],
+            receiverCard: extractedNumber[1],
             amount: parseInt(row.inputAmount),
             date: row.date,
           };

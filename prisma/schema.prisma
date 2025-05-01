@@ -33,7 +33,10 @@ model Shop {
   owner               Person  @relation("ShopOwner", fields: [ownerId], references: [id])
   renter              Person? @relation("ShopRenter", fields: [renterId], references: [id])
 
-  kioskRentAmount     Int?      // For Kiost Monthly Rent Only
+  description         String?
+
+  RentAmount     Int?      // For Kiost and Parking and Board Monthly Rent
+  ChargeAmount   Int?      // For Kiost and Parking and Board Monthly Charge
 
   chargeData          ShopChargeReference[]
   histories           ShopHistory[]
@@ -44,7 +47,9 @@ model Shop {
 enum ShopType {
   STORE
   OFFICE
-  KIOSK //مشاعات
+  KIOSK     // مشاعات
+  PARKING   // پارکینگ
+  BOARD     // تابلو
 }
 
 model Person {
@@ -84,6 +89,7 @@ model ShopHistory {
   startDate     DateTime
   endDate       DateTime?
   isActive      Boolean  @default(true)
+  shopType      ShopType
 
   shop          Shop     @relation(fields: [shopId], references: [id])
   person        Person   @relation(fields: [personId], references: [id])
@@ -113,8 +119,8 @@ model Charge {
   operationId   String
   operationName String
   daysCount     Int
-  proprietor    Boolean @default(false)  //مالکانه 
-  description       String      @default("") @db.VarChar(255)
+  proprietor    Boolean     @default(false)  //مالکانه 
+  description   String      @default("") @db.VarChar(255)
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])

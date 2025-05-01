@@ -8,6 +8,7 @@ import {
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
+import { getYear } from "date-fns-jalali";
 
 async function generateShopChargeReference(
   data: ShopChargeReferenceData,
@@ -31,6 +32,12 @@ async function generateShopChargeReference(
 
   // Fetch all active shops
   const shopsList = await db.shop.findMany({
+    where: { OR: [{ type: "OFFICE" }, { type: "STORE" }] },
+    orderBy: { plaque: "asc" },
+  });
+
+  const kioskList = await db.shop.findMany({
+    where: { OR: [{ type: "KIOSK" }, { type: "PARKING" }, { type: "BOARD" }] },
     orderBy: { plaque: "asc" },
   });
 
@@ -39,7 +46,7 @@ async function generateShopChargeReference(
   }
 
   // Prepare new charge reference data
-  const currentYear = new Date().getFullYear();
+  const currentYear = getYear(new Date());
   const newChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
     shopsList.map((shop) => {
       const constValue = shop.type === "STORE" ? storeConst : officeConst;
@@ -62,6 +69,23 @@ async function generateShopChargeReference(
       return chargeObject;
     });
 
+  const newKioskChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
+    kioskList.map((shop) => {
+      const totalAmount = shop.koistChargeAmount;
+      const chargeObject = {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        area: shop.area,
+        constantAmount: 0,
+        metricAmount: 0,
+        totalAmount: totalAmount ?? 0,
+        year: currentYear,
+        proprietor: false,
+      };
+
+      return chargeObject;
+    });
+
   // Transaction: Clear old references for these shops and insert new ones
   await db.$transaction(async (prisma) => {
     await prisma.shopChargeReference.deleteMany({
@@ -72,7 +96,7 @@ async function generateShopChargeReference(
     });
 
     await prisma.shopChargeReference.createMany({
-      data: newChargeList,
+      data: [...newChargeList, ...newKioskChargeList],
     });
   });
 

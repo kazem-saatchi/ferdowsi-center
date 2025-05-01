@@ -30,6 +30,7 @@ async function generateShopAnnualChargeReference(
 
   // Fetch all active shops
   const shopsList = await db.shop.findMany({
+    where: { OR: [{ type: "OFFICE" }, { type: "STORE" }] },
     orderBy: { plaque: "asc" },
   });
 
