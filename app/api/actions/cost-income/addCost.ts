@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { AddCostData, addCostSchema } from "@/schema/cost-IncomeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
+import { CostCategory, Person } from "@prisma/client";
 
 interface AddCostResponse {
   costId: string;
@@ -32,7 +32,7 @@ async function addCostData(
       amount: validation.data.amount,
       date: validation.data.date,
       description: validation.data.description,
-      category: validation.data.category,
+      category: validation.data.category as CostCategory,
       billImage: validation.data.billImage,
       proprietor: validation.data.proprietor,
     },

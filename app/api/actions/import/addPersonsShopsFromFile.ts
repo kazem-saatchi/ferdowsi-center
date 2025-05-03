@@ -192,6 +192,7 @@ async function addPersonsAndShopsInternal(
               personName: newShop.ownerName,
               type: "Ownership",
               startDate: startDate,
+              shopType: newShop.type,
             },
             {
               shopId: newShop.id,
@@ -200,6 +201,7 @@ async function addPersonsAndShopsInternal(
               personName: newShop.renterName || newShop.ownerName,
               type: newShop.renterId ? "ActiveByRenter" : "ActiveByOwner",
               startDate: startDate,
+              shopType: newShop.type,
             },
           ];
 

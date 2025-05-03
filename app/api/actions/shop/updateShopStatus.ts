@@ -42,6 +42,7 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
       ownerName: true,
       renterId: true,
       isActive: true,
+      type: true,
     },
   });
 
@@ -103,6 +104,7 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
         type: newType,
         startDate: newStartDate.toISOString(),
         isActive: isActivating,
+        shopType: shop.type,
       },
     });
   });

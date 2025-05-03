@@ -24,7 +24,7 @@ async function updateShop(data: EndShopRenterData, user: Person) {
 
   const shop = await db.shop.findUnique({
     where: { id: validation.data.shopId },
-    select: { id: true, plaque: true, ownerId: true, ownerName: true },
+    select: { id: true, plaque: true, ownerId: true, ownerName: true,type: true },
   });
 
   if (!shop) {
@@ -78,6 +78,7 @@ async function updateShop(data: EndShopRenterData, user: Person) {
         personName: shop.ownerName,
         type: "ActiveByOwner",
         startDate: currentDate,
+        shopType: shop.type,
       },
     });
   });

@@ -18,6 +18,7 @@ import { useUpateShopInfo } from "@/tanstack/mutations";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
+import { ShopType } from "@prisma/client";
 
 export default function EditShopPageById() {
   const params = useParams();
@@ -35,7 +36,7 @@ export default function EditShopPageById() {
     bankCardYearly: "",
   });
 
-  const [shopType, setShopType] = useState<"STORE" | "OFFICE" | "KIOSK">(
+  const [shopType, setShopType] = useState<ShopType>(
     "STORE"
   );
 

@@ -1,4 +1,7 @@
+import { CostCategory } from "@prisma/client";
 import { z } from "zod";
+
+const CostCategoryType = Object.values(CostCategory) as [string, ...string[]];
 
 //--------------------------------------------------------------------------------------
 export const addCostSchema = z.object({
@@ -6,17 +9,7 @@ export const addCostSchema = z.object({
   amount: z.number().int(),
   date: z.date(),
   description: z.string().max(255).optional(),
-  category: z.enum([
-    "ELECTRICITY",
-    "WATER",
-    "GAS",
-    "ELEVATOR",
-    "ESCALATOR",
-    "CHILLER",
-    "CLEANING",
-    "SECURITY",
-    "OTHER",
-  ]),
+  category: z.enum(CostCategoryType),
   billImage: z.string(),
   proprietor: z.boolean().default(false),
 });

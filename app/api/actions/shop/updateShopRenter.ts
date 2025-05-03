@@ -97,6 +97,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
           personName: renterName,
           type: "ActiveByRenter",
           startDate: newStartDate.toISOString(),
+          shopType: updatedShop.type,
         },
       });
     }

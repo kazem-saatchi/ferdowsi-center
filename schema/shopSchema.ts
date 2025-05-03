@@ -1,13 +1,16 @@
+import { ShopType } from "@prisma/client";
 import { z } from "zod";
+
+const ShopTypeValues = Object.values(ShopType) as [string, ...string[]];
 
 //--------------------------------------------------------------------------------------
 export const addShopSchema = z.object({
   plaque: z.number(),
   area: z
     .number()
-    .min(1, { message: "Area must be a positive number greater than zero." }),
-  floor: z.number().int({ message: "Floor must be an integer." }),
-  type: z.enum(["STORE", "OFFICE", "KIOSK"]),
+    .min(1, { message: "مساحت باید یک عدد مثبت بالاتر از صفر باشد." }),
+  floor: z.number().int({ message: "طبقه باید یک عدد باشد" }),
+  type: z.enum(ShopTypeValues),
   ownerId: z.string().uuid({ message: "Owner ID must be a valid UUID." }),
   renterId: z
     .string()

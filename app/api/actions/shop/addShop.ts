@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { AddShopData, addShopSchema } from "@/schema/shopSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma } from "@prisma/client";
+import { Person, Prisma, ShopType } from "@prisma/client";
 
 interface AddShopResponse {
   shopId: string;
@@ -60,7 +60,7 @@ async function createShop(data: AddShopData, person: Person) {
         plaque: validation.data.plaque,
         area: validation.data.area,
         floor: validation.data.floor,
-        type: validation.data.type,
+        type: validation.data.type as ShopType,
         ownerId: validation.data.ownerId,
         renterId: validation.data.renterId || null,
         ownerName: `${owner.firstName} ${owner.lastName}`,
@@ -78,6 +78,7 @@ async function createShop(data: AddShopData, person: Person) {
         personName: newShop.ownerName,
         type: "Ownership",
         startDate: currentDate,
+        shopType: newShop.type,
       },
       {
         shopId: newShop.id,
@@ -86,6 +87,7 @@ async function createShop(data: AddShopData, person: Person) {
         personName: newShop.renterName || newShop.ownerName,
         type: newShop.renterId ? "ActiveByRenter" : "ActiveByOwner",
         startDate: currentDate,
+        shopType: newShop.type,
       },
     ];
 

@@ -35,8 +35,8 @@ model Shop {
 
   description         String?
 
-  RentAmount     Int?      // For Kiost and Parking and Board Monthly Rent
-  ChargeAmount   Int?      // For Kiost and Parking and Board Monthly Charge
+  RentAmount          Int?      // For Kiost and Parking and Board Monthly Rent
+  ChargeAmount        Int?      // For Kiost and Parking and Board Monthly Charge
 
   chargeData          ShopChargeReference[]
   histories           ShopHistory[]
@@ -216,7 +216,7 @@ model Cost {
   amount        Int
   date          DateTime
   description   String  @db.VarChar(255) @default("")
-  category      Category
+  category      CostCategory
   billImage     String    @default("")
   proprietor    Boolean   @default(false) //مالکانه
   name          String    @default("") // نام فرد یا شرکت
@@ -224,7 +224,7 @@ model Cost {
   createdAt     DateTime @default(now())
 }
 
-enum Category {
+enum CostCategory {
   ELECTRICITY   // قبض برق
   WATER         // قبض آب
   GAS           // قبض گاز

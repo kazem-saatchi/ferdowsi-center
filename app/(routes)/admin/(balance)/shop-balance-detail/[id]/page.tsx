@@ -1,7 +1,6 @@
 "use client"
 
 import { BalanceDetailTable } from "@/components/balance/BalanceDetaiTable";
-import ErrorComponent from "@/components/ErrorComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useGetShopBalance } from "@/tanstack/queries";
@@ -43,7 +42,6 @@ function ShopBalanceDetaiById() {
       <BalanceDetailTable
         charges={balanceData?.data?.charges}
         payments={balanceData?.data?.payments}
-        plaque={balanceData.data.shopBalance?.plaque}
       />
     </div>
   );

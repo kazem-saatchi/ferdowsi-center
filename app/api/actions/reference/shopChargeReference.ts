@@ -71,7 +71,7 @@ async function generateShopChargeReference(
 
   const newKioskChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
     kioskList.map((shop) => {
-      const totalAmount = shop.koistChargeAmount;
+      const totalAmount = shop.ChargeAmount;
       const chargeObject = {
         shopId: shop.id,
         plaque: shop.plaque,

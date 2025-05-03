@@ -80,6 +80,7 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
         personName: ownerName,
         type: "Ownership",
         startDate: newStartDate.toISOString(),
+        shopType: updatedShop.type,
       },
     });
 
@@ -92,6 +93,7 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
           personName: ownerName,
           type: "ActiveByOwner",
           startDate: newStartDate.toISOString(),
+          shopType: updatedShop.type,
         },
       });
     }
