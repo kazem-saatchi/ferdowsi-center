@@ -1,5 +1,5 @@
-import { ShopType } from "@prisma/client";
 import { z } from "zod";
+import { ShopType } from "@prisma/client";
 
 const ShopTypeValues = Object.values(ShopType) as [string, ...string[]];
 

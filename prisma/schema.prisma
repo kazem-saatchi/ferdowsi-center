@@ -37,6 +37,7 @@ model Shop {
 
   RentAmount          Int?      // For Kiost and Parking and Board Monthly Rent
   ChargeAmount        Int?      // For Kiost and Parking and Board Monthly Charge
+  rentDate            DateTime? // For Kiost and Parking and Board Rent Date
 
   chargeData          ShopChargeReference[]
   histories           ShopHistory[]

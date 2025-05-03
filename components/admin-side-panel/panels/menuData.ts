@@ -24,6 +24,7 @@ import {
   BookText,
   FileChartColumn,
   Banknote,
+  Import,Car
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -314,7 +315,7 @@ export const adminMenuData: AdminMenuCollection = {
   import: {
     title: "بارگذاری اطلاعات",
     baseUrl: "/admin",
-    icon: DollarSign,
+    icon: Import,
     items: [
       {
         id: 1,
@@ -328,6 +329,12 @@ export const adminMenuData: AdminMenuCollection = {
         href: "/import-bank-data",
         icon: Banknote,
       },
+      {
+        id: 3,
+        name: "ثبت اطلاعات غرفه ها",
+        href: "/import-kiosks-data",
+        icon: Car,
+      }
     ],
   },
 };

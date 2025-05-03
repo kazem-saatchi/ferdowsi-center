@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export async function POST() {
+export async function GET() {
   try {
     // Check if any admin already exists
     const existingAdmin = await prisma.person.findFirst({

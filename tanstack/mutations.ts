@@ -50,9 +50,11 @@ import addCost from "@/app/api/actions/cost-income/addCost";
 import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
 import addIncome from "@/app/api/actions/cost-income/addIncome";
 import addPersonsShops from "@/app/api/actions/import/addPersonsShopsFromFile";
-import { AddPersonsShopsData } from "@/schema/importSchema";
+import { AddKioskData, AddPersonsShopsData } from "@/schema/importSchema";
 import { ActionResponse } from "@/utils/handleServerAction";
 import updateUserPassword from "@/app/api/actions/user/updatePersonPassword";
+import { AddPersonsShopsResponse } from "@/app/api/actions/import/addPersonsShopsFromFile"; 
+import addKioskAction, { AddKioskResponse } from "@/app/api/actions/import/addKioskFromFile";
 
 //------------------PERSON--------------------
 
@@ -705,13 +707,10 @@ export function useAddIncome() {
 //     },
 //   });
 // }
-interface AddPersonsShopsResponse {
-  message: string;
-  addedShops: number;
-  failedShops: number;
-  processed: number;
-}
 
+
+
+// Add Persons and Shops from File
 export function useAddPersonsShops() {
   const queryClient = useQueryClient();
 
@@ -722,6 +721,21 @@ export function useAddPersonsShops() {
   >({
     mutationFn: async (data: AddPersonsShopsData[]) => {
       return await addPersonsShops(data);
+    },
+  });
+}
+
+// Add Kiosk from File
+export function useAddKiosks() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ActionResponse<AddKioskResponse>, // Type of the data returned by the mutationFn
+    Error, // Type of error
+    AddKioskData[] // Type of variables passed to mutate/mutateAsync
+  >({
+    mutationFn: async (data: AddKioskData[]) => {
+      return await addKioskAction(data);
     },
   });
 }
