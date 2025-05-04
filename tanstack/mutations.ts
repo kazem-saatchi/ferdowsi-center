@@ -55,6 +55,8 @@ import { ActionResponse } from "@/utils/handleServerAction";
 import updateUserPassword from "@/app/api/actions/user/updatePersonPassword";
 import { AddPersonsShopsResponse } from "@/app/api/actions/import/addPersonsShopsFromFile"; 
 import addKioskAction, { AddKioskResponse } from "@/app/api/actions/import/addKioskFromFile";
+import addBankDataFromFile, { AddBankDataResponse } from "@/app/api/actions/import/addBankData";
+import { BankTransactionData } from "@/components/upload-file/readFile";
 
 //------------------PERSON--------------------
 
@@ -736,6 +738,21 @@ export function useAddKiosks() {
   >({
     mutationFn: async (data: AddKioskData[]) => {
       return await addKioskAction(data);
+    },
+  });
+}
+
+// Add Bank Data
+export function useAddBankDataFromFile() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ActionResponse<AddBankDataResponse>, // Type of the data returned by the mutationFn
+    Error, // Type of error
+    BankTransactionData[] // Type of variables passed to mutate/mutateAsync
+  >({
+    mutationFn: async (data: BankTransactionData[]) => {
+      return await addBankDataFromFile(data);
     },
   });
 }

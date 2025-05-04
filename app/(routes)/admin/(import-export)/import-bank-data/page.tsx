@@ -2,25 +2,25 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAddPersonsShops } from "@/tanstack/mutations";
-import { AddPersonsShopsData } from "@/schema/importSchema";
+import { useAddBankDataFromFile } from "@/tanstack/mutations";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { BankDataUpload } from "@/components/upload-file/UploadBankFile";
 import {
   BankPreviewTable,
-  BankTransaction,
+  
 } from "@/components/upload-file/BankPreviewTable";
 import { parseBankData } from "@/components/upload-file/parseBankData";
+import { BankTransactionData } from "@/components/upload-file/readFile";
 
 export default function UploadBankData() {
   const [file, setFile] = React.useState<File | null>(null);
-  const [parsedData, setParsedData] = React.useState<BankTransaction[]>([]);
+  const [parsedData, setParsedData] = React.useState<BankTransactionData[]>([]);
 
-  const mutationAddPersonsShops = useAddPersonsShops();
+  const mutationAddBankData = useAddBankDataFromFile();
   const { isUploading, progress, uploadStats, uploadData, resetUpload } =
-    useChunkedUpload<AddPersonsShopsData>({
-      mutationFn: mutationAddPersonsShops.mutateAsync,
+    useChunkedUpload<BankTransactionData>({
+      mutationFn: mutationAddBankData.mutateAsync,
       invalidateQueries: ["all-persons", "all-shops", "all-histories"],
     });
 
@@ -35,8 +35,8 @@ export default function UploadBankData() {
       toast.error("لطفا ابتدا یک فایل معتبر انتخاب و بارگذاری کنید.");
       return;
     }
-    console.log("bank transfer", parseBankData(parsedData));
-    // uploadData(parsedData);
+    // console.log("bank transfer", parseBankData(parsedData));
+    uploadData(parsedData);
   };
 
   return (

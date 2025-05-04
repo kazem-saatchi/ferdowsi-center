@@ -6,6 +6,7 @@ export const labels = {
   totalBalanceMonthly:"مانده حساب شارژ ماهانه",
   totalBalanceYearly:"ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
+  category:"دسته بندی",
 
   bankCardMonthly: "شماره حساب شارژ ماهانه",
   bankCardYearly: "شماره حساب شارژ مالکانه",

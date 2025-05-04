@@ -6,7 +6,7 @@ interface ExcelRow {
   [index: number]: any;
 }
 
-interface BankTransaction {
+export interface BankTransactionData {
   date: string; // Changed from Date to string
   // time: string;
   description: string;
@@ -88,7 +88,9 @@ export const parseImportFile = async (file: File): Promise<any[]> => {
 };
 
 // Pare Bank Excel File
-export const parseBankFile = async (file: File): Promise<BankTransaction[]> => {
+export const parseBankFile = async (
+  file: File
+): Promise<BankTransactionData[]> => {
   try {
     const data = await readFileAsBuffer(file);
     const workbook = XLSX.read(data, {
@@ -111,7 +113,7 @@ export const parseBankFile = async (file: File): Promise<BankTransaction[]> => {
       defval: null, // Handle empty cells
     });
 
-    const result: BankTransaction[] = [];
+    const result: BankTransactionData[] = [];
 
     excelData.forEach((row: ExcelRow, rowIndex: number) => {
       // Skip header row and merged rows

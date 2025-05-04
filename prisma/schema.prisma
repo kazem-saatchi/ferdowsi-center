@@ -260,13 +260,16 @@ model BankTransaction {
   amount            Int     
   balance           Int       
   type              TransactionType // INCOME or PAYMENT
-  category          TransactionCategory // More specific category
+  category          TransactionCategory? // More specific category
   description       String
   reference         String?  // External reference number
   date              DateTime @default(now()) // Transaction date
   createdAt         DateTime @default(now()) // When record was created
+  bankReferenceId   String // Bank Transaction Id
+  branch            Int?   // Bank Branch number
 
-  // New reference fields
+  //  reference fields for Cost/Income/Charge
+  registered         Boolean @default(false)
   referenceId       String?
   referenceType     ReferenceType?
   
@@ -284,6 +287,7 @@ enum ReferenceType {
 enum TransactionType {
   INCOME
   PAYMENT
+  UNKNOWN
 }
 
 enum TransactionCategory {
