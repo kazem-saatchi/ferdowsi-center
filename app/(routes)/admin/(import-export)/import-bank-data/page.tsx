@@ -6,10 +6,7 @@ import { useAddBankDataFromFile } from "@/tanstack/mutations";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { BankDataUpload } from "@/components/upload-file/UploadBankFile";
-import {
-  BankPreviewTable,
-  
-} from "@/components/upload-file/BankPreviewTable";
+import { BankPreviewTable } from "@/components/upload-file/BankPreviewTable";
 import { parseBankData } from "@/components/upload-file/parseBankData";
 import { BankTransactionData } from "@/components/upload-file/readFile";
 
@@ -42,7 +39,7 @@ export default function UploadBankData() {
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
-        <CardTitle>آپلود اطلاعات فروشگاه و اشخاص</CardTitle>
+        <CardTitle>آپلود اطلاعات بانک</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <BankDataUpload

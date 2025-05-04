@@ -6,8 +6,8 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
-import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
-import { BankTransactionTable } from "@/components/bank/BankTransactionsTable";
+import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
+import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
 
 export default function TransactionsPage() {
   const [page, setPage] = useState(1);
@@ -23,10 +23,10 @@ export default function TransactionsPage() {
     isPlaceholderData, // Useful for pagination UX
   } = useQuery({
     // Query key: Includes page number so data is refetched when page changes
-    queryKey: ["bankTransactions", page, limit],
+    queryKey: ["cardTransfer", page, limit],
     // Query function: Calls the server action
     queryFn: () =>
-      getBankTransactions({ page, limit, sortBy: "date", sortOrder: "desc" }),
+      getBankCardTransfer({ page, limit, sortBy: "date", sortOrder: "desc" }),
     // Keep previous data while loading the next page for smoother pagination
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
@@ -48,7 +48,7 @@ export default function TransactionsPage() {
           <Skeleton className="h-10 w-full" />
         </div>
       ) : (
-        <BankTransactionTable
+        <BankCardTransferTable
           transactions={transactions}
           isLoading={isFetching} // Show loading indicator during background fetches too
           isError={isError}

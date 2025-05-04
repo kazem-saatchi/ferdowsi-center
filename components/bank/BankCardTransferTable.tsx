@@ -10,12 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Adjust import path as needed
-import { Badge } from "@/components/ui/badge"; // For displaying type/category
-import {
-  BankTransaction,
-  TransactionType,
-  TransactionCategory,
-} from "@prisma/client";
+import { BankTransaction, TransactionCategory } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
@@ -44,7 +39,7 @@ interface BankTransactionTableProps {
   isError: boolean;
 }
 
-export function BankTransactionTable({
+export function BankCardTransferTable({
   transactions,
   isLoading,
   isError,
@@ -79,19 +74,23 @@ export function BankTransactionTable({
       {" "}
       {/* Added border and rounding */}
       <Table dir="rtl">
-        <TableCaption>لیست تراکنش های بانک</TableCaption>
+        <TableCaption>لیست کارت به کارت های بانک</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[120px] text-center">
               {labels.date}
             </TableHead>
-            <TableHead className="text-right">{labels.description}</TableHead>
-            <TableHead className="text-center w-[80px]">
-              {labels.transactionCategory}
+            <TableHead className="text-center max-w-[240px]">
+              {labels.description}
             </TableHead>
-            <TableHead className="text-center">{labels.type}</TableHead>
-            <TableHead className="text-left">{labels.amount}</TableHead>
-            <TableHead className="text-left">{labels.balance}</TableHead>
+
+            <TableHead className="text-center">
+              {labels.senderCardNumber}
+            </TableHead>
+            <TableHead className="text-center">
+              {labels.receiverCardNumber}
+            </TableHead>
+            <TableHead className="text-center">{labels.amount}</TableHead>
             {/* Add other relevant columns if needed:
             <TableHead>Reference</TableHead>
             <TableHead>Bank Ref ID</TableHead>
@@ -104,50 +103,16 @@ export function BankTransactionTable({
               <TableCell className="font-medium">
                 {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
               </TableCell>
-              <TableCell>{tx.description}</TableCell>
-              <TableCell>
-                {tx.category ? (
-                  <Badge variant="outline">
-                    {getCategoryText(tx.category)}
-                  </Badge>
-                ) : (
-                  <span className="text-xs text-muted-foreground">نامشخص</span>
-                )}
+              <TableCell className="text-justify max-w-[300px]">
+                {tx.description}
               </TableCell>
-              <TableCell>
-                <Badge
-                  variant={
-                    tx.type === TransactionType.INCOME ? "default" : "secondary"
-                  }
-                  className={
-                    tx.type === TransactionType.INCOME
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                      : tx.type === TransactionType.PAYMENT
-                      ? "bg-orange-100 text-yellow-800 dark:bg-orange-900 dark:text-yellow-100"
-                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                  }
-                >
-                  {tx.type === "INCOME"
-                    ? "درآمد"
-                    : tx.type === "PAYMENT"
-                    ? "هزینه"
-                    : "نامشخص"}
-                </Badge>
+
+              <TableCell className="text-center">{tx.senderAccount}</TableCell>
+              <TableCell className="text-center">
+                {tx.recieverAccount}
               </TableCell>
-              <TableCell
-                className={`text-left font-semibold ${
-                  tx.type === TransactionType.INCOME
-                    ? "text-green-600 dark:text-green-400"
-                    : tx.type === TransactionType.PAYMENT
-                    ? "text-red-600 dark:text-red-500"
-                    : ""
-                }`}
-              >
+              <TableCell className="text-center">
                 {formatNumber(tx.amount)}
-                {tx.type === TransactionType.PAYMENT ? " - " : " + "}
-              </TableCell>
-              <TableCell className="text-left">
-                {formatNumber(tx.balance)}
               </TableCell>
               {/* Add other relevant cells if needed */}
             </TableRow>

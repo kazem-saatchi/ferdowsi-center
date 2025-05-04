@@ -269,7 +269,7 @@ model BankTransaction {
   branch            Int?   // Bank Branch number
 
   //  reference fields for Cost/Income/Charge
-  registered         Boolean @default(false)
+  registered        Boolean @default(false)
   referenceId       String?
   referenceType     ReferenceType?
   

@@ -24,7 +24,9 @@ import {
   BookText,
   FileChartColumn,
   Banknote,
-  Import,Car
+  Import,
+  Car,
+  CircleDollarSign,CreditCard
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -35,7 +37,8 @@ type AdminMenuKeys =
   | "payment"
   | "person"
   | "shop"
-  | "import";
+  | "import"
+  | "bank";
 type AdminMenuCollection = Record<AdminMenuKeys, MenuData>;
 
 export type MenuData = {
@@ -334,6 +337,25 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت اطلاعات غرفه ها",
         href: "/import-kiosks-data",
         icon: Car,
+      },
+    ],
+  },
+  bank: {
+    title: "حساب بانکی",
+    baseUrl: "/admin",
+    icon: CircleDollarSign,
+    items: [
+      {
+        id: 1,
+        name: "مشاهده تراکنش ها",
+        href: "/bank-transactions",
+        icon: Banknote,
+      },
+      {
+        id: 2,
+        name: "کارت به کارت",
+        href: "/card-transfer",
+        icon: CreditCard,
       }
     ],
   },

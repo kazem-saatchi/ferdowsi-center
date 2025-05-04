@@ -6,10 +6,13 @@ export const labels = {
   totalBalanceMonthly:"مانده حساب شارژ ماهانه",
   totalBalanceYearly:"ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
-  category:"دسته بندی",
+  transactionCategory:"دسته بندی",
 
   bankCardMonthly: "شماره حساب شارژ ماهانه",
   bankCardYearly: "شماره حساب شارژ مالکانه",
+
+  senderCardNumber:"شماره کارت مبدا",
+  receiverCardNumber:"شماره کارت مقصد",
 
   userNotFound:"کاربری پیدا نشد",
   invalidPassword:"نام کاربری یا رمز عبور اشتباه است",

@@ -33,6 +33,8 @@ function AdminSidebar() {
           <SidebarItemsMap menuData={adminMenuData.cost} />
           <Separator />
           <SidebarItemsMap menuData={adminMenuData.import} />
+          <Separator />
+          <SidebarItemsMap menuData={adminMenuData.bank} />
         </SidebarMenu>
       </SidebarContent>
       <AdminPanelFooter />

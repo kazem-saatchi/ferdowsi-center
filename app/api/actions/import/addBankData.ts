@@ -75,7 +75,7 @@ async function addBankDataInternal(
 
           await prisma.bankTransaction.create({
             data: {
-              createdAt: new Date(row.date).toISOString(),
+              date: new Date(row.date).toISOString(),
               description: row.description,
               bankReferenceId: row.transactionId.toString(),
               balance: row.balanceAmount,
