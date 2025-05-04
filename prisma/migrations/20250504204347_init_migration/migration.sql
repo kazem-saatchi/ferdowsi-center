@@ -11,13 +11,13 @@ CREATE TYPE "HistoryType" AS ENUM ('ActiveByOwner', 'ActiveByRenter', 'InActive'
 CREATE TYPE "PaymentType" AS ENUM ('CASH', 'CHEQUE', 'POS_MACHINE', 'BANK_TRANSFER', 'OTHER');
 
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('ELECTRICITY', 'WATER', 'GAS', 'ELEVATOR', 'ESCALATOR', 'CHILLER', 'CLEANING', 'SECURITY', 'SALARY', 'UTILITIES', 'TAX', 'OTHER_PAYMENT');
+CREATE TYPE "CostCategory" AS ENUM ('ELECTRICITY', 'WATER', 'GAS', 'ELEVATOR', 'ESCALATOR', 'CHILLER', 'CLEANING', 'SECURITY', 'SALARY', 'UTILITIES', 'TAX', 'OTHER_PAYMENT');
 
 -- CreateEnum
 CREATE TYPE "ReferenceType" AS ENUM ('PAYMENT', 'COST', 'INCOME');
 
 -- CreateEnum
-CREATE TYPE "TransactionType" AS ENUM ('INCOME', 'PAYMENT');
+CREATE TYPE "TransactionType" AS ENUM ('INCOME', 'PAYMENT', 'UNKNOWN');
 
 -- CreateEnum
 CREATE TYPE "TransactionCategory" AS ENUM ('KIOSK', 'MONTHLY', 'YEARLY', 'RENT', 'SELL', 'ADVERTISMENT', 'CONTRACT_FEE', 'OTHER_INCOME', 'ELECTRICITY', 'WATER', 'GAS', 'ELEVATOR', 'ESCALATOR', 'CHILLER', 'CLEANING', 'SECURITY', 'SALARY', 'UTILITIES', 'TAX', 'OTHER_PAYMENT');
@@ -42,8 +42,9 @@ CREATE TABLE "Shop" (
     "bankCardMonthly" TEXT NOT NULL,
     "bankCardYearly" TEXT NOT NULL,
     "description" TEXT,
-    "kioskRentAmount" INTEGER,
-    "koistChargeAmount" INTEGER,
+    "RentAmount" INTEGER,
+    "ChargeAmount" INTEGER,
+    "rentDate" TIMESTAMP(3),
 
     CONSTRAINT "Shop_pkey" PRIMARY KEY ("id")
 );
@@ -175,7 +176,7 @@ CREATE TABLE "Cost" (
     "amount" INTEGER NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "description" VARCHAR(255) NOT NULL DEFAULT '',
-    "category" "Category" NOT NULL,
+    "category" "CostCategory" NOT NULL,
     "billImage" TEXT NOT NULL DEFAULT '',
     "proprietor" BOOLEAN NOT NULL DEFAULT false,
     "name" TEXT NOT NULL DEFAULT '',
@@ -207,11 +208,14 @@ CREATE TABLE "BankTransaction" (
     "amount" INTEGER NOT NULL,
     "balance" INTEGER NOT NULL,
     "type" "TransactionType" NOT NULL,
-    "category" "TransactionCategory" NOT NULL,
+    "category" "TransactionCategory",
     "description" TEXT NOT NULL,
     "reference" TEXT,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "bankReferenceId" TEXT NOT NULL,
+    "branch" INTEGER,
+    "registered" BOOLEAN NOT NULL DEFAULT false,
     "referenceId" TEXT,
     "referenceType" "ReferenceType",
 
