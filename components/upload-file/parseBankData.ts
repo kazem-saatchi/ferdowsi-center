@@ -1,7 +1,7 @@
-import { BankTransaction } from "./BankPreviewTable";
+import { BankTransactionData } from "./readFile";
 
 interface BankCardTransfer {
-  refrenceId: string;
+  refrenceId: number;
   senderCard: string;
   receiverCard: string;
   amount: number;
@@ -17,17 +17,17 @@ function extract16DigitNumbers(text: string): string[] {
   return matches || [];
 }
 
-export function parseBankData(data: BankTransaction[]): BankCardTransfer[] {
+export function parseBankData(data: BankTransactionData[]): BankCardTransfer[] {
   const bankTransfer: BankCardTransfer[] = data
     .map((row) => {
-      if (parseInt(row.inputAmount) > 0) {
+      if (row.inputAmount > 0) {
         const extractedNumber = extract16DigitNumbers(row.description);
         if (extractedNumber.length === 2) {
           return {
             refrenceId: row.transactionId,
             senderCard: extractedNumber[0],
             receiverCard: extractedNumber[1],
-            amount: parseInt(row.inputAmount),
+            amount: row.inputAmount,
             date: row.date,
           };
         }
