@@ -24,8 +24,9 @@ import {
   GetChargeByShopData,
 } from "@/schema/chargeSchema";
 import { verifyToken } from "@/utils/auth";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import allCosts from "@/app/api/actions/cost-income/allCosts";
+import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 
 //------------------PERSON--------------------
 
@@ -143,9 +144,9 @@ export function useFindPaymentsByPerson(personId: string) {
 
 //------------------BALANCE--------------------
 
-export function useGetAllShopsBalance(proprietor:boolean) {
+export function useGetAllShopsBalance(proprietor: boolean) {
   return useQuery({
-    queryKey: ["all-balances",proprietor ? "yearly" : "monthly"],
+    queryKey: ["all-balances", proprietor ? "yearly" : "monthly"],
     queryFn: async () => await findBalanceAllShops(proprietor),
   });
 }
@@ -187,5 +188,28 @@ export function useGetAllCosts() {
   return useQuery({
     queryKey: ["all-costs"],
     queryFn: async () => await allCosts(),
+  });
+}
+
+//------------------Bank--------------------
+
+// Get All Card Transfer
+export function useGetAllCardTransfer({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) {
+  return useQuery({
+    queryKey: ["cardTransfer"],
+    queryFn: async () =>
+      await getBankCardTransfer({
+        page,
+        limit,
+        sortBy: "date",
+        sortOrder: "desc",
+      }),
+    placeholderData: keepPreviousData,
   });
 }

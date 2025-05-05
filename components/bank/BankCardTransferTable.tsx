@@ -14,6 +14,7 @@ import { BankTransaction, TransactionCategory } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
+import AddPaymentButton from "../payment/AddPaymentButton";
 
 // Helper function for currency formatting
 const formatCurrency = (amount: number) => {
@@ -91,8 +92,9 @@ export function BankCardTransferTable({
               {labels.receiverCardNumber}
             </TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
+            <TableHead className="text-center">ثبت</TableHead>
+
             {/* Add other relevant columns if needed:
-            <TableHead>Reference</TableHead>
             <TableHead>Bank Ref ID</TableHead>
             */}
           </TableRow>
@@ -114,6 +116,10 @@ export function BankCardTransferTable({
               <TableCell className="text-center">
                 {formatNumber(tx.amount)}
               </TableCell>
+              <TableCell className="text-center">
+                <AddPaymentButton id={tx.id} />
+              </TableCell>
+
               {/* Add other relevant cells if needed */}
             </TableRow>
           ))}

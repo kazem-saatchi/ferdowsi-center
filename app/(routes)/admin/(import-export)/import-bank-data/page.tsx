@@ -50,20 +50,20 @@ export default function UploadBankData() {
 
         {isUploading && (
           <div className="space-y-2">
-            <div className="flex justify-between text-sm font-medium text-gray-700">
+            <div className="flex justify-between text-sm font-medium ">
               <span>
-                درحال پردازش: {uploadStats.totalProcessed}/{parsedData.length}{" "}
+                درحال پردازش: {uploadStats.totalProcessed}/{parsedData.length}
                 رکورد
               </span>
               <span>{progress}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 ">
               <div
                 className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="text-xs text-gray-500 flex justify-between">
+            <div className="text-xs  flex justify-between">
               <span>موفق: {uploadStats.totalAdded}</span>
               <span>ناموفق: {uploadStats.totalFailed}</span>
             </div>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
+import { useGetAllCardTransfer } from "@/tanstack/queries";
 
 export default function TransactionsPage() {
   const [page, setPage] = useState(1);
@@ -21,16 +22,7 @@ export default function TransactionsPage() {
     error,
     isFetching, // Indicates background fetching for refetches/new pages
     isPlaceholderData, // Useful for pagination UX
-  } = useQuery({
-    // Query key: Includes page number so data is refetched when page changes
-    queryKey: ["cardTransfer", page, limit],
-    // Query function: Calls the server action
-    queryFn: () =>
-      getBankCardTransfer({ page, limit, sortBy: "date", sortOrder: "desc" }),
-    // Keep previous data while loading the next page for smoother pagination
-    placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
-  });
+  } = useGetAllCardTransfer({ page, limit });
 
   const transactions = queryResult?.data ?? [];
   const totalPages = queryResult?.totalPages ?? 0;

@@ -53,10 +53,15 @@ import addPersonsShops from "@/app/api/actions/import/addPersonsShopsFromFile";
 import { AddKioskData, AddPersonsShopsData } from "@/schema/importSchema";
 import { ActionResponse } from "@/utils/handleServerAction";
 import updateUserPassword from "@/app/api/actions/user/updatePersonPassword";
-import { AddPersonsShopsResponse } from "@/app/api/actions/import/addPersonsShopsFromFile"; 
-import addKioskAction, { AddKioskResponse } from "@/app/api/actions/import/addKioskFromFile";
-import addBankDataFromFile, { AddBankDataResponse } from "@/app/api/actions/import/addBankData";
+import { AddPersonsShopsResponse } from "@/app/api/actions/import/addPersonsShopsFromFile";
+import addKioskAction, {
+  AddKioskResponse,
+} from "@/app/api/actions/import/addKioskFromFile";
+import addBankDataFromFile, {
+  AddBankDataResponse,
+} from "@/app/api/actions/import/addBankData";
 import { BankTransactionData } from "@/components/upload-file/readFile";
+import addPaymentFromCard from "@/app/api/actions/import/addPaymentFromCard";
 
 //------------------PERSON--------------------
 
@@ -710,8 +715,6 @@ export function useAddIncome() {
 //   });
 // }
 
-
-
 // Add Persons and Shops from File
 export function useAddPersonsShops() {
   const queryClient = useQueryClient();
@@ -753,6 +756,32 @@ export function useAddBankDataFromFile() {
   >({
     mutationFn: async (data: BankTransactionData[]) => {
       return await addBankDataFromFile(data);
+    },
+  });
+}
+
+export function useAddPaymentFromCard() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => await addPaymentFromCard(id),
+    onSuccess: (data) => {
+      if (data.success) {
+        queryClient.invalidateQueries({
+          queryKey: ["cardTransfer"],
+          refetchType: "active",
+        });
+        queryClient.refetchQueries({
+          queryKey: ["cardTransfer"],
+          refetchType: "active",
+        });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 }
