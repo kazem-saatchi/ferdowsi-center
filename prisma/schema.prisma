@@ -145,6 +145,7 @@ model Payment {
   type              PaymentType @default(CASH)
   description       String      @default("") @db.VarChar(255)
   receiptImageUrl   String      @default("")
+  bankTransactionId String?
 
   shop              Shop    @relation(fields: [shopId],references: [id])
   person            Person  @relation(fields: [personId],references: [id])
@@ -272,6 +273,8 @@ model BankTransaction {
   registered        Boolean @default(false)
   referenceId       String?
   referenceType     ReferenceType?
+
+  registerAble      Boolean @default(true)
   
   @@index([recieverAccount])
   @@index([date])

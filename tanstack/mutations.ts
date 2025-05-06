@@ -61,7 +61,8 @@ import addBankDataFromFile, {
   AddBankDataResponse,
 } from "@/app/api/actions/import/addBankData";
 import { BankTransactionData } from "@/components/upload-file/readFile";
-import addPaymentFromCard from "@/app/api/actions/import/addPaymentFromCard";
+import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
+import setRegisterAbleAction from "@/app/api/actions/bank/setRegisterAbleAction";
 
 //------------------PERSON--------------------
 
@@ -766,15 +767,43 @@ export function useAddPaymentFromCard() {
   return useMutation({
     mutationFn: async (id: string) => await addPaymentFromCard(id),
     onSuccess: (data) => {
-      if (data.success) {
-        queryClient.invalidateQueries({
-          queryKey: ["cardTransfer"],
-          refetchType: "active",
-        });
-        queryClient.refetchQueries({
-          queryKey: ["cardTransfer"],
-          refetchType: "active",
-        });
+      if (data.data?.success) {
+        // queryClient.invalidateQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
+        // queryClient.refetchQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// set a Transaction as Registerable
+
+export function useSetRegisterAble() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => await setRegisterAbleAction(id),
+    onSuccess: (data) => {
+      if (data.data?.success) {
+        // queryClient.invalidateQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
+        // queryClient.refetchQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

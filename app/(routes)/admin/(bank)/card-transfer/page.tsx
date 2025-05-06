@@ -1,18 +1,18 @@
 // app/transactions/page.tsx
 "use client"; // Required because we are using hooks (useQuery)
 
-import { useState } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
-import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
 import { useGetAllCardTransfer } from "@/tanstack/queries";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TransactionsPage() {
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const limit = 100; // Number of items per page
+  const limit = 40; // Number of items per page
 
   // Use TanStack Query to fetch data
   const {
@@ -27,13 +27,29 @@ export default function TransactionsPage() {
   const transactions = queryResult?.data ?? [];
   const totalPages = queryResult?.totalPages ?? 0;
 
+  console.log("Current page:", page);
+console.log("Query result:", {
+  data: queryResult?.data?.length,
+  totalPages: queryResult?.totalPages,
+  currentPage: queryResult?.currentPage
+});
+console.log("Loading states:", { isLoading, isFetching, isPlaceholderData });
+
+React.useEffect(() => {
+  console.log("Page changed:", page);
+  // Manually trigger refetch if needed
+  queryClient.refetchQueries({ 
+    queryKey: ['cardTransfer', page, limit] 
+  });
+}, [page, limit]);
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
 
       {/* Display loading skeleton or table */}
       {isLoading && !queryResult ? (
-        <div className="space-y-4">
+        <div className="space-y-4 px-2">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />

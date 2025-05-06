@@ -31,19 +31,30 @@ async function addPaymentFromCardTransfer(
   });
 
   if (!bankTransaction) {
-    return { success: false, message: "Transaction not found" };
+    return { success: false, message: "تراکنش یافت نشد" };
   }
 
   if (bankTransaction.registered) {
-    return { success: false, message: "Transaction already processed" };
+    return { success: false, message: "تراکنش قبلا ثبت شده" };
   }
 
   if (!bankTransaction.recieverAccount || !bankTransaction.senderAccount) {
-    return { success: false, message: "Bank account information missing" };
+    return { success: false, message: "اطلاعات کارت بانکی یافت نشد" };
   }
 
   if (bankTransaction.amount <= 0) {
-    return { success: false, message: "Invalid transaction amount" };
+    return { success: false, message: "مبلغ نامتعبر" };
+  }
+
+  const paymentCheck = await db.payment.findFirst({
+    where: { bankTransactionId: bankTransaction.id },
+  });
+
+  if (paymentCheck) {
+    return {
+      success: false,
+      message: "تراکنش قبلا ثبت شده است",
+    };
   }
 
   const bankCardNumber = bankTransaction.recieverAccount;
@@ -69,7 +80,7 @@ async function addPaymentFromCardTransfer(
       });
 
       if (!shop) {
-        throw new Error("Shop not found");
+        throw new Error("واحد پیدا نشد");
       }
 
       const isProprietor =
@@ -93,6 +104,7 @@ async function addPaymentFromCardTransfer(
           shopId: shop.id,
           title: "ثبت شارژ سیتمی",
           type: "BANK_TRANSFER",
+          bankTransactionId: bankTransaction.id,
         },
       });
 
@@ -116,7 +128,7 @@ async function addPaymentFromCardTransfer(
 
     return {
       success: true,
-      message: "Payment processed successfully",
+      message: "ردیف با موفقیت ثبت شد",
       paymentId: result.id,
     };
   } catch (error) {
@@ -126,7 +138,7 @@ async function addPaymentFromCardTransfer(
     });
     return {
       success: false,
-      message: "Payment processing failed",
+      message: "ثبت اطلاعات ناموفق بود",
       errorCode: "PROCESSING_ERROR",
     };
   }

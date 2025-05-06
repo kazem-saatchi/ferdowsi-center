@@ -203,13 +203,15 @@ export function useGetAllCardTransfer({
 }) {
   return useQuery({
     queryKey: ["cardTransfer"],
-    queryFn: async () =>
-      await getBankCardTransfer({
-        page,
-        limit,
-        sortBy: "date",
-        sortOrder: "desc",
-      }),
+    queryFn: async () => {
+      // Explicitly create new object to avoid referential stability issues
+      const result = await getBankCardTransfer({
+        page: Number(page),
+        limit: Number(limit),
+      });
+      console.log("API Response:", result);
+      return result;
+    },
     placeholderData: keepPreviousData,
   });
 }

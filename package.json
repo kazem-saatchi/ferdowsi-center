@@ -43,7 +43,7 @@
     "react-dom": "^18",
     "react-multi-date-picker": "^4.5.2",
     "react-number-format": "^5.4.4",
-    "sonner": "^1.7.1",
+    "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "xlsx": "^0.18.5",

@@ -1,12 +1,11 @@
-"use client";
-import { useAddPaymentFromCard } from "@/tanstack/mutations";
 import React from "react";
 import { Button } from "../ui/button";
+import { useSetRegisterAble } from "@/tanstack/mutations";
 
-function AddPaymentButton({ id }: { id: string }) {
+function SetRegisterAbleButton({ id }: { id: string }) {
   const [isMutating, setIsMutating] = React.useState<boolean>(false);
   const [isRegistred, setIsRegistred] = React.useState<boolean>(false);
-  const addMutation = useAddPaymentFromCard();
+  const addMutation = useSetRegisterAble();
 
   function registerHandler() {
     setIsMutating(true);
@@ -19,17 +18,18 @@ function AddPaymentButton({ id }: { id: string }) {
       },
     });
   }
+
   return (
     <Button
-      variant="outline"
+      variant="destructive"
       disabled={isMutating || isRegistred}
       onClick={registerHandler}
     >
-      {!isRegistred && isMutating && "در حال ثبت"}
-      {!isRegistred && !isMutating && "ثبت پرداخت"}
-      {isRegistred && "ثبت شده"}
+      {!isRegistred && isMutating && "در حال انجام"}
+      {!isRegistred && !isMutating && "حذف"}
+      {isRegistred && "انجام شد"}
     </Button>
   );
 }
 
-export default AddPaymentButton;
+export default SetRegisterAbleButton;

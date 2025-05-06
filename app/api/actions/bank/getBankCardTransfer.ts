@@ -30,12 +30,21 @@ export async function getBankCardTransfer(
 ): Promise<GetTransactionsResult> {
   const {
     page = 1,
-    limit = 10, // Default limit
+    limit = 100, // Default limit
     sortBy = "date", // Default sort field
     sortOrder = "desc", // Default sort order
   } = options;
 
+  // Add validation
+  if (isNaN(page) || page < 1) throw new Error("Invalid page number");
+
   const skip = (page - 1) * limit;
+
+  console.log("Server received:", {
+    page: options.page,
+    limit: options.limit,
+    skip, // Should increment by limit per page
+  });
 
   // Build dynamic where clause if filters were added
   // const where: Prisma.BankTransactionWhereInput = {};
@@ -61,12 +70,20 @@ export async function getBankCardTransfer(
               recieverAccount: { not: null },
               senderAccount: { not: null },
               registered: false,
+              registerAble: true,
             },
           ],
         },
       }),
       db.bankTransaction.count({
-        // where: where, // Uncomment if using filters
+        where: {
+          AND: [
+            { recieverAccount: { not: null } },
+            { senderAccount: { not: null } },
+            { registered: false }, // Must match!
+            { registerAble: true },
+          ],
+        },
       }),
     ]);
 

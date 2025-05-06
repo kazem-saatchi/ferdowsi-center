@@ -15,6 +15,7 @@ import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
 import AddPaymentButton from "../payment/AddPaymentButton";
+import SetRegisterAbleButton from "./SetRegisterAbleButton";
 
 // Helper function for currency formatting
 const formatCurrency = (amount: number) => {
@@ -93,6 +94,7 @@ export function BankCardTransferTable({
             </TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
             <TableHead className="text-center">ثبت</TableHead>
+            <TableHead className="text-center">حذف از لیست</TableHead>
 
             {/* Add other relevant columns if needed:
             <TableHead>Bank Ref ID</TableHead>
@@ -118,6 +120,9 @@ export function BankCardTransferTable({
               </TableCell>
               <TableCell className="text-center">
                 <AddPaymentButton id={tx.id} />
+              </TableCell>
+              <TableCell className="text-center">
+                <SetRegisterAbleButton id={tx.id} />
               </TableCell>
 
               {/* Add other relevant cells if needed */}

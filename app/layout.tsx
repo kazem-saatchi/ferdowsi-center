@@ -31,7 +31,25 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </TanstackProvider>
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            classNames: {
+              toast:
+                "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+              description: "group-[.toast]:text-muted-foreground",
+              actionButton:
+                "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+              cancelButton:
+                "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+              // For error toasts
+              error:
+                "bg-red-100 border-red-400 text-red-900 [&>svg]:text-red-500",
+              // For warning toasts
+              warning:
+                "bg-orange-100 border-orange-400 text-orange-900 [&>svg]:text-orange-500",
+            },
+          }}
+        />
       </body>
     </html>
   );
