@@ -3,30 +3,32 @@ export const labels = {
   totalCharge: "کل جمع شارژ (ریال)",
   totalPayment: "کل جمع پرداخت (ریال)",
   totalBalance: "مانده حساب کل",
-  totalBalanceMonthly:"مانده حساب شارژ ماهانه",
-  totalBalanceYearly:"ماهانه حساب شارژ مالکانه",
+  totalBalanceMonthly: "مانده حساب شارژ ماهانه",
+  totalBalanceYearly: "ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
-  transactionCategory:"دسته بندی",
+  transactionCategory: "دسته بندی",
 
   bankCardMonthly: "شماره حساب شارژ ماهانه",
   bankCardYearly: "شماره حساب شارژ مالکانه",
 
-  senderCardNumber:"شماره کارت مبدا",
-  receiverCardNumber:"شماره کارت مقصد",
+  senderCardNumber: "شماره کارت مبدا",
+  receiverCardNumber: "شماره کارت مقصد",
 
-  userNotFound:"کاربری پیدا نشد",
-  invalidPassword:"نام کاربری یا رمز عبور اشتباه است",
-  loginSuccessful:"با موفقیت وارد شدید",
-  errorOnLogin:"خطایی رخ داده است",
+  userNotFound: "کاربری پیدا نشد",
+  invalidPassword: "نام کاربری یا رمز عبور اشتباه است",
+  loginSuccessful: "با موفقیت وارد شدید",
+  errorOnLogin: "خطایی رخ داده است",
 
-  charge:"شارژ",
-  payment:"پرداخت",
+  charge: "شارژ",
+  payment: "پرداخت",
 
   title: "عنوان",
   amount: "مبلغ - ریال",
   date: "تاریخ",
   operationName: "موضوع",
   daysCount: "تعداد روز",
+
+  gettingData: "در حال گرفتن اطلاعات",
 
   constAmount: "مبلغ ثابت",
   metricAmount: "مبلغ متری",
@@ -135,7 +137,7 @@ export const labels = {
   generateShopChargeReference: "ایجاد مرجع شارژ ماهانه",
   shopConstantValue: "مقدار ثابت مغازه",
   officeConstantValue: "مقدار ثابت دفتر",
-  savingPercentValue:"درصد افزایش",
+  savingPercentValue: "درصد افزایش",
 
   // Common labels
   successMessage: "مرجع شارژ مغازه با موفقیت ایجاد شد",

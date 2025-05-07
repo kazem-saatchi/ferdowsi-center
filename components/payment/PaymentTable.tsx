@@ -60,7 +60,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
               {labels.paymentCategory}
             </TableHead>
             <TableHead className="text-center">{labels.receiptImage}</TableHead>
-            <TableHead className="text-center">{labels.delete}</TableHead>
+            {/* <TableHead className="text-center">{labels.delete}</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -102,7 +102,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                   </Button>
                 )}
               </TableCell>
-              <TableCell className="text-center">
+              {/* <TableCell className="text-center">
                 <Button
                   onClick={() => handleDelete(payment.id)}
                   disabled={
@@ -114,7 +114,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                     ? labels.deleting
                     : labels.delete}
                 </Button>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>

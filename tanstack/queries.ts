@@ -202,7 +202,7 @@ export function useGetAllCardTransfer({
   limit: number;
 }) {
   return useQuery({
-    queryKey: ["cardTransfer"],
+    queryKey: ["cardTransfer", page, limit],
     queryFn: async () => {
       // Explicitly create new object to avoid referential stability issues
       const result = await getBankCardTransfer({

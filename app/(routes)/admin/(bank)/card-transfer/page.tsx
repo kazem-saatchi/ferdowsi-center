@@ -7,12 +7,11 @@ import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
 import { useGetAllCardTransfer } from "@/tanstack/queries";
-import { useQueryClient } from "@tanstack/react-query";
+import { labels } from "@/utils/label";
 
 export default function TransactionsPage() {
-  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const limit = 40; // Number of items per page
+  const limit = 20; // Number of items per page
 
   // Use TanStack Query to fetch data
   const {
@@ -27,24 +26,8 @@ export default function TransactionsPage() {
   const transactions = queryResult?.data ?? [];
   const totalPages = queryResult?.totalPages ?? 0;
 
-  console.log("Current page:", page);
-console.log("Query result:", {
-  data: queryResult?.data?.length,
-  totalPages: queryResult?.totalPages,
-  currentPage: queryResult?.currentPage
-});
-console.log("Loading states:", { isLoading, isFetching, isPlaceholderData });
-
-React.useEffect(() => {
-  console.log("Page changed:", page);
-  // Manually trigger refetch if needed
-  queryClient.refetchQueries({ 
-    queryKey: ['cardTransfer', page, limit] 
-  });
-}, [page, limit]);
-
   return (
-    <div className="container mx-auto py-8">
+    <div className="w-full mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
 
       {/* Display loading skeleton or table */}
@@ -70,6 +53,7 @@ React.useEffect(() => {
           {error instanceof Error ? error.message : "Unknown error"}
         </p>
       )}
+      {isFetching && <p className="text-center mt-2">{labels.gettingData}</p>}
 
       {/* Pagination Controls */}
       {totalPages > 0 && (
@@ -101,9 +85,6 @@ React.useEffect(() => {
           </Button>
         </div>
       )}
-
-      {/* Optional: Show loading indicator during background refetches */}
-      {/* {isFetching && <p className="text-center mt-2">Updating...</p>} */}
     </div>
   );
 }
