@@ -2,22 +2,22 @@
 
 import { db } from "@/lib/db";
 import {
-  AddPaymentByInfoData,
-  addPaymentByInfoSchema,
+  addPaymentByBankIdData,
+  addPaymentByBankIdSchema,
 } from "@/schema/paymentSchema";
 
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { PaymentType, Person, Prisma } from "@prisma/client";
 
-async function createPayment(data: AddPaymentByInfoData, person: Person) {
+async function createPayment(data: addPaymentByBankIdData, person: Person) {
   // Authorization check
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
 
   // Schema validation
-  const validation = addPaymentByInfoSchema.safeParse(data);
+  const validation = addPaymentByBankIdSchema.safeParse(data);
   if (!validation.success) {
     throw new Error(
       validation.error.errors.map((err) => err.message).join(", ")
@@ -32,7 +32,7 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
     description,
     proprietor,
     receiptImageUrl,
-    type,
+    type,bankTransactionId
   } = validation.data;
 
   const titleMap = {
@@ -85,6 +85,6 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
   };
 }
 
-export default async function addPaymentByInfo(data: AddPaymentByInfoData) {
+export default async function addPaymentByBankId(data: addPaymentByBankIdData) {
   return handleServerAction(async (person) => createPayment(data, person));
 }

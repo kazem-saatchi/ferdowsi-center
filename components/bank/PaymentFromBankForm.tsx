@@ -1,23 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
-import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
 import { useStore } from "@/store/store";
+import { useFindAllPersons, useFindAllShops } from "@/tanstack/queries";
+import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
-
+import LoadingComponent from "../LoadingComponent";
+import ErrorComponentSimple from "../ErrorComponentSimple";
 import { labels } from "@/utils/label";
-import AddPaymentForm from "@/components/payment/AddPaymentForm";
-import LoadingComponent from "@/components/LoadingComponent";
-import ErrorComponentSimple from "@/components/ErrorComponentSimple";
+import { Card, CardHeader, CardTitle } from "../ui/card";
+import AddPaymentForm from "../payment/AddPaymentForm";
 
-export default function AddPaymentPage() {
+interface PaymentFromBankProps {
+  bankTransactionId: string;
+  description: string;
+  amount: number;
+}
+
+function PaymentFromBankForm() {
+  // Queries To Fetch All Shops and users
   const {
     data: shopsData,
     isLoading: isLoadingShops,
@@ -29,13 +29,15 @@ export default function AddPaymentPage() {
     isError: isErrorPersons,
   } = useFindAllPersons();
 
-  const { setShopsAll,  setPersonsAll } = useStore(
+  // State For Shops and Persons
+  const { setShopsAll, setPersonsAll } = useStore(
     useShallow((state) => ({
       setShopsAll: state.setshopsAll,
       setPersonsAll: state.setPersonAll,
     }))
   );
 
+  // UseEffect To Assign Shops and Persons
   useEffect(() => {
     if (shopsData?.data?.shops) {
       setShopsAll(shopsData.data.shops);
@@ -65,3 +67,5 @@ export default function AddPaymentPage() {
     </div>
   );
 }
+
+export default PaymentFromBankForm;
