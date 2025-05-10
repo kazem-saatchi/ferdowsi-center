@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
 import { CustomSelect } from "../CustomSelect";
@@ -14,27 +14,45 @@ import {
   SelectValue,
 } from "../ui/select";
 import { labels } from "@/utils/label";
-import UploadImage from "../upload-file/UploadImage";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { AddPaymentByInfoData, addPaymentByInfoSchema, PaymentType } from "@/schema/paymentSchema";
+import {
+  addPaymentByBankIdData,
+  addPaymentByBankIdSchema,
+  PaymentType,
+} from "@/schema/paymentSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
-import { useAddPaymentByShop } from "@/tanstack/mutations";
+import { useAddPaymentByBank, useAddPaymentByShop } from "@/tanstack/mutations";
 import { toast } from "sonner";
+import SetRegisterAbleButton from "../bank/SetRegisterAbleButton";
+import { Separator } from "../ui/separator";
 
+interface AddPaymentProps {
+  bankTransactionId: string;
+  description: string;
+  amount: number;
+  date: Date;
+  cancelFn: Dispatch<SetStateAction<string | null>>;
+}
 
-
-function AddPaymentForm() {
+function AddPaymentBankForm({
+  amount: amountValue,
+  bankTransactionId,
+  description: descriptionValue,
+  date,
+  cancelFn,
+}: AddPaymentProps) {
   //---------- States For Form ----------//
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
-  const [paymentDate, setPaymentDate] = useState<Date | null>(null);
-  const [amount, setAmount] = useState("");
-  const [amountPersian, setAmountPersian] = useState("");
-  const [description, setDescription] = useState("");
-  const [receiptImageUrl, setReceiptImageUrl] = useState("");
+  const [paymentDate, setPaymentDate] = useState<Date | null>(date);
+  const [amount, setAmount] = useState(amountValue.toString());
+  const [amountPersian, setAmountPersian] = useState(
+    formatNumberFromString(amountValue.toString()).formattedPersianNumber
+  );
+  const [description, setDescription] = useState(descriptionValue);
   const [proprietor, setProprietor] = useState<boolean>(false);
-  const [type, setType] = useState<PaymentType>("CASH");
+  const [type, setType] = useState<PaymentType>("BANK_TRANSFER");
   const [uploadPage, setUploadPage] = useState<boolean>(false);
 
   //---------- State For Shop and Person ----------//
@@ -71,7 +89,7 @@ function AddPaymentForm() {
 
   //---------- Mutation Function ----------//
 
-  const addPaymentMutation = useAddPaymentByShop();
+  const addPaymentMutation = useAddPaymentByBank();
 
   const { isPending } = addPaymentMutation; // For Disabling Button
 
@@ -83,39 +101,34 @@ function AddPaymentForm() {
       return;
     }
     try {
-      const paymentData: AddPaymentByInfoData = {
+      const paymentData: addPaymentByBankIdData = {
         shopId: selectedShopId,
         personId: selectedPersonId,
         date: paymentDate,
         amount: parseInt(amount, 10),
         description,
-        receiptImageUrl,
         proprietor,
         type,
+        bankTransactionId,
       };
 
-      const validatedData = addPaymentByInfoSchema.parse(paymentData);
+      const validatedData = addPaymentByBankIdSchema.parse(paymentData);
 
-      if (type !== "CASH" && type !== "OTHER" && receiptImageUrl === "") {
-        toast.error(labels.receiptRequired);
+      const result = await addPaymentMutation.mutateAsync(validatedData);
+
+      if (result.success) {
+        cancelFn(null);
+        // Reset form after successful submission
+        setSelectedShopId("");
+        setSelectedPersonId("");
+        setPaymentDate(null);
+        setAmount("");
+        setAmountPersian("");
+        setType("CASH");
+        setDescription("");
+        setProprietor(false);
+        setUploadPage(false);
       } else {
-        const result = await addPaymentMutation.mutateAsync(validatedData);
-
-        if (result.success) {
-          toast.success(labels.paymentAddedSuccess);
-          // Reset form after successful submission
-          setSelectedShopId("");
-          setSelectedPersonId("");
-          setPaymentDate(null);
-          setAmount("");
-          setAmountPersian("");
-          setType("CASH");
-          setDescription("");
-          setProprietor(false);
-          setUploadPage(false);
-        } else {
-          toast.error(result.message || labels.paymentAddedError);
-        }
       }
     } catch (error) {
       console.error("Error adding payment:", error);
@@ -187,6 +200,7 @@ function AddPaymentForm() {
           date={paymentDate}
           setDate={setPaymentDate}
           title={labels.paymentDate}
+          disabled={true}
         />
         <div className="space-y-2">
           <Label htmlFor="amount">{labels.amountInRials}</Label>
@@ -196,6 +210,7 @@ function AddPaymentForm() {
             value={amountPersian}
             onChange={handleChange}
             required
+            disabled={true}
           />
         </div>
         <div className="flex flex-row gap-2 items-center">
@@ -215,13 +230,15 @@ function AddPaymentForm() {
             id="description"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
+            disabled={true}
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="type">{labels.paymentMethod}</Label>
           <Select
-            defaultValue="CASH"
+            defaultValue="BANK_TRANSFER"
             onValueChange={(value) => setType(value as PaymentType)}
+            disabled={true}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Theme" />
@@ -237,41 +254,42 @@ function AddPaymentForm() {
             </SelectContent>
           </Select>
         </div>
-        {["BANK_TRANSFER", "CHEQUE", "POS_MACHINE"].includes(type) && (
-          <Button
-            variant="secondary"
-            type="button"
-            onClick={() => setUploadPage((prev) => !prev)}
-          >
-            {labels.uploadReceiptImage}
-          </Button>
-        )}
-        {uploadPage && (
-          <UploadImage
-            fileName={selectedShopId}
-            setUploadPage={setUploadPage}
-            setImageUrl={setReceiptImageUrl}
-            folderName="payment-image"
-          />
-        )}
       </CardContent>
-      <CardFooter>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={
-            isPending ||
-            !selectedShopId ||
-            !selectedPersonId ||
-            !paymentDate ||
-            !amount
-          }
-        >
-          {isPending ? labels.submitting : labels.submit}
-        </Button>
+      <CardFooter className="flex flex-col items-center gap-2">
+        <div className="flex w-full flex-row items-center gap-2">
+          <Button
+            onClick={() => {
+              cancelFn(null);
+            }}
+            variant="secondary"
+            className="w-44"
+          >
+            {labels.close}
+          </Button>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              isPending ||
+              !selectedShopId ||
+              !selectedPersonId ||
+              !paymentDate ||
+              !amount
+            }
+          >
+            {isPending ? labels.submitting : labels.submit}
+          </Button>
+        </div>
+        <div className="flex w-full flex-col items-start justify-start gap-2">
+          <Separator />
+          <span className="w-full border p-2 rounded-md">
+            {labels.setAsRegisterableInfo}
+          </span>
+          <SetRegisterAbleButton id={bankTransactionId} cancelFn={cancelFn} />
+        </div>
       </CardFooter>
     </form>
   );
 }
 
-export default AddPaymentForm;
+export default AddPaymentBankForm;

@@ -84,6 +84,8 @@ export const errorMSG = {
   shopChargeReferenceNotFound: "هزینه ماهانه فروشگاه یافت نشد.",
 
   invalidAmount: "مقدار وارد شده نامعتبر است.",
+  invalidBankId: "کد تراکنش نامعتبر است",
+  txAlreadyExist:"تراکنش قبلا ثبت شده است",
 
   paymentNotFound: "پرداخت یافت نشد.",
 

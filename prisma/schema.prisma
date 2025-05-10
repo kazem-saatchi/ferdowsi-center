@@ -121,7 +121,7 @@ model Charge {
   operationName String
   daysCount     Int
   proprietor    Boolean     @default(false)  //مالکانه 
-  description   String      @default("") @db.VarChar(255)
+  description   String      @default("") @db.Text
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])
@@ -143,7 +143,7 @@ model Payment {
   date              DateTime
   proprietor        Boolean     @default(false) //مالکانه 
   type              PaymentType @default(CASH)
-  description       String      @default("") @db.VarChar(255)
+  description       String      @default("") @db.Text
   receiptImageUrl   String      @default("")
   bankTransactionId String?
 
@@ -217,7 +217,7 @@ model Cost {
   title         String
   amount        Int
   date          DateTime
-  description   String  @db.VarChar(255) @default("")
+  description   String  @db.Text @default("")
   category      CostCategory
   billImage     String    @default("")
   proprietor    Boolean   @default(false) //مالکانه

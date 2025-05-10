@@ -15,7 +15,9 @@ import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
 import AddPaymentButton from "../payment/AddPaymentButton";
-import SetRegisterAbleButton from "./SetRegisterAbleButton";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import PaymentFromBankForm from "./PaymentFromBankForm";
 
 // Helper function for currency formatting
 const formatCurrency = (amount: number) => {
@@ -46,6 +48,8 @@ export function BankCardTransferTable({
   isLoading,
   isError,
 }: BankTransactionTableProps) {
+  const [editRowId, setEditRowId] = useState<string | null>(null);
+
   if (isLoading) {
     return (
       <div className="rounded-md border p-4">
@@ -103,30 +107,52 @@ export function BankCardTransferTable({
         </TableHeader>
         <TableBody>
           {transactions.map((tx) => (
-            <TableRow key={tx.id}>
-              <TableCell className="font-medium">
-                {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
-              </TableCell>
-              <TableCell className="text-justify max-w-[300px]">
-                {tx.description}
-              </TableCell>
+            <>
+              <TableRow key={tx.id}>
+                <TableCell className="font-medium">
+                  {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
+                </TableCell>
+                <TableCell className="text-justify max-w-[300px]">
+                  {tx.description}
+                </TableCell>
 
-              <TableCell className="text-center">{tx.senderAccount}</TableCell>
-              <TableCell className="text-center">
-                {tx.recieverAccount}
-              </TableCell>
-              <TableCell className="text-center">
-                {formatNumber(tx.amount)}
-              </TableCell>
-              <TableCell className="text-center">
-                <AddPaymentButton id={tx.id} />
-              </TableCell>
-              <TableCell className="text-center">
-                <SetRegisterAbleButton id={tx.id} />
-              </TableCell>
-
-              {/* Add other relevant cells if needed */}
-            </TableRow>
+                <TableCell className="text-center">
+                  {tx.senderAccount}
+                </TableCell>
+                <TableCell className="text-center">
+                  {tx.recieverAccount}
+                </TableCell>
+                <TableCell className="text-center">
+                  {formatNumber(tx.amount)}
+                </TableCell>
+                <TableCell className="text-center">
+                  <AddPaymentButton id={tx.id} />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    onClick={() => {
+                      setEditRowId(tx.id);
+                    }}
+                    variant="outline"
+                  >
+                    ثبت دستی
+                  </Button>
+                </TableCell>
+              </TableRow>
+              {editRowId !== null && editRowId === tx.id && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={7}>
+                    <PaymentFromBankForm
+                      amount={tx.amount}
+                      bankTransactionId={tx.id}
+                      date={tx.date}
+                      description={tx.description}
+                      cancelFn={setEditRowId}
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+            </>
           ))}
         </TableBody>
       </Table>

@@ -11,9 +11,15 @@ interface CalendarProps {
   date: Date | null;
   setDate: Dispatch<SetStateAction<Date | null>>;
   title: string;
+  disabled?: boolean;
 }
 
-function JalaliDayCalendar({ date, setDate,title }: CalendarProps) {
+function JalaliDayCalendar({
+  date,
+  setDate,
+  title,
+  disabled = false,
+}: CalendarProps) {
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
     return (
       <Input
@@ -44,6 +50,7 @@ function JalaliDayCalendar({ date, setDate,title }: CalendarProps) {
         }}
         render={<CustomInput />}
         format="YYYY/MM/DD"
+        disabled={disabled}
       />
     </div>
   );

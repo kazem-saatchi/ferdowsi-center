@@ -46,7 +46,7 @@ async function setAsRegisterAble(
 
   return {
     success: true,
-    message: "با موفقیت انجام شد",
+    message: `با موفقیت ${bankTransaction.registerAble ? "حذف" : "اضافه"} شد`,
   };
 }
 

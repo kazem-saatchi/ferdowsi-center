@@ -39,7 +39,7 @@ import {
 import addChargeByShop from "@/app/api/actions/charge/addChargeByShop";
 import addChargeToAllShops from "@/app/api/actions/charge/addChargeAllShops";
 import generateShopChargeReferenceList from "@/app/api/actions/reference/shopChargeReference";
-import { AddPaymentByInfoData } from "@/schema/paymentSchema";
+import { addPaymentByBankIdData, AddPaymentByInfoData } from "@/schema/paymentSchema";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
@@ -63,6 +63,7 @@ import addBankDataFromFile, {
 import { BankTransactionData } from "@/components/upload-file/readFile";
 import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
 import setRegisterAbleAction from "@/app/api/actions/bank/setRegisterAbleAction";
+import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
 
 //------------------PERSON--------------------
 
@@ -564,7 +565,7 @@ export function useCreateAnnualChargeReference() {
 
 //------------------PAYMENT--------------------
 
-// add paymentto a shop
+// add payment to a shop
 export function useAddPaymentByShop() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -572,6 +573,44 @@ export function useAddPaymentByShop() {
   return useMutation({
     mutationFn: async (data: AddPaymentByInfoData) =>
       await addPaymentByInfo(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-payments", variables.shopId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["shop-payments", variables.shopId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["person-payments", variables.personId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["person-payments", variables.personId],
+        });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// add payment to a shop by Bank TransactionId
+export function useAddPaymentByBank() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: addPaymentByBankIdData) =>
+      await addPaymentByBankId(data),
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });

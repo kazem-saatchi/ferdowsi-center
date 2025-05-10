@@ -192,6 +192,8 @@ export const labels = {
   shopStatusUpdateError: "خطا در تغییر وضعیت واحد",
 
   // Add new labels for payment page
+  manualAddPayment: "ثبت دستی پرداخت",
+  setAsRegisterableInfo:"در صورتی که این ترانش قابل ثبت نمی‌باشد، میتوانید از لیست کارت به کارتها حذف کنید.",
   addPayment: "ثبت پرداختی",
   paymentDetails: "جزییات پرداخت",
   selectUnit: "انتخاب واحد",

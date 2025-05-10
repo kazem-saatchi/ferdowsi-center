@@ -1,8 +1,14 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import { useSetRegisterAble } from "@/tanstack/mutations";
 
-function SetRegisterAbleButton({ id }: { id: string }) {
+function SetRegisterAbleButton({
+  id,
+  cancelFn,
+}: {
+  id: string;
+  cancelFn?: Dispatch<SetStateAction<string | null>>;
+}) {
   const [isMutating, setIsMutating] = React.useState<boolean>(false);
   const [isRegistred, setIsRegistred] = React.useState<boolean>(false);
   const addMutation = useSetRegisterAble();
@@ -12,6 +18,7 @@ function SetRegisterAbleButton({ id }: { id: string }) {
     addMutation.mutate(id, {
       onSuccess: (data) => {
         data.data?.success && setIsRegistred(true);
+        cancelFn && cancelFn(null);
       },
       onSettled: () => {
         setIsMutating(false);
@@ -24,6 +31,7 @@ function SetRegisterAbleButton({ id }: { id: string }) {
       variant="destructive"
       disabled={isMutating || isRegistred}
       onClick={registerHandler}
+      className="w-36"
     >
       {!isRegistred && isMutating && "در حال انجام"}
       {!isRegistred && !isMutating && "حذف"}

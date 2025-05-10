@@ -12,7 +12,7 @@ export const addPaymentByInfoSchema = z.object({
   personId: z.string(),
   date: z.date(),
   amount: z.number().int().positive(), // Ensures a positive integer
-  description: z.string().max(250),
+  description: z.string(),
   proprietor: z.boolean(),
   receiptImageUrl: z.string(),
   type: z.enum(PaymentTypeValue),
@@ -21,9 +21,13 @@ export const addPaymentByInfoSchema = z.object({
 export type AddPaymentByInfoData = z.infer<typeof addPaymentByInfoSchema>;
 export type PaymentType = z.infer<typeof addPaymentByInfoSchema>["type"];
 //--------------------------------------------------------------------------------------
-export const addPaymentByBankIdSchema = addPaymentByInfoSchema.extend({
-  bankTransactionId: z.string(),
-});
+export const addPaymentByBankIdSchema = addPaymentByInfoSchema
+  .extend({
+    bankTransactionId: z.string(),
+  })
+  .omit({
+    receiptImageUrl: true,
+  });
 
 export type addPaymentByBankIdData = z.infer<typeof addPaymentByBankIdSchema>;
 //--------------------------------------------------------------------------------------

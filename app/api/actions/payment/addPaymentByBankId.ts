@@ -31,8 +31,8 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
     shopId,
     description,
     proprietor,
-    receiptImageUrl,
-    type,bankTransactionId
+    type,
+    bankTransactionId,
   } = validation.data;
 
   const titleMap = {
@@ -61,25 +61,62 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
     throw new Error(errorMSG.invalidAmount);
   }
 
-  // Create payment
-  await db.payment.create({
-    data: {
-      amount,
-      personName: `${user.firstName} ${user.lastName}`,
-      plaque: shop.plaque,
-      date: new Date(date).toISOString(),
-      description,
-      proprietor,
-      receiptImageUrl,
-      type: type as PaymentType,
-      title: titleMap[type as PaymentType] || "روش پرداخت نامعلوم",
-      //   personId: user.id,
-      //   shopId: shop.id,
-      shop: { connect: { id: shop.id } }, // Connect shop by ID
-      person: { connect: { id: user.id } }, // Connect person by ID
-    },
+  if (bankTransactionId === "") {
+    throw new Error(errorMSG.invalidBankId);
+  }
+
+  const existPayment = await db.payment.findFirst({
+    where: { bankTransactionId },
   });
 
+  if (existPayment) {
+    throw new Error(errorMSG.txAlreadyExist);
+  }
+
+  try {
+    const result = await db.$transaction(async (prisma) => {
+      const payment = await prisma.payment.create({
+        data: {
+          amount,
+          personName: `${user.firstName} ${user.lastName}`,
+          plaque: shop.plaque,
+          date: new Date(date).toISOString(),
+          description,
+          proprietor,
+          type: type as PaymentType,
+          title: titleMap[type as PaymentType] || "روش پرداخت نامعلوم",
+          bankTransactionId,
+          //   personId: user.id,
+          //   shopId: shop.id,
+          shop: { connect: { id: shop.id } }, // Connect shop by ID
+          person: { connect: { id: user.id } }, // Connect person by ID
+        },
+      });
+
+      await prisma.bankTransaction.update({
+        where: { id: bankTransactionId },
+        data: {
+          registered: true,
+          referenceId: payment.id,
+          referenceType: "PAYMENT",
+        },
+      });
+
+      console.log("[Payment] Created:", {
+        paymentId: payment.id,
+        amount: payment.amount,
+        shopId: payment.shopId,
+      });
+    });
+  } catch (error) {
+    console.error("[Payment] Failed:", {
+      error: error instanceof Error && error.message,
+      transactionId: bankTransactionId,
+    });
+    return {
+      message: "ثبت اطلاعات ناموفق بود",
+    };
+  }
   return {
     message: successMSG.paymentCreated,
   };

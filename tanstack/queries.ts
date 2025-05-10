@@ -50,6 +50,13 @@ export function usePersonsByShop(shopId: string) {
   });
 }
 
+export function useFindPersonFromSession() {
+  return useQuery({
+    queryKey: ["user-info"],
+    queryFn: async () => await verifyToken(),
+  });
+}
+
 //------------------SHOP--------------------
 
 export function useFindAllShops() {

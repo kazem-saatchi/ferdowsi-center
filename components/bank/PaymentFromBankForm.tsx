@@ -2,21 +2,29 @@
 
 import { useStore } from "@/store/store";
 import { useFindAllPersons, useFindAllShops } from "@/tanstack/queries";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "../LoadingComponent";
 import ErrorComponentSimple from "../ErrorComponentSimple";
 import { labels } from "@/utils/label";
 import { Card, CardHeader, CardTitle } from "../ui/card";
-import AddPaymentForm from "../payment/AddPaymentForm";
+import AddPaymentBankForm from "../payment/AddPaymentBankForm";
 
 interface PaymentFromBankProps {
   bankTransactionId: string;
   description: string;
   amount: number;
+  date: Date;
+  cancelFn: Dispatch<SetStateAction<string | null>>;
 }
 
-function PaymentFromBankForm() {
+function PaymentFromBankForm({
+  amount,
+  bankTransactionId,
+  description,
+  date,
+  cancelFn,
+}: PaymentFromBankProps) {
   // Queries To Fetch All Shops and users
   const {
     data: shopsData,
@@ -56,14 +64,19 @@ function PaymentFromBankForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addPayment}</h1>
-      <Card>
+    <div className="max-w-3xl mx-auto">
+      <div>
         <CardHeader>
-          <CardTitle>{labels.paymentDetails}</CardTitle>
+          <CardTitle>{labels.manualAddPayment}</CardTitle>
         </CardHeader>
-        <AddPaymentForm />
-      </Card>
+        <AddPaymentBankForm
+          amount={amount}
+          bankTransactionId={bankTransactionId}
+          description={description}
+          date={date}
+          cancelFn={cancelFn}
+        />
+      </div>
     </div>
   );
 }
