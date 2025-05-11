@@ -28,6 +28,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import allCosts from "@/app/api/actions/cost-income/allCosts";
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import getShopFinancialDetails from "@/app/api/actions/balance/getShopDetail";
+import findUserQuickState from "@/app/api/actions/user/getUserQuickState";
 
 //------------------PERSON--------------------
 
@@ -173,13 +174,6 @@ export function useGetPersonBalance(personId: string) {
   });
 }
 
-// export function useGetShopFinancialDetail(shopId: string) {
-//   return useQuery({
-//     queryKey: ["shop-detail", shopId],
-//     queryFn: async () => await getShopFinancialDetails(shopId),
-//   });
-// }
-
 //------------------USER--------------------
 
 export function useGetAllShopsByPerson() {
@@ -193,6 +187,28 @@ export function useGetUserInfo() {
   return useQuery({
     queryKey: ["user-info"],
     queryFn: async () => await verifyToken(),
+  });
+}
+
+export function useGetUserQuickState() {
+  return useQuery({
+    queryKey: ["user-quick-state"],
+    queryFn: async () => {
+      // First get user info
+      const userData = await verifyToken();
+
+      if (!userData.person?.id) {
+        throw new Error("User not properly authenticated");
+      }
+
+      // Then fetch quick state data
+      const quickState = await findUserQuickState(userData.person.id);
+
+      return {
+        userInfo: userData,
+        quickState,
+      };
+    },
   });
 }
 
