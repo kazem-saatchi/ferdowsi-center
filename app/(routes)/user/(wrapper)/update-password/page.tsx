@@ -101,8 +101,7 @@ function UpdatePasswordPage() {
     <div className="mx-auto p-8 max-w-xl">
       <h1 className="text-2xl font-bold mb-6">{labels.updatePassword}</h1>
 
-      <Separator />
-      <CardContent className="mt-4">
+      <CardContent className="mt-4 border rounded-lg px-4 py-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="currentPassword">{labels.currentPassword}</Label>

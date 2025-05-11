@@ -26,11 +26,11 @@ function UserInfoPage() {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-xl mx-auto">
       <CardHeader>
         <CardTitle>{labels.userInfo}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="border rounded-lg">
         {userInfo && (
           <Table>
             <TableBody>
@@ -94,7 +94,7 @@ function UserInfoPage() {
           </Table>
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }
 

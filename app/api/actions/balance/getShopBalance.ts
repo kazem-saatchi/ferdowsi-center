@@ -35,8 +35,9 @@ async function getAllBalance(
   data: GetChargeByShopData,
   user: Person
 ): Promise<FindBalanceResponse> {
-  // Check authentication
-  if (!user || user.role !== "ADMIN") {
+
+        // Check authentication
+  if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
 
@@ -50,6 +51,11 @@ async function getAllBalance(
 
   if (!shop) {
     throw new Error(errorMSG.shopNotFound);
+  }
+
+      // Check authentication
+  if (!user || user.role !== "ADMIN") {
+    throw new Error(errorMSG.unauthorized);
   }
 
 

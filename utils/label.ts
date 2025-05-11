@@ -3,6 +3,7 @@ export const labels = {
   totalCharge: "کل جمع شارژ (ریال)",
   totalPayment: "کل جمع پرداخت (ریال)",
   totalBalance: "مانده حساب کل",
+  myBalance:"مانده حساب من",
   totalBalanceMonthly: "مانده حساب شارژ ماهانه",
   totalBalanceYearly: "ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
@@ -78,6 +79,7 @@ export const labels = {
 
   edit: "ویرایش",
   view: "مشاهده",
+  viewDetail:"مشاهده جزییات",
 
   searchByPerson: "جستجوی اشخاص",
   searchOnlyActivePersons: "جستجوی فقط بین اشخاص فعال",

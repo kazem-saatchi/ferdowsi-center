@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGetAllShopsByPerson } from "@/tanstack/queries";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
@@ -20,9 +20,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { labels } from "@/utils/label";
 import { errorMSG } from "@/utils/messages";
+import { Loader } from "lucide-react";
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
+  const [isLinking, setIsLinking] = useState<boolean>(false);
 
   const { personShopsBalance, setPersonShopsBalance } = useStore(
     useShallow((state) => ({
@@ -41,11 +43,11 @@ export default function MyShopsPage() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">Plaque</TableHead>
-          <TableHead className="text-center">Owner</TableHead>
-          <TableHead className="text-center">Total Shop Balance</TableHead>
-          <TableHead className="text-center">My Balance</TableHead>
-          <TableHead className="text-center">View Details</TableHead>
+          <TableHead className="text-center">{labels.plaque}</TableHead>
+          <TableHead className="text-center">{labels.owner}</TableHead>
+          <TableHead className="text-center">{labels.totalBalance}</TableHead>
+          <TableHead className="text-center">{labels.myBalance}</TableHead>
+          <TableHead className="text-center">{labels.viewDetail}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -75,7 +77,18 @@ export default function MyShopsPage() {
               </TableCell>
               <TableCell className="text-center">
                 <Link href={`/user/shop-detail/${shop.id}`}>
-                  <Button>View</Button>
+                  <Button
+                    disabled={isLinking}
+                    onClick={() => {
+                      setIsLinking(true);
+                    }}
+                  >
+                    {isLinking ? (
+                      <Loader className="animate-spin" />
+                    ) : (
+                      labels.view
+                    )}
+                  </Button>
                 </Link>
               </TableCell>
             </TableRow>

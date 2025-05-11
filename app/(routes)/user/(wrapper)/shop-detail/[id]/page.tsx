@@ -13,6 +13,7 @@ import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 import ShopInfo from "@/components/shop/ShopInfo";
 import { Separator } from "@/components/ui/separator";
+import { labels } from "@/utils/label";
 
 export default function ShopBalancePage() {
   const params = useParams();
@@ -38,6 +39,8 @@ export default function ShopBalancePage() {
       }))
     );
 
+    console.log(balanceData)
+
   useEffect(() => {
     if (balanceData?.data?.shopBalance) {
       setShopBalance(balanceData.data.shopBalance);
@@ -48,14 +51,14 @@ export default function ShopBalancePage() {
   }, [balanceData, setShopBalance, setPersonsBalance]);
 
   if (isLoading) {
-    return <LoadingComponent text="Loading Shops Data" />;
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
         error={error}
-        message={balanceData?.message || "Something Went Wrong"}
+        message={balanceData?.message || labels.errorOccurred}
         retry={refetch}
       />
     );
@@ -63,22 +66,22 @@ export default function ShopBalancePage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <div>
         <CardHeader>
-          <CardTitle>Shop Balance</CardTitle>
+          <CardTitle>اطلاعات واحد</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>No balance information found for this shop.</p>
+            <p>هیچ اطلاعاتی برای این واحد پیدا نشد</p>
           )}
         </CardContent>
 
         {personsBalance && personsBalance.length > 0 && (
           <>
             <CardHeader>
-              <CardTitle>People's Balances</CardTitle>
+              <CardTitle>حساب اشخاص روی واحد</CardTitle>
             </CardHeader>
             <CardContent>
               <PersonsBalanceTable personsBalance={personsBalance} />
@@ -92,7 +95,7 @@ export default function ShopBalancePage() {
             <ShopInfo isLoading={shopIsLoading} shop={shopInfo.data?.shop} />
           </>
         )}
-      </Card>
+      </div>
     </div>
   );
 }
