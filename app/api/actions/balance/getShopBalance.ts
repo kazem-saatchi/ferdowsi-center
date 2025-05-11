@@ -35,8 +35,7 @@ async function getAllBalance(
   data: GetChargeByShopData,
   user: Person
 ): Promise<FindBalanceResponse> {
-
-        // Check authentication
+  // Check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
@@ -53,11 +52,14 @@ async function getAllBalance(
     throw new Error(errorMSG.shopNotFound);
   }
 
-      // Check authentication
-  if (!user || user.role !== "ADMIN") {
+  // Check authentication
+  if (
+    shop.ownerId !== user.id &&
+    shop.renterId !== user.id &&
+    user.role !== "ADMIN"
+  ) {
     throw new Error(errorMSG.unauthorized);
   }
-
 
   const owner: PersonInfoSafe | null = await db.person.findUnique({
     where: { id: shop.ownerId },
@@ -83,7 +85,7 @@ async function getAllBalance(
   let ownerPaymentList: ChargePaymentData[] = [];
   let renterChargeList: ChargePaymentData[] = [];
   let renterPaymentList: ChargePaymentData[] = [];
-  
+
   if (shop.renterId) {
     renterChargeList = chargeList
       .filter((charge) => charge.personId === shop.renterId)

@@ -107,7 +107,7 @@ export default function MyShopsPage() {
   }
 
   return (
-    <Card>
+    <>
       <CardHeader>
         <CardTitle>{labels.myShops}</CardTitle>
       </CardHeader>
@@ -118,6 +118,6 @@ export default function MyShopsPage() {
           <p>{labels.youDontHaveAnyShop}</p>
         )}
       </CardContent>
-    </Card>
+    </>
   );
 }

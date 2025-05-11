@@ -27,6 +27,7 @@ import { verifyToken } from "@/utils/auth";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import allCosts from "@/app/api/actions/cost-income/allCosts";
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
+import getShopFinancialDetails from "@/app/api/actions/balance/getShopDetail";
 
 //------------------PERSON--------------------
 
@@ -171,6 +172,13 @@ export function useGetPersonBalance(personId: string) {
     queryFn: async () => await findBalanceByPerson({ personId }),
   });
 }
+
+// export function useGetShopFinancialDetail(shopId: string) {
+//   return useQuery({
+//     queryKey: ["shop-detail", shopId],
+//     queryFn: async () => await getShopFinancialDetails(shopId),
+//   });
+// }
 
 //------------------USER--------------------
 
