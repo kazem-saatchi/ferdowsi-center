@@ -9,9 +9,17 @@ import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
 import { BankTransactionTable } from "@/components/bank/BankTransactionsTable";
 
+import { AccountType } from "@prisma/client";
+
+import { LimitSelector } from "@/app/api/actions/bank/LimitSelector";
+import AccountTypeSelector from "@/app/api/actions/bank/AccountTypeSelector";
+
 export default function TransactionsPage() {
+  const [accountType, setAccountType] = useState<AccountType | undefined>(
+    undefined
+  );
+  const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState(1);
-  const limit = 100; // Number of items per page
 
   // Use TanStack Query to fetch data
   const {
@@ -23,14 +31,22 @@ export default function TransactionsPage() {
     isPlaceholderData, // Useful for pagination UX
   } = useQuery({
     // Query key: Includes page number so data is refetched when page changes
-    queryKey: ["bankTransactions", page, limit],
+    queryKey: ["bankTransactions", page, limit, accountType],
     // Query function: Calls the server action
     queryFn: () =>
-      getBankTransactions({ page, limit, sortBy: "date", sortOrder: "desc" }),
+      getBankTransactions({
+        page,
+        limit,
+        sortBy: "date",
+        sortOrder: "desc",
+        accountType,
+      }),
     // Keep previous data while loading the next page for smoother pagination
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
   });
+
+
 
   const transactions = queryResult?.data ?? [];
   const totalPages = queryResult?.totalPages ?? 0;
@@ -38,6 +54,15 @@ export default function TransactionsPage() {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
+      <div className="flex fle-row items-center justify-start gap-4 p-4">
+        <LimitSelector limit={limit} setLimit={setLimit} />
+        <AccountTypeSelector
+          accountType={accountType}
+          setAccountType={setAccountType}
+          isFetching={isFetching}
+          setPage={setPage}
+        />
+      </div>
 
       {/* Display loading skeleton or table */}
       {isLoading && !queryResult ? (

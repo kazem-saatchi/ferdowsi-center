@@ -64,6 +64,7 @@ import { BankTransactionData } from "@/components/upload-file/readFile";
 import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
 import setRegisterAbleAction from "@/app/api/actions/bank/setRegisterAbleAction";
 import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
+import { AccountType } from "@prisma/client";
 
 //------------------PERSON--------------------
 
@@ -788,14 +789,13 @@ export function useAddKiosks() {
 // Add Bank Data
 export function useAddBankDataFromFile() {
   const queryClient = useQueryClient();
-
-  return useMutation<
-    ActionResponse<AddBankDataResponse>, // Type of the data returned by the mutationFn
-    Error, // Type of error
-    BankTransactionData[] // Type of variables passed to mutate/mutateAsync
-  >({
-    mutationFn: async (data: BankTransactionData[]) => {
-      return await addBankDataFromFile(data);
+  return useMutation({
+    mutationFn: async (params: { 
+      accountType:AccountType,
+      bankAccountNumber: string; 
+      data: BankTransactionData[] 
+    }) => {
+      return await addBankDataFromFile(params.accountType,params.bankAccountNumber, params.data);
     },
   });
 }

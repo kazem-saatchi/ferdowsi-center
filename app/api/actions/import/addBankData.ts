@@ -4,7 +4,7 @@ import { BankTransactionData } from "@/components/upload-file/readFile";
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { TransactionType } from "@prisma/client";
+import { AccountType, Person, TransactionType } from "@prisma/client";
 
 export interface AddBankDataResponse {
   message: string;
@@ -23,11 +23,17 @@ function extract16DigitNumbers(text: string): string[] {
 }
 
 async function addBankDataInternal(
+  accountType: AccountType,
+  bankAccountNumber: string,
   data: BankTransactionData[],
-  admin: { role: string }
+  person: Person
 ): Promise<Omit<AddBankDataResponse, "message">> {
-  if (admin.role !== "ADMIN") {
+  if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
+  }
+
+  if (bankAccountNumber === "") {
+    throw new Error("شماره حساب بانک الزامی هست");
   }
 
   let addedShops = 0;
@@ -85,6 +91,8 @@ async function addBankDataInternal(
               recieverAccount: receiverCard && receiverCard,
               senderAccount: senderCard && senderCard,
               branch: row.branch,
+              bankAccountNumber,
+              accountType,
             },
           });
 
@@ -105,10 +113,19 @@ async function addBankDataInternal(
   };
 }
 
-export default async function addBankDataFromFile(data: BankTransactionData[]) {
+export default async function addBankDataFromFile(
+  accountType: AccountType,
+  bankAccountNumber: string,
+  data: BankTransactionData[]
+) {
   // Wrap with handleServerAction, which adds success/data structure
   return handleServerAction(async (user) => {
-    const result = await addBankDataInternal(data, user); // Call the internal logic
+    const result = await addBankDataInternal(
+      accountType,
+      bankAccountNumber,
+      data,
+      user
+    ); // Call the internal logic
     // Construct the final message based on chunk results
     const message = `Chunk processed: ${result.addedShops} added, ${result.failedShops} failed out of ${result.processed}.`;
     return { ...result, message };

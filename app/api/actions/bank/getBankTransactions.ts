@@ -1,15 +1,16 @@
 // app/actions/getBankTransactions.ts
-'use server';
+"use server";
 
-import { db } from '@/lib/db';
-import { BankTransaction, Prisma } from '@prisma/client';
+import { db } from "@/lib/db";
+import { AccountType, BankTransaction, Prisma } from "@prisma/client";
 
 // Define options for fetching, including pagination and sorting
 interface GetTransactionsOptions {
   page?: number;
   limit?: number;
   sortBy?: keyof BankTransaction;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
+  accountType?: AccountType;
   // Add filter parameters as needed (e.g., date range, type, category)
   // filterType?: TransactionType;
   // filterCategory?: TransactionCategory;
@@ -31,8 +32,9 @@ export async function getBankTransactions(
   const {
     page = 1,
     limit = 10, // Default limit
-    sortBy = 'date', // Default sort field
-    sortOrder = 'desc', // Default sort order
+    sortBy = "date", // Default sort field
+    sortOrder = "desc", // Default sort order
+    accountType,
   } = options;
 
   const skip = (page - 1) * limit;
@@ -55,10 +57,16 @@ export async function getBankTransactions(
         orderBy: {
           [sortBy]: sortOrder,
         },
-        // where: where, // Uncomment if using filters
+        // where: where
+        // If accountType is provided, filter by it, otherwise return all
+        where: {
+          accountType: accountType ? accountType : undefined,
+        },
       }),
       db.bankTransaction.count({
-        // where: where, // Uncomment if using filters
+        where: {
+          accountType: accountType ? accountType : undefined,
+        },
       }),
     ]);
 
@@ -80,9 +88,9 @@ export async function getBankTransactions(
       currentPage: page,
     };
   } catch (error) {
-    console.error('Failed to fetch bank transactions:', error);
+    console.error("Failed to fetch bank transactions:", error);
     // It's often better to throw the error and let TanStack Query handle it
-    throw new Error('Failed to fetch bank transactions.');
+    throw new Error("Failed to fetch bank transactions.");
     // Or return a structured error:
     // return { data: [], totalCount: 0, totalPages: 0, currentPage: 1, error: 'Failed to fetch data' };
   }

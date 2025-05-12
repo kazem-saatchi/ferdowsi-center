@@ -255,19 +255,20 @@ model Income {
 }
 
 model BankTransaction {
-  id                String   @id @default(uuid())
-  recieverAccount   String?     // Bank account number (e.g., "1234-5678-9012-3456")
-  senderAccount     String?    // Bank account number (e.g., "1234-5678-9012-3456")
-  amount            Int     
-  balance           Int       
-  type              TransactionType // INCOME or PAYMENT
-  category          TransactionCategory? // More specific category
-  description       String
-  reference         String?  // External reference number
-  date              DateTime @default(now()) // Transaction date
-  createdAt         DateTime @default(now()) // When record was created
-  bankReferenceId   String // Bank Transaction Id
-  branch            Int?   // Bank Branch number
+  id                  String   @id @default(uuid())
+  recieverAccount     String?               // Bank account number (e.g., "1234-5678-9012-3456")
+  senderAccount       String?               // Bank account number (e.g., "1234-5678-9012-3456")
+  amount              Int     
+  balance             Int       
+  type                TransactionType       // INCOME or PAYMENT
+  category            TransactionCategory?  // More specific category
+  description         String
+  date                DateTime @default(now()) // Transaction date
+  createdAt           DateTime @default(now()) // When record was created
+  bankAccountNumber   String  // Bank Account Number
+  accountType         AccountType
+  bankReferenceId     String  // Bank Transaction Id
+  branch              Int?    // Bank Branch number
 
   //  reference fields for Cost/Income/Charge
   registered        Boolean @default(false)
@@ -279,6 +280,12 @@ model BankTransaction {
   @@index([recieverAccount])
   @@index([date])
   @@index([referenceId]) // Important for lookups
+}
+
+enum AccountType {
+  PROPRIETOR
+  BUSINESS
+  GENERAL
 }
 
 enum ReferenceType {

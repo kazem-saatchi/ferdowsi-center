@@ -3,7 +3,7 @@ export const labels = {
   totalCharge: "کل جمع شارژ (ریال)",
   totalPayment: "کل جمع پرداخت (ریال)",
   totalBalance: "مانده حساب کل",
-  myBalance:"مانده حساب من",
+  myBalance: "مانده حساب من",
   totalBalanceMonthly: "مانده حساب شارژ ماهانه",
   totalBalanceYearly: "ماهانه حساب شارژ مالکانه",
   personName: "نام شخص",
@@ -35,6 +35,13 @@ export const labels = {
   metricAmount: "مبلغ متری",
 
   rialAllert: "تمامی مقادیر به ریال می‌باشد",
+
+  bankAccountNumber: "شماره حساب بانک",
+  accountType: "نوع حساب",
+  proprietorType: "حساب مالکانه",
+  businessType: "حساب ماهانه",
+  generalType: "حساب عمومی",
+  allAccountType:"همه حسابها",
 
   shopId: "واحد",
   personId: "شخص",
@@ -79,7 +86,7 @@ export const labels = {
 
   edit: "ویرایش",
   view: "مشاهده",
-  viewDetail:"مشاهده جزییات",
+  viewDetail: "مشاهده جزییات",
 
   searchByPerson: "جستجوی اشخاص",
   searchOnlyActivePersons: "جستجوی فقط بین اشخاص فعال",
@@ -195,7 +202,8 @@ export const labels = {
 
   // Add new labels for payment page
   manualAddPayment: "ثبت دستی پرداخت",
-  setAsRegisterableInfo:"در صورتی که این ترانش قابل ثبت نمی‌باشد، میتوانید از لیست کارت به کارتها حذف کنید.",
+  setAsRegisterableInfo:
+    "در صورتی که این ترانش قابل ثبت نمی‌باشد، میتوانید از لیست کارت به کارتها حذف کنید.",
   addPayment: "ثبت پرداختی",
   paymentDetails: "جزییات پرداخت",
   selectUnit: "انتخاب واحد",

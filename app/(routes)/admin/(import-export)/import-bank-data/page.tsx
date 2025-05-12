@@ -7,17 +7,33 @@ import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { BankDataUpload } from "@/components/upload-file/UploadBankFile";
 import { BankPreviewTable } from "@/components/upload-file/BankPreviewTable";
-import { parseBankData } from "@/components/upload-file/parseBankData";
 import { BankTransactionData } from "@/components/upload-file/readFile";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { labels } from "@/utils/label";
+import { cn } from "@/lib/utils";
+import { AccountType } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 
 export default function UploadBankData() {
   const [file, setFile] = React.useState<File | null>(null);
   const [parsedData, setParsedData] = React.useState<BankTransactionData[]>([]);
+  const [bankAccountNumber, setBankAccountNumber] = React.useState<string>("");
+  const [accountType, setAccountType] = React.useState<AccountType>("BUSINESS");
+
+  // Create an adapted mutation function
+  const adaptedMutationFn = async (chunk: BankTransactionData[]) => {
+    return mutationAddBankData.mutateAsync({
+      accountType,
+      bankAccountNumber, // You need to get this from somewhere
+      data: chunk,
+    });
+  };
 
   const mutationAddBankData = useAddBankDataFromFile();
   const { isUploading, progress, uploadStats, uploadData, resetUpload } =
     useChunkedUpload<BankTransactionData>({
-      mutationFn: mutationAddBankData.mutateAsync,
+      mutationFn: adaptedMutationFn,
       invalidateQueries: ["all-persons", "all-shops", "all-histories"],
     });
 
@@ -42,6 +58,56 @@ export default function UploadBankData() {
         <CardTitle>آپلود اطلاعات بانک</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div
+          className={cn(
+            "w-full p-4",
+            "flex flex-row items-center justify-start gap-4"
+          )}
+        >
+          <Label className="w-36">{labels.bankAccountNumber}</Label>
+          <Input
+            value={bankAccountNumber}
+            onChange={(event) => {
+              setBankAccountNumber(event.target.value);
+            }}
+          />
+        </div>
+        <div
+          className={cn(
+            "w-full p-4",
+            "flex flex-row items-center justify-start gap-4"
+          )}
+        >
+          <Label className="w-28">{labels.accountType}</Label>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setAccountType("BUSINESS");
+            }}
+            className={cn(accountType === "BUSINESS" && "bg-primary")}
+          >
+            {labels.businessType}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setAccountType("PROPRIETOR");
+            }}
+            className={cn(accountType === "PROPRIETOR" && "bg-primary")}
+          >
+            {labels.proprietorType}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setAccountType("GENERAL");
+            }}
+            className={cn(accountType === "GENERAL" && "bg-primary")}
+
+          >
+            {labels.generalType}
+          </Button>
+        </div>
         <BankDataUpload
           onFileChange={handleFileChange}
           onUpload={handleUpload}

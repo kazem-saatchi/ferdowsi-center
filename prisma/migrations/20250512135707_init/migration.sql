@@ -96,7 +96,7 @@ CREATE TABLE "Charge" (
     "operationName" TEXT NOT NULL,
     "daysCount" INTEGER NOT NULL,
     "proprietor" BOOLEAN NOT NULL DEFAULT false,
-    "description" VARCHAR(255) NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
 
     CONSTRAINT "Charge_pkey" PRIMARY KEY ("id")
 );
@@ -113,8 +113,9 @@ CREATE TABLE "Payment" (
     "date" TIMESTAMP(3) NOT NULL,
     "proprietor" BOOLEAN NOT NULL DEFAULT false,
     "type" "PaymentType" NOT NULL DEFAULT 'CASH',
-    "description" VARCHAR(255) NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
     "receiptImageUrl" TEXT NOT NULL DEFAULT '',
+    "bankTransactionId" TEXT,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
@@ -175,7 +176,7 @@ CREATE TABLE "Cost" (
     "title" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "description" VARCHAR(255) NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
     "category" "CostCategory" NOT NULL,
     "billImage" TEXT NOT NULL DEFAULT '',
     "proprietor" BOOLEAN NOT NULL DEFAULT false,
@@ -210,14 +211,15 @@ CREATE TABLE "BankTransaction" (
     "type" "TransactionType" NOT NULL,
     "category" "TransactionCategory",
     "description" TEXT NOT NULL,
-    "reference" TEXT,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "bankAccountNumber" TEXT NOT NULL,
     "bankReferenceId" TEXT NOT NULL,
     "branch" INTEGER,
     "registered" BOOLEAN NOT NULL DEFAULT false,
     "referenceId" TEXT,
     "referenceType" "ReferenceType",
+    "registerAble" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "BankTransaction_pkey" PRIMARY KEY ("id")
 );
