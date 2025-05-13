@@ -65,6 +65,8 @@ model Person {
   role          Role @default(USER)
   address       String?
 
+  visable       Boolean @default(true)
+
   ownedShops    Shop[] @relation("ShopOwner")
   rentedShops   Shop[] @relation("ShopRenter")
 

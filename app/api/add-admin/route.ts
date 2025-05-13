@@ -44,6 +44,7 @@ export async function GET() {
         firstName: "ADMIN",
         lastName: "ADMIN",
         phoneOne: "0000000000",
+        visable: false,
       },
     });
 

@@ -17,11 +17,13 @@ async function findPersons(user: Person) {
   }
 
   // find Persons
-  const persons = await db.person.findMany();
+  const persons = await db.person.findMany({ where: { visable: true } });
 
   return { message: successMSG.personIdFound, persons: persons };
 }
 
 export default async function findPersonAll() {
-  return handleServerAction<findPersonsAllResponse>((user) => findPersons(user));
+  return handleServerAction<findPersonsAllResponse>((user) =>
+    findPersons(user)
+  );
 }
