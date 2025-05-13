@@ -176,7 +176,7 @@ export async function calculateAllShopMonthlyBalance(
   proprietor: boolean
 ): Promise<ShopsBalanceData[]> {
   const BATCH_SIZE = 10;
-  const allShops = await db.shop.findMany();
+  const allShops = await db.shop.findMany({orderBy:{plaque:"asc"}});
   const results: ShopsBalanceData[] = [];
 
   for (let i = 0; i < allShops.length; i += BATCH_SIZE) {

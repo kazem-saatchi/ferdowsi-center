@@ -169,9 +169,17 @@ model Operation {
   title         String
   date          DateTime
 
-  createdAt     DateTime @default(now()) 
+  createdAt     DateTime @default(now())
+  deleted       Boolean @default(false)
+  operationType OperationType @default(CHARGE)
 
   charges       Charge[]
+}
+
+enum OperationType {
+  CHARGE
+  BANK
+
 }
 
 model Log {

@@ -5,7 +5,7 @@ import { UpdateShopInfoData, updateShopInfoSchema } from "@/schema/shopSchema";
 
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
+import { Person, ShopType } from "@prisma/client";
 
 interface updateShopResponse {
   plaque: number;
@@ -35,6 +35,7 @@ async function updateShop(data: UpdateShopInfoData, user: Person) {
       floor: validation.data.floor,
       bankCardMonthly: validation.data.bankCardMonthly,
       bankCardYearly: validation.data.bankCardYearly,
+      type: validation.data.type as ShopType,
     },
   });
 
