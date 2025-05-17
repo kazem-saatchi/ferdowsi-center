@@ -17,6 +17,18 @@ export interface BankTransactionData {
   branch: number;
 }
 
+export interface NetBankTransactionData {
+  date: string; // Changed from Date to string
+  description: string;
+  transactionId: number;
+  bankRecieptId: string;
+  chequeNumber: string;
+  inputAmount: number;
+  outputAmount: number;
+  balanceAmount: number;
+  branch: number;
+}
+
 // Utility functions
 async function readFileAsBuffer(file: File): Promise<ArrayBuffer | string> {
   return new Promise((resolve, reject) => {
@@ -84,6 +96,66 @@ export const parseImportFile = async (file: File): Promise<any[]> => {
   } catch (error) {
     console.error("File parsing error:", error);
     throw error;
+  }
+};
+
+export const parseNetBankFile = async (
+  file: File
+): Promise<BankTransactionData[]> => {
+  try {
+    const data = await readFileAsBuffer(file);
+    const workbook = XLSX.read(data, {
+      type: data instanceof ArrayBuffer ? "array" : "string",
+      cellDates: false, // Ensure dates are parsed correctly
+    });
+
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const merges = worksheet["!merges"] || [];
+    const mergedRows = new Set<number>();
+
+    merges.forEach((merge: XLSX.Range) => {
+      for (let r = merge.s.r; r <= merge.e.r; r++) {
+        mergedRows.add(r);
+      }
+    });
+
+    const excelData: ExcelRow[] = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      defval: null, // Handle empty cells
+    });
+
+    const result: NetBankTransactionData[] = [];
+
+    excelData.forEach((row: ExcelRow, rowIndex: number) => {
+      // Skip header row and merged rows
+      if (rowIndex < 3 || mergedRows.has(rowIndex)) return;
+
+      try {
+        // Convert Jalali date to ISO string
+        const dateObj = jalaliToISO(row[3]);
+        const isoDate = format(dateObj, "yyyy-MM-dd"); // Format as string
+
+
+        result.push({
+          branch: parseNumber(row[1]),
+          date: isoDate, // Now a string
+          transactionId: parseNumber(row[5]),
+          bankRecieptId: String(row[6]),
+          chequeNumber: String(row[7]),
+          description: String(row[8] || ""),
+          outputAmount: parseNumber(row[9]),
+          inputAmount: parseNumber(row[10]),
+          balanceAmount: parseNumber(row[11]),
+        });
+      } catch (error) {
+        console.warn(`Skipping row ${rowIndex} due to error:`, error);
+      }
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Bank file processing error:", error);
+    return [];
   }
 };
 

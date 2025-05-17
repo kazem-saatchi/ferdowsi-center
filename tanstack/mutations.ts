@@ -60,11 +60,12 @@ import addKioskAction, {
 import addBankDataFromFile, {
   AddBankDataResponse,
 } from "@/app/api/actions/import/addBankData";
-import { BankTransactionData } from "@/components/upload-file/readFile";
+import { BankTransactionData, NetBankTransactionData } from "@/components/upload-file/readFile";
 import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
 import setRegisterAbleAction from "@/app/api/actions/bank/setRegisterAbleAction";
 import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
 import { AccountType } from "@prisma/client";
+import addNetBankDataFromFile from "@/app/api/actions/import/addNetBankData";
 
 //------------------PERSON--------------------
 
@@ -796,6 +797,19 @@ export function useAddBankDataFromFile() {
       data: BankTransactionData[] 
     }) => {
       return await addBankDataFromFile(params.accountType,params.bankAccountNumber, params.data);
+    },
+  });
+}
+
+export function useAddNetBankDataFromFile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: { 
+      accountType:AccountType,
+      bankAccountNumber: string; 
+      data: NetBankTransactionData[] 
+    }) => {
+      return await addNetBankDataFromFile(params.accountType,params.bankAccountNumber, params.data);
     },
   });
 }

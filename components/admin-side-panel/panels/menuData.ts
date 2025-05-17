@@ -26,7 +26,8 @@ import {
   Banknote,
   Import,
   Car,
-  CircleDollarSign,CreditCard
+  CircleDollarSign,
+  CreditCard,
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -329,7 +330,7 @@ export const adminMenuData: AdminMenuCollection = {
       {
         id: 2,
         name: "ثبت اطلاعات بانک",
-        href: "/import-bank-data",
+        href: "/import-net-bank",
         icon: Banknote,
       },
       {
@@ -356,7 +357,7 @@ export const adminMenuData: AdminMenuCollection = {
         name: "کارت به کارت",
         href: "/card-transfer",
         icon: CreditCard,
-      }
+      },
     ],
   },
 };

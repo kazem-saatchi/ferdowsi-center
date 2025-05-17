@@ -277,7 +277,9 @@ model BankTransaction {
   createdAt           DateTime @default(now()) // When record was created
   bankAccountNumber   String  // Bank Account Number
   accountType         AccountType
-  bankReferenceId     String  // Bank Transaction Id
+  bankReferenceId     String  // Bank Transaction Id // شماره سند
+  bankRecieptId       String? // شماره قبض
+  chequeNumber        String? // شماره چک
   branch              Int?    // Bank Branch number
 
   //  reference fields for Cost/Income/Charge
@@ -299,9 +301,9 @@ enum AccountType {
 }
 
 enum ReferenceType {
-  PAYMENT
-  COST
-  INCOME
+  PAYMENT       // in Payment Table
+  COST          // in Cost Table
+  INCOME        // in Income Table
 }
 
 enum TransactionType {
