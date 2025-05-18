@@ -11,7 +11,7 @@ interface AddIncomeResponse {
 }
 
 async function allIncomesData(person: Person): Promise<AddIncomeResponse> {
-  if (person.role !== "ADMIN") {
+  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
     throw new Error(errorMSG.noPermission);
   }
   const incomesList = await db.income.findMany({ orderBy: { date: "desc" } });

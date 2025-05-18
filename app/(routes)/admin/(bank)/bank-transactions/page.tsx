@@ -11,8 +11,8 @@ import { BankTransactionTable } from "@/components/bank/BankTransactionsTable";
 
 import { AccountType } from "@prisma/client";
 
-import { LimitSelector } from "@/app/api/actions/bank/LimitSelector";
-import AccountTypeSelector from "@/app/api/actions/bank/AccountTypeSelector";
+import { LimitSelector } from "@/components/bank/LimitSelector";
+import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(

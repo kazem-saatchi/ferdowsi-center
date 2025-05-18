@@ -15,7 +15,7 @@ async function generateShopChargeReference(
   person: Person
 ) {
   // Only admins or authorized roles
-  if (person.role !== "ADMIN") {
+  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
     throw new Error(errorMSG.noPermission);
   }
 

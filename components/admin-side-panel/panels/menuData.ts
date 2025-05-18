@@ -28,6 +28,7 @@ import {
   Car,
   CircleDollarSign,
   CreditCard,
+  KeyRound,
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -264,6 +265,12 @@ export const adminMenuData: AdminMenuCollection = {
         name: "تغییر نقش شخص",
         href: "/update-person-role",
         icon: UserCheck,
+      },
+      {
+        id: 6,
+        name: "تغییر رمز کاربری شخص",
+        href: "/update-person-password",
+        icon: KeyRound,
       },
     ],
   },

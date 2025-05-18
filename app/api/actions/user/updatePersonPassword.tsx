@@ -38,7 +38,7 @@ async function updatePassword(data: UpdatePersonPasswordData, person: Person) {
   );
 
   // Only admins and the user can update the user password
-  if (person.role !== "ADMIN" || person.id !== validation.data.userId) {
+  if (person.role !== "ADMIN" && person.id !== validation.data.userId) {
     throw new Error(errorMSG.noPermission);
   }
 

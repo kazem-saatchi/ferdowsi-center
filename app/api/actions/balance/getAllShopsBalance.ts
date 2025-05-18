@@ -16,14 +16,22 @@ interface FindBalanceResponse {
   shopsBalance?: ShopsBalanceData[];
 }
 
-async function getAllShopsBalance(user: Person,propreitor:boolean): Promise<FindBalanceResponse> {
+async function getAllShopsBalance(
+  user: Person,
+  propreitor: boolean
+): Promise<FindBalanceResponse> {
   // Check authentication
-  if (!user || user.role !== "ADMIN") {
+  if (!user) {
+    throw new Error(errorMSG.unauthorized);
+  }
+
+  if (user?.role !== "ADMIN" && user?.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
   // Calculate balances for all shops
-  const shopsBalance: ShopsBalanceData[] =
-    await calculateAllShopMonthlyBalance(propreitor);
+  const shopsBalance: ShopsBalanceData[] = await calculateAllShopMonthlyBalance(
+    propreitor
+  );
 
   console.log("shops balance from server action", shopsBalance);
 
@@ -34,8 +42,8 @@ async function getAllShopsBalance(user: Person,propreitor:boolean): Promise<Find
   };
 }
 
-export default async function findBalanceAllShops(propreitor:boolean) {
+export default async function findBalanceAllShops(propreitor: boolean) {
   return handleServerAction<FindBalanceResponse>((user) =>
-    getAllShopsBalance(user,propreitor)
+    getAllShopsBalance(user, propreitor)
   );
 }

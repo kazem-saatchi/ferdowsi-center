@@ -20,7 +20,7 @@ import { Person, Charge, Payment } from "@prisma/client";
 interface FindBalanceResponse {
   success: boolean;
   message: string;
-  person:Person;
+  person: Person;
   personBalance: PersonBalanceResponce;
   shopsBalance?: ShopBalanceResponce[];
   personBalanceByShops?: PersonBalanceByShopData[];
@@ -31,9 +31,10 @@ async function getAllBalance(
   user: Person
 ): Promise<FindBalanceResponse> {
   // Check authentication
-  if (!user || user.role !== "ADMIN") {
+  if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
+
 
   // Extract ShopId
   const { personId } = data;

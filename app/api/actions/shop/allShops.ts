@@ -12,7 +12,7 @@ interface findShopsResponse {
 
 async function findShops(user: Person) {
   // check authentication
-  if (!user || user.role !== "ADMIN") {
+  if ( user.role !== "ADMIN" && user.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
 

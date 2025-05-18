@@ -17,7 +17,7 @@ async function findPayments(
   person: Person
 ): Promise<FindPaymentResponse> {
   // Authorization check
-  if (person.role !== "ADMIN") {
+  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
     throw new Error(errorMSG.noPermission);
   }
 

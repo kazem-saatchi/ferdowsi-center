@@ -11,7 +11,7 @@ interface AddCostResponse {
 }
 
 async function allCostsData(person: Person): Promise<AddCostResponse> {
-  if (person.role !== "ADMIN") {
+  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
     throw new Error(errorMSG.noPermission);
   }
   const costsList = await db.cost.findMany({ orderBy: { date: "desc" } });

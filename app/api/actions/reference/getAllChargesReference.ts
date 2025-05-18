@@ -16,7 +16,7 @@ async function getAllChargesReference(
   user: Person
 ): Promise<FindchargeResponse> {
   // Check authentication
-  if (!user || user.role !== "ADMIN") {
+  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
 
