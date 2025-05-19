@@ -99,6 +99,7 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
           registered: true,
           referenceId: payment.id,
           referenceType: "PAYMENT",
+          category: proprietor ? "YEARLY" : "MONTHLY",
         },
       });
 

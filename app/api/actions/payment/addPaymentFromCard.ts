@@ -114,6 +114,7 @@ async function addPaymentFromCardTransfer(
           registered: true,
           referenceId: payment.id,
           referenceType: "PAYMENT",
+          category:isProprietor ? "YEARLY" : "MONTHLY"
         },
       });
 

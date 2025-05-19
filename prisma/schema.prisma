@@ -260,6 +260,7 @@ model Income {
   billImage     String    @default("")
   proprietor    Boolean   @default(false) //مالکانه
   name          String    @default("") // نام فرد یا شرکت
+  transactionId String?     // BankTransaction reference ID
 
   createdAt     DateTime @default(now())
 }

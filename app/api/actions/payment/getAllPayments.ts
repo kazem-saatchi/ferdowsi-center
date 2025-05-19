@@ -19,7 +19,7 @@ async function findPayments(person: Person): Promise<FindPaymentResponse> {
   }
 
   // Create payment
-  const payments = await db.payment.findMany();
+  const payments = await db.payment.findMany({ orderBy: { date: "desc" } });
 
   return {
     success: true,
