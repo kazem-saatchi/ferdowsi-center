@@ -1,21 +1,14 @@
-// app/transactions/page.tsx
-"use client"; // Required because we are using hooks (useQuery)
-
-import { useState } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-
-import { Button } from "@/components/ui/button"; // For pagination
-import { Skeleton } from "@/components/ui/skeleton"; // For loading state
-import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
-import { BankTransactionTable } from "@/components/bank/BankTransactionsTable";
-
-import { AccountType } from "@prisma/client";
-
-import { LimitSelector } from "@/components/bank/LimitSelector";
+"use client";
 import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
+import { BankTransactionCostTable } from "@/components/bank/BankTransactionsCostTable";
+import { LimitSelector } from "@/components/bank/LimitSelector";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAllBankTransactions } from "@/tanstack/queries";
+import { AccountType } from "@prisma/client";
+import React, { useState } from "react";
 
-export default function TransactionsPage() {
+function BankCostListPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
     undefined
   );
@@ -36,6 +29,7 @@ export default function TransactionsPage() {
     sortBy: "date",
     sortOrder: "desc",
     accountType,
+    type: "PAYMENT",
   });
 
   const transactions = queryResult?.data ?? [];
@@ -43,7 +37,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
+      <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی - هزینه ها</h1>
       <div className="flex fle-row items-center justify-start gap-4 p-4">
         <LimitSelector limit={limit} setLimit={setLimit} />
         <AccountTypeSelector
@@ -63,7 +57,7 @@ export default function TransactionsPage() {
           <Skeleton className="h-10 w-full" />
         </div>
       ) : (
-        <BankTransactionTable
+        <BankTransactionCostTable
           transactions={transactions}
           isLoading={isFetching} // Show loading indicator during background fetches too
           isError={isError}
@@ -114,3 +108,5 @@ export default function TransactionsPage() {
     </div>
   );
 }
+
+export default BankCostListPage;

@@ -28,7 +28,7 @@ import {
   Car,
   CircleDollarSign,
   CreditCard,
-  KeyRound,
+  KeyRound,ReceiptText
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -364,6 +364,12 @@ export const adminMenuData: AdminMenuCollection = {
         name: "کارت به کارت",
         href: "/card-transfer",
         icon: CreditCard,
+      },
+      {
+        id: 3,
+        name: "هزینه ها",
+        href: "/cost-bank-list",
+        icon: ReceiptText,
       },
     ],
   },

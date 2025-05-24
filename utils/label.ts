@@ -23,6 +23,8 @@ export const labels = {
   charge: "شارژ",
   payment: "پرداخت",
 
+  applyCost:"ثبت هزینه",
+
   title: "عنوان",
   amount: "مبلغ - ریال",
   date: "تاریخ",

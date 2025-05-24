@@ -29,6 +29,8 @@ import allCosts from "@/app/api/actions/cost-income/allCosts";
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import getShopFinancialDetails from "@/app/api/actions/balance/getShopDetail";
 import findUserQuickState from "@/app/api/actions/user/getUserQuickState";
+import { AccountType } from "@prisma/client";
+import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
 
 //------------------PERSON--------------------
 
@@ -224,7 +226,7 @@ export function useGetAllCosts() {
 
 //------------------Bank--------------------
 
-// Get All Card Transfer
+// Get All Card Transfer - Card To Card
 export function useGetAllCardTransfer({
   page,
   limit,
@@ -243,6 +245,39 @@ export function useGetAllCardTransfer({
       console.log("API Response:", result);
       return result;
     },
+    placeholderData: keepPreviousData,
+  });
+}
+
+// Get All Bank Transactions
+export function useGetAllBankTransactions({
+  page,
+  limit,
+  sortBy,
+  sortOrder,
+  accountType,
+  type,
+}: {
+  page: number;
+  limit: number;
+  sortBy: "senderAccount" | "date";
+  sortOrder: "desc" | "asc";
+  accountType?: AccountType;
+  type?: "PAYMENT" | "INCOME";
+}) {
+  return useQuery({
+    queryKey: ["bankTransactions", page, limit, accountType],
+    // Query function: Calls the server action
+    queryFn: () =>
+      getBankTransactions({
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+        accountType,
+        type,
+      }),
+    // Keep previous data while loading the next page for smoother pagination
     placeholderData: keepPreviousData,
   });
 }

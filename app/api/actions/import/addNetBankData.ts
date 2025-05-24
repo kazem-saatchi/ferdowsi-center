@@ -95,6 +95,7 @@ async function addBankDataInternal(
               accountType,
               bankRecieptId: row.bankRecieptId,
               chequeNumber: row.chequeNumber,
+            
             },
           });
 

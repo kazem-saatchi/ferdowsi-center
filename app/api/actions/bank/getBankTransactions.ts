@@ -11,6 +11,7 @@ interface GetTransactionsOptions {
   sortBy?: keyof BankTransaction;
   sortOrder?: "asc" | "desc";
   accountType?: AccountType;
+  type?: "INCOME" | "PAYMENT";
   // Add filter parameters as needed (e.g., date range, type, category)
   // filterType?: TransactionType;
   // filterCategory?: TransactionCategory;
@@ -35,6 +36,7 @@ export async function getBankTransactions(
     sortBy = "date", // Default sort field
     sortOrder = "desc", // Default sort order
     accountType,
+    type,
   } = options;
 
   const skip = (page - 1) * limit;
@@ -57,15 +59,15 @@ export async function getBankTransactions(
         orderBy: {
           [sortBy]: sortOrder,
         },
-        // where: where
-        // If accountType is provided, filter by it, otherwise return all
         where: {
           accountType: accountType ? accountType : undefined,
+          type, // "PAYMENT" - "INCOME" - undefined
         },
       }),
       db.bankTransaction.count({
         where: {
           accountType: accountType ? accountType : undefined,
+          type,
         },
       }),
     ]);
