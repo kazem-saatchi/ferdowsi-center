@@ -28,3 +28,9 @@ export const addIncomeSchema = z.object({
 
 export type AddIncomeData = z.infer<typeof addIncomeSchema>;
 //--------------------------------------------------------------------------------------
+export const addCostFromBankSchema = addCostSchema.extend({
+  bankTransactionId: z.string(),
+});
+
+export type AddCostFromBankData = z.infer<typeof addCostFromBankSchema>;
+//--------------------------------------------------------------------------------------

@@ -223,17 +223,18 @@ model ShopChargeReference {
 }
 
 model Cost {
-  id            String   @id @unique @default(uuid())
-  title         String
-  amount        Int
-  date          DateTime
-  description   String  @db.Text @default("")
-  category      CostCategory
-  billImage     String    @default("")
-  proprietor    Boolean   @default(false) //مالکانه
-  name          String    @default("") // نام فرد یا شرکت
+  id                String   @id @unique @default(uuid())
+  title             String
+  amount            Int
+  date              DateTime
+  description       String  @db.Text @default("")
+  category          CostCategory
+  billImage         String    @default("")
+  proprietor        Boolean   @default(false) //مالکانه
+  name              String    @default("") // نام فرد یا شرکت
+  bankTransactionId String?  // ID from BankTransaction Table
 
-  createdAt     DateTime @default(now())
+  createdAt         DateTime @default(now())
 }
 
 enum CostCategory {

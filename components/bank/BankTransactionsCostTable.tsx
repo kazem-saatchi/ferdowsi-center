@@ -145,11 +145,11 @@ export function BankTransactionCostTable({
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={5}>
                     <CostFromBankForm
-                    // amount={tx.amount}
-                    // bankTransactionId={tx.id}
-                    // date={tx.date}
-                    // description={tx.description}
-                    // cancelFn={setEditRowId}
+                    amount={tx.amount}
+                    bankTransactionId={tx.id}
+                    date={tx.date}
+                    description={tx.description}
+                    cancelFn={setEditRowId}
                     />
                   </TableCell>
                 </TableRow>

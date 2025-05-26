@@ -45,7 +45,7 @@ import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
 import updatePersonRole from "@/app/api/actions/person/updatePersonRule";
 import generateAnnualShopChargeReferenceList from "@/app/api/actions/reference/shopAnnualChargeReference";
-import { AddCostData, AddIncomeData } from "@/schema/cost-IncomeSchema";
+import { AddCostData, AddCostFromBankData, AddIncomeData } from "@/schema/cost-IncomeSchema";
 import addCost from "@/app/api/actions/cost-income/addCost";
 import addPersonsFromFile from "@/app/api/actions/person/addPersonsFromFile";
 import addIncome from "@/app/api/actions/cost-income/addIncome";
@@ -66,6 +66,7 @@ import setRegisterAbleAction from "@/app/api/actions/bank/setRegisterAbleAction"
 import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
 import { AccountType } from "@prisma/client";
 import addNetBankDataFromFile from "@/app/api/actions/import/addNetBankData";
+import addCostFromBank from "@/app/api/actions/cost-income/addCostFromBank";
 
 //------------------PERSON--------------------
 
@@ -703,6 +704,29 @@ export function useAddCost() {
     },
   });
 }
+
+// Add Cost From Bank Transactions
+export function useAddCostFromBank() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddCostFromBankData) => await addCostFromBank(data),
+    onSuccess: (data) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-costs"] });
+        queryClient.refetchQueries({ queryKey: ["all-costs"] });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
 
 // add income
 export function useAddIncome() {

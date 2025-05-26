@@ -74,7 +74,7 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
   }
 
   try {
-    const result = await db.$transaction(async (prisma) => {
+    const { payment } = await db.$transaction(async (prisma) => {
       const payment = await prisma.payment.create({
         data: {
           amount,
@@ -103,11 +103,13 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
         },
       });
 
-      console.log("[Payment] Created:", {
-        paymentId: payment.id,
-        amount: payment.amount,
-        shopId: payment.shopId,
-      });
+      return { payment };
+    });
+
+    console.log("[Payment] Created:", {
+      paymentId: payment.id,
+      amount: payment.amount,
+      shopId: payment.shopId,
     });
   } catch (error) {
     console.error("[Payment] Failed:", {

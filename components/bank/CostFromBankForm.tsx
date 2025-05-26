@@ -28,7 +28,7 @@ import UploadImage from "@/components/upload-file/UploadImage";
 import { labels } from "@/utils/label";
 
 interface CostFromBankFormProps {
-  amount: string;
+  amount: number;
   bankTransactionId: string;
   date: Date;
   description?: string;
@@ -65,7 +65,7 @@ export default function CostFromBankForm({
     try {
       const costData: AddCostData = {
         title,
-        amount: parseInt(amount, 10),
+        amount,
         date: costDate,
         description,
         category: category,
