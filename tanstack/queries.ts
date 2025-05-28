@@ -25,7 +25,7 @@ import {
 } from "@/schema/chargeSchema";
 import { verifyToken } from "@/utils/auth";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import allCosts from "@/app/api/actions/cost-income/allCosts";
+import getAllCosts from "@/app/api/actions/cost-income/getAllCosts";
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import getShopFinancialDetails from "@/app/api/actions/balance/getShopDetail";
 import findUserQuickState from "@/app/api/actions/user/getUserQuickState";
@@ -220,7 +220,7 @@ export function useGetUserQuickState() {
 export function useGetAllCosts() {
   return useQuery({
     queryKey: ["all-costs"],
-    queryFn: async () => await allCosts(),
+    queryFn: async () => await getAllCosts(),
   });
 }
 

@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAddNetBankDataFromFile } from "@/tanstack/mutations";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
-import {  NetBankTransactionData } from "@/components/upload-file/readFile";
+import { NetBankTransactionData } from "@/components/upload-file/readFile";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { labels } from "@/utils/label";
@@ -15,17 +15,44 @@ import { Button } from "@/components/ui/button";
 import { UploadNetBankData } from "@/components/upload-file/UploadNetBankFile";
 import { NetBankPreviewTable } from "@/components/upload-file/NetBankPreviewTable";
 
+const bankAccountNumberList = {
+  PROPRIETOR: "2504-306",
+  BUSINESS: "2504-101",
+  GENERAL: null,
+};
+
 export default function UploadNetBankDataPage() {
   const [file, setFile] = React.useState<File | null>(null);
-  const [parsedData, setParsedData] = React.useState<NetBankTransactionData[]>([]);
-  const [bankAccountNumber, setBankAccountNumber] = React.useState<string>("");
-  const [accountType, setAccountType] = React.useState<AccountType>("BUSINESS");
+  const [parsedData, setParsedData] = React.useState<NetBankTransactionData[]>(
+    []
+  );
+  const [bankAccountNumber, setBankAccountNumber] = React.useState<
+    string | null
+  >(null);
+  const [accountType, setAccountType] = React.useState<AccountType | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (accountType) {
+      setBankAccountNumber(bankAccountNumberList[accountType]);
+    } else {
+      setBankAccountNumber(null);
+    }
+  }, [accountType]);
 
   // Create an adapted mutation function
   const adaptedMutationFn = async (chunk: NetBankTransactionData[]) => {
+    if (!accountType || !bankAccountNumber) {
+      toast.error("نوع حساب را انتخاب کنید");
+      return {
+        success: false,
+        message: "Account type and bank account number are required",
+      };
+    }
     return mutationAddBankData.mutateAsync({
       accountType,
-      bankAccountNumber, // You need to get this from somewhere
+      bankAccountNumber,
       data: chunk,
     });
   };
@@ -66,10 +93,11 @@ export default function UploadNetBankDataPage() {
         >
           <Label className="w-36">{labels.bankAccountNumber}</Label>
           <Input
-            value={bankAccountNumber}
+            value={bankAccountNumber ?? ""}
             onChange={(event) => {
               setBankAccountNumber(event.target.value);
             }}
+            disabled
           />
         </div>
         <div
@@ -97,16 +125,15 @@ export default function UploadNetBankDataPage() {
           >
             {labels.proprietorType}
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             onClick={() => {
               setAccountType("GENERAL");
             }}
             className={cn(accountType === "GENERAL" && "bg-primary")}
-
           >
             {labels.generalType}
-          </Button>
+          </Button> */}
         </div>
         <UploadNetBankData
           onFileChange={handleFileChange}

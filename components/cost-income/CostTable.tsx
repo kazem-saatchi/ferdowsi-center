@@ -26,11 +26,7 @@ import { Badge } from "../ui/badge";
 
 type SortKey = keyof Cost;
 
-interface CostsTableProps {
-  costs: Cost[];
-}
-
-export function CostsTable({ costs }: CostsTableProps) {
+export function CostsTable({ costs }: { costs: Cost[] }) {
   type CategoryType = AddCostData["category"];
 
   const [sortConfig, setSortConfig] = useState<{
@@ -47,35 +43,9 @@ export function CostsTable({ costs }: CostsTableProps) {
   const [viewImage, setViewImage] = useState<boolean>(false);
   const [viewImageSrc, setViewImageSrc] = useState<string>("");
 
-  const sortedCosts = React.useMemo(() => {
-    const sortableCosts = [...costs];
-    if (sortConfig !== null) {
-      sortableCosts.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    if (sortConfig.filter !== "ALL") {
-      return sortableCosts.filter(
-        (cost) => cost.category === sortConfig.filter
-      );
-    }
-    return sortableCosts;
-  }, [costs, sortConfig]);
-
-  const requestSort = (key: SortKey) => {
-    setSortConfig((currentConfig) => {
-      if (currentConfig.key === key && currentConfig.direction === "asc") {
-        return { key, direction: "desc", filter: currentConfig.filter };
-      }
-      return { key, direction: "asc", filter: currentConfig.filter };
-    });
-  };
+  function requestSort(key: SortKey) {
+    let direction: "asc" | "desc" = "asc";
+  }
 
   return (
     <>
@@ -144,7 +114,7 @@ export function CostsTable({ costs }: CostsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedCosts.map((cost) => (
+          {costs.map((cost) => (
             <TableRow key={cost.id}>
               <TableCell className="text-center">{cost.title}</TableCell>
               <TableCell className="text-center">

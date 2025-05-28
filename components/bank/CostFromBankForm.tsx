@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { useAddCost } from "@/tanstack/mutations";
+import { useAddCostFromBank } from "@/tanstack/mutations";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
-import { addCostSchema, type AddCostData } from "@/schema/cost-IncomeSchema";
+import {
+  AddCostFromBankData,
+  addCostFromBankSchema,
+  addCostSchema,
+  type AddCostData,
+} from "@/schema/cost-IncomeSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -46,14 +51,13 @@ export default function CostFromBankForm({
   type CategoryType = AddCostData["category"];
 
   const [title, setTitle] = useState("");
-  const [amountPersian, setAmountPersian] = useState("");
   const [costDate, setCostDate] = useState<Date | null>(date);
   const [category, setCategory] = useState<CategoryType>("OTHER");
   const [billImageUrl, setBillImageUrl] = useState("");
   const [proprietor, setProprietor] = useState<boolean>(false);
   const [uploadPage, setUploadPage] = useState<boolean>(false);
 
-  const addCostMutation = useAddCost();
+  const addCostMutation = useAddCostFromBank();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +67,7 @@ export default function CostFromBankForm({
       return;
     }
     try {
-      const costData: AddCostData = {
+      const costData: AddCostFromBankData = {
         title,
         amount,
         date: costDate,
@@ -71,14 +75,14 @@ export default function CostFromBankForm({
         category: category,
         billImage: billImageUrl,
         proprietor,
+        bankTransactionId,
       };
 
-      const validatedData = addCostSchema.parse(costData);
+      const validatedData = addCostFromBankSchema.parse(costData);
       const result = await addCostMutation.mutateAsync(validatedData);
       if (result.success) {
         // Reset form after successful submission
         setTitle("");
-        setAmountPersian("");
         setCostDate(null);
         setCategory("OTHER");
         setBillImageUrl("");
@@ -88,14 +92,6 @@ export default function CostFromBankForm({
     } catch (error) {
       console.error(labels.costAddedError, error);
     }
-  };
-
-  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const { formattedPersianNumber, formattedNumber } =
-      formatNumberFromString(value);
-
-    setAmountPersian(formattedPersianNumber);
   };
 
   return (
@@ -121,8 +117,9 @@ export default function CostFromBankForm({
               <Input
                 id="amount"
                 type="text"
-                value={amountPersian}
-                onChange={handleAmountChange}
+                value={
+                  formatNumberFromString(String(amount)).formattedPersianNumber
+                }
                 disabled
               />
             </div>
@@ -187,7 +184,10 @@ export default function CostFromBankForm({
               />
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-row items-center justify-start gap-2">
+            <Button variant="destructive" onClick={() => cancelFn(null)}>
+              {labels.close}
+            </Button>
             <Button
               type="submit"
               className="w-full"
