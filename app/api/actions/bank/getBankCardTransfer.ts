@@ -65,24 +65,20 @@ export async function getBankCardTransfer(
           [sortBy]: sortOrder,
         },
         where: {
-          AND: [
-            {
-              recieverAccount: { not: null },
-              senderAccount: { not: null },
-              registered: false,
-              registerAble: true,
-            },
-          ],
+          recieverAccount: { not: null },
+          senderAccount: { not: null },
+          registered: false,
+          registerAble: true,
+          type: "INCOME",
         },
       }),
       db.bankTransaction.count({
         where: {
-          AND: [
-            { recieverAccount: { not: null } },
-            { senderAccount: { not: null } },
-            { registered: false }, // Must match!
-            { registerAble: true },
-          ],
+          recieverAccount: { not: null },
+          senderAccount: { not: null },
+          registered: false,
+          registerAble: true,
+          type: "INCOME",
         },
       }),
     ]);
