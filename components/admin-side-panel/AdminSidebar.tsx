@@ -2,7 +2,6 @@
 
 import { Sidebar, SidebarContent, SidebarMenu } from "@/components/ui/sidebar";
 import { Separator } from "../ui/separator";
-import AdminImportPanel from "./panels/AdminImportPanel";
 import SidebarItemsMap from "./panels/SidebarItemMap";
 import { adminMenuData } from "./panels/menuData";
 import AdminDashboardPanel from "./panels/AdminDashboardPanel";
@@ -35,6 +34,9 @@ function AdminSidebar() {
           <SidebarItemsMap menuData={adminMenuData.import} />
           <Separator />
           <SidebarItemsMap menuData={adminMenuData.bank} />
+          <Separator />
+          <SidebarItemsMap menuData={adminMenuData.operation} />
+          <Separator />
         </SidebarMenu>
       </SidebarContent>
       <AdminPanelFooter />

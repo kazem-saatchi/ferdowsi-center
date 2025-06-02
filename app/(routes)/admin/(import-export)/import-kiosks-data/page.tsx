@@ -4,8 +4,8 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataFileUpload } from "@/components/upload-file/UploadImportFile";
 import { PreviewTable } from "@/components/upload-file/PreviewTable";
-import { useAddKiosks, useAddPersonsShops } from "@/tanstack/mutations";
-import { AddKioskData, AddPersonsShopsData } from "@/schema/importSchema";
+import { useAddKiosks } from "@/tanstack/mutations";
+import { AddKioskData } from "@/schema/importSchema";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 
@@ -15,6 +15,7 @@ export default function UploadKioskData() {
   const [previewData, setPreviewData] = React.useState<any[]>([]);
 
   const mutationAddKiosks = useAddKiosks();
+  
   const { isUploading, progress, uploadStats, uploadData, resetUpload } =
     useChunkedUpload<AddKioskData>({
       mutationFn: mutationAddKiosks.mutateAsync,

@@ -28,7 +28,9 @@ import {
   Car,
   CircleDollarSign,
   CreditCard,
-  KeyRound,ReceiptText
+  KeyRound,
+  ReceiptText,
+  DatabaseBackup,
 } from "lucide-react";
 
 type AdminMenuKeys =
@@ -40,7 +42,8 @@ type AdminMenuKeys =
   | "person"
   | "shop"
   | "import"
-  | "bank";
+  | "bank"
+  | "operation";
 type AdminMenuCollection = Record<AdminMenuKeys, MenuData>;
 
 export type MenuData = {
@@ -342,7 +345,7 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 3,
-        name: "ثبت اطلاعات غرفه ها",
+        name: "ثبت اطلاعات غرفه‌ها",
         href: "/import-kiosks-data",
         icon: Car,
       },
@@ -355,21 +358,34 @@ export const adminMenuData: AdminMenuCollection = {
     items: [
       {
         id: 1,
-        name: "مشاهده تراکنش ها",
+        name: "همه تراکنش‌ها",
         href: "/bank-transactions",
         icon: Banknote,
       },
       {
         id: 2,
-        name: "کارت به کارت",
+        name: "لیست کارت به کارت‌ها",
         href: "/card-transfer",
         icon: CreditCard,
       },
       {
         id: 3,
-        name: "هزینه ها",
+        name: "لیست هزینه‌ها",
         href: "/cost-bank-list",
         icon: ReceiptText,
+      },
+    ],
+  },
+  operation: {
+    title: "عملیات‌های قابل بازگشت",
+    baseUrl: "/admin",
+    icon: DatabaseBackup,
+    items: [
+      {
+        id: 1,
+        name: "لیست تمام عملیات‌ها",
+        href: "/all-operations",
+        icon: ClipboardList,
       },
     ],
   },

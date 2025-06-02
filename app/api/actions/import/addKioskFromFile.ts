@@ -38,7 +38,7 @@ async function addKioskInternal(
   const operation = await db.operation.create({
     data: {
       date: todayDate,
-      title: `ثبت اطلاعات اولیه از فایل - `,
+      title: `ثبت اطلاعات اولیه غرفه ها از فایل - `,
     },
   });
 
@@ -51,36 +51,40 @@ async function addKioskInternal(
     password: "0000000000",
   };
 
+  // Check if the owner exists
+  let owner = await db.person.findUnique({
+    where: { IdNumber: ferdowsiData.IdNumber },
+  });
+
+  if (!owner) {
+    // Hash password for Owner
+    const ownerHashedPassword: string = await hashPassword(
+      ferdowsiData.password
+    );
+
+    // Create owner if not exists
+    owner = await db.person.create({
+      data: {
+        IdNumber: ferdowsiData.IdNumber,
+        firstName: ferdowsiData.firstName.toString(),
+        lastName: ferdowsiData.lastName.toString(),
+        phoneOne: ferdowsiData.phoneOne.toString(),
+        phoneTwo: null,
+        address: "",
+        password: ownerHashedPassword,
+      },
+    });
+  }
+
   for (const row of data) {
     await db.$transaction(
       async (prisma) => {
         try {
-          // Check if the owner exists
-          let owner = await prisma.person.findUnique({
-            where: { IdNumber: ferdowsiData.IdNumber },
-          });
-
-          // Hash password for Owner
-          const ownerHashedPassword: string = await hashPassword(
-            ferdowsiData.password
-          );
-
-          if (!owner) {
-            // Create owner if not exists
-            owner = await prisma.person.create({
-              data: {
-                IdNumber: ferdowsiData.IdNumber,
-                firstName: ferdowsiData.firstName.toString(),
-                lastName: ferdowsiData.lastName.toString(),
-                phoneOne: ferdowsiData.phoneOne.toString(),
-                phoneTwo: null,
-                address: "",
-                password: ownerHashedPassword,
-              },
-            });
-          }
-
           if (!row.renterIdNumber) {
+            console.log(
+              `Skipping row with plaque ${row.plaque} due to missing renterIdNumber`
+            );
+            failedShops++;
             return; // Skip to next row if renterIdNumber is not provided
           }
 
@@ -91,12 +95,11 @@ async function addKioskInternal(
             where: { IdNumber: row.renterIdNumber.toString() },
           });
 
-          // Hash password for Renter
-          const renterHashedPassword = await hashPassword(
-            row.renterPhoneOne.toString()
-          );
-
           if (!renter) {
+            // Hash password for Renter
+            const renterHashedPassword = await hashPassword(
+              row.renterPhoneOne.toString()
+            );
             // Create renter if they exist in the Excel data
             renter = await prisma.person.create({
               data: {
@@ -116,6 +119,7 @@ async function addKioskInternal(
           });
 
           if (existingShop) {
+            console.log(`Plaque ${row.plaque} already exists, skipping.`);
             failedShops++;
             return; // Skip to next row
           }
@@ -149,7 +153,7 @@ async function addKioskInternal(
               personId: renter.id,
               personName: `${renter.firstName} ${renter.lastName}`,
               operationId: operation.id,
-              proprietor: false,
+              proprietor: true,
               description: pastBalanceDescription,
             },
           });

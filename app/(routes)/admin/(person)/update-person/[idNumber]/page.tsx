@@ -66,7 +66,6 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">Update Person</h1>
       <UpdatePersonForm initialData={initialData} />
     </div>
   );

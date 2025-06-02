@@ -11,6 +11,7 @@ import { ChargePaymentData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
 import { Charge, Payment } from "@prisma/client";
 import { Separator } from "../ui/separator";
+import { formatPersianDate } from "@/utils/localeDate";
 
 interface BalanceTableProps {
   charges: Charge[];
@@ -80,7 +81,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
             </TableCell>
             <TableCell className="text-center">{item.title}</TableCell>
             <TableCell className="text-center">
-              {item.date?.toLocaleDateString() || "N/A"}
+              {formatPersianDate(item.date)}
             </TableCell>
             <TableCell
               className={`text-center ${
@@ -95,7 +96,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
       </TableBody>
 
       <TableFooter>
-        <TableRow >
+        <TableRow>
           <TableCell></TableCell>
           <TableCell></TableCell>
           <TableCell className="text-center font-medium border-2">
