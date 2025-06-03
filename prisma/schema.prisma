@@ -210,8 +210,9 @@ model ShopChargeReference {
   constantAmount  Int
   metricAmount    Int
   totalAmount     Int
-  year            Int       @default(2024) // Example default year
+  year            Int       @default(2000)
   proprietor      Boolean   @default(false) //مالکانه 
+  forRent         Boolean   @default(false)
 
   createdAt       DateTime  @default(now()) 
 
@@ -221,6 +222,8 @@ model ShopChargeReference {
   @@index([year])
   @@unique([shopId,proprietor])
 }
+
+
 
 model Cost {
   id                String   @id @unique @default(uuid())

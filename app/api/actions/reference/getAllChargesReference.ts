@@ -9,6 +9,7 @@ interface FindchargeResponse {
   success: boolean;
   message: string;
   chargeList?: ShopChargeReference[];
+  rentList?: ShopChargeReference[];
   annualChargeList?: ShopChargeReference[];
 }
 
@@ -26,8 +27,12 @@ async function getAllChargesReference(
     orderBy: { plaque: "asc" },
   });
 
+  const rentList = await db.shopChargeReference.findMany({
+    where: { proprietor: true, forRent: true },
+  });
+
   const annualChargeList = await db.shopChargeReference.findMany({
-    where: { proprietor: true },
+    where: { proprietor: true, forRent: false },
     orderBy: { plaque: "asc" },
   });
 
@@ -35,6 +40,7 @@ async function getAllChargesReference(
     success: true,
     message: successMSG.chargesFound,
     chargeList: chargeList,
+    rentList: rentList,
     annualChargeList: annualChargeList,
   };
 }

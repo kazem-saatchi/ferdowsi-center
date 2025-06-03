@@ -6,9 +6,9 @@ import {
   ShopChargeReferenceSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
+import { currentJalaliYear } from "@/utils/localeDate";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
-import { getYear } from "date-fns-jalali";
 
 async function generateShopChargeReference(
   data: ShopChargeReferenceData,
@@ -37,7 +37,17 @@ async function generateShopChargeReference(
   });
 
   const kioskList = await db.shop.findMany({
-    where: { OR: [{ type: "KIOSK" }, { type: "PARKING" }, { type: "BOARD" }] },
+    where: { type: "KIOSK" },
+    orderBy: { plaque: "asc" },
+  });
+
+  const parkingList = await db.shop.findMany({
+    where: { type: "PARKING" },
+    orderBy: { plaque: "asc" },
+  });
+
+  const boardList = await db.shop.findMany({
+    where: { type: "BOARD" },
     orderBy: { plaque: "asc" },
   });
 
@@ -46,8 +56,9 @@ async function generateShopChargeReference(
   }
 
   // Prepare new charge reference data
-  const currentYear = getYear(new Date());
-  const newChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
+  const currentYear = currentJalaliYear().toNumber;
+
+  const shopChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
     shopsList.map((shop) => {
       const constValue = shop.type === "STORE" ? storeConst : officeConst;
       const metricValue = shop.type === "STORE" ? storeMetric : officeMetric;
@@ -69,7 +80,7 @@ async function generateShopChargeReference(
       return chargeObject;
     });
 
-  const newKioskChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
+  const kioskChargeList: Prisma.ShopChargeReferenceCreateManyInput[] =
     kioskList.map((shop) => {
       const totalAmount = shop.ChargeAmount;
       const chargeObject = {
@@ -86,23 +97,82 @@ async function generateShopChargeReference(
       return chargeObject;
     });
 
+  const kioskRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
+    kioskList.map((shop) => {
+      const totalAmount = shop.rentAmount;
+      const chargeObject = {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        area: shop.area,
+        constantAmount: 0,
+        metricAmount: 0,
+        totalAmount: totalAmount ?? 0,
+        year: currentYear,
+        proprietor: true,
+        forRent: true,
+      };
+
+      return chargeObject;
+    });
+
+  const parkingRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
+    parkingList.map((shop) => {
+      const totalAmount = shop.rentAmount;
+      const chargeObject = {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        area: shop.area,
+        constantAmount: 0,
+        metricAmount: 0,
+        totalAmount: totalAmount ?? 0,
+        year: currentYear,
+        proprietor: true,
+        forRent: true,
+      };
+
+      return chargeObject;
+    });
+
+  const boardRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
+    boardList.map((shop) => {
+      const totalAmount = shop.rentAmount;
+      const chargeObject = {
+        shopId: shop.id,
+        plaque: shop.plaque,
+        area: shop.area,
+        constantAmount: 0,
+        metricAmount: 0,
+        totalAmount: totalAmount ?? 0,
+        year: currentYear,
+        proprietor: true,
+        forRent: true,
+      };
+
+      return chargeObject;
+    });
+
   // Transaction: Clear old references for these shops and insert new ones
   await db.$transaction(async (prisma) => {
     await prisma.shopChargeReference.deleteMany({
       where: {
-        shopId: { in: shopsList.map((shop) => shop.id) },
-        proprietor: false,
+        OR: [{ proprietor: false }, { proprietor: true, forRent: true }],
       },
     });
 
     await prisma.shopChargeReference.createMany({
-      data: [...newChargeList, ...newKioskChargeList],
+      data: [
+        ...shopChargeList,
+        ...kioskChargeList,
+        ...kioskRentList,
+        ...parkingRentList,
+        ...boardRentList,
+      ],
     });
   });
 
   return {
     message: successMSG.chargesCreated,
-    chargesCreated: newChargeList.length,
+    chargesCreated: shopChargeList.length,
   };
 }
 
