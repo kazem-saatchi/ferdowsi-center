@@ -12,7 +12,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useFindAllShops } from "@/tanstack/queries";
-import { useUpateShopInfo } from "@/tanstack/mutations";
+import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import type { Shop, ShopType } from "@prisma/client";
@@ -53,9 +53,7 @@ export default function EditShopPage() {
     bankCardYearly: "",
   });
 
-  const [shopType, setShopType] = useState<ShopType>(
-    "STORE"
-  );
+  const [shopType, setShopType] = useState<ShopType>("STORE");
 
   useEffect(() => {
     if (data?.data?.shops) {
@@ -170,7 +168,7 @@ export default function EditShopPage() {
           />
         </CardContent>
       </Card>
-      <Separator className="mb-4"/>
+      <Separator className="mb-4" />
       {selectedShop ? (
         <Card>
           <CardHeader>

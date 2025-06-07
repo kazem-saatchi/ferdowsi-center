@@ -124,6 +124,7 @@ model Charge {
   daysCount     Int
   proprietor    Boolean     @default(false)  //مالکانه 
   description   String      @default("") @db.Text
+  forRent       Boolean     @default(false)
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])
@@ -222,8 +223,6 @@ model ShopChargeReference {
   @@index([year])
   @@unique([shopId,proprietor])
 }
-
-
 
 model Cost {
   id                String   @id @unique @default(uuid())

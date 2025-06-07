@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
-import { useUpdateShopRenter } from "@/tanstack/mutations";
+import { useUpdateShopRenter } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,

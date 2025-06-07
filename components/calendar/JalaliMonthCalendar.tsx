@@ -26,7 +26,7 @@ function JalaliMonthCalendar({ handleDateChange }: CalendarProps) {
   return (
     <div className="space-y-2">
       <Label htmlFor="DatePicker" className="ml-2">
-        Month
+        ماه
       </Label>
       <DatePicker
         id="DatePicker"

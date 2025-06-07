@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { UpdatePersonData, updatePersonSchema } from "@/schema/userSchemas";
+import { UpdatePersonData, updatePersonSchema } from "@/schema/personSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";

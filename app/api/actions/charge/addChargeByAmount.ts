@@ -2,14 +2,14 @@
 
 import { db } from "@/lib/db";
 import {
-  AddChargeByAmount,
+  AddChargeByAmountData,
   addChargeByAmountSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-async function createCharge(data: AddChargeByAmount, user: Person) {
+async function createCharge(data: AddChargeByAmountData, user: Person) {
   // Authorization check
   if (user.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
@@ -68,6 +68,6 @@ async function createCharge(data: AddChargeByAmount, user: Person) {
   return { success: true, message: successMSG.chargesCreated };
 }
 
-export default async function addChargeByAmount(data: AddChargeByAmount) {
+export default async function addChargeByAmount(data: AddChargeByAmountData) {
   return handleServerAction(async (person) => createCharge(data, person));
 }

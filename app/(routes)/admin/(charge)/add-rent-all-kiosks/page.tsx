@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAddChargeAllShop } from "@/tanstack/mutation/chargeMutation";
+import { useAddRentAllKiosks } from "@/tanstack/mutation/chargeMutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ import DateObject from "react-date-object";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { labels } from "@/utils/label";
 
-export default function AddChargesToAllShopsPage() {
+export default function AddRentToAllKiosksPage() {
   const [formData, setFormData] = useState({
     month: "",
     title: "",
@@ -32,7 +32,7 @@ export default function AddChargesToAllShopsPage() {
     title: "",
   });
 
-  const addChargeAllShopMutation = useAddChargeAllShop();
+  const addRentAllKiosksMutation = useAddRentAllKiosks();
 
   const handleDateChange = (date: DateObject) => {
     if (date) {
@@ -40,7 +40,7 @@ export default function AddChargesToAllShopsPage() {
       const formattedDate = `${persianDate.year}-${String(
         persianDate.month.number
       ).padStart(2, "0")}`;
-      const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
+      const title = `اجاره ماهانه ${persianDate.month.name} ${persianDate.year}`;
       setFormData({
         title,
         month: formattedDate,
@@ -59,7 +59,7 @@ export default function AddChargesToAllShopsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await addChargeAllShopMutation.mutateAsync(dataState);
+      const result = await addRentAllKiosksMutation.mutateAsync(dataState);
 
       if (result.success) {
         toast.success(labels.chargesAddedSuccess);
@@ -84,10 +84,10 @@ export default function AddChargesToAllShopsPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addChargesToAllShops}</h1>
+      <h1 className="text-3xl font-bold mb-8">{labels.addRentToAllKiosks}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>{labels.chargeDetailsTitle}</CardTitle>
+          <CardTitle>{labels.rentDetailsTitle}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -107,11 +107,11 @@ export default function AddChargesToAllShopsPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addChargeAllShopMutation.isPending}
+              disabled={addRentAllKiosksMutation.isPending}
             >
-              {addChargeAllShopMutation.isPending
-                ? labels.addingChargesToAllShops
-                : labels.addChargesToAllShops}
+              {addRentAllKiosksMutation.isPending
+                ? labels.addingRentToAllKiosks
+                : labels.addRentToAllKiosks}
             </Button>
           </CardFooter>
         </form>

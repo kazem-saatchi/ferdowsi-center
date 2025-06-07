@@ -7,7 +7,7 @@ import {
   ShopBalanceData,
 } from "@/schema/balanceSchema";
 import { GetChargeByShopData } from "@/schema/chargeSchema";
-import { PersonInfoSafe } from "@/schema/userSchemas";
+import { PersonInfoSafe } from "@/schema/personSchema";
 import {
   calculatePersonBalanceByShop,
   calculateShopBalance,

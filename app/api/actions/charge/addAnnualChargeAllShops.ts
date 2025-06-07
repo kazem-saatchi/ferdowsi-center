@@ -78,7 +78,7 @@ async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
   return { success: true, message: successMSG.chargesCreated };
 }
 
-export default async function addChargeToAllShops(
+export default async function addAnnualChargeToAllShops(
   data: AddAnnualChargeAllShopsData
 ) {
   return handleServerAction<AddChargeResponse>(async (person) =>

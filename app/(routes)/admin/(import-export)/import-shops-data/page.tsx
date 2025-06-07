@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataFileUpload } from "@/components/upload-file/UploadImportFile";
 import { PreviewTable } from "@/components/upload-file/PreviewTable";
-import { useAddPersonsShops } from "@/tanstack/mutations";
+import { useAddPersonsShops } from "@/tanstack/mutation/importMutation";
 import { AddPersonsShopsData } from "@/schema/importSchema";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";

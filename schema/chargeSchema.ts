@@ -20,7 +20,7 @@ export const addChargeByAmountSchema = z.object({
   description: z.string().max(250),
 });
 
-export type AddChargeByAmount = z.infer<typeof addChargeByAmountSchema>;
+export type AddChargeByAmountData = z.infer<typeof addChargeByAmountSchema>;
 //--------------------------------------------------------------------------------------
 export const addChargeAllShopsSchema = z.object({
   startDate: z.date(),
@@ -30,12 +30,15 @@ export const addChargeAllShopsSchema = z.object({
 
 export type AddChargeAllShopsData = z.infer<typeof addChargeAllShopsSchema>;
 //--------------------------------------------------------------------------------------
+export const addRentAllKiosksSchema = addChargeAllShopsSchema;
+export type AddRentAllKiosksData = z.infer<typeof addRentAllKiosksSchema>;
+//--------------------------------------------------------------------------------------
 export const ShopChargeReferenceSchema = z.object({
   storeConst: z.number(),
   storeMetric: z.number(),
   officeConst: z.number(),
   officeMetric: z.number(),
-  savingPercent:z.number(),
+  savingPercent: z.number(),
 });
 
 export type ShopChargeReferenceData = z.infer<typeof ShopChargeReferenceSchema>;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFindAllShops } from "@/tanstack/queries";
-import { useEndShopRenter } from "@/tanstack/mutations";
+import { useEndShopRenter } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,7 +46,7 @@ export default function RemoveShopRenterPage() {
 
   useEffect(() => {
     if (selectedShopId && shopsAll) {
-      const selectedShop = shopsAll.find(shop => shop.id === selectedShopId);
+      const selectedShop = shopsAll.find((shop) => shop.id === selectedShopId);
       setCurrentRenterName(selectedShop?.renterName || labels.noCurrentRenter);
       setCurrentRenterId(selectedShop?.renterId || "");
     }
@@ -76,10 +76,11 @@ export default function RemoveShopRenterPage() {
     }
   };
 
-  const shopOptions = shopsAll?.map((shop) => ({
-    id: shop.id,
-    label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
-  })) || [];
+  const shopOptions =
+    shopsAll?.map((shop) => ({
+      id: shop.id,
+      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+    })) || [];
 
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
     return (
@@ -118,7 +119,9 @@ export default function RemoveShopRenterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate" className="ml-2">{labels.endDate}</Label>
+              <Label htmlFor="endDate" className="ml-2">
+                {labels.endDate}
+              </Label>
               <DatePicker
                 calendar={persian}
                 locale={persian_fa}
@@ -157,4 +160,3 @@ export default function RemoveShopRenterPage() {
     </div>
   );
 }
-

@@ -14,7 +14,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { labels } from "@/utils/label";
-import { useUpatePerson } from "@/tanstack/mutations";
+import { useUpatePerson } from "@/tanstack/mutation/personMutation";
 
 interface UpdatePersonFormProps {
   initialData: {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAddChargeByShop } from "@/tanstack/mutations";
+import { useAddChargeByShop } from "@/tanstack/mutation/chargeMutation";
 import { useFindAllShops } from "@/tanstack/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

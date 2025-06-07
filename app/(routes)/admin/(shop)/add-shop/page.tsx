@@ -12,7 +12,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-import { useAddShop } from "@/tanstack/mutations";
+import { useAddShop } from "@/tanstack/mutation/shopMutation";
 import { PersonSelect } from "@/components/person/PersonSelect";
 import { useFindAllPersons } from "@/tanstack/queries";
 import { useStore } from "@/store/store";

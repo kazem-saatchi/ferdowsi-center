@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAddNetBankDataFromFile } from "@/tanstack/mutations";
+import { useAddNetBankDataFromFile } from "@/tanstack/mutation/importMutation";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { NetBankTransactionData } from "@/components/upload-file/readFile";

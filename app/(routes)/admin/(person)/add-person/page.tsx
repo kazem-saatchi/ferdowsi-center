@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAddPerson } from "@/tanstack/mutations";
+import { useAddPerson } from "@/tanstack/mutation/personMutation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function AddPersonPage() {

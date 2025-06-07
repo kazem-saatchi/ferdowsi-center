@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
-import { useUpdateShopOwner } from "@/tanstack/mutations";
+import { useUpdateShopOwner } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -73,7 +73,6 @@ export default function UpdateShopOwnerPage() {
       setSelectedOwnerId("");
       setOwnerChangeDate(null);
       setCurrentOwnerName("");
-      
     } catch (error) {
       console.error("Error updating shop owner:", error);
       toast.error(labels.ownerUpdateError);

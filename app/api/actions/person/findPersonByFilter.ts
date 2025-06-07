@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import {
   findPersonByFilterSchema,
   FindPersonByFilterData,
-} from "@/schema/userSchemas";
+} from "@/schema/personSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -21,19 +21,24 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   }
   // Validate input
   const validation = findPersonByFilterSchema.safeParse(data);
- 
+
   if (!validation.success) {
     throw new Error(
       validation.error.errors.map((err) => err.message).join(", ")
     );
   }
-  
+
   const filters = validation.data;
 
   // Build dynamic filter
   const whereClause: Record<string, any> = {};
-  if (filters.firstName) whereClause.firstName = { contains: filters.firstName, mode: 'insensitive' };
-  if (filters.lastName) whereClause.lastName = { contains: filters.lastName, mode: 'insensitive' };
+  if (filters.firstName)
+    whereClause.firstName = {
+      contains: filters.firstName,
+      mode: "insensitive",
+    };
+  if (filters.lastName)
+    whereClause.lastName = { contains: filters.lastName, mode: "insensitive" };
   if (filters.phoneOne) whereClause.phoneOne = { contains: filters.phoneOne };
   if (filters.phoneTwo) whereClause.phoneTwo = { contains: filters.phoneTwo };
   if (filters.IdNumber) whereClause.IdNumber = { contains: filters.IdNumber };
@@ -56,4 +61,3 @@ export default async function findPersonByFilter(data: FindPersonByFilterData) {
     findPersons(data, user)
   );
 }
-

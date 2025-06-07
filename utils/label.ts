@@ -9,6 +9,10 @@ export const labels = {
   personName: "نام شخص",
   transactionCategory: "دسته بندی",
 
+  addRentToAllKiosks: "ثبت اجاره برای همه مشاعات",
+  addingRentToAllKiosks: "در حال ثبت اجاره...",
+  rentDetailsTitle: "جزئیات اجاره",
+
   bankCardMonthly: "شماره حساب شارژ ماهانه",
   bankCardYearly: "شماره حساب شارژ مالکانه",
 

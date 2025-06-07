@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2, Trash } from "lucide-react";
-import { useDeletePerson } from "@/tanstack/mutations";
+import { useDeletePerson } from "@/tanstack/mutation/personMutation";
 
 function DeletePerson({id}:{id: string}) {
   //Tanstack Mutation

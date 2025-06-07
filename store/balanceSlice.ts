@@ -5,7 +5,7 @@ import {
   ShopBalanceData,
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
-import { PersonInfoSafe } from "@/schema/userSchemas";
+import { PersonInfoSafe } from "@/schema/personSchema";
 import { exportToExcel, exportToPDF } from "@/utils/tableExport";
 import { StateCreator } from "zustand";
 

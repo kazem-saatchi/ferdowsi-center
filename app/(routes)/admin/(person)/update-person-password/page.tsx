@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useFindAllPersons } from "@/tanstack/queries";
-import { useUpatePersonRole, useUpdatePassword } from "@/tanstack/mutations";
+import { useUpatePersonRole, useUpdatePassword } from "@/tanstack/mutation/personMutation";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CustomSelect } from "@/components/CustomSelect";
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePersonRoleSchema } from "@/schema/userSchemas";
+import { updatePersonRoleSchema } from "@/schema/personSchema";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";

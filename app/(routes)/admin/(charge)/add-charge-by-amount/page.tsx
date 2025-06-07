@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
-import { useAddChargeByAmount } from "@/tanstack/mutations";
+import { useAddChargeByAmount } from "@/tanstack/mutation/chargeMutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import {
   addChargeByAmountSchema,
-  AddChargeByAmount,
+  AddChargeByAmountData,
 } from "@/schema/chargeSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
 import { Textarea } from "@/components/ui/textarea";
@@ -61,12 +61,18 @@ export default function AddChargeByAmountPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedShopId || !selectedPersonId || !chargeDate || !amount || !title) {
+    if (
+      !selectedShopId ||
+      !selectedPersonId ||
+      !chargeDate ||
+      !amount ||
+      !title
+    ) {
       toast.error(labels.fillRequiredFields);
       return;
     }
     try {
-      const chargeData: AddChargeByAmount = {
+      const chargeData: AddChargeByAmountData = {
         shopId: selectedShopId,
         personId: selectedPersonId,
         date: chargeDate,
@@ -147,7 +153,10 @@ export default function AddChargeByAmountPage() {
                   <Input
                     id="owner"
                     type="text"
-                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.ownerName}
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.ownerName
+                    }
                     disabled
                   />
                 </div>
@@ -156,7 +165,10 @@ export default function AddChargeByAmountPage() {
                   <Input
                     id="renter"
                     type="text"
-                    value={shopsAll.find((shop) => shop.id === selectedShopId)?.renterName || labels.noRenter}
+                    value={
+                      shopsAll.find((shop) => shop.id === selectedShopId)
+                        ?.renterName || labels.noRenter
+                    }
                     disabled
                   />
                 </div>
@@ -171,9 +183,12 @@ export default function AddChargeByAmountPage() {
                 label={labels.person}
               />
             </div>
-            {selectedShopId !== "" && selectedPersonId !== "" && 
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !== selectedPersonId &&
-              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !== selectedPersonId && (
+            {selectedShopId !== "" &&
+              selectedPersonId !== "" &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.ownerId !==
+                selectedPersonId &&
+              shopsAll?.find((shop) => shop.id === selectedShopId)?.renterId !==
+                selectedPersonId && (
                 <p className="text-red-400">{labels.personNotOwnerOrRenter}</p>
               )}
             <JalaliDayCalendar
@@ -225,9 +240,18 @@ export default function AddChargeByAmountPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addChargeMutation.isPending || !selectedShopId || !selectedPersonId || !chargeDate || !amount || !title}
+              disabled={
+                addChargeMutation.isPending ||
+                !selectedShopId ||
+                !selectedPersonId ||
+                !chargeDate ||
+                !amount ||
+                !title
+              }
             >
-              {addChargeMutation.isPending ? labels.addingCharge : labels.addCharge}
+              {addChargeMutation.isPending
+                ? labels.addingCharge
+                : labels.addCharge}
             </Button>
           </CardFooter>
         </form>

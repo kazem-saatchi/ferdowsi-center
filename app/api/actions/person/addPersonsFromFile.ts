@@ -4,7 +4,7 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, PrismaClient } from "@prisma/client";
-import { AddPersonData, addPersonSchema } from "@/schema/userSchemas";
+import { AddPersonData, addPersonSchema } from "@/schema/personSchema";
 
 interface AddPersonResponse {
   message: string;

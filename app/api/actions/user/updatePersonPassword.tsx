@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import {
   updatePersonPassword,
   UpdatePersonPasswordData,
-} from "@/schema/userSchemas";
+} from "@/schema/personSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { comparePassword, hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";

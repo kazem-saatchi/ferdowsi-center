@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAddBankDataFromFile } from "@/tanstack/mutations";
+import { useAddBankDataFromFile } from "@/tanstack/mutation/importMutation";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
 import { BankDataUpload } from "@/components/upload-file/UploadBankFile";

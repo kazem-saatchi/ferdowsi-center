@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useStore } from "@/store/store";
-import { useUpdatePassword } from "@/tanstack/mutations";
+import { useUpdatePassword } from "@/tanstack/mutation/personMutation";
 import { labels } from "@/utils/label";
 import { AlertCircle } from "lucide-react";
 import React from "react";

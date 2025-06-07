@@ -9,6 +9,7 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 import { differenceInDays, startOfDay } from "date-fns";
+import { getRelatedHistories } from "./utils";
 
 async function createCharge(data: AddChargeByShopData, person: Person) {
   // Authorization check
@@ -26,28 +27,21 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
 
   const { startDate, endDate, shopId, title } = validation.data;
 
-  if (endDate <= startDate) {
-    throw new Error(errorMSG.invalidDateRange);
-  }
-
-  // Calculate the number of days (inclusive)
-  const totalDays = differenceInDays(endDate, startDate) + 1;
-
-  // Fetch ShopHistory entries of specified types
-  const relevantHistories = await db.shopHistory.findMany({
-    where: {
-      type: { in: ["ActiveByOwner", "ActiveByRenter", "InActive"] },
-      shopId,
-      startDate: { lte: endDate },
-      OR: [
-        { endDate: null }, // Include ongoing periods
-        { endDate: { gte: startDate } }, // Include overlapping periods
-      ],
-    },
-    orderBy: { startDate: "asc" },
+  const {
+    data: relevantHistories,
+    totalDays,
+    success,
+    message,
+  } = await getRelatedHistories({
+    startDate,
+    endDate,
   });
 
-  if (!relevantHistories.length) {
+  if (!success) {
+    throw new Error(message);
+  }
+
+  if (!relevantHistories || !totalDays) {
     throw new Error(errorMSG.noRelevantHistory);
   }
 

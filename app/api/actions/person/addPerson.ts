@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { AddPersonData, addPersonSchema } from "@/schema/userSchemas";
+import { AddPersonData, addPersonSchema } from "@/schema/personSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";
