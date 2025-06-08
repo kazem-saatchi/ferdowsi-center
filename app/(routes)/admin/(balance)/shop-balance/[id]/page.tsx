@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useGetShopBalance, useFindAllShops } from "@/tanstack/queries";
+import { useEffect } from "react";
+import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CustomSelect } from "@/components/CustomSelect";
-import { Label } from "@/components/ui/label";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import ErrorComponent from "@/components/ErrorComponent";

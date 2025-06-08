@@ -385,45 +385,45 @@ import addCostFromBank from "@/app/api/actions/cost-income/addCostFromBank";
 //   });
 // }
 
-//------------------HISTORY--------------------
+// //------------------HISTORY--------------------
 
-// add history
-export function useAddShopHistory() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // add history
+// export function useAddShopHistory() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (historyData: AddShopHistoryData) =>
-      await addShopHistory(historyData),
-    onSuccess: (data, variables) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-histories"] });
-        queryClient.refetchQueries({ queryKey: ["all-histories"] });
+//   return useMutation({
+//     mutationFn: async (historyData: AddShopHistoryData) =>
+//       await addShopHistory(historyData),
+//     onSuccess: (data, variables) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-histories"] });
+//         queryClient.refetchQueries({ queryKey: ["all-histories"] });
 
-        queryClient.invalidateQueries({
-          queryKey: ["shop-history", variables.shopId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["shop-history", variables.shopId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["shop-history", variables.shopId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["shop-history", variables.shopId],
+//         });
 
-        queryClient.invalidateQueries({
-          queryKey: ["person-history", variables.personId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["person-history", variables.personId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["person-history", variables.personId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["person-history", variables.personId],
+//         });
 
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
 // //------------------CHARGE--------------------
 
@@ -576,189 +576,189 @@ export function useAddShopHistory() {
 //   });
 // }
 
-//------------------PAYMENT--------------------
+// //------------------PAYMENT--------------------
 
-// add payment to a shop
-export function useAddPaymentByShop() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // add payment to a shop
+// export function useAddPaymentByShop() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: AddPaymentByInfoData) =>
-      await addPaymentByInfo(data),
-    onSuccess: (data, variables) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+//   return useMutation({
+//     mutationFn: async (data: AddPaymentByInfoData) =>
+//       await addPaymentByInfo(data),
+//     onSuccess: (data, variables) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+//         queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
-        queryClient.invalidateQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["shop-payments", variables.shopId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["shop-payments", variables.shopId],
+//         });
 
-        queryClient.invalidateQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["person-payments", variables.personId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["person-payments", variables.personId],
+//         });
 
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
-// add payment to a shop by Bank TransactionId
-export function useAddPaymentByBank() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // add payment to a shop by Bank TransactionId
+// export function useAddPaymentByBank() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: addPaymentByBankIdData) =>
-      await addPaymentByBankId(data),
-    onSuccess: (data, variables) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+//   return useMutation({
+//     mutationFn: async (data: addPaymentByBankIdData) =>
+//       await addPaymentByBankId(data),
+//     onSuccess: (data, variables) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+//         queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
-        queryClient.invalidateQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["shop-payments", variables.shopId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["shop-payments", variables.shopId],
+//         });
 
-        queryClient.invalidateQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["person-payments", variables.personId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["person-payments", variables.personId],
+//         });
 
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
-// delete a payment
-export function useDeletePaymentById() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // delete a payment
+// export function useDeletePaymentById() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (paymentId: string) => await deletePaymentById(paymentId),
-    onSuccess: (data, variables) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+//   return useMutation({
+//     mutationFn: async (paymentId: string) => await deletePaymentById(paymentId),
+//     onSuccess: (data, variables) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+//         queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
-        queryClient.invalidateQueries({
-          queryKey: ["shop-payments", data?.data?.shopId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", data?.data?.shopId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["shop-payments", data?.data?.shopId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["shop-payments", data?.data?.shopId],
+//         });
 
-        queryClient.invalidateQueries({
-          queryKey: ["person-payments", data?.data?.personId],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["person-payments", data?.data?.personId],
-        });
+//         queryClient.invalidateQueries({
+//           queryKey: ["person-payments", data?.data?.personId],
+//         });
+//         queryClient.refetchQueries({
+//           queryKey: ["person-payments", data?.data?.personId],
+//         });
 
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
 //------------------COST-INCOME--------------------
 
-// add cost
-export function useAddCost() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // add cost
+// export function useAddCost() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: AddCostData) => await addCost(data),
-    onSuccess: (data) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-costs"] });
-        queryClient.refetchQueries({ queryKey: ["all-costs"] });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: async (data: AddCostData) => await addCost(data),
+//     onSuccess: (data) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-costs"] });
+//         queryClient.refetchQueries({ queryKey: ["all-costs"] });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
-// Add Cost From Bank Transactions
-export function useAddCostFromBank() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // Add Cost From Bank Transactions
+// export function useAddCostFromBank() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: AddCostFromBankData) =>
-      await addCostFromBank(data),
-    onSuccess: (data) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-costs"] });
-        queryClient.refetchQueries({ queryKey: ["all-costs"] });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: async (data: AddCostFromBankData) =>
+//       await addCostFromBank(data),
+//     onSuccess: (data) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-costs"] });
+//         queryClient.refetchQueries({ queryKey: ["all-costs"] });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
-// add income
-export function useAddIncome() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+// // add income
+// export function useAddIncome() {
+//   const queryClient = useQueryClient();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: async (data: AddIncomeData) => await addIncome(data),
-    onSuccess: (data) => {
-      if (data.success) {
-        queryClient.invalidateQueries({ queryKey: ["all-incomes"] });
-        queryClient.refetchQueries({ queryKey: ["all-incomes"] });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: async (data: AddIncomeData) => await addIncome(data),
+//     onSuccess: (data) => {
+//       if (data.success) {
+//         queryClient.invalidateQueries({ queryKey: ["all-incomes"] });
+//         queryClient.refetchQueries({ queryKey: ["all-incomes"] });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
 // //------------------IMPORT-EXPORT--------------------
 
@@ -856,56 +856,56 @@ export function useAddIncome() {
 //   });
 // }
 
-export function useAddPaymentFromCard() {
-  const queryClient = useQueryClient();
+// export function useAddPaymentFromCard() {
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (id: string) => await addPaymentFromCard(id),
-    onSuccess: (data) => {
-      if (data.data?.success) {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        // queryClient.refetchQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: async (id: string) => await addPaymentFromCard(id),
+//     onSuccess: (data) => {
+//       if (data.data?.success) {
+//         // queryClient.invalidateQueries({
+//         //   queryKey: ["cardTransfer"],
+//         //   refetchType: "active",
+//         // });
+//         // queryClient.refetchQueries({
+//         //   queryKey: ["cardTransfer"],
+//         //   refetchType: "active",
+//         // });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }
 
 // set a Transaction as Registerable
 
-export function useSetRegisterAble() {
-  const queryClient = useQueryClient();
+// export function useSetRegisterAble() {
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (id: string) => await setRegisterAbleAction(id),
-    onSuccess: (data) => {
-      if (data.data?.success) {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        // queryClient.refetchQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        toast.success(data.data?.message);
-      } else {
-        toast.error(data.data?.message || data.message);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: async (id: string) => await setRegisterAbleAction(id),
+//     onSuccess: (data) => {
+//       if (data.data?.success) {
+//         // queryClient.invalidateQueries({
+//         //   queryKey: ["cardTransfer"],
+//         //   refetchType: "active",
+//         // });
+//         // queryClient.refetchQueries({
+//         //   queryKey: ["cardTransfer"],
+//         //   refetchType: "active",
+//         // });
+//         toast.success(data.data?.message);
+//       } else {
+//         toast.error(data.data?.message || data.message);
+//       }
+//     },
+//     onError: (error) => {
+//       toast.error(error.message);
+//     },
+//   });
+// }

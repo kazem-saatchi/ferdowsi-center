@@ -13,7 +13,7 @@ import { AccountType } from "@prisma/client";
 
 import { LimitSelector } from "@/components/bank/LimitSelector";
 import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
-import { useGetAllBankTransactions } from "@/tanstack/queries";
+import { useGetAllBankTransactions } from "@/tanstack/query/bankQuery";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(

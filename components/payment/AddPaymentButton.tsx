@@ -1,5 +1,5 @@
 "use client";
-import { useAddPaymentFromCard } from "@/tanstack/mutations";
+import { useAddPaymentFromCard } from "@/tanstack/mutation/paymentMutation";
 import React from "react";
 import { Button } from "../ui/button";
 

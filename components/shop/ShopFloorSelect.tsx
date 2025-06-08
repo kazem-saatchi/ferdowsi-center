@@ -2,7 +2,14 @@ import React from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
-const floorsNumber: number[] = [-1, 0, 1, 2, 3, 4, 5, 6, 7];
+const floorsNumber: number[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+
+const parkingFloorsLabel = (number: number) => {
+  if (number === -4) return "P3";
+  if (number === -3) return "P2";
+  if (number === -2) return "P1";
+  return number;
+};
 
 interface SelectShopFloorProps {
   floorValue: number;
@@ -24,7 +31,7 @@ function ShopFloorSelect({ floorValue, setFloorValue }: SelectShopFloorProps) {
             variant="outline"
             className={cn(floorValue === floor && "bg-primary")}
           >
-            {floor}
+            {parkingFloorsLabel(floor)}
           </Button>
         ))}
       </div>

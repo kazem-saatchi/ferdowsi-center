@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
 import { useUpdateShopRenter } from "@/tanstack/mutation/shopMutation";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { Button } from "@/components/ui/button";
 import {
   Card,

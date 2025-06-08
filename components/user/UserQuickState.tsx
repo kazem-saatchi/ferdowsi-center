@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { useGetUserInfo, useGetUserQuickState } from "@/tanstack/queries";
+import { useGetUserQuickState } from "@/tanstack/query/personQuery";
 import LoadingComponent from "../LoadingComponent";
 import { labels } from "@/utils/label";
 import ErrorComponent from "../ErrorComponent";

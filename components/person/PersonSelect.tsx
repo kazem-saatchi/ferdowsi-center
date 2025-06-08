@@ -63,7 +63,7 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
       >
         {selectedPerson
           ? `${selectedPerson.firstName} ${selectedPerson.lastName} (${selectedPerson.IdNumber})`
-          : `Select ${label}`}
+          : `انتخاب ${label}`}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">

@@ -1,5 +1,5 @@
-import { useFindPersonFromSession } from '@/tanstack/queries';
 import React from 'react'
+import { useFindPersonFromSession } from '@/tanstack/query/personQuery';
 
 function UserGreeting() {
     const { data: session } = useFindPersonFromSession();

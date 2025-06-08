@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAddChargeByShop } from "@/tanstack/mutation/chargeMutation";
-import { useFindAllShops } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

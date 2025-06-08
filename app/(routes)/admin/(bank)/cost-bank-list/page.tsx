@@ -4,7 +4,7 @@ import { BankTransactionCostTable } from "@/components/bank/BankTransactionsCost
 import { LimitSelector } from "@/components/bank/LimitSelector";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAllBankTransactions } from "@/tanstack/queries";
+import { useGetAllBankTransactions } from "@/tanstack/query/bankQuery";
 import { AccountType } from "@prisma/client";
 import React, { useState } from "react";
 

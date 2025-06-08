@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useFindAllPersons, useGetPersonBalance } from "@/tanstack/queries";
+import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
@@ -10,6 +10,7 @@ import { CustomSelect } from "@/components/CustomSelect";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 
 export default function PersonBalancePage() {
   const [selectedPersonId, setSelectedPersonId] = useState<string>("");

@@ -4,8 +4,8 @@
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetShopFinancialDetail } from "@/hooks/useGetShopFinancialDetail";
 import { ShopFinancialTable } from "@/components/user/form/ShopFinancialTable";
+import { useGetShopFinancialDetail } from "@/hooks/useGetShopFinancialDetail";
 
 export default function ShopFinancialDetailPage() {
   const params = useParams();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useUpatePersonRole, useUpdatePassword } from "@/tanstack/mutation/personMutation";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";

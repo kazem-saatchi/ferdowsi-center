@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
-import { useGetAllCardTransfer } from "@/tanstack/queries";
+import { useGetAllCardTransfer } from "@/tanstack/query/bankQuery";
 import { labels } from "@/utils/label";
 
 export default function TransactionsPage() {

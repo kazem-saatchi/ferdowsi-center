@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 
 import {
   Card,

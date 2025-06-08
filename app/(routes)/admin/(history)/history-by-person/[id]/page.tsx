@@ -4,7 +4,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useStore } from "@/store/store";
-import { useShopHistoryByPerson } from "@/tanstack/queries";
+import { useShopHistoryByPerson } from "@/tanstack/query/historyQuery";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";

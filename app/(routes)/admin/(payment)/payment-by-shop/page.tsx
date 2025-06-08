@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFindPaymentsByShop, useFindAllShops } from "@/tanstack/queries";
+import { useFindPaymentsByShop } from "@/tanstack/query/paymentQuery";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PaymentTable } from "@/components/payment/PaymentTable";

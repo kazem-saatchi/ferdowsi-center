@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFindAllShops } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useUpdateShopStatus } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

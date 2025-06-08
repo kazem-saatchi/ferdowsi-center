@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
-import { useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "@/components/LoadingComponent";

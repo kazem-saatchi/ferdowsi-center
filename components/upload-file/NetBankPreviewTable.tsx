@@ -42,7 +42,6 @@ export function NetBankPreviewTable({ data }: PreviewTableProps) {
     (header) => header !== "bankRecieptId"
   );
 
-  // console.log(data)
 
   return (
     <div className="overflow-x-auto">

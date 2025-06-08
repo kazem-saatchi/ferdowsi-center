@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDeletePaymentById } from "@/tanstack/mutations";
+import { useDeletePaymentById } from "@/tanstack/mutation/paymentMutation";
 import { Payment } from "@prisma/client";
 import { format } from "date-fns-jalali";
 import { Button } from "../ui/button";

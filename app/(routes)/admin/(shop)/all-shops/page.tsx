@@ -5,7 +5,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { ShopsTable } from "@/components/shop/ShopTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/store/store";
-import { useFindAllShops } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { labels } from "@/utils/label";

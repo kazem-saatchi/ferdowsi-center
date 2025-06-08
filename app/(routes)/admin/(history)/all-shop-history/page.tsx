@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useShopHistoryAll } from "@/tanstack/queries";
+import { useShopHistoryAll } from "@/tanstack/query/historyQuery";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";

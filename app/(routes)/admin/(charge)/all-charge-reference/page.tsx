@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFindAllChargesReference } from "@/tanstack/queries";
+import { useFindAllChargesReference } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

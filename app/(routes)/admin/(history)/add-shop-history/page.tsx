@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useFindAllShops, usePersonsByShop } from '@/tanstack/queries'
-import { useAddShopHistory } from '@/tanstack/mutations'
+import { useFindAllShops } from '@/tanstack/query/shopQuery'
+import { usePersonsByShop } from '@/tanstack/query/personQuery'
+import { useAddShopHistory } from '@/tanstack/mutation/historyMutation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"

@@ -22,7 +22,7 @@ import {
   PaymentType,
 } from "@/schema/paymentSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
-import { useAddPaymentByBank, useAddPaymentByShop } from "@/tanstack/mutations";
+import { useAddPaymentByBank, useAddPaymentByShop } from "@/tanstack/mutation/paymentMutation";
 import { toast } from "sonner";
 import SetRegisterAbleButton from "../bank/SetRegisterAbleButton";
 import { Separator } from "../ui/separator";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGetShopBalance, useFindAllShops } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
+import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

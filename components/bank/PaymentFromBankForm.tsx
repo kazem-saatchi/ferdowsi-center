@@ -1,7 +1,8 @@
 "use client";
 
 import { useStore } from "@/store/store";
-import { useFindAllPersons, useFindAllShops } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "../LoadingComponent";

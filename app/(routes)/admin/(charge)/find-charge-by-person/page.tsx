@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFindAllPersons, useFindChargesByPerson } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
+import { useFindChargesByPerson } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
 import { ChargeTable } from "@/components/charge/ChargeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

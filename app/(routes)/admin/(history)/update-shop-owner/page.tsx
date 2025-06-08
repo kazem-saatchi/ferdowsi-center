@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFindAllShops, useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllShops } from "@/tanstack/query/shopQuery";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useUpdateShopOwner } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import {

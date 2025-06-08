@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useGetPersonBalance } from "@/tanstack/queries";
+import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";

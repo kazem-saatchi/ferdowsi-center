@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
-import { useSetRegisterAble } from "@/tanstack/mutations";
+import { useSetRegisterAble } from "@/tanstack/mutation/incomeCostMutation";
 
 function SetRegisterAbleButton({
   id,

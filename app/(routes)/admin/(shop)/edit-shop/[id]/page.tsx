@@ -13,7 +13,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useFindShopById } from "@/tanstack/queries";
+import { useFindShopById } from "@/tanstack/query/shopQuery";
 import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";

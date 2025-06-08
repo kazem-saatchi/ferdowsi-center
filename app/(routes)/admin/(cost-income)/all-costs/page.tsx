@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useGetAllCosts } from "@/tanstack/queries"
+import { useGetAllCosts } from "@/tanstack/query/incomeCostQuery"
 import { useStore } from "@/store/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

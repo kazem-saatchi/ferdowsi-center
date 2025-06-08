@@ -3,7 +3,7 @@
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useStore } from "@/store/store";
-import { useGetUserInfo } from "@/tanstack/queries";
+import { useGetUserInfo } from "@/tanstack/query/personQuery";
 import { labels } from "@/utils/label";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";

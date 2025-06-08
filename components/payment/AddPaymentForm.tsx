@@ -19,7 +19,7 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { AddPaymentByInfoData, addPaymentByInfoSchema, PaymentType } from "@/schema/paymentSchema";
 import { formatNumberFromString } from "@/utils/formatNumber";
-import { useAddPaymentByShop } from "@/tanstack/mutations";
+import { useAddPaymentByShop } from "@/tanstack/mutation/paymentMutation";
 import { toast } from "sonner";
 
 

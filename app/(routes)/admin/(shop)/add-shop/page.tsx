@@ -14,7 +14,7 @@ import {
 
 import { useAddShop } from "@/tanstack/mutation/shopMutation";
 import { PersonSelect } from "@/components/person/PersonSelect";
-import { useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
@@ -118,15 +118,7 @@ export default function AddShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="floor">{labels.floorNumber}</Label>
-              {/* <Input
-                id="floor"
-                name="floor"
-                type="number"
-                value={newShop.floor}
-                onChange={(event) => {
-                  setNewShop("floor", parseInt(event.target.value));
-                }}
-              /> */}
+
               <ShopFloorSelect
                 floorValue={newShop.floor}
                 setFloorValue={setNewShop}
@@ -139,7 +131,7 @@ export default function AddShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="ownerId">{labels.owner}</Label>
-              <PersonSelect property="ownerId" label="Owner" />
+              <PersonSelect property="ownerId" label={labels.owner} />
               {formErrors.ownerId && (
                 <span className="text-red-500 text-sm">
                   {formErrors.ownerId?._errors[0]}
@@ -148,7 +140,7 @@ export default function AddShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="renterId">{`${labels.renter} (${labels.optional})`}</Label>
-              <PersonSelect property="renterId" label="Renter" />
+              <PersonSelect property="renterId" label={labels.renter} />
               {formErrors.renterId && (
                 <span className="text-red-500 text-sm">
                   {formErrors.renterId?._errors[0]}

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { useFindAllPersons } from "@/tanstack/queries";
+import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { PersonList } from "@/components/person/PersonList";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";

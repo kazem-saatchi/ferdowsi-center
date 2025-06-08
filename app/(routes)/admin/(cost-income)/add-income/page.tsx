@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useAddIncome } from "@/tanstack/mutations"
+import { useAddIncome } from "@/tanstack/mutation/incomeCostMutation"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
