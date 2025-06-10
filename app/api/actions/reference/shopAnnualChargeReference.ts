@@ -52,6 +52,7 @@ async function generateShopAnnualChargeReference(
         totalAmount: Math.floor((shop.area * metricValue) / 100000) * 100000,
         year: currentYear,
         proprietor: true,
+        forRent: false,
       };
 
       return chargeObject;

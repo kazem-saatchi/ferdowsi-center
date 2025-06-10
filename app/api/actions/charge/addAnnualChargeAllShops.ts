@@ -7,8 +7,7 @@ import {
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma } from "@prisma/client";
-import { differenceInDays, startOfDay } from "date-fns";
+import { Person, Prisma, ShopChargeReference } from "@prisma/client";
 
 interface AddChargeResponse {
   message: string;
@@ -39,15 +38,30 @@ async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
     throw new Error(errorMSG.unknownError);
   }
 
-  const shops = await db.shop.findMany();
+  const shops = await db.shop.findMany({
+    where: { OR: [{ type: "OFFICE" }, { type: "STORE" }] },
+  });
 
+  const annualChargeReferenceList = await db.shopChargeReference.findMany({
+    where: { proprietor: true, forRent: false },
+  });
+  const annualChargeReferenceListMap = annualChargeReferenceList.reduce(
+    (acc, item) => {
+      acc[item.shopId] = item;
+      return acc;
+    },
+    {} as Record<string, ShopChargeReference>
+  );
   // Calculate charges for each history period
   const annualChargeList = shops.reduce<Prisma.ChargeCreateManyInput[]>(
     (acc, shop) => {
-      const metricValue = shop.type === "STORE" ? storeMetric : officeMetric;
+      // const metricValue = shop.type === "STORE" ? storeMetric : officeMetric;
+
+      const amount = annualChargeReferenceListMap[shop.id]?.totalAmount;
+
       acc.push({
         title: `شارژ مالکانه ${year}`,
-        amount: shop.area * metricValue,
+        amount: amount,
         shopId: shop.id,
         plaque: shop.plaque,
         personId: shop.ownerId,

@@ -80,103 +80,141 @@ async function addKioskInternal(
     await db.$transaction(
       async (prisma) => {
         try {
-          if (!row.renterIdNumber) {
-            console.log(
-              `Skipping row with plaque ${row.plaque} due to missing renterIdNumber`
-            );
-            failedShops++;
-            return; // Skip to next row if renterIdNumber is not provided
-          }
-
-          let renter = null;
-
-          // Check if the renter exists
-          renter = await prisma.person.findUnique({
-            where: { IdNumber: row.renterIdNumber.toString() },
-          });
-
-          if (!renter) {
-            // Hash password for Renter
-            const renterHashedPassword = await hashPassword(
-              row.renterPhoneOne.toString()
-            );
-            // Create renter if they exist in the Excel data
-            renter = await prisma.person.create({
-              data: {
-                IdNumber: row.renterIdNumber.toString(),
-                firstName: row.renterFirstName.toString(),
-                lastName: row.renterLastName.toString(),
-                phoneOne: row.renterPhoneOne.toString(),
-                address: "",
-                password: renterHashedPassword,
-              },
-            });
-          }
-
-          // Check for duplicate plaque
-          const existingShop = await prisma.shop.findUnique({
+          //--------------------------------Check for duplicate plaque--------------------------------
+          let newShop = null;
+          newShop = await prisma.shop.findUnique({
             where: { plaque: +row.plaque },
           });
 
-          if (existingShop) {
+          console.log(row.plaque, row);
+
+          if (newShop) {
             console.log(`Plaque ${row.plaque} already exists, skipping.`);
             failedShops++;
             return; // Skip to next row
           }
 
-          // Create shop
-          const newShop = await prisma.shop.create({
-            data: {
-              plaque: row.plaque,
-              area: row.area,
-              floor: row.floor,
-              type: row.type as ShopType,
-              ownerId: owner.id,
-              renterId: renter.id,
-              ownerName: `${owner.firstName} ${owner.lastName}`,
-              renterName: `${renter.firstName} ${renter.lastName}`,
-              bankCardMonthly: row.bankCardMonthly,
-              bankCardYearly: row.bankCardYearly,
-            },
-          });
+          //--------------------------------Check if the shop is inactive--------------------------------
+          if (!row.isActive) {
+            console.log("shop is inactive, creating shop");
+            newShop = await prisma.shop.create({
+              data: {
+                plaque: row.plaque,
+                area: row.area,
+                floor: row.floor,
+                type: row.type as ShopType,
+                ownerId: owner.id,
+                ownerName: `${owner.firstName} ${owner.lastName}`,
+                bankCardMonthly: row.bankCardMonthly || "",
+                bankCardYearly: row.bankCardYearly || "",
+                isActive: false,
+              },
+            });
+            console.log(`shop ${row.plaque} added successfully`);
+          }
 
-          // Add Renter Charge Balance
-          const ownerCharge = await prisma.charge.create({
-            data: {
-              amount: row.renterChargeBalance,
-              date: todayDate,
-              daysCount: 0,
-              title: pastBalanceTitle,
-              operationName: operation.title,
-              plaque: newShop.plaque,
-              shopId: newShop.id,
-              personId: renter.id,
-              personName: `${renter.firstName} ${renter.lastName}`,
-              operationId: operation.id,
-              proprietor: true,
-              description: pastBalanceDescription,
-            },
-          });
+          //--------------------------------Check for missing renterIdNumber--------------------------------
+          // if (!row.renterIdNumber) {
+          //   console.log(
+          //     `Skipping row with plaque ${row.plaque} due to missing renterIdNumber`
+          //   );
+          //   failedShops++;
+          //   return; // Skip to next row if renterIdNumber is not provided
+          // }
 
-          // Add Renter Rent Balance
-          const renterCharge = await prisma.charge.create({
-            data: {
-              amount: row.renterRentBalance,
-              date: todayDate,
-              daysCount: 0,
-              title: pastBalanceTitle,
-              operationName: operation.title,
-              plaque: newShop.plaque,
-              shopId: newShop.id,
-              personId: renter.id,
-              personName: `${renter.firstName} ${renter.lastName}`,
-              operationId: operation.id,
-              proprietor: false,
-              description: pastBalanceDescription,
-            },
-          });
+          //--------------------------------Check if the renter exists--------------------------------
+          let renter = null;
+          if (row.renterIdNumber) {
+            renter = await prisma.person.findUnique({
+              where: { IdNumber: row.renterIdNumber.toString() },
+            });
+          }
 
-          // Create shop history
+          if (renter) {
+            console.log("renter found", renter);
+          }
+
+          //--------------------------------Check if the renter exists--------------------------------
+          if (row.renterPhoneOne && row.renterIdNumber) {
+            // Hash password for Renter
+            const renterHashedPassword = await hashPassword(
+              row.renterPhoneOne.toString()
+            );
+
+            if (!renter) {
+              console.log("renter not found, creating renter");
+              // Create renter if they exist in the Excel data
+              renter = await prisma.person.create({
+                data: {
+                  IdNumber: row.renterIdNumber.toString(),
+                  firstName: row.renterFirstName?.toString() || "",
+                  lastName: row.renterLastName?.toString() || "",
+                  phoneOne: row.renterPhoneOne.toString(),
+                  address: "",
+                  password: renterHashedPassword,
+                },
+              });
+            }
+            //--------------------------------Create shop--------------------------------
+            newShop = await prisma.shop.create({
+              data: {
+                plaque: row.plaque,
+                area: row.area,
+                floor: row.floor,
+                type: row.type as ShopType,
+                ownerId: owner.id,
+                renterId: renter.id,
+                ownerName: `${owner.firstName} ${owner.lastName}`,
+                renterName: `${renter.firstName} ${renter.lastName}`,
+                bankCardMonthly: row.bankCardMonthly || "",
+                bankCardYearly: row.bankCardYearly || "",
+              },
+            });
+
+            //--------------------------------Add Renter Rent Balance--------------------------------
+            const renterRentBalance = await prisma.charge.create({
+              data: {
+                amount: row.renterRentBalance || 0,
+                date: todayDate,
+                daysCount: 0,
+                title: pastBalanceTitle,
+                operationName: operation.title,
+                plaque: newShop.plaque,
+                shopId: newShop.id,
+                personId: renter.id,
+                personName: `${renter.firstName} ${renter.lastName}`,
+                operationId: operation.id,
+                proprietor: true,
+                description: pastPropreitorBalanceTitle,
+              },
+            });
+
+            //--------------------------------Add Renter Charge Balance--------------------------------
+            const renterChargeBalance = await prisma.charge.create({
+              data: {
+                amount: row.renterChargeBalance || 0,
+                date: todayDate,
+                daysCount: 0,
+                title: pastBalanceTitle,
+                operationName: operation.title,
+                plaque: newShop.plaque,
+                shopId: newShop.id,
+                personId: renter.id,
+                personName: `${renter.firstName} ${renter.lastName}`,
+                operationId: operation.id,
+                proprietor: false,
+                description: pastBalanceDescription,
+              },
+            });
+          }
+
+          if (!newShop) {
+            console.log(`shop ${row.plaque} not found, skipping.`);
+            failedShops++;
+            return;
+          }
+
+          //--------------------------------Create shop history--------------------------------
           const historyEntries: Prisma.ShopHistoryCreateManyInput[] = [
             {
               shopId: newShop.id,

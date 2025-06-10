@@ -33,6 +33,7 @@ export const addPersonsShopsSchema = z.object({
 export type AddPersonsShopsData = z.infer<typeof addPersonsShopsSchema>;
 //--------------------------------------------------------------------------------------
 export const addkioskSchema = z.object({
+  isActive: z.boolean(),
   plaque: z.number(),
   area: z
     .number()
@@ -40,18 +41,18 @@ export const addkioskSchema = z.object({
   floor: z.number().int({ message: "Floor must be an integer." }),
   type: z.enum(ShopTypeValues),
 
-  renterPhoneOne: z.string(),
-  renterIdNumber: z.string(),
-  renterFirstName: z.string(),
-  renterLastName: z.string(),
-  renterAddress: z.string(),
-  renterRentBalance: z.number(),
-  renterChargeBalance: z.number(),
-  rentAmount: z.number(),
-  chargeAmount: z.number(),
+  renterPhoneOne: z.string().nullable(),
+  renterIdNumber: z.string().nullable(),
+  renterFirstName: z.string().nullable(),
+  renterLastName: z.string().nullable(),
+  renterAddress: z.string().nullable(),
+  renterRentBalance: z.number().nullable(),
+  renterChargeBalance: z.number().nullable(),
+  rentAmount: z.number().nullable(),
+  chargeAmount: z.number().nullable(),
 
-  bankCardMonthly: z.string(),
-  bankCardYearly: z.string(),
+  bankCardMonthly: z.string().nullable(),
+  bankCardYearly: z.string().nullable(),
 });
 
 export type AddKioskData = z.infer<typeof addkioskSchema>;
