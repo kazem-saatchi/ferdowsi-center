@@ -129,18 +129,18 @@ export default function AddChargeToShopPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shopId">{labels.shop}</Label>
+              <Label htmlFor="shopId">{labels.unit}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={formData.shopId}
                 onChange={(value) =>
                   setFormData((prev) => ({ ...prev, shopId: value }))
                 }
-                label={labels.shop}
+                label={labels.unit}
               />
             </div>
             <JalaliMonthCalendar handleDateChange={handleDateChange} />
-       
+
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
               <Input
@@ -159,7 +159,9 @@ export default function AddChargeToShopPage() {
               className="w-full"
               disabled={addChargeMutation.isPending}
             >
-              {addChargeMutation.isPending ? labels.addingChargeToShop : labels.addCharge}
+              {addChargeMutation.isPending
+                ? labels.addingChargeToShop
+                : labels.addCharge}
             </Button>
           </CardFooter>
         </form>

@@ -150,7 +150,7 @@ export default function EditShopPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `${labels.shop} ${shop.plaque} (${labels.floorNumber} ${shop.floor})`,
+      label: `${labels.unit} ${shop.plaque} (${labels.floorNumber} ${shop.floor})`,
     })) || [];
 
   return (

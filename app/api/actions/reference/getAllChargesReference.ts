@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, ShopChargeReference } from "@prisma/client";
+import { Person, ShopChargeReference, ShopType } from "@prisma/client";
 
 interface FindchargeResponse {
   success: boolean;
@@ -23,16 +23,27 @@ async function getAllChargesReference(
 
   // Get ShopCharges
   const chargeList = await db.shopChargeReference.findMany({
-    where: { proprietor: false },
+    where: {
+      proprietor: false,
+      shopType: { in: [ShopType.STORE, ShopType.OFFICE, ShopType.KIOSK] },
+    },
     orderBy: { plaque: "asc" },
   });
 
   const rentList = await db.shopChargeReference.findMany({
-    where: { proprietor: true, forRent: true },
+    where: {
+      proprietor: true,
+      forRent: true,
+      shopType: { in: [ShopType.BOARD, ShopType.KIOSK, ShopType.PARKING] },
+    },
   });
 
   const annualChargeList = await db.shopChargeReference.findMany({
-    where: { proprietor: true, forRent: false },
+    where: {
+      proprietor: true,
+      forRent: false,
+      shopType: { in: [ShopType.STORE, ShopType.OFFICE] },
+    },
     orderBy: { plaque: "asc" },
   });
 

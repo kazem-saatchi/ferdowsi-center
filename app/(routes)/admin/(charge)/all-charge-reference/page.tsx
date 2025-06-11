@@ -14,24 +14,33 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
-import type { ShopChargeReference } from "@prisma/client";
+import { ShopChargeReference, ShopType } from "@prisma/client";
 import { formatNumber } from "@/utils/formatNumber";
 import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
-
-type SortKey = keyof ShopChargeReference;
+import ChargeReferenceTable from "@/components/charge/ChargeReferenceTable";
+import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 
 export default function ChargeReferenceListPage() {
   const { data, isLoading, isError, error, refetch } =
     useFindAllChargesReference();
+
+  const [tableType, setTableType] = useState<"CHARGE" | "ANNUAL" | "RENT">(
+    "CHARGE"
+  );
+  const [shopTypeFilter, setShopTypeFilter] = useState<ShopType | undefined>(
+    undefined
+  );
 
   const {
     allChargesReference,
     setAllChargesReference,
     allAnnualChargeReference,
     setAllAnnualChargesReference,
+    allRentReference,
+    setAllRentReference,
     exportChargeListToPDF,
     exportChargeListToExcel,
   } = useStore(
@@ -40,16 +49,12 @@ export default function ChargeReferenceListPage() {
       setAllChargesReference: state.setAllChargesReference,
       allAnnualChargeReference: state.allAnnualChargesReference,
       setAllAnnualChargesReference: state.setAllAnnualChargesReference,
+      allRentReference: state.allRentReference,
+      setAllRentReference: state.setAllRentReference,
       exportChargeListToPDF: state.exportChargeListToPDF,
       exportChargeListToExcel: state.exportChargeListToExcel,
     }))
   );
-
-  const [sortConfig, setSortConfig] = useState<{
-    key: SortKey;
-    direction: "asc" | "desc";
-    proprietor: boolean;
-  }>({ key: "plaque", direction: "asc", proprietor: false });
 
   useEffect(() => {
     if (data?.data?.chargeList) {
@@ -58,142 +63,112 @@ export default function ChargeReferenceListPage() {
     if (data?.data?.annualChargeList) {
       setAllAnnualChargesReference(data.data.annualChargeList);
     }
-  }, [data, setAllChargesReference, setAllAnnualChargesReference]);
-
-  const sortedChargeReferences = [
-    ...(allChargesReference || []),
-    ...(allAnnualChargeReference || []),
-  ]
-    .filter((charge) => charge.proprietor === sortConfig.proprietor)
-    .sort((a, b) => {
-      if (!sortConfig) return 0;
-      const { key, direction } = sortConfig;
-      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
-      return 0;
-    });
-
-  const handleSort = (key: SortKey) => {
-    setSortConfig((current) => {
-      if (current?.key === key) {
-        return {
-          key,
-          direction: current.direction === "asc" ? "desc" : "asc",
-          proprietor: current.proprietor,
-        };
-      }
-      return { key, direction: "asc", proprietor: current.proprietor };
-    });
-  };
+    if (data?.data?.rentList) {
+      setAllRentReference(data.data.rentList);
+    }
+  }, [
+    data,
+    setAllChargesReference,
+    setAllAnnualChargesReference,
+    setAllRentReference,
+  ]);
 
   if (isLoading) return <LoadingComponent text={labels.loadingData} />;
-  if (isError)
-    return (
-      <ErrorComponent
-        error={error}
-        message={labels.errorOccurred}
-        retry={refetch}
-      />
-    );
+  if (
+    isError ||
+    !allChargesReference ||
+    !allAnnualChargeReference ||
+    !allRentReference
+  )
+    return <ErrorComponentSimple message={labels.errorOccurred} />;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-row items-center justify-between">
-          <CardTitle>
-            {sortConfig.proprietor
-              ? labels.proprietorChargeList
-              : labels.monthlyChargeList}
-          </CardTitle>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSortConfig((prev) => {
-                return { ...prev, proprietor: !prev.proprietor };
-              });
-            }}
-          >
-            {sortConfig.proprietor
-              ? labels.viewMonthlyList
-              : labels.viewProprietorList}
+    <div>
+      <CardHeader className="flex flex-row items-center justify-between gap-2 mb-4 px-2">
+        <div className="flex flex-col items-start justify-start gap-2 mb-4 px-2">
+          <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
+            <Button
+              variant={tableType === "CHARGE" ? "default" : "outline"}
+              onClick={() => setTableType("CHARGE")}
+            >
+              {labels.monthlyCharge}
+            </Button>
+            <Button
+              variant={tableType === "ANNUAL" ? "default" : "outline"}
+              onClick={() => setTableType("ANNUAL")}
+            >
+              {labels.proprietorCharge}
+            </Button>
+            <Button
+              variant={tableType === "RENT" ? "default" : "outline"}
+              onClick={() => setTableType("RENT")}
+            >
+              {labels.rentCharge}
+            </Button>
+          </div>
+          <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
+            <Button
+              variant={
+                shopTypeFilter === ShopType.STORE ? "default" : "outline"
+              }
+              onClick={() => setShopTypeFilter(ShopType.STORE)}
+            >
+              {labels.shop}
+            </Button>
+            <Button
+              variant={
+                shopTypeFilter === ShopType.OFFICE ? "default" : "outline"
+              }
+              onClick={() => setShopTypeFilter(ShopType.OFFICE)}
+            >
+              {labels.office}
+            </Button>
+            <Button
+              variant={
+                shopTypeFilter === ShopType.KIOSK ? "default" : "outline"
+              }
+              onClick={() => setShopTypeFilter(ShopType.KIOSK)}
+            >
+              {labels.kiosk}
+            </Button>
+            <Button
+              variant={
+                shopTypeFilter === ShopType.BOARD ? "default" : "outline"
+              }
+              onClick={() => setShopTypeFilter(ShopType.BOARD)}
+            >
+              {labels.board}
+            </Button>
+            <Button
+              variant={
+                shopTypeFilter === ShopType.PARKING ? "default" : "outline"
+              }
+              onClick={() => setShopTypeFilter(ShopType.PARKING)}
+            >
+              {labels.parking}
+            </Button>
+          </div>
+        </div>
+        <div className="flex flex-col items-end justify-end gap-2 mb-4 px-2">
+          <Button onClick={exportChargeListToPDF} className="w-40">
+            {labels.downloadAsPDF}
+          </Button>
+          <Button onClick={exportChargeListToExcel} className="w-40">
+            {labels.downloadAsExcel}
           </Button>
         </div>
       </CardHeader>
-      <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
-        <Button onClick={exportChargeListToPDF}>{labels.downloadAsPDF}</Button>
-        <Button onClick={exportChargeListToExcel}>
-          {labels.downloadAsExcel}
-        </Button>
-      </div>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-center">
-                <Button variant="ghost" onClick={() => handleSort("plaque")}>
-                  {labels.plaque} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">
-                <Button variant="ghost" onClick={() => handleSort("area")}>
-                  {labels.areaM2} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => handleSort("constantAmount")}
-                >
-                  {labels.constAmount} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => handleSort("metricAmount")}
-                >
-                  {labels.metricAmount} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => handleSort("totalAmount")}
-                >
-                  {labels.totalCharge} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-              <TableHead className="text-center">
-                <Button variant="ghost" onClick={() => handleSort("year")}>
-                  {labels.date} <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedChargeReferences.map((reference) => (
-              <TableRow key={reference.id}>
-                <TableCell className="text-center">
-                  {reference.plaque}
-                </TableCell>
-                <TableCell className="text-center">
-                  {reference.area.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-center text-2xl">
-                  {formatNumber(reference.constantAmount)}
-                </TableCell>
-                <TableCell className="text-center text-2xl">
-                  {formatNumber(reference.metricAmount)}
-                </TableCell>
-                <TableCell className="text-center text-2xl">
-                  {formatNumber(reference.totalAmount)}
-                </TableCell>
-                <TableCell className="text-center">{reference.year}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <ChargeReferenceTable
+          chargeReferences={
+            tableType === "CHARGE"
+              ? allChargesReference
+              : tableType === "ANNUAL"
+              ? allAnnualChargeReference
+              : allRentReference
+          }
+        />
       </CardContent>
-    </Card>
+    </div>
   );
 }

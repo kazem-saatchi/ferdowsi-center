@@ -53,6 +53,7 @@ async function generateShopAnnualChargeReference(
         year: currentYear,
         proprietor: true,
         forRent: false,
+        shopType: shop.type,
       };
 
       return chargeObject;

@@ -12,6 +12,7 @@ type Charges = {
   setAllCharges: (charges: Charge[]) => void;
   shopCharges: Charge[] | null;
   setShopCharges: (charges: Charge[]) => void;
+  
   personCharges: Charge[] | null;
   setPersonCharges: (charges: Charge[]) => void;
   allChargesReference: ShopChargeReference[] | null;
@@ -20,6 +21,8 @@ type Charges = {
   setAllAnnualChargesReference: (
     chargeReference: ShopChargeReference[]
   ) => void;
+  allRentReference: ShopChargeReference[] | null;
+  setAllRentReference: (charges: ShopChargeReference[]) => void;
   exportChargeListToPDF: () => void;
   exportChargeListToExcel: () => void;
 };
@@ -35,6 +38,7 @@ export const createChargeSlice: StateCreator<
   // State
   allCharges: null,
   shopCharges: null,
+  allRentReference: null,
   personCharges: null,
   allChargesReference: null,
   allAnnualChargesReference: null,
@@ -42,6 +46,7 @@ export const createChargeSlice: StateCreator<
   // Set utils
   setAllCharges: (charges) => set({ allCharges: charges }),
   setShopCharges: (charges) => set({ shopCharges: charges }),
+  setAllRentReference: (charges) => set({ allRentReference: charges }),
   setPersonCharges: (charges) => set({ personCharges: charges }),
   setAllChargesReference: (chargeList) =>
     set({ allChargesReference: chargeList }),
@@ -50,7 +55,10 @@ export const createChargeSlice: StateCreator<
 
   exportChargeListToPDF: () =>
     set((state) => {
-      if (!state.allChargesReference || state.allChargesReference.length === 0) {
+      if (
+        !state.allChargesReference ||
+        state.allChargesReference.length === 0
+      ) {
         console.error("No Charge data to export");
         return;
       }
@@ -62,7 +70,10 @@ export const createChargeSlice: StateCreator<
     }),
   exportChargeListToExcel: () =>
     set((state) => {
-      if (!state.allChargesReference || state.allChargesReference.length === 0) {
+      if (
+        !state.allChargesReference ||
+        state.allChargesReference.length === 0
+      ) {
         console.error("No Charge data to export");
         return;
       }

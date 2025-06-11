@@ -102,12 +102,12 @@ export default function RemoveShopRenterPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop">{labels.shop}</Label>
+              <Label htmlFor="shop">{labels.unit}</Label>
               <CustomSelect
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
-                label={labels.shop}
+                label={labels.unit}
               />
             </div>
             <div className="space-y-2">

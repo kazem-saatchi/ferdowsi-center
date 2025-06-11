@@ -75,6 +75,7 @@ async function generateShopChargeReference(
               100000
           ) * 100000,
         year: currentYear,
+        shopType: shop.type,
       };
 
       return chargeObject;
@@ -92,6 +93,7 @@ async function generateShopChargeReference(
         totalAmount: totalAmount ?? 0,
         year: currentYear,
         proprietor: false,
+        shopType: shop.type,
       };
 
       return chargeObject;
@@ -110,6 +112,7 @@ async function generateShopChargeReference(
         year: currentYear,
         proprietor: true,
         forRent: true,
+        shopType: shop.type,
       };
 
       return chargeObject;
@@ -128,6 +131,7 @@ async function generateShopChargeReference(
         year: currentYear,
         proprietor: true,
         forRent: true,
+        shopType: shop.type,
       };
 
       return chargeObject;
@@ -146,6 +150,7 @@ async function generateShopChargeReference(
         year: currentYear,
         proprietor: true,
         forRent: true,
+        shopType: shop.type,
       };
 
       return chargeObject;

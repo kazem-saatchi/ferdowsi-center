@@ -82,7 +82,7 @@ export default function FindChargesByShopPage() {
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
-            label={labels.shop}
+            label={labels.unit}
           />
         </div>
         <Separator className="my-4" />

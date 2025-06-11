@@ -72,6 +72,7 @@ export const labels = {
 
   proprietorCharge: "مالکانه",
   monthlyCharge: "ماهانه",
+  rentCharge: "اجاره",
 
   viewReceipt: "مشاهده رسید",
   noReceipt: "بدون رسید",
@@ -116,6 +117,8 @@ export const labels = {
   store: "تجاری",
   office: "اداری",
   kiosk: "مشاعات",
+  parking: "پارکینگ",
+  board: "بورد",
 
   // Add new labels for shop history
   addShopHistory: "ثبت تاریخچه واحد",
@@ -126,8 +129,9 @@ export const labels = {
   rental: "اجاره",
   addingHistory: "در حال ثبت تاریخچه...",
   selectType: "انتخاب نوع",
-  shop: "واحد",
+  shop: "تجاری",
   person: "شخص",
+  unit: "واحد",
 
   optional: "اختیاری",
 

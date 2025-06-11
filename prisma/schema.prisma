@@ -208,6 +208,8 @@ model ShopChargeReference {
   shopId          String    
   plaque          Int
   area            Float
+  shopType        ShopType  @default(STORE)
+
   constantAmount  Int
   metricAmount    Int
   totalAmount     Int

@@ -6,16 +6,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Shop } from "@prisma/client";
+import { Shop, ShopType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { labels } from "@/utils/label";
+import { labels } from "@/utils/label"
 
 interface ShopsTableProps {
   shops: Shop[];
 }
 
 export function ShopsTable({ shops }: ShopsTableProps) {
+  
   return (
     <Table>
       <TableHeader>
