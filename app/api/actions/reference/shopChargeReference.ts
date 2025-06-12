@@ -101,7 +101,7 @@ async function generateShopChargeReference(
 
   const kioskRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
     kioskList.map((shop) => {
-      const totalAmount = shop.rentAmount;
+      const totalAmount = shop.RentAmount;
       const chargeObject = {
         shopId: shop.id,
         plaque: shop.plaque,
@@ -120,7 +120,7 @@ async function generateShopChargeReference(
 
   const parkingRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
     parkingList.map((shop) => {
-      const totalAmount = shop.rentAmount;
+      const totalAmount = shop.RentAmount;
       const chargeObject = {
         shopId: shop.id,
         plaque: shop.plaque,
@@ -139,7 +139,7 @@ async function generateShopChargeReference(
 
   const boardRentList: Prisma.ShopChargeReferenceCreateManyInput[] =
     boardList.map((shop) => {
-      const totalAmount = shop.rentAmount;
+      const totalAmount = shop.RentAmount;
       const chargeObject = {
         shopId: shop.id,
         plaque: shop.plaque,

@@ -108,6 +108,8 @@ async function addKioskInternal(
                 bankCardMonthly: row.bankCardMonthly || "",
                 bankCardYearly: row.bankCardYearly || "",
                 isActive: false,
+                RentAmount: row.rentAmount || 0,
+                ChargeAmount: row.chargeAmount || 0,
               },
             });
             console.log(`shop ${row.plaque} added successfully`);
@@ -168,6 +170,8 @@ async function addKioskInternal(
                 renterName: `${renter.firstName} ${renter.lastName}`,
                 bankCardMonthly: row.bankCardMonthly || "",
                 bankCardYearly: row.bankCardYearly || "",
+                RentAmount: row.rentAmount || 0,
+                ChargeAmount: row.chargeAmount || 0,
               },
             });
 

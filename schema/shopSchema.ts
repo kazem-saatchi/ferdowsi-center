@@ -18,6 +18,15 @@ export const addShopSchema = z.object({
     .nullable(),
   bankCardMonthly: z.string(),
   bankCardYearly: z.string(),
+  rentAmount: z
+    .number()
+    .min(0, { message: "مبلغ اجاره باید یک عدد مثبت باشد." })
+    .optional(),
+  chargeAmount: z
+    .number()
+    .min(0, { message: "مبلغ شارژ باید یک عدد مثبت باشد." })
+    .optional(),
+  rentDate: z.string().datetime().optional(),
 });
 
 export type AddShopData = z.infer<typeof addShopSchema>;

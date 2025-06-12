@@ -36,6 +36,9 @@ async function updateShop(data: UpdateShopInfoData, user: Person) {
       bankCardMonthly: validation.data.bankCardMonthly,
       bankCardYearly: validation.data.bankCardYearly,
       type: validation.data.type as ShopType,
+      RentAmount: validation.data.rentAmount,
+      ChargeAmount: validation.data.chargeAmount,
+      rentDate: validation.data.rentDate,
     },
   });
 

@@ -47,6 +47,10 @@ async function getAllChargesReference(
     orderBy: { plaque: "asc" },
   });
 
+  console.log("charge List", chargeList);
+  console.log("rent List", rentList);
+  console.log("annual Charge List", annualChargeList);
+
   return {
     success: true,
     message: successMSG.chargesFound,

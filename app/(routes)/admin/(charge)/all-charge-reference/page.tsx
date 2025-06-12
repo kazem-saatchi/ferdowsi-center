@@ -3,22 +3,11 @@
 import { useEffect, useState } from "react";
 import { useFindAllChargesReference } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
 import { ShopChargeReference, ShopType } from "@prisma/client";
-import { formatNumber } from "@/utils/formatNumber";
 import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "@/components/LoadingComponent";
-import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
 import ChargeReferenceTable from "@/components/charge/ChargeReferenceTable";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
@@ -33,6 +22,8 @@ export default function ChargeReferenceListPage() {
   const [shopTypeFilter, setShopTypeFilter] = useState<ShopType | undefined>(
     undefined
   );
+
+  const [tableData, setTableData] = useState<ShopChargeReference[]>([]);
 
   const {
     allChargesReference,
@@ -73,6 +64,31 @@ export default function ChargeReferenceListPage() {
     setAllRentReference,
   ]);
 
+  useEffect(() => {
+    let baseData: ShopChargeReference[] = [];
+
+    if (tableType === "CHARGE") {
+      baseData = allChargesReference || [];
+    } else if (tableType === "ANNUAL") {
+      baseData = allAnnualChargeReference || [];
+    } else {
+      baseData = allRentReference || [];
+    }
+
+    // Apply shop type filter if it exists
+    if (shopTypeFilter) {
+      baseData = baseData.filter((item) => item.shopType === shopTypeFilter);
+    }
+
+    setTableData(baseData);
+  }, [
+    tableType,
+    shopTypeFilter,
+    allChargesReference,
+    allAnnualChargeReference,
+    allRentReference,
+  ]);
+
   if (isLoading) return <LoadingComponent text={labels.loadingData} />;
   if (
     isError ||
@@ -81,6 +97,8 @@ export default function ChargeReferenceListPage() {
     !allRentReference
   )
     return <ErrorComponentSimple message={labels.errorOccurred} />;
+
+  console.log("tableData", tableType, shopTypeFilter, tableData);
 
   return (
     <div>
@@ -107,6 +125,12 @@ export default function ChargeReferenceListPage() {
             </Button>
           </div>
           <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
+            <Button
+              variant={shopTypeFilter === undefined ? "default" : "outline"}
+              onClick={() => setShopTypeFilter(undefined)}
+            >
+              {labels.all}
+            </Button>
             <Button
               variant={
                 shopTypeFilter === ShopType.STORE ? "default" : "outline"
@@ -159,15 +183,7 @@ export default function ChargeReferenceListPage() {
         </div>
       </CardHeader>
       <CardContent>
-        <ChargeReferenceTable
-          chargeReferences={
-            tableType === "CHARGE"
-              ? allChargesReference
-              : tableType === "ANNUAL"
-              ? allAnnualChargeReference
-              : allRentReference
-          }
-        />
+        <ChargeReferenceTable chargeReferences={tableData} />
       </CardContent>
     </div>
   );

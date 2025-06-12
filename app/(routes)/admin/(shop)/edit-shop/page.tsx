@@ -30,10 +30,14 @@ import { toast } from "sonner";
 import { labels } from "@/utils/label";
 import BankCardOTPForm from "@/components/shop/BankCardOTPForm";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
+import NumericInput from "@/components/NumericInput";
 
 export default function EditShopPage() {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
+  const [rentDate, setRentDate] = useState<Date | null>(null);
 
   const { data, error, isError, isLoading, refetch } = useFindAllShops();
 
@@ -45,15 +49,25 @@ export default function EditShopPage() {
   );
   const updateShopMutation = useUpateShopInfo();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    plaque: string;
+    area: string;
+    floor: string;
+    bankCardMonthly: string;
+    bankCardYearly: string;
+    type: ShopType;
+    rentAmount: number | null;
+    chargeAmount: number | null;
+  }>({
     plaque: "",
     area: "",
     floor: "",
     bankCardMonthly: "",
     bankCardYearly: "",
+    type: "STORE",
+    rentAmount: null,
+    chargeAmount: null,
   });
-
-  const [shopType, setShopType] = useState<ShopType>("STORE");
 
   useEffect(() => {
     if (data?.data?.shops) {
@@ -72,8 +86,10 @@ export default function EditShopPage() {
           floor: selected.floor.toString(),
           bankCardMonthly: selected.bankCardMonthly,
           bankCardYearly: selected.bankCardYearly,
+          type: selected.type,
+          rentAmount: selected.RentAmount,
+          chargeAmount: selected.ChargeAmount,
         });
-        setShopType(selected.type);
       }
     } else {
       setSelectedShop(null);
@@ -83,8 +99,10 @@ export default function EditShopPage() {
         floor: "",
         bankCardMonthly: "",
         bankCardYearly: "",
+        type: "STORE",
+        rentAmount: null,
+        chargeAmount: null,
       });
-      setShopType("STORE");
     }
   }, [selectedShopId, shopsAll]);
 
@@ -121,9 +139,12 @@ export default function EditShopPage() {
         plaque: Number.parseInt(formData.plaque),
         area: Number.parseFloat(formData.area),
         floor: Number.parseInt(formData.floor),
-        type: shopType,
+        type: formData.type as ShopType,
         bankCardMonthly: formData.bankCardMonthly,
         bankCardYearly: formData.bankCardYearly,
+        rentAmount: formData.rentAmount || undefined,
+        chargeAmount: formData.chargeAmount || undefined,
+        rentDate: rentDate?.toISOString() || undefined,
       });
       if (result.success) {
         toast.success(labels.shopUpdateSuccess);
@@ -232,9 +253,12 @@ export default function EditShopPage() {
                 <Label htmlFor="type">{labels.storeOrOffice}</Label>
                 <Select
                   dir="rtl"
-                  value={shopType}
-                  onValueChange={(value: "STORE" | "OFFICE") =>
-                    setShopType(value)
+                  value={formData.type}
+                  onValueChange={(value: ShopType) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      type: value,
+                    }))
                   }
                 >
                   <SelectTrigger>
@@ -243,9 +267,63 @@ export default function EditShopPage() {
                   <SelectContent>
                     <SelectItem value="STORE">فروشگاه</SelectItem>
                     <SelectItem value="OFFICE">دفتر</SelectItem>
+                    <SelectItem value="BOARD">بورد</SelectItem>
+                    <SelectItem value="KIOSK">کیوسک</SelectItem>
+                    <SelectItem value="PARKING">پارکینگ</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
+              <div
+                className={cn(
+                  "flex flex-col w-full border-2 rounded-md",
+                  "p-4 gap-4"
+                )}
+              >
+                <div className="flex flex-col md:flex-row items-center justify-start gap-4">
+                  <NumericInput
+                    value={formData.rentAmount?.toString() || ""}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        rentAmount: Number(value),
+                      }))
+                    }
+                    label="مبلغ اجاره"
+                    disabled={
+                      formData.type === "STORE" || formData.type === "OFFICE"
+                    }
+                  />
+
+                  <NumericInput
+                    value={formData.chargeAmount?.toString() || ""}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        chargeAmount: Number(value),
+                      }))
+                    }
+                    label="مبلغ شارژ"
+                    disabled={
+                      formData.type === "STORE" || formData.type === "OFFICE"
+                    }
+                  />
+
+                  <div className="space-y-2">
+                    <JalaliDayCalendar
+                      title="تاریخ قرارداد"
+                      date={rentDate || new Date()}
+                      setDate={(date) => setRentDate(date as Date)}
+                    />
+                  </div>
+                </div>
+                {formData.type === "STORE" || formData.type === "OFFICE" ? (
+                  <span className="text-sm text-gray-500">
+                    مبلغ اجاره و شارژ ماهانه برای فروشگاه و دفتر نیست
+                  </span>
+                ) : null}
+              </div>
+
               <div className="space-y-2">
                 <Label>مالک</Label>
                 <Input value={selectedShop.ownerName} disabled />
