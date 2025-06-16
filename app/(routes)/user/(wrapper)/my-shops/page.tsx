@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { labels } from "@/utils/label";
 import { errorMSG } from "@/utils/messages";
 import { Loader } from "lucide-react";
+import { Shop } from "@prisma/client";
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
@@ -39,31 +40,46 @@ export default function MyShopsPage() {
     }
   }, [data, setPersonShopsBalance]);
 
+  let userShops:Shop[]
+
+  if (personShopsBalance) {
+    userShops = [
+      ...personShopsBalance?.shopsOwned,
+      ...personShopsBalance.shopsRented,
+    ];
+  }
+
   const renderShopsTable = () => (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="text-center">{labels.plaque}</TableHead>
+          <TableHead className="text-center">{labels.type}</TableHead>
           <TableHead className="text-center">{labels.owner}</TableHead>
+          <TableHead className="text-center">{labels.renter}</TableHead>
           <TableHead className="text-center">{labels.totalBalance}</TableHead>
           <TableHead className="text-center">{labels.myBalance}</TableHead>
           <TableHead className="text-center">{labels.viewDetail}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {personShopsBalance?.shopsOwned.map((shop) => {
-          const shopBalance = personShopsBalance.shopsBalance.find(
+        {userShops.map((shop) => {
+          const shopBalance = personShopsBalance?.shopsBalance.find(
             (balance) => balance.shopBalance.shopId === shop.id
           );
-          const personBalance = personShopsBalance.shopsBalanceByPerson.find(
+          const personBalance = personShopsBalance?.shopsBalanceByPerson.find(
             (balance) => balance.shopId === shop.id
           );
 
           return (
             <TableRow key={shop.id}>
               <TableCell className="text-center">{shop.plaque}</TableCell>
+              <TableCell className="text-center">{shop.type}</TableCell>
               <TableCell className="text-center">
                 <Badge>{shop.ownerName}</Badge>
+              </TableCell>
+              <TableCell className="text-center">
+                <Badge>{shop.renterName ?? "ندارد"}</Badge>
               </TableCell>
               <TableCell className="text-center">
                 {shopBalance
