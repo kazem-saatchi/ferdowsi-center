@@ -7,7 +7,7 @@ import {
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma } from "@prisma/client";
+import { Person, Prisma, ShopType } from "@prisma/client";
 import { differenceInDays, startOfDay } from "date-fns";
 import { getRelatedHistories } from "./utils";
 
@@ -30,7 +30,12 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   }
   const { startDate, endDate, title } = validation?.data;
 
-  const { data: allHistories, success, message, totalDays } = await getRelatedHistories({
+  const {
+    data: allHistories,
+    success,
+    message,
+    totalDays,
+  } = await getRelatedHistories({
     startDate,
     endDate,
   });
@@ -61,8 +66,10 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error("No shop charge references found in the database.");
   }
 
-  const relevantHistories = allHistories.filter(
-    (history) => history.shopType === "KIOSK"
+  const rentableShopType: ShopType[] = ["KIOSK", "BOARD", "PARKING"];
+
+  const relevantHistories = allHistories.filter((history) =>
+    rentableShopType.includes(history.shopType)
   );
 
   // Calculate charges for each history period
@@ -72,14 +79,26 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
         (charge) => charge.shopId === history.shopId
       );
 
+      console.log("--------------------------------------------------------");
+
+      console.log(
+        "shopCharge reference",
+        shopChargeReference ?? "undefined",
+        history
+      );
+
       if (!shopChargeReference) {
-        console.warn(`No monthly charge found for shop ${history.shopId}`);
-        throw new Error(
-          `No charge reference found for shopId: ${history.shopId}`
+        console.warn(
+          `*** No Rent Reference found for shop ${history.shopId} ***`
         );
+        // throw new Error(
+        //   `No charge reference found for shopId: ${history.shopId}`
+        // );
       }
 
-      const dailyAmount = shopChargeReference.totalAmount / totalDays;
+      const dailyAmount = shopChargeReference
+        ? shopChargeReference.totalAmount / totalDays
+        : 0;
 
       const historyStartDate = startOfDay(new Date(history.startDate));
 
@@ -93,7 +112,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 
-      if (days > 0) {
+      if (days > 0 && dailyAmount > 0) {
         acc.push({
           title: operation.title,
           amount: days * dailyAmount,

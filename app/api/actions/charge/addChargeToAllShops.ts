@@ -30,7 +30,12 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   }
   const { startDate, endDate, title } = validation?.data;
 
-  const { data: relevantHistories, success, message, totalDays } = await getRelatedHistories({
+  const {
+    data: relevantHistories,
+    success,
+    message,
+    totalDays,
+  } = await getRelatedHistories({
     startDate,
     endDate,
   });
@@ -53,29 +58,40 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error(errorMSG.unknownError);
   }
 
-  const shopsChargeList = await db.shopChargeReference.findMany({
+  const shopsChargeRefList = await db.shopChargeReference.findMany({
     where: { proprietor: false },
   });
 
-  if (!shopsChargeList.length) {
+  if (!shopsChargeRefList.length) {
     throw new Error("No shop charge references found in the database.");
   }
 
   // Calculate charges for each history period
   const charges = relevantHistories.reduce<Prisma.ChargeCreateManyInput[]>(
     (acc, history) => {
-      const shopChargeReference = shopsChargeList.find(
+      const shopChargeReference = shopsChargeRefList.find(
         (charge) => charge.shopId === history.shopId
+      );
+
+      console.log("--------------------------------------------------------")
+
+      console.log(
+        "shopCharge reference",
+        shopChargeReference ?? "undefined",
+        history
       );
 
       if (!shopChargeReference) {
         console.warn(`No monthly charge found for shop ${history.shopId}`);
-        throw new Error(
-          `No charge reference found for shopId: ${history.shopId}`
-        );
+
+        // throw new Error(
+        //   `No charge reference found for shopId: ${history.shopId}`
+        // );
       }
 
-      const dailyAmount = shopChargeReference.totalAmount / totalDays;
+      const dailyAmount = shopChargeReference
+        ? shopChargeReference.totalAmount / totalDays
+        : 0;
 
       const historyStartDate = startOfDay(new Date(history.startDate));
 
@@ -89,7 +105,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
       const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
 
-      if (days > 0) {
+      if (days > 0 && dailyAmount > 0) {
         acc.push({
           title: operation.title,
           amount: days * dailyAmount,

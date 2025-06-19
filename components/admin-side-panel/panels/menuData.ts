@@ -80,18 +80,24 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 3,
+        name: "مانده حساب اجاره",
+        href: "/all-rents-balance",
+        icon: BarChart2,
+      },
+      {
+        id: 4,
         name: "حساب یک واحد",
         href: "/shop-balance",
         icon: PieChart,
       },
       {
-        id: 4,
+        id: 5,
         name: "ریز حساب واحد",
         href: "/shop-balance-detail",
         icon: BookText,
       },
       {
-        id: 5,
+        id: 6,
         name: "حساب یک شخص",
         href: "/person-balance",
         icon: UserPlus,

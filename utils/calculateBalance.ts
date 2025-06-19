@@ -5,7 +5,7 @@ import {
   ShopBalanceData,
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
-import { Charge, Payment } from "@prisma/client";
+import { Charge, Payment, ShopType } from "@prisma/client";
 
 export interface ShopBalanceResponce {
   chargeList: Charge[];
@@ -176,7 +176,16 @@ export async function calculateAllShopMonthlyBalance(
   proprietor: boolean
 ): Promise<ShopsBalanceData[]> {
   const BATCH_SIZE = 10;
-  const allShops = await db.shop.findMany({orderBy:{plaque:"asc"}});
+
+  // only claculate monthly charge for store, office, kiosk
+  // only claculate yearly charge for store, office
+  const shopType: ShopType[] = proprietor
+    ? ["STORE", "OFFICE"]
+    : ["STORE", "OFFICE", "KIOSK"];
+  const allShops = await db.shop.findMany({
+    where: { type: { in: shopType } },
+    orderBy: { plaque: "asc" },
+  });
   const results: ShopsBalanceData[] = [];
 
   for (let i = 0; i < allShops.length; i += BATCH_SIZE) {
@@ -193,6 +202,62 @@ export async function calculateAllShopMonthlyBalance(
               }),
               tx.payment.aggregate({
                 where: { shopId: shop.id, proprietor },
+                _sum: { amount: true },
+              }),
+            ]);
+
+            return {
+              plaque: shop.plaque,
+              balance: (payments._sum.amount || 0) - (charges._sum.amount || 0),
+              ownerName: shop.ownerName,
+              renterName: shop.renterName,
+            };
+          })
+        );
+      },
+      {
+        maxWait: 10000,
+        timeout: 30000,
+      }
+    );
+
+    results.push(...batchResults);
+    console.log(
+      `Processed batch ${i / BATCH_SIZE + 1} of ${Math.ceil(
+        allShops.length / BATCH_SIZE
+      )}`
+    );
+  }
+
+  return results;
+}
+
+export async function calculateAllRentsBalance(): Promise<ShopsBalanceData[]> {
+  const BATCH_SIZE = 10;
+
+  // only claculate monthly charge for store, office, kiosk
+  // only claculate yearly charge for store, office
+  const shopType: ShopType[] = ["KIOSK", "BOARD", "PARKING"];
+  const allShops = await db.shop.findMany({
+    where: { type: { in: shopType } },
+    orderBy: { plaque: "asc" },
+  });
+  const results: ShopsBalanceData[] = [];
+
+  for (let i = 0; i < allShops.length; i += BATCH_SIZE) {
+    const batch = allShops.slice(i, i + BATCH_SIZE);
+
+    const batchResults = await db.$transaction(
+      async (tx) => {
+        return Promise.all(
+          batch.map(async (shop) => {
+            const [charges, payments] = await Promise.all([
+              tx.charge.aggregate({
+                where: { shopId: shop.id, proprietor: true },
+                _sum: { amount: true },
+              }),
+              tx.payment.aggregate({
+                where: { shopId: shop.id, proprietor: true },
                 _sum: { amount: true },
               }),
             ]);

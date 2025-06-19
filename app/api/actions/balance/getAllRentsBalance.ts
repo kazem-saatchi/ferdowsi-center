@@ -1,7 +1,7 @@
 "use server";
 
 import { ShopsBalanceData } from "@/schema/balanceSchema";
-import { calculateAllShopMonthlyBalance } from "@/utils/calculateBalance";
+import { calculateAllRentsBalance } from "@/utils/calculateBalance";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -12,11 +12,7 @@ interface FindBalanceResponse {
   shopsBalance?: ShopsBalanceData[];
 }
 
-async function getAllShopsBalance(
-  user: Person,
-  propreitor: boolean
-): Promise<FindBalanceResponse> {
-  // Check authentication
+async function getAllRentsBalance(user: Person): Promise<FindBalanceResponse> {
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
@@ -24,10 +20,8 @@ async function getAllShopsBalance(
   if (user?.role !== "ADMIN" && user?.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
-  // Calculate balances for all shops
-  const shopsBalance: ShopsBalanceData[] = await calculateAllShopMonthlyBalance(
-    propreitor
-  );
+
+  const shopsBalance: ShopsBalanceData[] = await calculateAllRentsBalance();
 
   console.log("shops balance from server action", shopsBalance);
 
@@ -38,8 +32,8 @@ async function getAllShopsBalance(
   };
 }
 
-export default async function findBalanceAllShops(propreitor: boolean) {
+export default async function findRentBalanceAllShops() {
   return handleServerAction<FindBalanceResponse>((user) =>
-    getAllShopsBalance(user, propreitor)
+    getAllRentsBalance(user)
   );
 }
