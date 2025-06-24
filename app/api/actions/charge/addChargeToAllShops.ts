@@ -8,7 +8,7 @@ import {
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
-import { differenceInDays, startOfDay } from "date-fns";
+import { differenceInDays, startOfDay, endOfDay, addDays } from "date-fns";
 import { getRelatedHistories } from "./utils";
 
 interface AddChargeResponse {
@@ -73,7 +73,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
         (charge) => charge.shopId === history.shopId
       );
 
-      console.log("--------------------------------------------------------")
+      console.log("--------------------------------------------------------");
 
       console.log(
         "shopCharge reference",
@@ -97,13 +97,18 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
       const historyEndDate = history.endDate
         ? startOfDay(new Date(history.endDate))
-        : endDate;
+        : startOfDay(endDate);
 
       const chargeStartDate =
-        historyStartDate > startDate ? historyStartDate : startDate;
-      const chargeEndDate = historyEndDate < endDate ? historyEndDate : endDate;
+        historyStartDate > startOfDay(startDate)
+          ? historyStartDate
+          : startOfDay(startDate);
+      const chargeEndDate =
+        historyEndDate < startOfDay(endDate)
+          ? startOfDay(historyEndDate)
+          : addDays(startOfDay(endDate), 1);
 
-      const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
+      const days = differenceInDays(chargeEndDate, chargeStartDate);
 
       if (days > 0 && dailyAmount > 0) {
         acc.push({

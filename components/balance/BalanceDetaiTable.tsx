@@ -12,6 +12,7 @@ import { labels } from "@/utils/label";
 import { Charge, Payment } from "@prisma/client";
 import { Separator } from "../ui/separator";
 import { formatPersianDate } from "@/utils/localeDate";
+import { cn } from "@/lib/utils";
 
 interface BalanceTableProps {
   charges: Charge[];
@@ -52,43 +53,66 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
   });
 
   // Calculate totals for better organization
-  const totalBalance: TotalBalance = {
+  const totalChargeBalance: TotalBalance = {
     charge: balanceData
       .filter((item) => item.type === "charge")
+      .filter((item) => !item.proprietor)
       .reduce((sum, item) => sum + (item.amount || 0), 0),
     payment: balanceData
       .filter((item) => item.type === "payment")
+      .filter((item) => !item.proprietor)
       .reduce((sum, item) => sum + (item.amount || 0), 0),
-    balance: balanceData.reduce((sum, item) => {
-      return item.type === "charge" ? sum + item.amount : sum - item.amount;
-    }, 0),
+    balance: balanceData
+      .filter((item) => !item.proprietor)
+      .reduce((sum, item) => {
+        return item.type === "charge" ? sum + item.amount : sum - item.amount;
+      }, 0),
   };
+
+  const totalProprietorBalance: TotalBalance = {
+    charge: balanceData
+      .filter((item) => item.type === "charge")
+      .filter((item) => item.proprietor)
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    payment: balanceData
+      .filter((item) => item.type === "payment")
+      .filter((item) => item.proprietor)
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    balance: balanceData
+      .filter((item) => item.proprietor)
+      .reduce((sum, item) => {
+        return item.type === "charge" ? sum + item.amount : sum - item.amount;
+      }, 0),
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="text-center">{labels.type}</TableHead>
           <TableHead className="text-center">{labels.title}</TableHead>
+          <TableHead className="text-center">{labels.name}</TableHead>
           <TableHead className="text-center">{labels.date}</TableHead>
           <TableHead className="text-center">{labels.amount}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {balanceData.map((item) => (
-          <TableRow key={`${item.type}-${item.id}`}>
+          <TableRow
+            key={`${item.type}-${item.id}`}
+            className={cn(
+              item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30"
+            )}
+          >
             <TableCell className="text-center capitalize">
               {item.type === "charge" ? labels.charge : labels.payment}
             </TableCell>
             <TableCell className="text-center">{item.title}</TableCell>
+            <TableCell className="text-center">{item.personName}</TableCell>
             <TableCell className="text-center">
               {formatPersianDate(item.date)}
             </TableCell>
-            <TableCell
-              className={`text-center ${
-                item.type === "charge" ? "text-red-500" : "text-green-500"
-              }`}
-            >
-              {/* {item.type === "charge" ? "+" : "-"} */}
+            <TableCell className="text-center">
               {item.amount.toLocaleString()}
             </TableCell>
           </TableRow>
@@ -97,21 +121,35 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
 
       <TableFooter>
         <TableRow>
-          <TableCell></TableCell>
-          <TableCell></TableCell>
-          <TableCell className="text-center font-medium border-2">
-            {labels.totalBalance}
+          <TableCell className="text-center font-medium border-2" colSpan={4}>
+            {labels.totalChargeBalance}
           </TableCell>
           <TableCell
             className={`text-center font-bold border-2 ${
-              totalBalance.balance > 0
+              totalChargeBalance.balance > 0
                 ? "text-red-500"
-                : totalBalance.balance < 0
+                : totalChargeBalance.balance < 0
                 ? "text-green-500"
                 : ""
             }`}
           >
-            {totalBalance.balance.toLocaleString()}
+            {totalChargeBalance.balance.toLocaleString()}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="text-center font-medium border-2" colSpan={4}>
+            {labels.totalProprietorBalance}
+          </TableCell>
+          <TableCell
+            className={`text-center font-bold border-2 ${
+              totalChargeBalance.balance > 0
+                ? "text-red-500"
+                : totalChargeBalance.balance < 0
+                ? "text-green-500"
+                : ""
+            }`}
+          >
+            {totalProprietorBalance.balance.toLocaleString()}
           </TableCell>
         </TableRow>
       </TableFooter>

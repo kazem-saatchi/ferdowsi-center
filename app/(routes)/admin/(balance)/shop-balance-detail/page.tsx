@@ -119,7 +119,7 @@ export default function ShopBalanceDetailPage() {
 
   return (
     <div>
-      <Card>
+      <>
         <CardHeader>
           <CardTitle>{labels.shopBalanceTitle}</CardTitle>
         </CardHeader>
@@ -149,7 +149,7 @@ export default function ShopBalanceDetailPage() {
             <p>{labels.noInformationFound}</p>
           )}
         </CardContent>
-      </Card>
+      </>
     </div>
   );
 }
