@@ -93,10 +93,13 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
         ? shopChargeReference.totalAmount / totalDays
         : 0;
 
-      const historyStartDate = startOfDay(new Date(history.startDate));
+      console.log("dailyAmount", dailyAmount);
+      console.log("totalDays", totalDays);
+
+      const historyStartDate = startOfDay(history.startDate);
 
       const historyEndDate = history.endDate
-        ? startOfDay(new Date(history.endDate))
+        ? startOfDay(history.endDate)
         : startOfDay(endDate);
 
       const chargeStartDate =
@@ -109,6 +112,9 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
           : addDays(startOfDay(endDate), 1);
 
       const days = differenceInDays(chargeEndDate, chargeStartDate);
+
+      console.log("shop plaque", history.plaque);
+      console.log("days", days);
 
       if (days > 0 && dailyAmount > 0) {
         acc.push({
