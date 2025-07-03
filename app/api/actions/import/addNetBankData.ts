@@ -57,13 +57,13 @@ async function addBankDataInternal(
           let senderCard: string | null = null;
           let receiverCard: string | null = null;
 
-          if (row.inputAmount > 0) {
+          // if (row.inputAmount > 0) {
+          // }
             const extractedNumber = extract16DigitNumbers(row.description);
             if (extractedNumber.length === 2) {
               senderCard = extractedNumber[0];
               receiverCard = extractedNumber[1];
             }
-          }
 
           const bankRow = await prisma.bankTransaction.findFirst({
             where: {

@@ -4,14 +4,14 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button"; // For pagination
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
-import { BankTransactionTable } from "@/components/bank/BankTransactionsTable";
 
 import { AccountType } from "@prisma/client";
 
 import { LimitSelector } from "@/components/bank/LimitSelector";
 import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
-import { useGetAllBankTransactions } from "@/tanstack/query/bankQuery";
+import { useGetAllFailedCardTransfer } from "@/tanstack/query/bankQuery";
 import BankTypeSelector from "@/components/bank/BankTypeSelector";
+import { BankFailedCardTransferTable } from "@/components/bank/BankFailedCardTransferTable";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -29,13 +29,9 @@ export default function TransactionsPage() {
     error,
     isFetching, // Indicates background fetching for refetches/new pages
     isPlaceholderData, // Useful for pagination UX
-  } = useGetAllBankTransactions({
+    } = useGetAllFailedCardTransfer({
     page,
     limit,
-    sortBy: "date",
-    sortOrder: "desc",
-    accountType,
-    type,
   });
 
   const transactions = queryResult?.data ?? [];
@@ -43,7 +39,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
+      <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی ناموفق</h1>
       <div className="flex fle-row items-center justify-start gap-4 p-4">
         <LimitSelector limit={limit} setLimit={setLimit} />
         <AccountTypeSelector
@@ -69,7 +65,7 @@ export default function TransactionsPage() {
           <Skeleton className="h-10 w-full" />
         </div>
       ) : (
-        <BankTransactionTable
+        <BankFailedCardTransferTable
           transactions={transactions}
           isLoading={isFetching} // Show loading indicator during background fetches too
           isError={isError}

@@ -386,6 +386,12 @@ export const adminMenuData: AdminMenuCollection = {
         href: "/cost-bank-list",
         icon: ReceiptText,
       },
+      {
+        id: 4,
+        name: "لیست تراکنش های ناموفق",
+        href: "/failed-card-transfer",
+        icon: Banknote,
+      },
     ],
   },
   operation: {
