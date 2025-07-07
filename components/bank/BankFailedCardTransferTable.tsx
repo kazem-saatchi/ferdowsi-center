@@ -14,10 +14,10 @@ import { BankTransaction, TransactionCategory } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
-import AddPaymentButton from "../payment/AddPaymentButton";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import PaymentFromBankForm from "./PaymentFromBankForm";
+import AddFailedPaymentButton from "../charge/AddFailedPaymentButton";
 
 // Helper function for currency formatting
 const formatCurrency = (amount: number) => {
@@ -80,7 +80,7 @@ export function BankFailedCardTransferTable({
       {" "}
       {/* Added border and rounding */}
       <Table dir="rtl">
-        <TableCaption>لیست کارت به کارت های بانک</TableCaption>
+        <TableCaption>لیست برگششتی‌های بانک</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[120px] text-center">
@@ -126,7 +126,7 @@ export function BankFailedCardTransferTable({
                   {formatNumber(tx.amount)}
                 </TableCell>
                 <TableCell className="text-center">
-                  <AddPaymentButton id={tx.id} />
+                  <AddFailedPaymentButton id={tx.id} />
                 </TableCell>
                 <TableCell className="text-center">
                   <Button

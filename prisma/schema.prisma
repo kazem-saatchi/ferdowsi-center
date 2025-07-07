@@ -125,6 +125,7 @@ model Charge {
   proprietor    Boolean     @default(false)  //مالکانه 
   description   String      @default("") @db.Text
   forRent       Boolean     @default(false)
+  bankTransactionId String?
 
   shop          Shop    @relation(fields: [shopId],references: [id])
   person        Person  @relation(fields: [personId],references: [id])

@@ -1,3 +1,4 @@
+import addFailedPayment from "@/app/api/actions/payment/addFailedPayment";
 import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
 import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
@@ -130,6 +131,32 @@ export function useAddPaymentFromCard() {
 
   return useMutation({
     mutationFn: async (id: string) => await addPaymentFromCard(id),
+    onSuccess: (data) => {
+      if (data.data?.success) {
+        // queryClient.invalidateQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
+        // queryClient.refetchQueries({
+        //   queryKey: ["cardTransfer"],
+        //   refetchType: "active",
+        // });
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useAddFailedPayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => await addFailedPayment(id),
     onSuccess: (data) => {
       if (data.data?.success) {
         // queryClient.invalidateQueries({
