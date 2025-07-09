@@ -228,6 +228,7 @@ export const labels = {
   amountInRials: "مبلغ به ریال",
   chargeType: "نوع شارژ",
   description: "توضیحات",
+  transactionInfo: "اطلاعات تراکنش",
   paymentMethod: "نوع پرداخت",
   cash: "نقدی",
   cheque: "چک",
@@ -256,8 +257,12 @@ export const labels = {
   // Add new labels for balance page
   allShopsMonthlyBalance: "حساب ماهانه همه واحدها",
   allShopsYearlyBalance: "حساب مالکانه همه واحدها",
+  download: "دانلود",
+  downloadOptions: "گزینه های دانلود",
   downloadAsPDF: "دانلود به صورت PDF",
   downloadAsExcel: "دانلود به صورت EXCEL",
+  downloadAsPDFFiltered: "دانلود به صورت PDF فیلتر شده",
+  downloadAsExcelFiltered: "دانلود به صورت EXCEL فیلتر شده",
   noDataFound: "اطلاعاتی یافت نشد",
 
   // Add new labels for person balance page

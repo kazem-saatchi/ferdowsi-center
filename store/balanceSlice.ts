@@ -6,12 +6,20 @@ import {
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
 import { PersonInfoSafe } from "@/schema/personSchema";
-import { exportToExcel, exportToPDF } from "@/utils/tableExport";
+import {
+  exportToExcel,
+  exportToPDF,
+  exportBalanceDetailToPDF,
+  exportBalanceDetailToExcel,
+} from "@/utils/tableExport";
 import { StateCreator } from "zustand";
+import { Charge, Payment } from "@prisma/client";
 
 type Balances = {
   allBalances: ShopsBalanceData[] | null;
   setAllBalances: (balances: ShopsBalanceData[]) => void;
+  allBalanceFiltered: ShopsBalanceData[] | null;
+  setAllBalanceFiltered: (value: number | null) => void;
   shopBalance: ShopBalanceData | null;
   setShopBalance: (balances: ShopBalanceData) => void;
   personBalance: PersonBalanceData | null;
@@ -26,6 +34,10 @@ type Balances = {
   setShopRenterBalance: (data: OwnerRenterBalance | null) => void;
   exportAllBalanceToPDF: () => void;
   exportAllBalanceToExcel: () => void;
+  exportAllBalanceToPDFFiltered: () => void;
+  exportAllBalanceToExcelFiltered: () => void;
+  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[]) => void;
+  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[]) => void;
 };
 
 export interface OwnerRenterBalance {
@@ -41,9 +53,10 @@ export const createBalanceSlice: StateCreator<
   [["zustand/immer", never]],
   [],
   BalanceSlice
-> = (set) => ({
+> = (set, get) => ({
   // State
   allBalances: null,
+  allBalanceFiltered: null,
   shopBalance: null,
   personBalance: null,
   shopsBalance: null,
@@ -53,37 +66,86 @@ export const createBalanceSlice: StateCreator<
 
   // Set utils
   setAllBalances: (balances) => set({ allBalances: balances }),
+  setAllBalanceFiltered: (value) => {
+    if (value === null) {
+      set({ allBalanceFiltered: get().allBalances ?? [] });
+      return;
+    }
+    set({
+      allBalanceFiltered:
+        get().allBalances?.filter((balance) => balance.balance < -value) ?? [],
+    });
+  },
   setShopBalance: (balances) => set({ shopBalance: balances }),
   setPersonBalance: (balance) => set({ personBalance: balance }),
   setShopsBalance: (balances) => set({ shopsBalance: balances }),
   setPersonsBalance: (Balances) => set({ personsBalance: Balances }),
-  exportAllBalanceToPDF: () =>
-    set((state) => {
-      if (!state.allBalances || state.allBalances.length === 0) {
-        console.error("No balance data to export");
-        return;
-      }
-      exportToPDF({
-        fileName: "Balance-Report",
-        data: state.allBalances,
-        columns: getBalanceColumns(),
-      });
-    }),
-  exportAllBalanceToExcel: () =>
-    set((state) => {
-      if (!state.allBalances || state.allBalances.length === 0) {
-        console.error("No balance data to export");
-        return;
-      }
-      exportToExcel({
-        fileName: "Balance-Report",
-        data: state.allBalances,
-        columns: getBalanceColumns(),
-      });
-    }),
-
+  exportAllBalanceToPDF: () => {
+    const state = get();
+    if (!state.allBalances || state.allBalances.length === 0) {
+      console.error("No balance data to export");
+      return;
+    }
+    exportToPDF({
+      fileName: "Balance-Report",
+      data: state.allBalances,
+      columns: getBalanceColumns(),
+    });
+  },
+  exportAllBalanceToExcel: () => {
+    const state = get();
+    if (!state.allBalances || state.allBalances.length === 0) {
+      console.error("No balance data to export");
+      return;
+    }
+    exportToExcel({
+      fileName: "Balance-Report",
+      data: state.allBalances,
+      columns: getBalanceColumns(),
+    });
+  },
+  exportAllBalanceToPDFFiltered: () => {
+    const state = get();
+    if (!state.allBalanceFiltered || state.allBalanceFiltered.length === 0) {
+      console.error("No balance data to export");
+      return;
+    }
+    exportToPDF({
+      fileName: "Balance-Report-Filtered",
+      data: state.allBalanceFiltered,
+      columns: getBalanceColumns(),
+    });
+  },
+  exportAllBalanceToExcelFiltered: () => {
+    const state = get();
+    if (!state.allBalanceFiltered || state.allBalanceFiltered.length === 0) {
+      console.error("No balance data to export");
+      return;
+    }
+    exportToExcel({
+      fileName: "Balance-Report-Filtered",
+      data: state.allBalanceFiltered,
+      columns: getBalanceColumns(),
+    });
+  },
   setShopOwnerBalance: (data) => set({ shopOwnerBalanceData: data }),
   setShopRenterBalance: (data) => set({ shopRenterBalanceData: data }),
+
+  // New functions for balance detail export
+  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[]) => {
+    if (!charges || !payments) {
+      console.error("No balance detail data to export");
+      return;
+    }
+    exportBalanceDetailToPDF({ charges, payments }, "Balance-Detail-Report");
+  },
+  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[]) => {
+    if (!charges || !payments) {
+      console.error("No balance detail data to export");
+      return;
+    }
+    exportBalanceDetailToExcel({ charges, payments }, "Balance-Detail-Report");
+  },
 });
 
 const getBalanceColumns = () => [
@@ -92,10 +154,3 @@ const getBalanceColumns = () => [
   { header: "نام مالک", accessor: "ownerName" },
   { header: "پلاک", accessor: "plaque" },
 ];
-
-// const getBalanceColumnsPdf = () => [
-//   { header: "Plaque", accessor: "plaque" },
-//   { header: "Owner Name", accessor: "ownerName" },
-//   { header: "Renter Name", accessor: "renterName" },
-//   { header: "Balance", accessor: "balance" },
-// ];

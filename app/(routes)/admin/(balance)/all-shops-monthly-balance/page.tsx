@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useGetAllShopsBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { BalanceTable } from "@/components/balance/BalanceTable";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,22 @@ import { labels } from "@/utils/label";
 import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Download } from "lucide-react";
 
 export default function AllShopsMonthlyBalancePage() {
   const proprietor: boolean = false;
@@ -26,12 +41,20 @@ export default function AllShopsMonthlyBalancePage() {
     setAllBalances,
     exportAllBalanceToExcel,
     exportAllBalanceToPdf,
+    setAllBalanceFiltered,
+    allBalanceFiltered,
+    exportAllBalanceToPDFFiltered,
+    exportAllBalanceToExcelFiltered,
   } = useStore(
     useShallow((state) => ({
       allBalances: state.allBalances,
       setAllBalances: state.setAllBalances,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
       exportAllBalanceToExcel: state.exportAllBalanceToExcel,
+      exportAllBalanceToPDFFiltered: state.exportAllBalanceToPDFFiltered,
+      exportAllBalanceToExcelFiltered: state.exportAllBalanceToExcelFiltered,
+      setAllBalanceFiltered: state.setAllBalanceFiltered,
+      allBalanceFiltered: state.allBalanceFiltered,
     }))
   );
 
@@ -60,7 +83,13 @@ export default function AllShopsMonthlyBalancePage() {
     );
   }
 
-  console.log("all shops balance", allBalances);
+  const handleFilter = (value: string) => {
+    if (value === "all") {
+      setAllBalanceFiltered(null);
+    } else {
+      setAllBalanceFiltered(Number(value));
+    }
+  };
 
   return (
     <div>
@@ -76,22 +105,57 @@ export default function AllShopsMonthlyBalancePage() {
           )}
         >
           <div className="flex flex-row items-center justify-start gap-2">
-            {labels.totalBalance}{"  : "}
+            {labels.totalBalance}
+            {"  : "}
             <span className="text-xl font-bold">
               {formatNumber(totalBalance)}
             </span>
           </div>
           <div className="flex flex-row items-center justify-start gap-2 mb-4">
-            <Button onClick={exportAllBalanceToPdf}>
-              {labels.downloadAsPDF}
-            </Button>
-            <Button onClick={exportAllBalanceToExcel}>
-              {labels.downloadAsExcel}
-            </Button>
+            <Select onValueChange={handleFilter} defaultValue="all">
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by balance" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="50000000">5.000.000</SelectItem>
+                <SelectItem value="100000000">10.000.000</SelectItem>
+              </SelectContent>
+            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  {labels.download}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>{labels.downloadOptions}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={exportAllBalanceToPdf}>
+                  {labels.downloadAsPDF}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportAllBalanceToExcel}>
+                  {labels.downloadAsExcel}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportAllBalanceToPDFFiltered}>
+                  {labels.downloadAsPDFFiltered}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportAllBalanceToExcelFiltered}>
+                  {labels.downloadAsExcelFiltered}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         {allBalances && allBalances.length > 0 ? (
-          <ShopsBalanceTable shopsBlances={allBalances} />
+          <ShopsBalanceTable
+            shopsBlances={
+              allBalanceFiltered && allBalanceFiltered.length > 0
+                ? allBalanceFiltered
+                : allBalances
+            }
+          />
         ) : (
           <p>{labels.noDataFound}</p>
         )}
