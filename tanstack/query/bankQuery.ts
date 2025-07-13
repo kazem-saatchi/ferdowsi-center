@@ -3,6 +3,7 @@ import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer"
 import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
 import { AccountType } from "@prisma/client";
 import { getBankFailedCardTransfer } from "@/app/api/actions/bank/getBankFailedCardTransfer";
+import { getBankIncomeTransfer } from "@/app/api/actions/bank/getBankIncomeTransfer";
 
 //------------------Bank--------------------
 
@@ -75,6 +76,29 @@ export function useGetAllFailedCardTransfer({
     queryFn: async () => {
       // Explicitly create new object to avoid referential stability issues
       const result = await getBankFailedCardTransfer({
+        page: Number(page),
+        limit: Number(limit),
+      });
+      console.log("API Response:", result);
+      return result;
+    },
+    placeholderData: keepPreviousData,
+  });
+}
+
+// Get All Income Transfer - Exclude Card To Card
+export function useGetAllIncomeTransfer({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) {
+  return useQuery({
+    queryKey: ["incomeTransfer", page, limit],
+    queryFn: async () => {
+      // Explicitly create new object to avoid referential stability issues
+      const result = await getBankIncomeTransfer({
         page: Number(page),
         limit: Number(limit),
       });

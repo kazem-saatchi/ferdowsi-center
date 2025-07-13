@@ -8,7 +8,6 @@ import {
   AddPaymentByInfoData,
 } from "@/schema/paymentSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { toast } from "sonner";
 
 //------------------PAYMENT--------------------
@@ -16,7 +15,6 @@ import { toast } from "sonner";
 // add payment to a shop
 export function useAddPaymentByShop() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddPaymentByInfoData) =>
@@ -54,7 +52,6 @@ export function useAddPaymentByShop() {
 // add payment to a shop by Bank TransactionId
 export function useAddPaymentByBank() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: addPaymentByBankIdData) =>
@@ -92,7 +89,6 @@ export function useAddPaymentByBank() {
 // delete a payment
 export function useDeletePaymentById() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (paymentId: string) => await deletePaymentById(paymentId),

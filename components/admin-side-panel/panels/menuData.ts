@@ -382,12 +382,18 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 3,
+        name: "لیست دریافتی‌های دیگر",
+        href: "/other-incomes",
+        icon: DollarSign,
+      },
+      {
+        id: 4,
         name: "لیست هزینه‌ها",
         href: "/cost-bank-list",
         icon: ReceiptText,
       },
       {
-        id: 4,
+        id: 5,
         name: "لیست تراکنش های ناموفق",
         href: "/failed-card-transfer",
         icon: Banknote,
