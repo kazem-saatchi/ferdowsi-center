@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,16 +13,16 @@ export default function ShopFinancialDetailPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="mx-auto p-4">
         <Card className="p-4 text-red-600">{error}</Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">جزئیات مالی واحد تجاری</h1>
-      
+    <div className="mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">جزئیات مالی واحد</h1>
+
       {loading ? (
         <div className="space-y-4">
           <Skeleton className="h-10 w-full" />

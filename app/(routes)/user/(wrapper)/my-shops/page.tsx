@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useGetAllShopsByPerson } from "@/tanstack/query/personQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -40,7 +40,7 @@ export default function MyShopsPage() {
     }
   }, [data, setPersonShopsBalance]);
 
-  let userShops:Shop[]
+  let userShops: Shop[] = [];
 
   if (personShopsBalance) {
     userShops = [
@@ -128,7 +128,10 @@ export default function MyShopsPage() {
         <CardTitle>{labels.myShops}</CardTitle>
       </CardHeader>
       <CardContent>
-        {personShopsBalance && personShopsBalance.shopsOwned.length > 0 ? (
+        {personShopsBalance &&
+        personShopsBalance.shopsOwned.length +
+          personShopsBalance.shopsRented.length >
+          0 ? (
           renderShopsTable()
         ) : (
           <p>{labels.youDontHaveAnyShop}</p>
