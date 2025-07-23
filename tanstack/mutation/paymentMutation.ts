@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 //------------------PAYMENT--------------------
 
-// add payment to a shop
+// add payment to a shop by shopId and personId
 export function useAddPaymentByShop() {
   const queryClient = useQueryClient();
 
