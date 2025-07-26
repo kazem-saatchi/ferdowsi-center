@@ -47,7 +47,7 @@ export default function AddRentToAllKiosksPage() {
       });
       const startDate = date.toFirstOfMonth().toDate();
       const endDate = date.toLastOfMonth().toDate();
-      endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
+      // endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
       setDataState({
         startDate,
         endDate,
