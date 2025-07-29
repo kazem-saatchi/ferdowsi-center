@@ -18,7 +18,9 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
 
   const validation = updateShopOwner.safeParse(data);
   if (!validation.success) {
-    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
+    throw new Error(
+      validation.error.errors.map((err) => err.message).join(", ")
+    );
   }
 
   const newOwner = await db.person.findUnique({
@@ -85,6 +87,15 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
     });
 
     if (activeHistory.type === "ActiveByOwner") {
+      await prisma.shopHistory.update({
+        where: {
+          id: activeHistory.id,
+        },
+        data: {
+          endDate: newStartDate.toISOString(),
+        },
+      });
+
       await prisma.shopHistory.create({
         data: {
           shopId: updatedShop.id,
@@ -108,5 +119,7 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
 }
 
 export default async function updateShopOwnerId(data: UpdateShopOwnerData) {
-  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
+  return handleServerAction<UpdateShopResponse>((user) =>
+    updateShop(data, user)
+  );
 }
