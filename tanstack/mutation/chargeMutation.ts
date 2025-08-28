@@ -13,8 +13,10 @@ import {
   ShopChargeReferenceData,
   ShopAnnualChargeReferenceData,
   AddRentAllKiosksData,
+  AddChargeByAmountToShopListData,
 } from "@/schema/chargeSchema";
 import addRentToAllKiosks from "@/app/api/actions/charge/addRentAllKiosks";
+import addChargeByAmountToShopList from "@/app/api/actions/charge/addChargeByAmountToShopList";
 
 //------------------CHARGE--------------------
 
@@ -70,6 +72,42 @@ export function useAddChargeByAmount() {
         });
         queryClient.refetchQueries({
           queryKey: ["shop-charges", variables.shopId],
+        });
+
+        // i can't refetch person-charges related to this add charge so invalidate all person
+        queryClient.invalidateQueries({ queryKey: ["person-charges"] });
+
+        toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+// add charge by amount to shop list
+export function useAddChargeByAmountToShopList() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (data: AddChargeByAmountToShopListData) =>
+      await addChargeByAmountToShopList(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-charges"] });
+        queryClient.refetchQueries({ queryKey: ["all-charges"] });
+
+        variables.shopIdList.forEach((shopId) => {
+          queryClient.invalidateQueries({
+            queryKey: ["shop-charges", shopId],
+          });
+          queryClient.refetchQueries({
+            queryKey: ["shop-charges", shopId],
+          });
         });
 
         // i can't refetch person-charges related to this add charge so invalidate all person

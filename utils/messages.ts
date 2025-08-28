@@ -82,6 +82,8 @@ export const errorMSG = {
   noRelevantHistory: "تاریخی در این محدوده یافت نشد.",
   noChargeGenerated: "هیچ هزینه‌ای تولید نشد.",
   shopChargeReferenceNotFound: "هزینه ماهانه فروشگاه یافت نشد.",
+  operationCreationFailed: "ایجاد عملیات ناموفق بود.",
+  chargeCreationFailed: "ایجاد هزینه ناموفق بود.",
 
   invalidAmount: "مقدار وارد شده نامعتبر است.",
   invalidBankId: "کد تراکنش نامعتبر است",

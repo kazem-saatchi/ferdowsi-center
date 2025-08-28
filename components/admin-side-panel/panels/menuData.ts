@@ -153,18 +153,24 @@ export const adminMenuData: AdminMenuCollection = {
       },
       {
         id: 8,
+        name: "ثبت شارژ چند واحد با مبلغ",
+        href: "/add-charge-to-list",
+        icon: DollarSign,
+      },
+      {
+        id: 9,
         name: "لیست شارژ مرجع ماهانه / مالکانه",
         href: "/all-charge-reference",
         icon: List,
       },
       {
-        id: 9,
+        id: 10,
         name: "ساخت لیست مرجع شارژ ماهانه",
         href: "/generate-charge-list",
         icon: FileText,
       },
       {
-        id: 10,
+        id: 11,
         name: "ساخت لیست مرجع شارژ مالکانه",
         href: "/generate-annual-charge-list",
         icon: House,

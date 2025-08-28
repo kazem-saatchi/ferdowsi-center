@@ -22,6 +22,17 @@ export const addChargeByAmountSchema = z.object({
 
 export type AddChargeByAmountData = z.infer<typeof addChargeByAmountSchema>;
 //--------------------------------------------------------------------------------------
+export const addChargeByAmountToShopListSchema = z.object({
+  date: z.date(),
+  amount: z.number(),
+  title: z.string(),
+  shopIdList: z.array(z.string()),
+  proprietor: z.boolean(),
+  description: z.string().max(250),
+});
+
+export type AddChargeByAmountToShopListData = z.infer<typeof addChargeByAmountToShopListSchema>;
+//--------------------------------------------------------------------------------------
 export const addChargeAllShopsSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
