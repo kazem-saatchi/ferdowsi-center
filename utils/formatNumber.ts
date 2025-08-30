@@ -54,3 +54,15 @@ export function formatNumberFromString(value: string): {
 
   return { formattedPersianNumber, formattedNumber }; // Return the formatted Persian number
 }
+
+export function convertToEnglishNumber(value: string): string { 
+  const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+  const englishDigits = "0123456789";
+
+  let formattedNumber = "";
+  for (let char of value) {
+    const index = persianDigits.indexOf(char);
+    formattedNumber += index !== -1 ? englishDigits[index] : char;
+  }
+  return formattedNumber;
+}

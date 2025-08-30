@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { X, Plus, Search } from "lucide-react";
 import {
   Dialog,
@@ -21,7 +20,7 @@ import { useAddChargeByAmountToShopList } from "@/tanstack/mutation/chargeMutati
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { AddChargeByAmountToShopListData } from "@/schema/chargeSchema";
 import { labels } from "@/utils/label";
-import { formatNumber } from "@/utils/formatNumber";
+import { convertToEnglishNumber, formatNumber } from "@/utils/formatNumber";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Shop } from "@prisma/client";
@@ -83,8 +82,11 @@ function AddChargeToListPage() {
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^\d]/g, "");
+    console.log("e.target.value", e.target.value);
+    const value = convertToEnglishNumber(e.target.value).replace(/[^\d]/g, "");
+    console.log("value", value);
     const numericValue = value ? parseInt(value) : 0;
+    console.log("numericValue", numericValue);
     handleInputChange("amount", numericValue);
   };
 
@@ -147,8 +149,8 @@ function AddChargeToListPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <Card>
+    <div className="border-2 rounded-md mx-auto p-6 max-w-5xl lg:max-w-7xl max-h-[90vh] overflow-y-hidden">
+      <>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             افزودن شارژ به لیست واحدها
@@ -157,197 +159,200 @@ function AddChargeToListPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Date Selection */}
-            <div>
-              <JalaliDayCalendar
-                date={formData.date}
-                setDate={(date) => handleInputChange("date", date)}
-                title={labels.date}
-              />
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <JalaliDayCalendar
+                    date={formData.date}
+                    setDate={(date) => handleInputChange("date", date)}
+                    title={labels.date}
+                  />
+                </div>
 
-            {/* Amount Input */}
-            <div className="space-y-2">
-              <Label htmlFor="amount">{labels.amount}</Label>
-              <Input
-                id="amount"
-                type="text"
-                value={formData.amount ? formatNumber(formData.amount) : ""}
-                onChange={handleAmountChange}
-                placeholder="مبلغ را وارد کنید"
-                className="text-right"
-              />
-              {formData.amount > 0 && (
-                <p className="text-sm text-gray-600">
-                  {formatNumber(formData.amount)} ریال
-                </p>
-              )}
-            </div>
+                {/* Amount Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="amount">{labels.amount}</Label>
+                  <Input
+                    id="amount"
+                    type="text"
+                    value={formData.amount ? formatNumber(formData.amount) : ""}
+                    onChange={handleAmountChange}
+                    placeholder="مبلغ را وارد کنید"
+                    className="text-right"
+                  />
+                </div>
 
-            {/* Title Input */}
-            <div className="space-y-2">
-              <Label htmlFor="title">{labels.title}</Label>
-              <Input
-                id="title"
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleInputChange("title", e.target.value)}
-                placeholder="عنوان شارژ را وارد کنید"
-                className="text-right"
-              />
-            </div>
+                {/* Title Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="title">{labels.title}</Label>
+                  <Input
+                    id="title"
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    placeholder="عنوان شارژ را وارد کنید"
+                    className="text-right"
+                  />
+                </div>
 
-            {/* Description Input */}
-            <div className="space-y-2">
-              <Label htmlFor="description">{labels.description}</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) =>
-                  handleInputChange("description", e.target.value)
-                }
-                placeholder="توضیحات (اختیاری)"
-                className="text-right min-h-[80px]"
-                maxLength={250}
-              />
-              <p className="text-sm text-gray-500 text-left">
-                {formData.description.length}/250
-              </p>
-            </div>
+                {/* Description Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="description">{labels.description}</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
+                    placeholder="توضیحات (اختیاری)"
+                    className="text-right min-h-[80px]"
+                    maxLength={250}
+                  />
+                  <p className="text-sm text-gray-500 text-left">
+                    {formData.description.length}/250
+                  </p>
+                </div>
 
-            {/* Proprietor Checkbox */}
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <Checkbox
-                id="proprietor"
-                checked={formData.proprietor}
-                onCheckedChange={(checked) =>
-                  handleInputChange("proprietor", checked)
-                }
-              />
-              <Label htmlFor="proprietor" className="cursor-pointer">
-                {labels.proprietorType}
-              </Label>
-            </div>
-
-            {/* Shop Selection */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>انتخاب واحدها</Label>
-                <Dialog
-                  open={isShopDialogOpen}
-                  onOpenChange={setIsShopDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button type="button" variant="outline" size="sm">
-                      <Plus className="w-4 h-4 ml-2" />
-                      افزودن واحد
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[600px]">
-                    <DialogHeader>
-                      <DialogTitle>انتخاب واحد</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="relative">
-                        <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          placeholder="جستجو بر اساس پلاک، نام مالک یا مستاجر..."
-                          value={shopSearchTerm}
-                          onChange={(e) => setShopSearchTerm(e.target.value)}
-                          className="pr-10 text-right"
-                        />
-                      </div>
-                      <div className="max-h-[400px] overflow-y-auto space-y-2">
-                        {filteredShops.map((shop: Shop) => (
-                          <div
-                            key={shop.id}
-                            className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer flex justify-between items-center"
-                            onClick={() => {
-                              addShopToSelection(shop);
-                              setIsShopDialogOpen(false);
-                              setShopSearchTerm("");
-                            }}
-                          >
-                            <div className="text-right">
-                              <div className="font-medium">
-                                پلاک {shop.plaque} - طبقه {shop.floor}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                مالک: {shop.ownerName}
-                                {shop.renterName &&
-                                  ` | مستاجر: ${shop.renterName}`}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                نوع: {shop.type} | مساحت: {shop.area} متر
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        {filteredShops.length === 0 && (
-                          <p className="text-center text-gray-500 py-8">
-                            {shopSearchTerm
-                              ? "واحدی یافت نشد"
-                              : "همه واحدها انتخاب شده‌اند"}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                {/* Proprietor Checkbox */}
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Checkbox
+                    id="proprietor"
+                    checked={formData.proprietor}
+                    onCheckedChange={(checked) =>
+                      handleInputChange("proprietor", checked)
+                    }
+                  />
+                  <Label htmlFor="proprietor" className="cursor-pointer">
+                    {labels.proprietorType}
+                  </Label>
+                </div>
               </div>
 
-              {/* Selected Shops List */}
-              <div className="space-y-2">
-                {selectedShops.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 border-2 border-dashed rounded-lg">
-                    هیچ واحدی انتخاب نشده است
-                  </p>
-                ) : (
-                  <div className="grid gap-2">
-                    <p className="text-sm font-medium">
-                      واحدهای انتخاب شده ({selectedShops.length} واحد):
-                    </p>
-                    <div className="grid gap-2 max-h-[300px] overflow-y-auto">
-                      {selectedShops.map((shop) => (
-                        <div
-                          key={shop.id}
-                          className="flex items-center justify-between p-3 border rounded-lg bg-blue-50"
-                        >
-                          <div className="text-right flex-1">
-                            <div className="font-medium">
-                              پلاک {shop.plaque} - طبقه {shop.floor}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              مالک: {shop.ownerName}
-                              {shop.renterName &&
-                                ` | مستاجر: ${shop.renterName}`}
-                            </div>
+              <div className="space-y-4">
+                {/* Shop Selection */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label>انتخاب واحدها</Label>
+                    <Dialog
+                      open={isShopDialogOpen}
+                      onOpenChange={setIsShopDialogOpen}
+                    >
+                      <DialogTrigger asChild>
+                        <Button type="button" variant="outline" size="sm">
+                          <Plus className="w-4 h-4 ml-2" />
+                          افزودن واحد
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[600px]">
+                        <DialogHeader>
+                          <DialogTitle>انتخاب واحد</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="relative">
+                            <Search className="absolute right-3 top-3 h-4 w-4" />
+                            <Input
+                              placeholder="جستجو بر اساس پلاک، نام مالک یا مستاجر..."
+                              value={shopSearchTerm}
+                              onChange={(e) =>
+                                setShopSearchTerm(e.target.value)
+                              }
+                              className="pr-10 text-right"
+                            />
                           </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeShopFromSelection(shop.id)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
+                          <div className="max-h-[400px] overflow-y-auto space-y-2">
+                            {filteredShops.map((shop: Shop) => (
+                              <div
+                                key={shop.id}
+                                className="p-3 border rounded-md cursor-pointer flex justify-between items-center"
+                                onClick={() => {
+                                  addShopToSelection(shop);
+                                  setIsShopDialogOpen(false);
+                                  setShopSearchTerm("");
+                                }}
+                              >
+                                <div className="text-right">
+                                  <div className="font-medium">
+                                    پلاک {shop.plaque} - طبقه {shop.floor}
+                                  </div>
+                                  <div className="text-sm text-gray-600">
+                                    مالک: {shop.ownerName}
+                                    {shop.renterName &&
+                                      ` | مستاجر: ${shop.renterName}`}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    نوع: {shop.type} | مساحت: {shop.area} متر
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {filteredShops.length === 0 && (
+                              <p className="text-center text-gray-500 py-8">
+                                {shopSearchTerm
+                                  ? "واحدی یافت نشد"
+                                  : "همه واحدها انتخاب شده‌اند"}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                )}
+
+                  {/* Selected Shops List */}
+                  <div className="space-y-2">
+                    {selectedShops.length === 0 ? (
+                      <p className="text-gray-500 text-center py-4 border-2 border-dashed rounded-md">
+                        هیچ واحدی انتخاب نشده است
+                      </p>
+                    ) : (
+                      <div className="grid gap-2">
+                        <p className="text-sm font-medium">
+                          واحدهای انتخاب شده ({selectedShops.length} واحد):
+                        </p>
+                        <div className="grid gap-2 max-h-[600px] overflow-y-auto border-2 rounded-md p-2">
+                          {selectedShops.map((shop) => (
+                            <div
+                              key={shop.id}
+                              className="flex items-center justify-between p-3 border rounded-md "
+                            >
+                              <div className="text-right flex-1">
+                                <div className="font-medium">
+                                  پلاک {shop.plaque} - طبقه {shop.floor}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  مالک: {shop.ownerName}
+                                  {shop.renterName &&
+                                    ` | مستاجر: ${shop.renterName}`}
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeShopFromSelection(shop.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Summary */}
             {selectedShops.length > 0 && formData.amount > 0 && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-medium mb-2">خلاصه:</h3>
-                <p className="text-sm text-gray-600">
+              <div className=" border-2 rounded-md">
+                <h3 className="font-medium p-2 pb-0">خلاصه:</h3>
+                <p className="text-sm p-2">
                   مبلغ {formatNumber(formData.amount)} ریال به{" "}
                   {selectedShops.length} واحد اضافه خواهد شد.
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm border-t-2 p-2 mt-2">
                   مجموع کل:{" "}
                   {formatNumber(formData.amount * selectedShops.length)} ریال
                 </p>
@@ -381,7 +386,7 @@ function AddChargeToListPage() {
             </div>
           </form>
         </CardContent>
-      </Card>
+      </>
     </div>
   );
 }
