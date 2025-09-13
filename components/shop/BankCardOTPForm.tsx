@@ -23,6 +23,7 @@ function BankCardOTPForm({ title, value, handleChange }: CardFormProps) {
           handleChange({ value, name: title });
         }}
         containerClassName="w-full mx-auto justify-start items-center gap-1 lg:gap-0"
+        disabled
       >
         <InputOTPGroup className="w-24 sm:w-28">
           <InputOTPSlot index={0} className="" />
