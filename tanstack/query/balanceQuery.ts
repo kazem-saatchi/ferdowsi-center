@@ -12,6 +12,22 @@ export function useGetAllShopsBalance(proprietor: boolean) {
   });
 }
 
+export function useGetAllShopsBalanceChunked(
+  proprietor: boolean,
+  skip: number,
+  take: number
+) {
+  return useQuery({
+    queryKey: [
+      "all-balances-chunked",
+      proprietor ? "yearly" : "monthly",
+      skip,
+      take,
+    ],
+    queryFn: async () => await findBalanceAllShops(proprietor, skip, take),
+  });
+}
+
 export function useGetShopBalance(shopId: string) {
   return useQuery({
     queryKey: ["shop-balance", shopId],

@@ -173,8 +173,10 @@ export async function calculatePersonBalanceByShop({
 
 // More efficient version using transaction
 export async function calculateAllShopMonthlyBalance(
-  proprietor: boolean
-): Promise<ShopsBalanceData[]> {
+  proprietor: boolean,
+  skip?: number,
+  take?: number
+): Promise<{ results: ShopsBalanceData[]; totalCount: number }> {
   const BATCH_SIZE = 10;
 
   // only claculate monthly charge for store, office, kiosk
@@ -182,10 +184,29 @@ export async function calculateAllShopMonthlyBalance(
   const shopType: ShopType[] = proprietor
     ? ["STORE", "OFFICE"]
     : ["STORE", "OFFICE", "KIOSK"];
-  const allShops = await db.shop.findMany({
-    where: { type: { in: shopType } },
-    orderBy: { plaque: "asc" },
+  
+  const whereClause = { type: { in: shopType } };
+  
+  // Get total count of shops
+  const totalCount = await db.shop.count({
+    where: whereClause,
   });
+
+  // Fetch shops with pagination if skip/take provided
+  const queryOptions: any = {
+    where: whereClause,
+    orderBy: { plaque: "asc" },
+  };
+  
+  if (skip !== undefined) {
+    queryOptions.skip = skip;
+  }
+  
+  if (take !== undefined) {
+    queryOptions.take = take;
+  }
+
+  const allShops = await db.shop.findMany(queryOptions);
   const results: ShopsBalanceData[] = [];
 
   for (let i = 0; i < allShops.length; i += BATCH_SIZE) {
@@ -229,7 +250,7 @@ export async function calculateAllShopMonthlyBalance(
     );
   }
 
-  return results;
+  return { results, totalCount };
 }
 
 export async function calculateAllRentsBalance(): Promise<ShopsBalanceData[]> {

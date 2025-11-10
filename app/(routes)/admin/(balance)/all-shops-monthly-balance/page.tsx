@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useGetAllShopsBalance } from "@/tanstack/query/balanceQuery";
+import { useEffect, useState, useCallback } from "react";
+import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { labels } from "@/utils/label";
 import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
+import { ShopsBalanceData } from "@/schema/balanceSchema";
 import {
   Select,
   SelectContent,
@@ -31,11 +32,16 @@ import { Download } from "lucide-react";
 
 export default function AllShopsMonthlyBalancePage() {
   const proprietor: boolean = false;
+  const CHUNK_SIZE = 10;
 
   const [totalBalance, setTotalBalance] = useState<number>(0);
+  const [isLoadingChunks, setIsLoadingChunks] = useState<boolean>(true);
+  const [loadingProgress, setLoadingProgress] = useState<string>("");
+  const [error, setError] = useState<any>(null);
+  const [accumulatedData, setAccumulatedData] = useState<ShopsBalanceData[]>(
+    []
+  );
 
-  const { data, isLoading, isError, error, refetch } =
-    useGetAllShopsBalance(proprietor);
   const {
     allBalances,
     setAllBalances,
@@ -58,27 +64,92 @@ export default function AllShopsMonthlyBalancePage() {
     }))
   );
 
-  useEffect(() => {
-    if (data?.data?.shopsBalance) {
-      setAllBalances(data?.data?.shopsBalance);
-      const total = data.data.shopsBalance.reduce((total, current) => {
-        return total + current.balance;
-      }, 0);
+  const loadAllChunks = useCallback(async () => {
+    try {
+      setIsLoadingChunks(true);
+      setError(null);
+      setAccumulatedData([]);
+      setTotalBalance(0);
 
-      setTotalBalance(total);
+      // First request to get total count
+      const firstResponse = await findBalanceAllShops(
+        proprietor,
+        0,
+        CHUNK_SIZE
+      );
+
+      if (!firstResponse.success || !firstResponse.data) {
+        throw new Error(firstResponse.message || "Failed to load balance data");
+      }
+
+      const totalCount = firstResponse.data.totalCount || 0;
+      const firstChunk = firstResponse.data.shopsBalance || [];
+
+      // Update with first chunk
+      setAccumulatedData(firstChunk);
+      const firstTotal = firstChunk.reduce(
+        (sum, item) => sum + item.balance,
+        0
+      );
+      setTotalBalance(firstTotal);
+      setLoadingProgress(`Loading shops: ${firstChunk.length}/${totalCount}`);
+
+      // Load remaining chunks
+      const accumulated: ShopsBalanceData[] = [...firstChunk];
+
+      for (let skip = CHUNK_SIZE; skip < totalCount; skip += CHUNK_SIZE) {
+        setLoadingProgress(`Loading shops: ${skip}/${totalCount}`);
+
+        const response = await findBalanceAllShops(
+          proprietor,
+          skip,
+          CHUNK_SIZE
+        );
+
+        if (!response.success || !response.data?.shopsBalance) {
+          throw new Error(response.message || "Failed to load chunk");
+        }
+
+        const chunk = response.data.shopsBalance;
+        accumulated.push(...chunk);
+
+        // Update incrementally
+        setAccumulatedData([...accumulated]);
+        const runningTotal = accumulated.reduce(
+          (sum, item) => sum + item.balance,
+          0
+        );
+        setTotalBalance(runningTotal);
+        setLoadingProgress(
+          `Loading shops: ${accumulated.length}/${totalCount}`
+        );
+      }
+
+      // Final update
+      setAllBalances(accumulated);
+      setLoadingProgress("");
+      setIsLoadingChunks(false);
+    } catch (err: any) {
+      console.error("Error loading chunks:", err);
+      setError(err);
+      setIsLoadingChunks(false);
     }
-  }, [data, setAllBalances]);
+  }, [proprietor, setAllBalances]);
 
-  if (isLoading) {
-    return <LoadingComponent text={labels.loadingData} />;
+  useEffect(() => {
+    loadAllChunks();
+  }, [loadAllChunks]);
+
+  if (isLoadingChunks && accumulatedData.length === 0) {
+    return <LoadingComponent text={loadingProgress || labels.loadingData} />;
   }
 
-  if (isError) {
+  if (error && accumulatedData.length === 0) {
     return (
       <ErrorComponent
         error={error}
         message={labels.errorOccurred}
-        retry={refetch}
+        retry={loadAllChunks}
       />
     );
   }
@@ -91,12 +162,26 @@ export default function AllShopsMonthlyBalancePage() {
     }
   };
 
+  const displayData =
+    allBalanceFiltered && allBalanceFiltered.length > 0
+      ? allBalanceFiltered
+      : accumulatedData.length > 0
+      ? accumulatedData
+      : allBalances;
+
   return (
     <div>
       <CardHeader>
         <CardTitle>{labels.allShopsMonthlyBalance}</CardTitle>
       </CardHeader>
       <CardContent>
+        {isLoadingChunks && loadingProgress && (
+          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {loadingProgress}
+            </p>
+          </div>
+        )}
         <div
           className={cn(
             "flex flex-col items-start justify-start",
@@ -124,7 +209,10 @@ export default function AllShopsMonthlyBalancePage() {
             </Select>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="flex items-center gap-2">
+                <Button
+                  className="flex items-center gap-2"
+                  disabled={isLoadingChunks}
+                >
                   <Download className="h-4 w-4" />
                   {labels.download}
                 </Button>
@@ -148,14 +236,8 @@ export default function AllShopsMonthlyBalancePage() {
             </DropdownMenu>
           </div>
         </div>
-        {allBalances && allBalances.length > 0 ? (
-          <ShopsBalanceTable
-            shopsBlances={
-              allBalanceFiltered && allBalanceFiltered.length > 0
-                ? allBalanceFiltered
-                : allBalances
-            }
-          />
+        {displayData && displayData.length > 0 ? (
+          <ShopsBalanceTable shopsBlances={displayData} />
         ) : (
           <p>{labels.noDataFound}</p>
         )}
