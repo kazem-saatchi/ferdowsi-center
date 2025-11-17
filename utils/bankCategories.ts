@@ -1,4 +1,31 @@
-import { TransactionType } from "@prisma/client";
+import { TransactionType, TransactionCategory } from "@prisma/client";
+
+// Income and Payment category arrays
+export const incomeCategories: TransactionCategory[] = [
+  "KIOSK",
+  "MONTHLY",
+  "YEARLY",
+  "RENT",
+  "SELL",
+  "ADVERTISMENT",
+  "CONTRACT_FEE",
+  "OTHER_INCOME",
+];
+
+export const paymentCategories: TransactionCategory[] = [
+  "ELECTRICITY",
+  "WATER",
+  "GAS",
+  "ELEVATOR",
+  "ESCALATOR",
+  "CHILLER",
+  "CLEANING",
+  "SECURITY",
+  "SALARY",
+  "UTILITIES",
+  "TAX",
+  "OTHER_PAYMENT",
+];
 
 // Get transaction category display names in Persian
 export const transactionCategoryNames: Record<string, string> = {

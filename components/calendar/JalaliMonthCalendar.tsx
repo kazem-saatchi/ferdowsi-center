@@ -10,9 +10,10 @@ import DateObject from "react-date-object";
 
 interface CalendarProps {
   handleDateChange: (date: DateObject) => void;
+  value?: DateObject | null;
 }
 
-function JalaliMonthCalendar({ handleDateChange }: CalendarProps) {
+function JalaliMonthCalendar({ handleDateChange, value }: CalendarProps) {
   const CustomInput = ({ value, openCalendar, handleValueChange }: any) => {
     return (
       <Input
@@ -35,6 +36,7 @@ function JalaliMonthCalendar({ handleDateChange }: CalendarProps) {
         calendarPosition="bottom-right"
         onlyMonthPicker
         onChange={handleDateChange}
+        value={value}
         render={<CustomInput />}
         format="MMMM YYYY"
       />

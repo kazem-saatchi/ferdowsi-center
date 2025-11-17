@@ -2,14 +2,15 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Construction } from "lucide-react";
+import { ChevronRight, Banknote, ArrowLeft } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function BuildingInfoPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-background px-4 py-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header with back button */}
         <div className="mb-8">
           <button
@@ -21,42 +22,61 @@ export default function BuildingInfoPage() {
           </button>
         </div>
 
-        {/* Main content */}
-        <div className="bg-card rounded-2xl shadow-lg p-8 text-center border border-border">
-          {/* Construction icon */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-muted p-4 rounded-full">
-              <Construction className="w-12 h-12 text-muted-foreground" />
-            </div>
-          </div>
-
-          {/* Title */}
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+        {/* Page Title */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             اطلاعات ساختمان
           </h1>
-
-          {/* Message */}
-          <p className="text-lg text-muted-foreground mb-8">
-            این صفحه در حال ساخت می باشد
+          <p className="text-muted-foreground">
+            مدیریت و مشاهده اطلاعات مالی و گزارش‌های ساختمان
           </p>
+        </div>
 
-          {/* Decorative elements */}
-          <div className="flex justify-center gap-2 mb-8">
-            <div className="w-3 h-3 bg-primary rounded-full animate-bounce"></div>
-            <div
-              className="w-3 h-3 bg-primary rounded-full animate-bounce"
-              style={{ animationDelay: "0.2s" }}
-            ></div>
-            <div
-              className="w-3 h-3 bg-primary rounded-full animate-bounce"
-              style={{ animationDelay: "0.4s" }}
-            ></div>
-          </div>
+        {/* Reports Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Bank Report Card */}
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+            onClick={() => router.push("/user/building-info/bank-report")}
+          >
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Banknote className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-right">گزارش بانکی</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground text-sm mb-4">
+                مشاهده گزارش جامع تراکنش‌های بانکی شامل درآمدها و پرداخت‌ها به
+                تفکیک دسته‌بندی
+              </p>
+              <div className="flex items-center gap-2 text-primary font-medium">
+                <span>مشاهده گزارش</span>
+                <ArrowLeft className="w-4 h-4" />
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Subtitle */}
-          <p className="text-sm text-muted-foreground">
-            لطفاً بعداً دوباره بازدید کنید
-          </p>
+          {/* Placeholder for future features */}
+          <Card className="opacity-50 cursor-not-allowed border-2 border-dashed">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="bg-muted p-3 rounded-lg">
+                  <ChevronRight className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <CardTitle className="text-right text-muted-foreground">
+                  گزارش‌های بیشتر
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground text-sm">
+                گزارش‌های بیشتر به زودی اضافه خواهند شد
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
