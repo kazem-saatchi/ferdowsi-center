@@ -15,5 +15,5 @@ jobs:
       - name: Ping Supabase
         run: |
           curl -s "https://gpebcraqrwhssznbezki.supabase.co/rest/v1/Person?select=*" \
-            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZWJjcmFxcndoc3N6bmJlemtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NTAxMDUsImV4cCI6MjA3NDEyNjEwNX0.i4JX-vfNcahCGh9d8UKpzPRu0DPzJDPFppzUd_KrQ1g \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZWJjcmFxcndoc3N6bmJlemtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NTAxMDUsImV4cCI6MjA3NDEyNjEwNX0.i4JX-vfNcahCGh9d8UKpzPRu0DPzJDPFppzUd_KrQ1g" \
             -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZWJjcmFxcndoc3N6bmJlemtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NTAxMDUsImV4cCI6MjA3NDEyNjEwNX0.i4JX-vfNcahCGh9d8UKpzPRu0DPzJDPFppzUd_KrQ1g"
