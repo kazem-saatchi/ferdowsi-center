@@ -171,7 +171,10 @@ export async function calculatePersonBalanceByShop({
   };
 }
 
-// More efficient version using transaction
+// DEPRECATED: This function is no longer used.
+// Calculations have been moved to client-side.
+// See: app/(routes)/admin/(balance)/all-shops-monthly-balance/page.tsx
+// and utils/calculateBalanceClient.ts
 export async function calculateAllShopMonthlyBalance(
   proprietor: boolean,
   skip?: number,
@@ -184,9 +187,9 @@ export async function calculateAllShopMonthlyBalance(
   const shopType: ShopType[] = proprietor
     ? ["STORE", "OFFICE"]
     : ["STORE", "OFFICE", "KIOSK"];
-  
+
   const whereClause = { type: { in: shopType } };
-  
+
   // Get total count of shops
   const totalCount = await db.shop.count({
     where: whereClause,
@@ -197,11 +200,11 @@ export async function calculateAllShopMonthlyBalance(
     where: whereClause,
     orderBy: { plaque: "asc" },
   };
-  
+
   if (skip !== undefined) {
     queryOptions.skip = skip;
   }
-  
+
   if (take !== undefined) {
     queryOptions.take = take;
   }

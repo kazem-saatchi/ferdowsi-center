@@ -3,6 +3,7 @@ import {
   PersonBalanceByShopData,
   PersonBalanceData,
   ShopBalanceData,
+  ShopBalanceDetails,
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
 import { PersonInfoSafe } from "@/schema/personSchema";
@@ -17,7 +18,9 @@ import { Charge, Payment } from "@prisma/client";
 
 type Balances = {
   allBalances: ShopsBalanceData[] | null;
+  allBalanceDetails: ShopBalanceDetails[] | null;
   setAllBalances: (balances: ShopsBalanceData[]) => void;
+  setAllBalanceDetails: (details: ShopBalanceDetails[]) => void;
   allBalanceFiltered: ShopsBalanceData[] | null;
   setAllBalanceFiltered: (value: number | null) => void;
   shopBalance: ShopBalanceData | null;
@@ -56,6 +59,7 @@ export const createBalanceSlice: StateCreator<
 > = (set, get) => ({
   // State
   allBalances: null,
+  allBalanceDetails: null,
   allBalanceFiltered: null,
   shopBalance: null,
   personBalance: null,
@@ -66,6 +70,7 @@ export const createBalanceSlice: StateCreator<
 
   // Set utils
   setAllBalances: (balances) => set({ allBalances: balances }),
+  setAllBalanceDetails: (details) => set({ allBalanceDetails: details }),
   setAllBalanceFiltered: (value) => {
     if (value === null) {
       set({ allBalanceFiltered: get().allBalances ?? [] });
@@ -94,13 +99,13 @@ export const createBalanceSlice: StateCreator<
   },
   exportAllBalanceToExcel: () => {
     const state = get();
-    if (!state.allBalances || state.allBalances.length === 0) {
+    if (!state.allBalanceDetails || state.allBalanceDetails.length === 0) {
       console.error("No balance data to export");
       return;
     }
     exportToExcel({
       fileName: "Balance-Report",
-      data: state.allBalances,
+      data: state.allBalanceDetails,
       columns: getBalanceColumns(),
     });
   },
@@ -149,8 +154,10 @@ export const createBalanceSlice: StateCreator<
 });
 
 const getBalanceColumns = () => [
-  { header: "مانده حساب", accessor: "balance" },
-  { header: "نام مستاجر ", accessor: "renterName" },
-  { header: "نام مالک", accessor: "ownerName" },
   { header: "پلاک", accessor: "plaque" },
+  { header: "نام مالک", accessor: "ownerName" },
+  { header: "مانده حساب مالک", accessor: "ownerBalance" },
+  { header: "نام مستاجر ", accessor: "renterName" },
+  { header: "مانده حساب مستاجر", accessor: "renterBalance" },
+  { header: "مانده حساب", accessor: "totalBalance" },
 ];

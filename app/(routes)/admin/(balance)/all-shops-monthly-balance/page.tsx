@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
@@ -12,7 +12,18 @@ import { labels } from "@/utils/label";
 import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
-import { ShopsBalanceData } from "@/schema/balanceSchema";
+import {
+  ShopsBalanceData,
+  RawTransactionShopData,
+  ShopBalanceDetails,
+} from "@/schema/balanceSchema";
+import {
+  calculateAllShopsBalanceDetailsOnClient,
+  calculateTotalBalance,
+  calculateTotalOwnerBalance,
+  calculateTotalRenterBalance,
+  convertToShopsBalanceData,
+} from "@/utils/calculateBalanceClient";
 import {
   Select,
   SelectContent,
@@ -32,19 +43,22 @@ import { Download } from "lucide-react";
 
 export default function AllShopsMonthlyBalancePage() {
   const proprietor: boolean = false;
-  const CHUNK_SIZE = 10;
+  const BATCH_SIZE = 10;
+  const hasStartedLoading = useRef(false);
 
   const [totalBalance, setTotalBalance] = useState<number>(0);
-  const [isLoadingChunks, setIsLoadingChunks] = useState<boolean>(true);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadingProgress, setLoadingProgress] = useState<string>("");
   const [error, setError] = useState<any>(null);
-  const [accumulatedData, setAccumulatedData] = useState<ShopsBalanceData[]>(
+  const [accumulatedData, setAccumulatedData] = useState<ShopBalanceDetails[]>(
     []
   );
 
   const {
     allBalances,
     setAllBalances,
+    setAllBalanceDetails,
     exportAllBalanceToExcel,
     exportAllBalanceToPdf,
     setAllBalanceFiltered,
@@ -55,6 +69,7 @@ export default function AllShopsMonthlyBalancePage() {
     useShallow((state) => ({
       allBalances: state.allBalances,
       setAllBalances: state.setAllBalances,
+      setAllBalanceDetails: state.setAllBalanceDetails,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
       exportAllBalanceToExcel: state.exportAllBalanceToExcel,
       exportAllBalanceToPDFFiltered: state.exportAllBalanceToPDFFiltered,
@@ -64,18 +79,20 @@ export default function AllShopsMonthlyBalancePage() {
     }))
   );
 
-  const loadAllChunks = useCallback(async () => {
+  const loadAllData = useCallback(async () => {
     try {
-      setIsLoadingChunks(true);
+      setIsLoading(true);
       setError(null);
       setAccumulatedData([]);
       setTotalBalance(0);
+
+      setLoadingProgress("Fetching initial data...");
 
       // First request to get total count
       const firstResponse = await findBalanceAllShops(
         proprietor,
         0,
-        CHUNK_SIZE
+        BATCH_SIZE
       );
 
       if (!firstResponse.success || !firstResponse.data) {
@@ -83,64 +100,90 @@ export default function AllShopsMonthlyBalancePage() {
       }
 
       const totalCount = firstResponse.data.totalCount || 0;
-      const firstChunk = firstResponse.data.shopsBalance || [];
+      const firstBatch =
+        (firstResponse.data.shopsData as RawTransactionShopData[]) || [];
 
-      // Update with first chunk
-      setAccumulatedData(firstChunk);
-      const firstTotal = firstChunk.reduce(
-        (sum, item) => sum + item.balance,
-        0
+      // Calculate all three balance types for first batch on client side
+      // proprietor=false for monthly balances
+      const firstCalculated = calculateAllShopsBalanceDetailsOnClient(
+        firstBatch,
+        proprietor
       );
-      setTotalBalance(firstTotal);
-      setLoadingProgress(`Loading shops: ${firstChunk.length}/${totalCount}`);
 
-      // Load remaining chunks
-      const accumulated: ShopsBalanceData[] = [...firstChunk];
+      setAccumulatedData(firstCalculated);
+      let runningTotal = calculateTotalBalance(firstCalculated);
+      let runningOwnerTotal = calculateTotalOwnerBalance(firstCalculated);
+      let runningRenterTotal = calculateTotalRenterBalance(firstCalculated);
+      setTotalBalance(runningTotal);
 
-      for (let skip = CHUNK_SIZE; skip < totalCount; skip += CHUNK_SIZE) {
+      setLoadingProgress(
+        `Loading shops: ${firstCalculated.length}/${totalCount}`
+      );
+
+      const accumulated: ShopBalanceDetails[] = [...firstCalculated];
+
+      // Load remaining batches progressively
+      for (let skip = BATCH_SIZE; skip < totalCount; skip += BATCH_SIZE) {
         setLoadingProgress(`Loading shops: ${skip}/${totalCount}`);
 
         const response = await findBalanceAllShops(
           proprietor,
           skip,
-          CHUNK_SIZE
+          BATCH_SIZE
         );
 
-        if (!response.success || !response.data?.shopsBalance) {
-          throw new Error(response.message || "Failed to load chunk");
+        if (!response.success || !response.data?.shopsData) {
+          throw new Error(response.message || "Failed to load batch");
         }
 
-        const chunk = response.data.shopsBalance;
-        accumulated.push(...chunk);
+        const batchRawData = response.data
+          .shopsData as RawTransactionShopData[];
+        const batchCalculated = calculateAllShopsBalanceDetailsOnClient(
+          batchRawData,
+          proprietor
+        );
+
+        accumulated.push(...batchCalculated);
 
         // Update incrementally
         setAccumulatedData([...accumulated]);
-        const runningTotal = accumulated.reduce(
-          (sum, item) => sum + item.balance,
-          0
-        );
+        runningTotal = calculateTotalBalance(accumulated);
+        runningOwnerTotal = calculateTotalOwnerBalance(accumulated);
+        runningRenterTotal = calculateTotalRenterBalance(accumulated);
         setTotalBalance(runningTotal);
+
         setLoadingProgress(
           `Loading shops: ${accumulated.length}/${totalCount}`
         );
       }
 
-      // Final update
-      setAllBalances(accumulated);
+      // Final update - convert to ShopsBalanceData for store compatibility
+      setAllBalances(convertToShopsBalanceData(accumulated));
+      setAllBalanceDetails(accumulated);
       setLoadingProgress("");
-      setIsLoadingChunks(false);
+      setIsLoading(false);
+
+      console.log(
+        "All batches loaded and calculated on client:",
+        accumulated.length,
+        "shops"
+      );
     } catch (err: any) {
-      console.error("Error loading chunks:", err);
+      console.error("Error loading data:", err);
       setError(err);
-      setIsLoadingChunks(false);
+      setIsLoading(false);
     }
   }, [proprietor, setAllBalances]);
 
   useEffect(() => {
-    loadAllChunks();
-  }, [loadAllChunks]);
+    // Prevent loading data multiple times
+    if (!hasStartedLoading.current) {
+      hasStartedLoading.current = true;
+      loadAllData();
+    }
+  }, [loadAllData]);
 
-  if (isLoadingChunks && accumulatedData.length === 0) {
+  if (isLoading && accumulatedData.length === 0) {
     return <LoadingComponent text={loadingProgress || labels.loadingData} />;
   }
 
@@ -149,7 +192,7 @@ export default function AllShopsMonthlyBalancePage() {
       <ErrorComponent
         error={error}
         message={labels.errorOccurred}
-        retry={loadAllChunks}
+        retry={loadAllData}
       />
     );
   }
@@ -162,12 +205,12 @@ export default function AllShopsMonthlyBalancePage() {
     }
   };
 
+  // Use accumulated data directly for table display (shows all three balance types)
+  // Convert for store compatibility
+  const convertedAccumulated = convertToShopsBalanceData(accumulatedData);
+
   const displayData =
-    allBalanceFiltered && allBalanceFiltered.length > 0
-      ? allBalanceFiltered
-      : accumulatedData.length > 0
-      ? accumulatedData
-      : allBalances;
+    accumulatedData.length > 0 ? accumulatedData : allBalances || [];
 
   return (
     <div>
@@ -175,7 +218,7 @@ export default function AllShopsMonthlyBalancePage() {
         <CardTitle>{labels.allShopsMonthlyBalance}</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoadingChunks && loadingProgress && (
+        {isLoading && loadingProgress && (
           <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
             <p className="text-sm text-blue-700 dark:text-blue-300">
               {loadingProgress}
@@ -186,15 +229,16 @@ export default function AllShopsMonthlyBalancePage() {
           className={cn(
             "flex flex-col items-start justify-start",
             "lg:flex-row lg:justify-between lg:items-center",
-            "w-full gap-2"
+            "w-full gap-4 flex-wrap"
           )}
         >
-          <div className="flex flex-row items-center justify-start gap-2">
-            {labels.totalBalance}
-            {"  : "}
-            <span className="text-xl font-bold">
-              {formatNumber(totalBalance)}
-            </span>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row items-center justify-start gap-2">
+              <span className="text-sm font-semibold">Total Balance:</span>
+              <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                {formatNumber(totalBalance)}
+              </span>
+            </div>
           </div>
           <div className="flex flex-row items-center justify-start gap-2 mb-4">
             <Select onValueChange={handleFilter} defaultValue="all">
@@ -211,7 +255,7 @@ export default function AllShopsMonthlyBalancePage() {
               <DropdownMenuTrigger asChild>
                 <Button
                   className="flex items-center gap-2"
-                  disabled={isLoadingChunks}
+                  disabled={isLoading}
                 >
                   <Download className="h-4 w-4" />
                   {labels.download}

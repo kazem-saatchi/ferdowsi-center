@@ -5,6 +5,8 @@ export const labels = {
   totalBalance: "مانده حساب کل",
   totalChargeBalance: "مانده حساب شارژ ماهانه",
   totalProprietorBalance: "مانده حساب مالکانه",
+  totalOwnerBalance: "مانده حساب مالک",
+  totalRenterBalance: "مانده حساب مستاجر",
   myBalance: "مانده حساب من",
   totalBalanceMonthly: "مانده حساب شارژ ماهانه",
   totalBalanceYearly: "ماهانه حساب شارژ مالکانه",

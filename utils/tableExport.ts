@@ -112,7 +112,10 @@ export const exportToPDF = ({ fileName, columns, data }: ExportOptions) => {
         if (
           column.accessor.includes("balance") ||
           column.accessor.includes("amount") ||
-          column.accessor.includes("totalAmount")
+          column.accessor.includes("totalAmount") ||
+          column.accessor.includes("totalBalance") ||
+          column.accessor.includes("ownerBalance") ||
+          column.accessor.includes("renterBalance")
         ) {
           return formatNumber(row[column.accessor]);
         }
