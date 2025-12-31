@@ -76,6 +76,7 @@ export const errorMSG = {
   personNotFound: "شخص مشخص شده وجود ندارد.",
   noActiveRental: "فروشگاه اجاره فعال ندارد.",
   invalidEndDate: "تاریخ شروع نمی‌تواند قبل از تاریخ شروع دوره فعلی باشد.",
+  invalidStartDate: "تاریخ پایان نمی‌تواند قبل از تاریخ شروع دوره فعلی باشد.",
   noActiveOwnership: "مالکیت فعالی برای فروشگاه یافت نشد.",
   incorrectStatus: "هیچ دوره فعال یا غیرفعالی برای فروشگاه یافت نشد.",
   invalidDateRange: "تاریخ‌ها نامعتبر هستند.",
@@ -93,6 +94,11 @@ export const errorMSG = {
 
   noRelatedShopFound: "هیچ فروشگاهی برای کاربر یافت نشد.",
   somethingWentWrong: "خطایی پیش آمده است",
+
+  neitherStartDateNorEndDate: "تاریخ شروع یا پایان ندارد.",
+  historyNotFound: "تاریخچه یافت نشد.",
+  shopIdMismatch: "شناسه فروشگاه مطابقت ندارد.",
+  
 };
 
 export const successMSG = {
@@ -127,4 +133,5 @@ export const successMSG = {
   incomeAdded: "درآمد با موفقیت اضافه شد",
 
   personsAndShopsAdded: "اشخاص و فروشگاهها با موفقیت اضافه شد",
+  historyUpdated: "تاریخچه با موفقیت به‌روزرسانی شد.",
 };

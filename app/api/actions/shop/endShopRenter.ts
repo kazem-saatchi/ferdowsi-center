@@ -19,12 +19,20 @@ async function updateShop(data: EndShopRenterData, user: Person) {
 
   const validation = endShopRenter.safeParse(data);
   if (!validation.success) {
-    throw new Error(validation.error.errors.map((err) => err.message).join(", "));
+    throw new Error(
+      validation.error.errors.map((err) => err.message).join(", ")
+    );
   }
 
   const shop = await db.shop.findUnique({
     where: { id: validation.data.shopId },
-    select: { id: true, plaque: true, ownerId: true, ownerName: true,type: true },
+    select: {
+      id: true,
+      plaque: true,
+      ownerId: true,
+      ownerName: true,
+      type: true,
+    },
   });
 
   if (!shop) {
@@ -66,7 +74,7 @@ async function updateShop(data: EndShopRenterData, user: Person) {
     // Close the current rental history
     await prisma.shopHistory.update({
       where: { id: currentRentalHistory.id },
-      data: { endDate: currentDate },
+      data: { endDate: currentDate, isActive: false },
     });
 
     // Add new history entry for the owner
@@ -91,5 +99,7 @@ async function updateShop(data: EndShopRenterData, user: Person) {
 }
 
 export default async function endShopRenterId(data: EndShopRenterData) {
-  return handleServerAction<UpdateShopResponse>((user) => updateShop(data, user));
+  return handleServerAction<UpdateShopResponse>((user) =>
+    updateShop(data, user)
+  );
 }

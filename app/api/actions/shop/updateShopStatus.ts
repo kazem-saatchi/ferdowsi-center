@@ -91,6 +91,7 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
       where: { id: currentStatusHistory.id },
       data: {
         endDate: newStartDate.toISOString(),
+        isActive: false,
       },
     });
 

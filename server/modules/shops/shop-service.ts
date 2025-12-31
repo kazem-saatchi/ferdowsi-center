@@ -385,6 +385,7 @@ export const endRenter = async (data: EndShopRenterData) => {
       },
       data: {
         endDate: data.endDate,
+        isActive: false,
       },
     });
 

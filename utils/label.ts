@@ -31,7 +31,7 @@ export const labels = {
   charge: "شارژ",
   payment: "پرداخت",
 
-  applyCost:"ثبت هزینه",
+  applyCost: "ثبت هزینه",
 
   title: "عنوان",
   amount: "مبلغ - ریال",
@@ -51,7 +51,7 @@ export const labels = {
   proprietorType: "حساب مالکانه",
   businessType: "حساب ماهانه",
   generalType: "حساب عمومی",
-  allAccountType:"همه حسابها",
+  allAccountType: "همه حسابها",
 
   shopId: "واحد",
   personId: "شخص",
@@ -176,6 +176,14 @@ export const labels = {
   historiesNotFound: "تاریخچه‌ای یافت نشد",
   shopHistory: "تاریخچه واحد",
   personHistory: "تاریخچه شخص",
+
+  // Update history labels
+  updateHistoryDate: "ویرایش تاریخ",
+  updatingHistoryDate: "در حال ویرایش...",
+  selectDateType: "نوع تاریخ را انتخاب کنید",
+  cannotUpdateNullEndDate: "نمی‌توانید تاریخ پایان خالی را ویرایش کنید",
+  cancel: "لغو",
+  update: "به‌روزرسانی",
 
   removeShopRenter: "حذف مستاجر واحد",
   endRentalAgreement: "پایان قرارداد اجاره",

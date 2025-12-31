@@ -75,6 +75,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
         where: { id: currentRentalHistory.id },
         data: {
           endDate: newStartDate.toISOString(),
+          isActive: false,
         },
       });
     }
@@ -84,6 +85,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
         where:{id:currentOwnerHistory.id},
         data:{
           endDate: newStartDate.toISOString(),
+          isActive: false,
         }
       })
     }

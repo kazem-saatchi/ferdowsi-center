@@ -9,10 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns-jalali";
 import { ShopHistory } from "@prisma/client";
 import { useState } from "react";
 import { labels } from "@/utils/label";
+import { UpdateHistoryModal } from "./UpdateHistoryModal";
+import { Pencil } from "lucide-react";
 
 type HistoryType =
   | "Ownership"
@@ -36,10 +39,25 @@ function HistoryTable({ allHistories }: TableProps) {
   const itemsPerPage = 40;
   const totalPages = Math.ceil(allHistories.length / itemsPerPage);
 
+  const [selectedHistory, setSelectedHistory] = useState<ShopHistory | null>(
+    null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const paginatedHistories = allHistories?.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
+
+  const handleEditClick = (history: ShopHistory) => {
+    setSelectedHistory(history);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedHistory(null);
+  };
 
   return (
     <>
@@ -52,6 +70,7 @@ function HistoryTable({ allHistories }: TableProps) {
             <TableHead className="text-center">{labels.startDate}</TableHead>
             <TableHead className="text-center">{labels.endDate}</TableHead>
             <TableHead className="text-center">{labels.status}</TableHead>
+            <TableHead className="text-center">{labels.edit}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -79,10 +98,24 @@ function HistoryTable({ allHistories }: TableProps) {
                   {history.isActive ? labels.active : labels.inactive}
                 </Badge>
               </TableCell>
+              <TableCell className="text-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEditClick(history)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <UpdateHistoryModal
+        history={selectedHistory}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
       {totalPages > 1 && (
         <div className="flex justify-center mt-4 space-x-2">
           <button

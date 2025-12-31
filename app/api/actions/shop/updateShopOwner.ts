@@ -71,7 +71,7 @@ async function updateShop(data: UpdateShopOwnerData, user: Person) {
 
     await prisma.shopHistory.update({
       where: { id: currentOwnershipHistory.id },
-      data: { endDate: newStartDate.toISOString() },
+      data: { endDate: newStartDate.toISOString(), isActive: false },
     });
 
     await prisma.shopHistory.create({
