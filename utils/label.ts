@@ -38,6 +38,7 @@ export const labels = {
   date: "تاریخ",
   operationName: "موضوع",
   daysCount: "تعداد روز",
+  bankTransactionId: "شماره کارت",
 
   gettingData: "در حال گرفتن اطلاعات",
 

@@ -107,6 +107,7 @@ async function getAllBalance(
           title: "",
           date: payment.date,
           proprietor: payment.proprietor,
+          bankTransactionId: payment.bankTransactionId ?? undefined,
         };
       });
   }
@@ -130,6 +131,7 @@ async function getAllBalance(
         title: "",
         date: payment.date,
         proprietor: payment.proprietor,
+        bankTransactionId: payment.bankTransactionId ?? undefined,
       };
     });
 

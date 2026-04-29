@@ -40,6 +40,7 @@ export const chargePaymentSchema = z.object({
   title: z.string(),
   date: z.date(),
   proprietor: z.boolean(),
+  bankTransactionId: z.string().optional(),
 });
 
 export type ChargePaymentData = z.infer<typeof chargePaymentSchema>;

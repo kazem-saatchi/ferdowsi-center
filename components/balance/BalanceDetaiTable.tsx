@@ -128,6 +128,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
             <TableHead className="text-center">{labels.name}</TableHead>
             <TableHead className="text-center">{labels.date}</TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
+            <TableHead className="text-center">{labels.bankTransactionId}</TableHead>
             <TableHead className="text-center">
               {labels.transactionInfo}
             </TableHead>
@@ -152,6 +153,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
               <TableCell className="text-center">
                 {item.amount.toLocaleString()}
               </TableCell>
+              <TableCell className="text-center">{item.bankTransactionId}</TableCell>
               <TableCell className="text-center">{item.description}</TableCell>
             </TableRow>
           ))}
