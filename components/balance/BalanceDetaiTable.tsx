@@ -10,12 +10,21 @@ import {
 import { ChargePaymentData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
 import { Charge, Payment } from "@prisma/client";
-import { Separator } from "../ui/separator";
 import { formatPersianDate } from "@/utils/localeDate";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/store";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Download } from "lucide-react";
+import { useState } from "react";
+import TransactionInfo from "./TransactionInfo";
 
 interface BalanceTableProps {
   charges: Charge[];
@@ -39,6 +48,9 @@ type TotalBalance = {
 
 export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
   const { exportBalanceDetailToPDF, exportBalanceDetailToExcel } = useStore();
+  const [selectedTransactionId, setSelectedTransactionId] = useState<
+    string | null
+  >(null);
 
   const handleExportPDF = () => {
     exportBalanceDetailToPDF(charges, payments);
@@ -128,7 +140,9 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
             <TableHead className="text-center">{labels.name}</TableHead>
             <TableHead className="text-center">{labels.date}</TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
-            <TableHead className="text-center">{labels.bankTransactionId}</TableHead>
+            <TableHead className="text-center">
+              {labels.bankTransactionId}
+            </TableHead>
             <TableHead className="text-center">
               {labels.transactionInfo}
             </TableHead>
@@ -139,7 +153,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
             <TableRow
               key={`${item.type}-${item.id}`}
               className={cn(
-                item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30"
+                item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30",
               )}
             >
               <TableCell className="text-center capitalize">
@@ -153,7 +167,19 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
               <TableCell className="text-center">
                 {item.amount.toLocaleString()}
               </TableCell>
-              <TableCell className="text-center">{item.bankTransactionId}</TableCell>
+              <TableCell className="text-center">
+                {item.bankTransactionId && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTransactionId(item.bankTransactionId);
+                    }}
+                  >
+                    {labels.view}
+                  </Button>
+                )}
+              </TableCell>
               <TableCell className="text-center">{item.description}</TableCell>
             </TableRow>
           ))}
@@ -169,8 +195,8 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
                 totalChargeBalance.balance > 0
                   ? "text-red-500"
                   : totalChargeBalance.balance < 0
-                  ? "text-green-500"
-                  : ""
+                    ? "text-green-500"
+                    : ""
               }`}
             >
               {totalChargeBalance.balance.toLocaleString()}
@@ -185,8 +211,8 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
                 totalChargeBalance.balance > 0
                   ? "text-red-500"
                   : totalChargeBalance.balance < 0
-                  ? "text-green-500"
-                  : ""
+                    ? "text-green-500"
+                    : ""
               }`}
             >
               {totalProprietorBalance.balance.toLocaleString()}
@@ -194,6 +220,43 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
           </TableRow>
         </TableFooter>
       </Table>
+      <Dialog
+        open={selectedTransactionId !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedTransactionId(null);
+        }}
+      >
+        <DialogContent
+          className={cn(
+            "flex max-h-[min(90vh,720px)] max-w-2xl flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl",
+            "[&>button.absolute]:hidden",
+          )}
+        >
+          <DialogHeader className="space-y-1 border-b bg-muted/40 px-6 py-4 text-right sm:text-right">
+            <DialogTitle className="text-xl font-semibold tracking-tight">
+              {labels.transactionInfo}
+            </DialogTitle>
+            <DialogDescription className="text-sm font-normal text-muted-foreground">
+              {labels.viewDetail}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+            {selectedTransactionId ? (
+              <TransactionInfo bankTransactionId={selectedTransactionId} />
+            ) : null}
+          </div>
+          <DialogFooter className="border-t bg-muted/20 px-6 py-3 sm:justify-start">
+            <Button
+              type="button"
+              variant="secondary"
+              className="min-w-[7rem]"
+              onClick={() => setSelectedTransactionId(null)}
+            >
+              {labels.close}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

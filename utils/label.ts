@@ -416,4 +416,47 @@ export const labels = {
   // My Shops
   myShops: "لیست واحدهای من",
   youDontHaveAnyShop: " با این حساب کاربری واحدی ثبت نشده است. ",
+
+  loadingTransactionDetails: "در حال بارگذاری جزئیات تراکنش...",
+  transactionDataNotFound: "اطلاعات این تراکنش یافت نشد",
+  errorLoadingTransactionDetails: "خطا در دریافت اطلاعات تراکنش",
+  bankStatementNumber: "شماره سند بانکی",
+  bankReceiptNumberLabel: "شماره قبض / رسید بانکی",
+  branchCode: "کد شعبه",
+  balanceAfterTransaction: "مانده پس از تراکنش",
+  systemRecordedAt: "تاریخ ثبت در سیستم",
+  transactionDateLabel: "تاریخ تراکنش",
+  senderBankAccount: "شماره حساب مبدا",
+  bankAccountNumberDestination: "شماره حساب مقصد",
+};
+
+/** Bank API transaction type → Persian label */
+export const bankTransactionTypeLabels: Record<string, string> = {
+  INCOME: "واریز",
+  PAYMENT: "برداشت",
+  UNKNOWN: "نامشخص",
+};
+
+/** Bank transaction category enum → Persian label */
+export const bankTransactionCategoryLabels: Record<string, string> = {
+  KIOSK: "درآمد مشاعات",
+  MONTHLY: "درآمد شارژ ماهانه",
+  YEARLY: "درآمد شارژ مالکانه",
+  RENT: "درآمد اجاره",
+  SELL: "درآمد فروش",
+  ADVERTISMENT: "درآمد تبلیغات",
+  CONTRACT_FEE: "درآمد قرارداد",
+  OTHER_INCOME: "سایر درآمدها",
+  ELECTRICITY: "قبض برق",
+  WATER: "قبض آب",
+  GAS: "قبض گاز",
+  ELEVATOR: "تعمیرات آسانسور",
+  ESCALATOR: "تعمیرات پله برقی",
+  CHILLER: "تعمیرات موتورخانه",
+  CLEANING: "خدمات نظافت",
+  SECURITY: "خدمات نگهبانی",
+  SALARY: "حقوق کارمندان",
+  UTILITIES: "تجهیزات",
+  TAX: "مالیات",
+  OTHER_PAYMENT: "سایر هزینه‌ها",
 };

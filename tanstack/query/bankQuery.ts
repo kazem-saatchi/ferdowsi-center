@@ -4,6 +4,7 @@ import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions"
 import { AccountType } from "@prisma/client";
 import { getBankFailedCardTransfer } from "@/app/api/actions/bank/getBankFailedCardTransfer";
 import { getBankIncomeTransfer } from "@/app/api/actions/bank/getBankIncomeTransfer";
+import { getTransactionData } from "@/app/api/actions/bank/getTransactionData";
 
 //------------------Bank--------------------
 
@@ -106,5 +107,13 @@ export function useGetAllIncomeTransfer({
       return result;
     },
     placeholderData: keepPreviousData,
+  });
+}
+
+// Get Transaction Data
+export function useGetTransactionData(bankTransactionId: string) {
+  return useQuery({
+    queryKey: ["transactionData", bankTransactionId],
+    queryFn: () => getTransactionData(bankTransactionId),
   });
 }
