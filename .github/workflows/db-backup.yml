@@ -22,7 +22,7 @@ jobs:
         env:
           SESSION_URL: ${{ secrets.SUPABASE_SESSION_URL }}
         run: |
-          pg_dump "$SESSION_URL" \
+          /usr/lib/postgresql/17/bin/pg_dump "$SESSION_URL" \
             --no-owner \
             --no-acl \
             -Fc \
