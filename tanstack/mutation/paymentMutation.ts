@@ -3,12 +3,16 @@ import addPaymentByInfo from "@/app/api/actions/payment/addPayment";
 import addPaymentByBankId from "@/app/api/actions/payment/addPaymentByBankId";
 import addPaymentFromCard from "@/app/api/actions/payment/addPaymentFromCard";
 import deletePaymentById from "@/app/api/actions/payment/deletePayment";
+import updatePaymentUserAction, {
+  UpdatePaymentUserProps,
+} from "@/app/api/actions/payment/updatePaymentUser";
 import {
   addPaymentByBankIdData,
   AddPaymentByInfoData,
 } from "@/schema/paymentSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { successMSG } from "@/utils/messages";
 
 //------------------PAYMENT--------------------
 
@@ -164,6 +168,36 @@ export function useAddFailedPayment() {
         //   refetchType: "active",
         // });
         toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdatePaymentUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: UpdatePaymentUserProps) =>
+      await updatePaymentUserAction(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+        queryClient.refetchQueries({ queryKey: ["all-payments"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-payments", variables.shopId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["shop-payments", variables.shopId],
+        });
+
+        const payload = data.data as { message?: string } | undefined;
+        toast.success(payload?.message ?? successMSG.paymentUpdated);
       } else {
         toast.error(data.data?.message || data.message);
       }

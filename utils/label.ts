@@ -260,10 +260,20 @@ export const labels = {
   paymentsNotFound: "پرداختی یافت نشد",
   loadingPayments: "در حال بارگذاری اطلاعات",
   errorLoadingPayments: "خطایی رخ داده است",
+  errorLoadingCharges: "خطایی رخ داده است",
 
   searchPaymentsByPerson: "جستجوی پرداختی‌ها بر اساس شخص",
 
   searchPaymentsByShop: "جستجوی پرداختی‌ها بر اساس واحد",
+
+  // Change person on charge/payment row (shop balance detail)
+  changeBalanceRowPerson: "تغییر شخص برای ردیف مانده حساب",
+  changeBalanceRowPersonDescription:
+    "شخص جدید را انتخاب کرده و تغییرات را ثبت کنید.",
+  currentPerson: "شخص فعلی",
+  transactionKindShort: "نوع ثبت",
+  selectDifferentPersonHint:
+    "برای ذخیره، باید شخصی غیر از شخص فعلی انتخاب شود.",
 
   // Add new labels for balance page
   allShopsMonthlyBalance: "حساب ماهانه همه واحدها",

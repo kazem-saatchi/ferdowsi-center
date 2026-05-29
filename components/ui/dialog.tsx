@@ -6,6 +6,39 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Modal Dialog ignores outside-pointer/focus routed through portaled floating UI (Popover, Select).
+ * Prefer `composedPath()` because `closest()` on `target` alone can miss some hit targets / paths.
+ *
+ * Wrapper: `@radix-ui/react-popper` (`data-radix-popper-content-wrapper`).
+ */
+function swallowDialogInteractIfInsideRadixPopperFloating(
+  event: CustomEvent<{ originalEvent?: Event }>,
+) {
+  const oe = event.detail.originalEvent;
+  if (!(oe instanceof Event)) return;
+
+  const path =
+    typeof oe.composedPath === "function"
+      ? (oe.composedPath() as EventTarget[])
+      : [];
+  const inPath = path.some(
+    (n) =>
+      n instanceof Element &&
+      n.closest?.("[data-radix-popper-content-wrapper]") != null,
+  );
+
+  let inClosest = false;
+  const t = oe.target;
+  if (t instanceof Element) {
+    inClosest = t.closest("[data-radix-popper-content-wrapper]") != null;
+  }
+
+  if (inPath || inClosest) {
+    event.preventDefault()
+  }
+}
+
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
@@ -32,7 +65,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, onPointerDownOutside, onInteractOutside, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -41,6 +74,14 @@ const DialogContent = React.forwardRef<
         "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
         className
       )}
+      onPointerDownOutside={(event) => {
+        swallowDialogInteractIfInsideRadixPopperFloating(event)
+        onPointerDownOutside?.(event)
+      }}
+      onInteractOutside={(event) => {
+        swallowDialogInteractIfInsideRadixPopperFloating(event)
+        onInteractOutside?.(event)
+      }}
       {...props}
     >
       {children}

@@ -16,4 +16,4 @@ $2a$10$MYfablteqPQvFWw4.OqJ7.mQwmlQeJtWBrtIkkKqafd4cfulxv3lu
 [] back-up data - import/export data
 [] use bank api to get transactions data
 
- 
+[] For Kiosks we have issue when adding proprietor payment, it goes to owner (Ferdowsi Center) while the Rent relate to renter

@@ -17,6 +17,7 @@ import {
 } from "@/schema/chargeSchema";
 import addRentToAllKiosks from "@/app/api/actions/charge/addRentAllKiosks";
 import addChargeByAmountToShopList from "@/app/api/actions/charge/addChargeByAmountToShopList";
+import updateChargeUserAction, { UpdateChargeUserProps } from "@/app/api/actions/charge/updateChargeUser";
 
 //------------------CHARGE--------------------
 
@@ -228,6 +229,35 @@ export function useCreateAnnualChargeReference() {
         queryClient.refetchQueries({ queryKey: ["all-charges-reference"] });
 
         toast.success(data.data?.message);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useUpdateChargeUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: UpdateChargeUserProps) =>
+      await updateChargeUserAction(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-charges"] });
+        queryClient.refetchQueries({ queryKey: ["all-charges"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-charges", variables.shopId],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["shop-charges", variables.shopId],
+        });
+
+        toast.success(data.data?.message ?? successMSG.chargeUpdated);
       } else {
         toast.error(data.data?.message || data.message);
       }

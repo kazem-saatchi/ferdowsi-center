@@ -98,10 +98,11 @@ export const errorMSG = {
   neitherStartDateNorEndDate: "تاریخ شروع یا پایان ندارد.",
   historyNotFound: "تاریخچه یافت نشد.",
   shopIdMismatch: "شناسه فروشگاه مطابقت ندارد.",
-  
+  chargeNotFound: "شارژ یافت نشد.",
 };
 
 export const successMSG = {
+  chargeUpdated: "شارژ با موفقیت به‌روزرسانی شد.",
   personAdded: "شخص با موفقیت اضافه شد.",
   personDeleted: "شخص با موفقیت حذف شد.",
   personUpdated: "شخص با موفقیت به‌روزرسانی شد.",
@@ -126,6 +127,7 @@ export const successMSG = {
   paymentCreated: "پرداخت با موفقیت اضافه شد.",
   paymentDeleted: "پرداخت با موفقیت حذف شد.",
   paymentFinded: "پرداخت با موفقیت یافت شد.",
+  paymentUpdated: "پرداخت با موفقیت به‌روزرسانی شد.",
 
   balancesFound: "حساب با موفقیت یافت شد",
 
