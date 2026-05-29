@@ -1,0 +1,50 @@
+name: Weekly Supabase DB Backup
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Every Sunday at 03:00 UTC
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Dump database
+        env:
+          DIRECT_URL: ${{ secrets.SUPABASE_DIRECT_URL }}
+        run: |
+          # Strip pgbouncer params — pg_dump needs a direct connection
+          CLEAN_URL=$(echo "$DIRECT_URL" | cut -d'?' -f1)
+          pg_dump "$CLEAN_URL" \
+            --no-owner \
+            --no-acl \
+            -Fc \
+            -f backup_$(date +%Y-%m-%d).dump
+          gzip backup_$(date +%Y-%m-%d).dump
+
+      - name: Checkout backup repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.BACKUP_REPO }}   # e.g. your-username/ferdowsi-db-backups
+          token: ${{ secrets.BACKUP_REPO_TOKEN }}
+          path: backup-repo
+
+      - name: Commit and push backup
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BACKUP_FILE="backup_${DATE}.dump.gz"
+
+          cp "$BACKUP_FILE" backup-repo/
+
+          cd backup-repo
+
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add "$BACKUP_FILE"
+          git commit -m "backup: $DATE"
+          git push
