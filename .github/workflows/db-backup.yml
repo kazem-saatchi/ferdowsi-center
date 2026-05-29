@@ -15,11 +15,9 @@ jobs:
 
       - name: Dump database
         env:
-          DIRECT_URL: ${{ secrets.SUPABASE_DIRECT_URL }}
+          SESSION_URL: ${{ secrets.SUPABASE_SESSION_URL }}
         run: |
-          # Strip pgbouncer params — pg_dump needs a direct connection
-          CLEAN_URL=$(echo "$DIRECT_URL" | cut -d'?' -f1)
-          pg_dump "$CLEAN_URL" \
+          pg_dump "$SESSION_URL" \
             --no-owner \
             --no-acl \
             -Fc \
