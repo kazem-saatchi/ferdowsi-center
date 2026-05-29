@@ -4,6 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Shop {
@@ -95,7 +97,7 @@ model ShopHistory {
   shop          Shop     @relation(fields: [shopId], references: [id])
   person        Person   @relation(fields: [personId], references: [id])
 
-  createdAt     DateTime @default(now()) 
+  createdAt     DateTime @default(now())
 
   @@index([shopId])
   @@index([personId])
@@ -120,7 +122,7 @@ model Charge {
   operationId   String
   operationName String
   daysCount     Int
-  proprietor    Boolean     @default(false)  //مالکانه 
+  proprietor    Boolean     @default(false)  //مالکانه
   description   String      @default("") @db.Text
   forRent       Boolean     @default(false)
   bankTransactionId String?
@@ -143,7 +145,7 @@ model Payment {
   personId          String
   personName        String
   date              DateTime
-  proprietor        Boolean     @default(false) //مالکانه 
+  proprietor        Boolean     @default(false) //مالکانه
   type              PaymentType @default(CASH)
   description       String      @default("") @db.Text
   receiptImageUrl   String      @default("")
@@ -194,17 +196,17 @@ model Log {
 
 model Session {
   id          String   @id @default(uuid())
-  personId    String   
+  personId    String
   idNumber    String
   createdAt   DateTime @default(now())
   expireAt    DateTime
 
-  @@index([personId]) 
+  @@index([personId])
 }
 
 model ShopChargeReference {
   id              String    @id @unique @default(uuid())
-  shopId          String    
+  shopId          String
   plaque          Int
   area            Float
   shopType        ShopType  @default(STORE)
@@ -213,10 +215,10 @@ model ShopChargeReference {
   metricAmount    Int
   totalAmount     Int
   year            Int       @default(2000)
-  proprietor      Boolean   @default(false) //مالکانه 
+  proprietor      Boolean   @default(false) //مالکانه
   forRent         Boolean   @default(false)
 
-  createdAt       DateTime  @default(now()) 
+  createdAt       DateTime  @default(now())
 
   shop            Shop      @relation(fields: [shopId], references: [id])
 
@@ -249,10 +251,10 @@ enum CostCategory {
   CHILLER       // تعمیرات موتورخانه
   CLEANING      // خدمات نظافت
   SECURITY      // خدمات نگهبانی
-  SALARY        // حقوق کارمندان        
+  SALARY        // حقوق کارمندان
   UTILITIES     // تجهیزات
   TAX           // مالیات
-  OTHER_PAYMENT // سایر خدمات 
+  OTHER_PAYMENT // سایر خدمات
 }
 
 model Income {
@@ -273,8 +275,8 @@ model BankTransaction {
   id                  String   @id @default(uuid())
   recieverAccount     String?               // Bank account number (e.g., "1234-5678-9012-3456")
   senderAccount       String?               // Bank account number (e.g., "1234-5678-9012-3456")
-  amount              Int     
-  balance             Int       
+  amount              Int
+  balance             Int
   type                TransactionType       // INCOME or PAYMENT
   category            TransactionCategory?  // More specific category
   description         String
@@ -293,7 +295,7 @@ model BankTransaction {
   referenceType     ReferenceType?
 
   registerAble      Boolean @default(true)
-  
+
   @@index([recieverAccount])
   @@index([date])
   @@index([referenceId]) // Important for lookups
@@ -327,7 +329,7 @@ enum TransactionCategory {
   ADVERTISMENT  // درآمد تبلیغات
   CONTRACT_FEE   // درآمد
   OTHER_INCOME  // سایر درآمدها
-  
+
   // Payment categories
   ELECTRICITY   // قبض برق
   WATER         // قبض آب
@@ -337,9 +339,9 @@ enum TransactionCategory {
   CHILLER       // تعمیرات موتورخانه
   CLEANING      // خدمات نظافت
   SECURITY      // خدمات نگهبانی
-  SALARY        // حقوق کارمندان        
+  SALARY        // حقوق کارمندان
   UTILITIES     // تجهیزات
   TAX           // مالیات
-  OTHER_PAYMENT // سایر خدمات 
-  
+  OTHER_PAYMENT // سایر خدمات
+
 }
