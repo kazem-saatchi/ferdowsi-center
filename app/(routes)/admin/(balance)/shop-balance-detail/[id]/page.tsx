@@ -42,6 +42,7 @@ function ShopBalanceDetaiById() {
       <BalanceDetailTable
         charges={balanceData?.data?.charges}
         payments={balanceData?.data?.payments}
+        plaque={balanceData?.data?.shopBalance?.plaque}
       />
     </div>
   );

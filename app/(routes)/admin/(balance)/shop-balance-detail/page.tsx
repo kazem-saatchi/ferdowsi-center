@@ -144,6 +144,7 @@ export default function ShopBalanceDetailPage() {
             <BalanceDetailTable
               charges={balanceData?.data?.charges}
               payments={balanceData?.data?.payments}
+              plaque={balanceData?.data?.shopBalance?.plaque}
             />
           ) : (
             <p>{labels.noInformationFound}</p>

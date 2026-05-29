@@ -25,16 +25,8 @@ import type { BalanceTransactionRow } from "./ChangeUser";
 interface BalanceTableProps {
   charges: Charge[];
   payments: Payment[];
+  plaque?: string | number;
 }
-
-// type BalanceItem = {
-//   type: string;
-//   id: string;
-//   title: string;
-//   amount: number;
-//   date: Date;
-//   proprietor: boolean;
-// };
 
 type TotalBalance = {
   charge: number;
@@ -42,32 +34,62 @@ type TotalBalance = {
   balance: number;
 };
 
-export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
+type TabType = "all" | "proprietor" | "non-proprietor";
+
+const tabs: { id: TabType; label: string }[] = [
+  { id: "all", label: labels.all },
+  { id: "proprietor", label: labels.proprietorCharge },
+  { id: "non-proprietor", label: labels.monthlyCharge },
+];
+
+function computeTotals(
+  balanceData: Array<{ type: "charge" | "payment"; amount: number; proprietor: boolean }>
+): TotalBalance {
+  return {
+    charge: balanceData
+      .filter((item) => item.type === "charge")
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    payment: balanceData
+      .filter((item) => item.type === "payment")
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    balance: balanceData.reduce((sum, item) => {
+      return item.type === "charge" ? sum + item.amount : sum - item.amount;
+    }, 0),
+  };
+}
+
+export function BalanceDetailTable({ charges, payments, plaque }: BalanceTableProps) {
   const { exportBalanceDetailToPDF, exportBalanceDetailToExcel } = useStore();
   const [selectedTransactionId, setSelectedTransactionId] = useState<
     string | null
   >(null);
-
   const [selectedTransaction, setSelectedTransaction] =
     useState<BalanceTransactionRow | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>("all");
 
-  const handleExportPDF = () => {
-    exportBalanceDetailToPDF(charges, payments);
-  };
+  // ── filtered source data based on active tab ───────────────────────────────
+  const activeCharges =
+    activeTab === "all"
+      ? charges
+      : activeTab === "proprietor"
+        ? charges.filter((c) => c.proprietor)
+        : charges.filter((c) => !c.proprietor);
 
-  const handleExportExcel = () => {
-    exportBalanceDetailToExcel(charges, payments);
-  };
+  const activePayments =
+    activeTab === "all"
+      ? payments
+      : activeTab === "proprietor"
+        ? payments.filter((p) => p.proprietor)
+        : payments.filter((p) => !p.proprietor);
 
+  // ── sorted combined rows for the current tab ──────────────────────────────
   const balanceData = [
-    ...charges.map((charge) => ({
+    ...activeCharges.map((charge) => ({
       ...charge,
-      title: charge.title,
       type: "charge" as const,
     })),
-    ...payments.map((payment) => ({
+    ...activePayments.map((payment) => ({
       ...payment,
-      title: payment.title,
       type: "payment" as const,
     })),
   ].sort((a, b) => {
@@ -76,42 +98,61 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
     return dateB - dateA; // newest first
   });
 
-  // Calculate totals for better organization
-  const totalChargeBalance: TotalBalance = {
-    charge: balanceData
-      .filter((item) => item.type === "charge")
-      .filter((item) => !item.proprietor)
-      .reduce((sum, item) => sum + (item.amount || 0), 0),
-    payment: balanceData
-      .filter((item) => item.type === "payment")
-      .filter((item) => !item.proprietor)
-      .reduce((sum, item) => sum + (item.amount || 0), 0),
-    balance: balanceData
-      .filter((item) => !item.proprietor)
-      .reduce((sum, item) => {
-        return item.type === "charge" ? sum + item.amount : sum - item.amount;
-      }, 0),
+  // ── footer totals ─────────────────────────────────────────────────────────
+  // "all" tab keeps the original two-row footer (non-prop / prop split)
+  const totalNonProprietorBalance = computeTotals(
+    balanceData.filter((item) => !item.proprietor)
+  );
+  const totalProprietorBalance = computeTotals(
+    balanceData.filter((item) => item.proprietor)
+  );
+  // filtered tabs show a single total row
+  const totalActiveBalance = computeTotals(balanceData);
+
+  // ── export ────────────────────────────────────────────────────────────────
+  const tabSuffix =
+    activeTab === "proprietor"
+      ? "Proprietor"
+      : activeTab === "non-proprietor"
+        ? "NonProprietor"
+        : "All";
+
+  const plaquePart = plaque != null ? `-Shop${plaque}` : "";
+  const fileName = `Balance-Detail${plaquePart}-${tabSuffix}-Report`;
+
+  const handleExportPDF = () => {
+    exportBalanceDetailToPDF(activeCharges, activePayments, fileName);
   };
 
-  const totalProprietorBalance: TotalBalance = {
-    charge: balanceData
-      .filter((item) => item.type === "charge")
-      .filter((item) => item.proprietor)
-      .reduce((sum, item) => sum + (item.amount || 0), 0),
-    payment: balanceData
-      .filter((item) => item.type === "payment")
-      .filter((item) => item.proprietor)
-      .reduce((sum, item) => sum + (item.amount || 0), 0),
-    balance: balanceData
-      .filter((item) => item.proprietor)
-      .reduce((sum, item) => {
-        return item.type === "charge" ? sum + item.amount : sum - item.amount;
-      }, 0),
+  const handleExportExcel = () => {
+    exportBalanceDetailToExcel(activeCharges, activePayments, fileName);
   };
+
+  // ── balance colour helper ─────────────────────────────────────────────────
+  const balanceColour = (balance: number) =>
+    balance > 0 ? "text-red-500" : balance < 0 ? "text-green-500" : "";
 
   return (
     <div className="space-y-4">
-      {/* Export buttons */}
+      {/* ── Tabs ── */}
+      <div className="flex border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              "px-4 py-2 text-sm font-medium transition-colors",
+              activeTab === tab.id
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Export buttons ── */}
       <div className="flex gap-2 justify-end">
         <Button
           onClick={handleExportPDF}
@@ -131,6 +172,7 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
         </Button>
       </div>
 
+      {/* ── Table ── */}
       <Table className="border rounded-md">
         <TableHeader>
           <TableRow>
@@ -147,12 +189,13 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
             </TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {balanceData.map((item) => (
             <TableRow
               key={`${item.type}-${item.id}`}
               className={cn(
-                item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30",
+                item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30"
               )}
             >
               <TableCell className="text-center capitalize">
@@ -196,45 +239,77 @@ export function BalanceDetailTable({ charges, payments }: BalanceTableProps) {
         </TableBody>
 
         <TableFooter>
-          <TableRow>
-            <TableCell className="text-center font-medium border-2" colSpan={4}>
-              {labels.totalChargeBalance}
-            </TableCell>
-            <TableCell
-              className={`text-center font-bold border-2 ${
-                totalChargeBalance.balance > 0
-                  ? "text-red-500"
-                  : totalChargeBalance.balance < 0
-                    ? "text-green-500"
-                    : ""
-              }`}
-            >
-              {totalChargeBalance.balance.toLocaleString()}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="text-center font-medium border-2" colSpan={4}>
-              {labels.totalProprietorBalance}
-            </TableCell>
-            <TableCell
-              className={`text-center font-bold border-2 ${
-                totalProprietorBalance.balance > 0
-                  ? "text-red-500"
-                  : totalProprietorBalance.balance < 0
-                    ? "text-green-500"
-                    : ""
-              }`}
-            >
-              {totalProprietorBalance.balance.toLocaleString()}
-            </TableCell>
-          </TableRow>
+          {activeTab === "all" ? (
+            // "All" tab: show the original two-row split footer
+            <>
+              <TableRow>
+                <TableCell
+                  className="text-center font-medium border-2"
+                  colSpan={4}
+                >
+                  {labels.totalChargeBalance}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-center font-bold border-2",
+                    balanceColour(totalNonProprietorBalance.balance)
+                  )}
+                >
+                  {totalNonProprietorBalance.balance.toLocaleString()}
+                </TableCell>
+                <TableCell colSpan={2} />
+              </TableRow>
+              <TableRow>
+                <TableCell
+                  className="text-center font-medium border-2"
+                  colSpan={4}
+                >
+                  {labels.totalProprietorBalance}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-center font-bold border-2",
+                    balanceColour(totalProprietorBalance.balance)
+                  )}
+                >
+                  {totalProprietorBalance.balance.toLocaleString()}
+                </TableCell>
+                <TableCell colSpan={2} />
+              </TableRow>
+            </>
+          ) : (
+            // Filtered tabs: single total row
+            <TableRow>
+              <TableCell
+                className="text-center font-medium border-2"
+                colSpan={4}
+              >
+                {activeTab === "proprietor"
+                  ? labels.totalProprietorBalance
+                  : labels.totalChargeBalance}
+              </TableCell>
+              <TableCell
+                className={cn(
+                  "text-center font-bold border-2",
+                  balanceColour(totalActiveBalance.balance)
+                )}
+              >
+                {totalActiveBalance.balance.toLocaleString()}
+              </TableCell>
+              <TableCell colSpan={2} />
+            </TableRow>
+          )}
         </TableFooter>
       </Table>
+
       <TransactionInfoDialog
         selectedTransactionId={selectedTransactionId}
         setSelectedTransactionId={setSelectedTransactionId}
       />
-      <ChangeUserDialog selectedTransaction={selectedTransaction} setSelectedTransaction={setSelectedTransaction} />
+      <ChangeUserDialog
+        selectedTransaction={selectedTransaction}
+        setSelectedTransaction={setSelectedTransaction}
+      />
     </div>
   );
 }
