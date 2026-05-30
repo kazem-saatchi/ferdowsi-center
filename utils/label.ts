@@ -9,7 +9,7 @@ export const labels = {
   totalRenterBalance: "مانده حساب مستاجر",
   myBalance: "مانده حساب من",
   totalBalanceMonthly: "مانده حساب شارژ ماهانه",
-  totalBalanceYearly: "ماهانه حساب شارژ مالکانه",
+  totalBalanceYearly: "مانده حساب شارژ مالکانه",
   personName: "نام شخص",
   transactionCategory: "دسته بندی",
 

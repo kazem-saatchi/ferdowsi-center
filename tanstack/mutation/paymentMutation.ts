@@ -26,19 +26,12 @@ export function useAddPaymentByShop() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
         queryClient.invalidateQueries({
           queryKey: ["shop-payments", variables.shopId],
         });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
 
         queryClient.invalidateQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
-        queryClient.refetchQueries({
           queryKey: ["person-payments", variables.personId],
         });
 
@@ -63,19 +56,12 @@ export function useAddPaymentByBank() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
         queryClient.invalidateQueries({
           queryKey: ["shop-payments", variables.shopId],
         });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", variables.shopId],
-        });
 
         queryClient.invalidateQueries({
-          queryKey: ["person-payments", variables.personId],
-        });
-        queryClient.refetchQueries({
           queryKey: ["person-payments", variables.personId],
         });
 
@@ -99,19 +85,12 @@ export function useDeletePaymentById() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
         queryClient.invalidateQueries({
           queryKey: ["shop-payments", data?.data?.shopId],
         });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", data?.data?.shopId],
-        });
 
         queryClient.invalidateQueries({
-          queryKey: ["person-payments", data?.data?.personId],
-        });
-        queryClient.refetchQueries({
           queryKey: ["person-payments", data?.data?.personId],
         });
 
@@ -133,14 +112,11 @@ export function useAddPaymentFromCard() {
     mutationFn: async (id: string) => await addPaymentFromCard(id),
     onSuccess: (data) => {
       if (data.data?.success) {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        // queryClient.refetchQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
+        queryClient.invalidateQueries({
+          queryKey: ["cardTransfer"],
+          refetchType: "active",
+        });
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -159,14 +135,11 @@ export function useAddFailedPayment() {
     mutationFn: async (id: string) => await addFailedPayment(id),
     onSuccess: (data) => {
       if (data.data?.success) {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        // queryClient.refetchQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
+        queryClient.invalidateQueries({
+          queryKey: ["cardTransfer"],
+          refetchType: "active",
+        });
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -187,13 +160,13 @@ export function useUpdatePaymentUser() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
-        queryClient.refetchQueries({ queryKey: ["all-payments"] });
 
         queryClient.invalidateQueries({
           queryKey: ["shop-payments", variables.shopId],
         });
-        queryClient.refetchQueries({
-          queryKey: ["shop-payments", variables.shopId],
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-balance", variables.shopId],
         });
 
         const payload = data.data as { message?: string } | undefined;

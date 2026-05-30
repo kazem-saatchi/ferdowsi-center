@@ -38,7 +38,6 @@ function ShopBalanceDetaiById() {
 
   return (
     <div>
-      ShopBalanceDetaiById
       <BalanceDetailTable
         charges={balanceData?.data?.charges}
         payments={balanceData?.data?.payments}

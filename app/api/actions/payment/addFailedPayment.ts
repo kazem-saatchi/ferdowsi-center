@@ -122,16 +122,14 @@ async function addFailedPaymentFromCard(
         data: {
           registered: true,
           referenceId: charge.id,
+          // NOTE: referenceId points at a Charge record, but the ReferenceType
+          // enum has no "CHARGE" value — "PAYMENT" is the closest available option.
+          // If a CHARGE enum value is added in the future, update this field.
           referenceType: "PAYMENT",
           category: isProprietor ? "YEARLY" : "MONTHLY",
         },
       });
 
-      console.log("[Charge] Created:", {
-        chargeId: charge.id,
-        amount: charge.amount,
-        shopId: charge.shopId,
-      });
 
       return charge;
     });

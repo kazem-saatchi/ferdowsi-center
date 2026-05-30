@@ -19,13 +19,10 @@ export function useGetAllCardTransfer({
   return useQuery({
     queryKey: ["cardTransfer", page, limit],
     queryFn: async () => {
-      // Explicitly create new object to avoid referential stability issues
-      const result = await getBankCardTransfer({
+      return getBankCardTransfer({
         page: Number(page),
         limit: Number(limit),
       });
-      console.log("API Response:", result);
-      return result;
     },
     placeholderData: keepPreviousData,
   });
@@ -75,13 +72,10 @@ export function useGetAllFailedCardTransfer({
   return useQuery({
     queryKey: ["failedCardTransfer", page, limit],
     queryFn: async () => {
-      // Explicitly create new object to avoid referential stability issues
-      const result = await getBankFailedCardTransfer({
+      return getBankFailedCardTransfer({
         page: Number(page),
         limit: Number(limit),
       });
-      console.log("API Response:", result);
-      return result;
     },
     placeholderData: keepPreviousData,
   });
@@ -98,13 +92,10 @@ export function useGetAllIncomeTransfer({
   return useQuery({
     queryKey: ["incomeTransfer", page, limit],
     queryFn: async () => {
-      // Explicitly create new object to avoid referential stability issues
-      const result = await getBankIncomeTransfer({
+      return getBankIncomeTransfer({
         page: Number(page),
         limit: Number(limit),
       });
-      console.log("API Response:", result);
-      return result;
     },
     placeholderData: keepPreviousData,
   });
@@ -115,5 +106,6 @@ export function useGetTransactionData(bankTransactionId: string) {
   return useQuery({
     queryKey: ["transactionData", bankTransactionId],
     queryFn: () => getTransactionData(bankTransactionId),
+    enabled: !!bankTransactionId,
   });
 }

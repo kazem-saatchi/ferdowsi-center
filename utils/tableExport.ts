@@ -28,6 +28,12 @@ interface ExportOptions {
 interface BalanceDetailExportData {
   charges: Charge[];
   payments: Payment[];
+  /** When true, only a single total row is added to the footer instead of the
+   *  non-proprietor + proprietor split. Pass true when exporting a filtered
+   *  (proprietor-only or non-proprietor-only) tab. */
+  singleFooter?: boolean;
+  /** Label to use for the single footer row when singleFooter is true. */
+  footerLabel?: string;
 }
 
 // Helper function to prepare balance detail data for export
@@ -85,10 +91,23 @@ const prepareBalanceDetailData = ({
       }, 0),
   };
 
+  const totalBalance = {
+    charge: balanceData
+      .filter((item) => item.type === "charge")
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    payment: balanceData
+      .filter((item) => item.type === "payment")
+      .reduce((sum, item) => sum + (item.amount || 0), 0),
+    balance: balanceData.reduce((sum, item) => {
+      return item.type === "charge" ? sum + item.amount : sum - item.amount;
+    }, 0),
+  };
+
   return {
     balanceData,
     totalChargeBalance,
     totalProprietorBalance,
+    totalBalance,
   };
 };
 
@@ -162,10 +181,10 @@ export const exportToExcel = ({ fileName, columns, data }: ExportOptions) => {
 };
 
 export const exportBalanceDetailToPDF = (
-  { charges, payments }: BalanceDetailExportData,
+  { charges, payments, singleFooter = false, footerLabel }: BalanceDetailExportData,
   fileName: string = "Balance-Detail-Report"
 ) => {
-  const { balanceData, totalChargeBalance, totalProprietorBalance } =
+  const { balanceData, totalChargeBalance, totalProprietorBalance, totalBalance } =
     prepareBalanceDetailData({ charges, payments });
 
   const doc = new jsPDF({
@@ -188,25 +207,36 @@ export const exportBalanceDetailToPDF = (
     item.description || "",
   ]);
 
-  // Add footer rows
-  const footerData = [
-    [
-      "",
-      "",
-      "",
-      labels.totalChargeBalance,
-      formatNumber(totalChargeBalance.balance),
-      "",
-    ],
-    [
-      "",
-      "",
-      "",
-      labels.totalProprietorBalance,
-      formatNumber(totalProprietorBalance.balance),
-      "",
-    ],
-  ];
+  // Add footer rows — single row for filtered tabs, two rows for "all"
+  const footerData = singleFooter
+    ? [
+        [
+          "",
+          "",
+          "",
+          footerLabel ?? labels.totalChargeBalance,
+          formatNumber(totalBalance.balance),
+          "",
+        ],
+      ]
+    : [
+        [
+          "",
+          "",
+          "",
+          labels.totalChargeBalance,
+          formatNumber(totalChargeBalance.balance),
+          "",
+        ],
+        [
+          "",
+          "",
+          "",
+          labels.totalProprietorBalance,
+          formatNumber(totalProprietorBalance.balance),
+          "",
+        ],
+      ];
 
   autoTable(doc, {
     head: [
@@ -259,10 +289,10 @@ export const exportBalanceDetailToPDF = (
 };
 
 export const exportBalanceDetailToExcel = (
-  { charges, payments }: BalanceDetailExportData,
+  { charges, payments, singleFooter = false, footerLabel }: BalanceDetailExportData,
   fileName: string = "Balance-Detail-Report"
 ) => {
-  const { balanceData, totalChargeBalance, totalProprietorBalance } =
+  const { balanceData, totalChargeBalance, totalProprietorBalance, totalBalance } =
     prepareBalanceDetailData({ charges, payments });
 
   // Prepare Excel data
@@ -290,16 +320,13 @@ export const exportBalanceDetailToExcel = (
     // Empty row for separation
     ["", "", "", "", "", ""],
 
-    // Footer rows
-    ["", "", "", labels.totalChargeBalance, totalChargeBalance.balance, ""],
-    [
-      "",
-      "",
-      "",
-      labels.totalProprietorBalance,
-      totalProprietorBalance.balance,
-      "",
-    ],
+    // Footer rows — single row for filtered tabs, two rows for "all"
+    ...(singleFooter
+      ? [["", "", "", footerLabel ?? labels.totalChargeBalance, totalBalance.balance, ""]]
+      : [
+          ["", "", "", labels.totalChargeBalance, totalChargeBalance.balance, ""],
+          ["", "", "", labels.totalProprietorBalance, totalProprietorBalance.balance, ""],
+        ]),
   ];
 
   const worksheet = XLSX.utils.aoa_to_sheet(excelData);

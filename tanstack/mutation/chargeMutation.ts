@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import addChargeByShop from "@/app/api/actions/charge/addChargeByShop";
 import addChargeByAmount from "@/app/api/actions/charge/addChargeByAmount";
@@ -25,7 +24,6 @@ import { successMSG } from "@/utils/messages";
 // add monthly charge to a shop
 export function useAddChargeByShop() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddChargeByShopData) =>
@@ -33,12 +31,8 @@ export function useAddChargeByShop() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
 
         queryClient.invalidateQueries({
-          queryKey: ["shop-charges", variables.shopId],
-        });
-        queryClient.refetchQueries({
           queryKey: ["shop-charges", variables.shopId],
         });
 
@@ -59,7 +53,6 @@ export function useAddChargeByShop() {
 // add charge by amount and id
 export function useAddChargeByAmount() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddChargeByAmountData) =>
@@ -67,12 +60,8 @@ export function useAddChargeByAmount() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
 
         queryClient.invalidateQueries({
-          queryKey: ["shop-charges", variables.shopId],
-        });
-        queryClient.refetchQueries({
           queryKey: ["shop-charges", variables.shopId],
         });
 
@@ -93,7 +82,6 @@ export function useAddChargeByAmount() {
 // add charge by amount to shop list
 export function useAddChargeByAmountToShopList() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddChargeByAmountToShopListData) =>
@@ -101,13 +89,9 @@ export function useAddChargeByAmountToShopList() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
 
         variables.shopIdList.forEach((shopId) => {
           queryClient.invalidateQueries({
-            queryKey: ["shop-charges", shopId],
-          });
-          queryClient.refetchQueries({
             queryKey: ["shop-charges", shopId],
           });
         });
@@ -129,7 +113,6 @@ export function useAddChargeByAmountToShopList() {
 // add charge to all shop
 export function useAddChargeAllShop() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddChargeAllShopsData) =>
@@ -145,9 +128,6 @@ export function useAddChargeAllShop() {
         // Dynamically invalidate all person-related charges
         queryClient.invalidateQueries({ queryKey: ["person-charges"] });
 
-        // refetch all charges list
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
-
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -162,7 +142,6 @@ export function useAddChargeAllShop() {
 // Add rent to all kiosks
 export function useAddRentAllKiosks() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddRentAllKiosksData) =>
@@ -178,9 +157,6 @@ export function useAddRentAllKiosks() {
         // Dynamically invalidate all person-related charges
         queryClient.invalidateQueries({ queryKey: ["person-charges"] });
 
-        // refetch all charges list
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
-
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -195,7 +171,6 @@ export function useAddRentAllKiosks() {
 // generate charge reference Monthly
 export function useCreateChargeReference() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: ShopChargeReferenceData) =>
@@ -203,7 +178,6 @@ export function useCreateChargeReference() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges-reference"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges-reference"] });
 
         toast.success(data.data?.message);
       } else {
@@ -219,7 +193,6 @@ export function useCreateChargeReference() {
 // generate charge reference Yearly
 export function useCreateAnnualChargeReference() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: ShopAnnualChargeReferenceData) =>
@@ -227,7 +200,6 @@ export function useCreateAnnualChargeReference() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges-reference"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges-reference"] });
 
         toast.success(data.data?.message);
       } else {
@@ -249,13 +221,13 @@ export function useUpdateChargeUser() {
     onSuccess: (data, variables) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-charges"] });
-        queryClient.refetchQueries({ queryKey: ["all-charges"] });
 
         queryClient.invalidateQueries({
           queryKey: ["shop-charges", variables.shopId],
         });
-        queryClient.refetchQueries({
-          queryKey: ["shop-charges", variables.shopId],
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-balance", variables.shopId],
         });
 
         toast.success(data.data?.message ?? successMSG.chargeUpdated);

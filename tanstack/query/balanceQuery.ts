@@ -32,6 +32,7 @@ export function useGetShopBalance(shopId: string) {
   return useQuery({
     queryKey: ["shop-balance", shopId],
     queryFn: async () => await findBalanceByShop({ shopId }),
+    enabled: !!shopId,
   });
 }
 

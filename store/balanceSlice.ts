@@ -39,8 +39,8 @@ type Balances = {
   exportAllBalanceToExcel: () => void;
   exportAllBalanceToPDFFiltered: () => void;
   exportAllBalanceToExcelFiltered: () => void;
-  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string) => void;
-  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string) => void;
+  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => void;
+  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => void;
 };
 
 export interface OwnerRenterBalance {
@@ -137,19 +137,19 @@ export const createBalanceSlice: StateCreator<
   setShopRenterBalance: (data) => set({ shopRenterBalanceData: data }),
 
   // New functions for balance detail export
-  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string) => {
+  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => {
     if (!charges || !payments) {
       console.error("No balance detail data to export");
       return;
     }
-    exportBalanceDetailToPDF({ charges, payments }, fileName ?? "Balance-Detail-Report");
+    exportBalanceDetailToPDF({ charges, payments, singleFooter, footerLabel }, fileName ?? "Balance-Detail-Report");
   },
-  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string) => {
+  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => {
     if (!charges || !payments) {
       console.error("No balance detail data to export");
       return;
     }
-    exportBalanceDetailToExcel({ charges, payments }, fileName ?? "Balance-Detail-Report");
+    exportBalanceDetailToExcel({ charges, payments, singleFooter, footerLabel }, fileName ?? "Balance-Detail-Report");
   },
 });
 

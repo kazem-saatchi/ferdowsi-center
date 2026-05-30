@@ -68,7 +68,8 @@ function DetailRow({
 export default function TransactionInfo({
   bankTransactionId,
 }: TransactionInfoProps) {
-  const { data, isLoading, error } = useGetTransactionData(bankTransactionId);
+  const { data: response, isLoading, error } = useGetTransactionData(bankTransactionId);
+  const data = response?.data;
 
   if (isLoading) {
     return (
@@ -88,13 +89,13 @@ export default function TransactionInfo({
     );
   }
 
-  if (error) {
+  if (error || response?.success === false) {
     return (
       <Alert variant="destructive" className="border-destructive/50">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>{labels.errorLoadingTransactionDetails}</AlertTitle>
         <AlertDescription className="text-sm opacity-90">
-          {labels.errorOccurred}
+          {response?.message ?? labels.errorOccurred}
         </AlertDescription>
       </Alert>
     );

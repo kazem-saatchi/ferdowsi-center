@@ -118,11 +118,6 @@ async function addPaymentFromCardTransfer(
         },
       });
 
-      console.log("[Payment] Created:", {
-        paymentId: payment.id,
-        amount: payment.amount,
-        shopId: payment.shopId,
-      });
 
       return payment;
     });

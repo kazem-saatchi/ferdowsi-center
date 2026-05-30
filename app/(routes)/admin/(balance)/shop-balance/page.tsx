@@ -104,14 +104,14 @@ export default function ShopBalancePage() {
     })) || [];
 
   if (isLoadingAllShops) {
-    return <LoadingComponent text="Loading Shops Data" />;
+    return <LoadingComponent text={labels.loadingShopsData} />;
   }
 
   if (isErrorAllShops) {
     return (
       <ErrorComponent
         error={errorAllShops}
-        message={shopsData?.message || "Something Went Wrong"}
+        message={shopsData?.message || labels.somethingWentWrong}
         retry={refetchAllShops}
       />
     );

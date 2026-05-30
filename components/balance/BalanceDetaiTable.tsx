@@ -120,12 +120,18 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
   const plaquePart = plaque != null ? `-Shop${plaque}` : "";
   const fileName = `Balance-Detail${plaquePart}-${tabSuffix}-Report`;
 
+  const isSingleFooter = activeTab !== "all";
+  const footerLabel =
+    activeTab === "proprietor"
+      ? labels.totalProprietorBalance
+      : labels.totalChargeBalance;
+
   const handleExportPDF = () => {
-    exportBalanceDetailToPDF(activeCharges, activePayments, fileName);
+    exportBalanceDetailToPDF(activeCharges, activePayments, fileName, isSingleFooter, footerLabel);
   };
 
   const handleExportExcel = () => {
-    exportBalanceDetailToExcel(activeCharges, activePayments, fileName);
+    exportBalanceDetailToExcel(activeCharges, activePayments, fileName, isSingleFooter, footerLabel);
   };
 
   // ── balance colour helper ─────────────────────────────────────────────────
@@ -284,9 +290,7 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
                 className="text-center font-medium border-2"
                 colSpan={4}
               >
-                {activeTab === "proprietor"
-                  ? labels.totalProprietorBalance
-                  : labels.totalChargeBalance}
+                {footerLabel}
               </TableCell>
               <TableCell
                 className={cn(

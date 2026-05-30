@@ -246,11 +246,6 @@ export async function calculateAllShopMonthlyBalance(
     );
 
     results.push(...batchResults);
-    console.log(
-      `Processed batch ${i / BATCH_SIZE + 1} of ${Math.ceil(
-        allShops.length / BATCH_SIZE
-      )}`
-    );
   }
 
   return { results, totalCount };
@@ -302,11 +297,6 @@ export async function calculateAllRentsBalance(): Promise<ShopsBalanceData[]> {
     );
 
     results.push(...batchResults);
-    console.log(
-      `Processed batch ${i / BATCH_SIZE + 1} of ${Math.ceil(
-        allShops.length / BATCH_SIZE
-      )}`
-    );
   }
 
   return results;

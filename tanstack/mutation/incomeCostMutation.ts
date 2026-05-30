@@ -8,7 +8,6 @@ import {
   AddIncomeData,
 } from "@/schema/cost-IncomeSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 //------------------COST-INCOME--------------------
@@ -16,14 +15,12 @@ import { toast } from "sonner";
 // add cost
 export function useAddCost() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddCostData) => await addCost(data),
     onSuccess: (data) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-costs"] });
-        queryClient.refetchQueries({ queryKey: ["all-costs"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -38,7 +35,6 @@ export function useAddCost() {
 // Add Cost From Bank Transactions
 export function useAddCostFromBank() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddCostFromBankData) =>
@@ -46,7 +42,6 @@ export function useAddCostFromBank() {
     onSuccess: (data) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-costs"] });
-        queryClient.refetchQueries({ queryKey: ["all-costs"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -61,14 +56,12 @@ export function useAddCostFromBank() {
 // add income
 export function useAddIncome() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (data: AddIncomeData) => await addIncome(data),
     onSuccess: (data) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: ["all-incomes"] });
-        queryClient.refetchQueries({ queryKey: ["all-incomes"] });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);
@@ -89,14 +82,10 @@ export function useSetRegisterAble() {
     mutationFn: async (id: string) => await setRegisterAbleAction(id),
     onSuccess: (data) => {
       if (data.data?.success) {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
-        // queryClient.refetchQueries({
-        //   queryKey: ["cardTransfer"],
-        //   refetchType: "active",
-        // });
+        queryClient.invalidateQueries({
+          queryKey: ["cardTransfer"],
+          refetchType: "active",
+        });
         toast.success(data.data?.message);
       } else {
         toast.error(data.data?.message || data.message);

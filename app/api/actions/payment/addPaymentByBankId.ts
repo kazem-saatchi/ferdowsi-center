@@ -73,53 +73,34 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
     throw new Error(errorMSG.txAlreadyExist);
   }
 
-  try {
-    const { payment } = await db.$transaction(async (prisma) => {
-      const payment = await prisma.payment.create({
-        data: {
-          amount,
-          personName: `${user.firstName} ${user.lastName}`,
-          plaque: shop.plaque,
-          date: new Date(date).toISOString(),
-          description,
-          proprietor,
-          type: type as PaymentType,
-          title: titleMap[type as PaymentType] || "روش پرداخت نامعلوم",
-          bankTransactionId,
-          //   personId: user.id,
-          //   shopId: shop.id,
-          shop: { connect: { id: shop.id } }, // Connect shop by ID
-          person: { connect: { id: user.id } }, // Connect person by ID
-        },
-      });
-
-      await prisma.bankTransaction.update({
-        where: { id: bankTransactionId },
-        data: {
-          registered: true,
-          referenceId: payment.id,
-          referenceType: "PAYMENT",
-          category: proprietor ? "YEARLY" : "MONTHLY",
-        },
-      });
-
-      return { payment };
+  await db.$transaction(async (prisma) => {
+    const payment = await prisma.payment.create({
+      data: {
+        amount,
+        personName: `${user.firstName} ${user.lastName}`,
+        plaque: shop.plaque,
+        date: new Date(date).toISOString(),
+        description,
+        proprietor,
+        type: type as PaymentType,
+        title: titleMap[type as PaymentType] || "روش پرداخت نامعلوم",
+        bankTransactionId,
+        shop: { connect: { id: shop.id } },
+        person: { connect: { id: user.id } },
+      },
     });
 
-    console.log("[Payment] Created:", {
-      paymentId: payment.id,
-      amount: payment.amount,
-      shopId: payment.shopId,
+    await prisma.bankTransaction.update({
+      where: { id: bankTransactionId },
+      data: {
+        registered: true,
+        referenceId: payment.id,
+        referenceType: "PAYMENT",
+        category: proprietor ? "YEARLY" : "MONTHLY",
+      },
     });
-  } catch (error) {
-    console.error("[Payment] Failed:", {
-      error: error instanceof Error && error.message,
-      transactionId: bankTransactionId,
-    });
-    return {
-      message: "ثبت اطلاعات ناموفق بود",
-    };
-  }
+  });
+
   return {
     message: successMSG.paymentCreated,
   };

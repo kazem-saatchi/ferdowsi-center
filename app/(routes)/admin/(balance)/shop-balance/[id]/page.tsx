@@ -65,11 +65,7 @@ export default function ShopBalanceById() {
           <CardTitle>{labels.unitAccountBalance}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {isLoading ? (
-            <LoadingComponent text={labels.loadingData} />
-          ) : isError ? (
-            <ErrorComponentSimple message={labels.errorOccurred} />
-          ) : shopBalance ? (
+          {shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
             <p>{labels.noInformationFound}</p>
