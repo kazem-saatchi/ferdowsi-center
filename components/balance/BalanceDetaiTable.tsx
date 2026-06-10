@@ -98,6 +98,17 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
     return dateB - dateA; // newest first
   });
 
+  // ── running balance per row ───────────────────────────────────────────────
+  // Accumulate chronologically (oldest → newest): charges add, payments subtract.
+  // Stored by row key so it can be displayed in the newest-first table order.
+  const runningBalances = new Map<string, number>();
+  let runningBalance = 0;
+  for (let i = balanceData.length - 1; i >= 0; i--) {
+    const item = balanceData[i];
+    runningBalance += item.type === "charge" ? item.amount : -item.amount;
+    runningBalances.set(`${item.type}-${item.id}`, runningBalance);
+  }
+
   // ── footer totals ─────────────────────────────────────────────────────────
   // "all" tab keeps the original two-row footer (non-prop / prop split)
   const totalNonProprietorBalance = computeTotals(
@@ -188,6 +199,9 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
             <TableHead className="text-center">{labels.date}</TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
             <TableHead className="text-center">
+              {labels.balanceAfterTransaction}
+            </TableHead>
+            <TableHead className="text-center">
               {labels.bankTransactionId}
             </TableHead>
             <TableHead className="text-center">
@@ -224,6 +238,14 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
               </TableCell>
               <TableCell className="text-center">
                 {item.amount.toLocaleString()}
+              </TableCell>
+              <TableCell
+                className={cn(
+                  "text-center font-medium",
+                  balanceColour(runningBalances.get(`${item.type}-${item.id}`) ?? 0)
+                )}
+              >
+                {(runningBalances.get(`${item.type}-${item.id}`) ?? 0).toLocaleString()}
               </TableCell>
               <TableCell className="text-center">
                 {item.bankTransactionId && (
@@ -288,7 +310,7 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
             <TableRow>
               <TableCell
                 className="text-center font-medium border-2"
-                colSpan={4}
+                colSpan={5}
               >
                 {footerLabel}
               </TableCell>
