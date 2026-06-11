@@ -13,8 +13,34 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { successMSG } from "@/utils/messages";
+import { BankTransaction } from "@prisma/client";
 
 //------------------PAYMENT--------------------
+
+// Shape returned by the cardTransfer / failedCardTransfer queries
+type CardTransferResult = {
+  data: BankTransaction[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+// Remove a single transaction from every cached cardTransfer page,
+// so the table updates in place without a full server refetch.
+function removeCardTransferRow(
+  queryClient: ReturnType<typeof useQueryClient>,
+  txId: string
+) {
+  queryClient.setQueriesData<CardTransferResult>(
+    { queryKey: ["cardTransfer"] },
+    (old) => {
+      if (!old) return old;
+      const data = old.data.filter((tx) => tx.id !== txId);
+      if (data.length === old.data.length) return old;
+      return { ...old, data, totalCount: Math.max(0, old.totalCount - 1) };
+    }
+  );
+}
 
 // add payment to a shop by shopId and personId
 export function useAddPaymentByShop() {
@@ -110,12 +136,10 @@ export function useAddPaymentFromCard() {
 
   return useMutation({
     mutationFn: async (id: string) => await addPaymentFromCard(id),
-    onSuccess: (data) => {
+    onSuccess: (data, id) => {
       if (data.data?.success) {
-        queryClient.invalidateQueries({
-          queryKey: ["cardTransfer"],
-          refetchType: "active",
-        });
+        // Partial update: drop just this row from the cached table
+        removeCardTransferRow(queryClient, id);
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
         toast.success(data.data?.message);
       } else {
@@ -133,12 +157,10 @@ export function useAddFailedPayment() {
 
   return useMutation({
     mutationFn: async (id: string) => await addFailedPayment(id),
-    onSuccess: (data) => {
+    onSuccess: (data, id) => {
       if (data.data?.success) {
-        queryClient.invalidateQueries({
-          queryKey: ["cardTransfer"],
-          refetchType: "active",
-        });
+        // Partial update: drop just this row from the cached table
+        removeCardTransferRow(queryClient, id);
         queryClient.invalidateQueries({ queryKey: ["all-payments"] });
         toast.success(data.data?.message);
       } else {
