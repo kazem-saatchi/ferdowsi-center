@@ -367,6 +367,12 @@ export const adminMenuData: AdminMenuCollection = {
         href: "/import-kiosks-data",
         icon: Car,
       },
+      {
+        id: 4,
+        name: "ثبت شارژ مالکانه با فایل",
+        href: "/import-proprietor-charge",
+        icon: CircleDollarSign,
+      },
     ],
   },
   bank: {

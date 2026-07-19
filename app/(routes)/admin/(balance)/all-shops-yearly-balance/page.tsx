@@ -34,12 +34,14 @@ export default function AllShopsYearlyBalancePage() {
   const {
     allBalances,
     setAllBalances,
+    setAllBalanceDetails,
     exportAllBalanceToExcel,
     exportAllBalanceToPdf,
   } = useStore(
     useShallow((state) => ({
       allBalances: state.allBalances,
       setAllBalances: state.setAllBalances,
+      setAllBalanceDetails: state.setAllBalanceDetails,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
       exportAllBalanceToExcel: state.exportAllBalanceToExcel,
     }))
@@ -113,6 +115,7 @@ export default function AllShopsYearlyBalancePage() {
 
       // Final update - convert to ShopsBalanceData for store compatibility
       setAllBalances(convertToShopsBalanceData(accumulated));
+      setAllBalanceDetails(accumulated);
       setLoadingProgress("");
       setIsLoading(false);
 
@@ -126,7 +129,7 @@ export default function AllShopsYearlyBalancePage() {
       setError(err);
       setIsLoading(false);
     }
-  }, [proprietor, setAllBalances]);
+  }, [proprietor, setAllBalances, setAllBalanceDetails]);
 
   useEffect(() => {
     // Prevent loading data multiple times

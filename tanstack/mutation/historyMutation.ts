@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import addShopHistory from "@/app/api/actions/history/addShopHistory";
 import { UpdateHistoryData } from "@/app/api/actions/history/updateHistory";
 import updateHistoryAction from "@/app/api/actions/history/updateHistory";
+import previewHistoryDateChangeAction from "@/app/api/actions/history/previewHistoryDateChange";
 
 //------------------HISTORY--------------------
 
@@ -45,6 +46,15 @@ export function useAddShopHistory() {
   }
 
 
+  // PREVIEW HISTORY DATE CHANGE (charge recalculation preview, no writes)
+
+  export function usePreviewHistoryDateChange() {
+    return useMutation({
+      mutationFn: async (data: UpdateHistoryData) =>
+        await previewHistoryDateChangeAction(data),
+    });
+  }
+
   // UPDATE SHOP HISTORY
 
   export function useUpdateShopHistory() {
@@ -62,10 +72,23 @@ export function useAddShopHistory() {
           queryClient.invalidateQueries({ queryKey: ["person-history", variables.personId] });
           queryClient.refetchQueries({ queryKey: ["person-history", variables.personId] });
 
+          // Charges may have been re-split between owner/renter — refresh
+          // every charge and balance view so amounts stay consistent.
+          queryClient.invalidateQueries({ queryKey: ["all-charges"] });
+          queryClient.invalidateQueries({ queryKey: ["shop-charges", variables.shopId] });
+          queryClient.invalidateQueries({ queryKey: ["person-charges", variables.personId] });
+          queryClient.invalidateQueries({ queryKey: ["all-balances"] });
+          queryClient.invalidateQueries({ queryKey: ["shop-balance", variables.shopId] });
+          queryClient.invalidateQueries({ queryKey: ["person-balance", variables.personId] });
+          queryClient.invalidateQueries({ queryKey: ["all-rent-balance"] });
+
           toast.success(data.data?.message);
         } else {
           toast.error(data.data?.message || data.message);
         }
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   }

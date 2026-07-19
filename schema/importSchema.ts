@@ -57,3 +57,15 @@ export const addkioskSchema = z.object({
 
 export type AddKioskData = z.infer<typeof addkioskSchema>;
 //--------------------------------------------------------------------------------------
+// Rows come from the Excel file (plaque + amount); title/date/description are added
+// once on the page and merged into every row before upload.
+export const addProprietorChargeSchema = z.object({
+  plaque: z.number(),
+  amount: z.number(),
+  title: z.string().min(1),
+  date: z.string(), // ISO string
+  description: z.string().max(250),
+});
+
+export type AddProprietorChargeData = z.infer<typeof addProprietorChargeSchema>;
+//--------------------------------------------------------------------------------------

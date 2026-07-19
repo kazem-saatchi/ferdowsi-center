@@ -2,8 +2,9 @@ import addBankDataFromFile from "@/app/api/actions/import/addBankData";
 import addKioskAction, { AddKioskResponse } from "@/app/api/actions/import/addKioskFromFile";
 import addNetBankDataFromFile from "@/app/api/actions/import/addNetBankData";
 import addPersonsShops, { AddPersonsShopsResponse } from "@/app/api/actions/import/addPersonsShopsFromFile";
+import addProprietorChargeFromFile, { AddProprietorChargeResponse } from "@/app/api/actions/import/addProprietorChargeFromFile";
 import { BankTransactionData, NetBankTransactionData } from "@/components/upload-file/readFile";
-import { AddKioskData, AddPersonsShopsData } from "@/schema/importSchema";
+import { AddKioskData, AddPersonsShopsData, AddProprietorChargeData } from "@/schema/importSchema";
 import { ActionResponse } from "@/utils/handleServerAction";
 import { AccountType } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -41,6 +42,21 @@ export function useAddPersonsShops() {
     });
   }
   
+  // Add Proprietor Charge from File
+  export function useAddProprietorCharge() {
+    const queryClient = useQueryClient();
+
+    return useMutation<
+      ActionResponse<AddProprietorChargeResponse>,
+      Error,
+      AddProprietorChargeData[]
+    >({
+      mutationFn: async (data: AddProprietorChargeData[]) => {
+        return await addProprietorChargeFromFile(data);
+      },
+    });
+  }
+
   // Add Bank Data
   export function useAddBankDataFromFile() {
     const queryClient = useQueryClient();

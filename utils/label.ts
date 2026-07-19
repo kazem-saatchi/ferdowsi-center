@@ -186,6 +186,19 @@ export const labels = {
   cancel: "لغو",
   update: "به‌روزرسانی",
 
+  // Charge recalculation preview (on history date change)
+  previewChargeChanges: "مشاهده تغییرات شارژ",
+  loadingChargeChanges: "در حال محاسبه...",
+  chargeRecalcTitle: "بازمحاسبه شارژ",
+  noChargeImpact: "این تغییر تاریخ تأثیری بر شارژهای ثبت‌شده ندارد.",
+  chargeRecalcNotice: "با تغییر این تاریخ، شارژ افراد زیر بازتقسیم می‌شود:",
+  chargePeriod: "دوره",
+  daysColumn: "روز",
+  oldValue: "مقدار فعلی",
+  newValue: "مقدار جدید",
+  confirmAndApply: "تأیید و اعمال",
+  backToDate: "بازگشت",
+
   removeShopRenter: "حذف مستاجر واحد",
   endRentalAgreement: "پایان قرارداد اجاره",
   noCurrentRenter: "مستاجری ندارد",
