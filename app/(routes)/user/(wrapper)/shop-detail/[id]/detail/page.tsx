@@ -13,22 +13,24 @@ export default function ShopFinancialDetailPage() {
 
   if (error) {
     return (
-      <div className="mx-auto p-4">
-        <Card className="p-4 text-red-600">{error}</Card>
+      <div className="w-full">
+        <Card className="p-4 text-red-600 text-sm sm:text-base">{error}</Card>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">جزئیات مالی واحد</h1>
+    <div className="w-full">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+        جزئیات مالی واحد
+      </h1>
 
       {loading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
+        <div className="space-y-3 sm:space-y-4">
+          <Skeleton className="h-20 md:h-10 w-full" />
+          <Skeleton className="h-20 md:h-10 w-full" />
+          <Skeleton className="h-20 md:h-10 w-full" />
+          <Skeleton className="h-20 md:h-10 w-full" />
         </div>
       ) : (
         <ShopFinancialTable data={data} />

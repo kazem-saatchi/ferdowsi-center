@@ -6,19 +6,17 @@ import { Banknote } from "lucide-react";
 
 export default function BankReportPage() {
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="w-full space-y-4 sm:space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Banknote className="h-8 w-8 text-blue-600" />
-          <div className="text-right">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              گزارش بانکی
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              گزارش جامع تراکنش‌های بانکی درآمدها و هزینه‌ها
-            </p>
-          </div>
+      <div className="flex items-start sm:items-center gap-3">
+        <Banknote className="h-7 w-7 sm:h-8 sm:w-8 text-blue-600 shrink-0 mt-0.5 sm:mt-0" />
+        <div className="text-right min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+            گزارش بانکی
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            گزارش جامع تراکنش‌های بانکی درآمدها و هزینه‌ها
+          </p>
         </div>
       </div>
 

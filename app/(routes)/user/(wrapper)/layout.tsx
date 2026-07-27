@@ -44,14 +44,16 @@ export default function UserClientLayout({
   }
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full overflow-hidden">
         <UserSidePanel />
-        <main className="flex-1 overflow-y-auto no-scrollbar items-center justify-center  m-2 rounded-md border-2 relative">
+        <main className="flex-1 min-w-0 overflow-y-auto no-scrollbar m-1 sm:m-2 rounded-md border-2 relative">
           <SidebarTrigger
-            className="absolute top-2 right-2 w-8 h-8"
+            className="absolute top-2 right-2 z-10 w-9 h-9 touch-manipulation"
             variant="outline"
           />
-          <div className="p-8 pt-12">{children}</div>
+          <div className="p-4 pt-14 sm:p-6 sm:pt-14 md:p-8 md:pt-12">
+            {children}
+          </div>
         </main>
       </div>
     </SidebarProvider>

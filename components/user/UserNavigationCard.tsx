@@ -11,23 +11,27 @@ import { cn } from "@/lib/utils";
 
 function UserNavigationCard() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {navigationCards.map((card, index) => (
         <Card
           key={index}
-          className={`hover:shadow-md transition-shadow cursor-pointer ${card.bgColor}`}
+          className={`hover:shadow-md transition-shadow cursor-pointer active:scale-[0.99] touch-manipulation ${card.bgColor}`}
           onClick={() => (window.location.href = card.href)}
         >
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <div
-              className={`flex items-center justify-between ${card.textColor}`}
+              className={`flex items-center justify-between gap-2 ${card.textColor}`}
             >
-              <CardTitle className="text-lg">{card.title}</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                {card.title}
+              </CardTitle>
               {card.icon}
             </div>
-            <CardDescription>{card.description}</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">
+              {card.description}
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <div
               className={cn(
                 "flex flex-row items-center justify-start gap-2",
@@ -35,7 +39,7 @@ function UserNavigationCard() {
               )}
             >
               <span>مشاهده جزییات</span>
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 shrink-0" />
             </div>
           </CardContent>
         </Card>

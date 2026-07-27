@@ -36,40 +36,35 @@ function UserQuickState() {
   }
 
   return (
-    <div className="mt-12">
-      <h2 className="text-xl font-semibold mb-4">خلاصه اطلاعات</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+        خلاصه اطلاعات
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">واحدهای فعال</CardTitle>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-base sm:text-lg">واحدهای فعال</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+            <p className="text-xl sm:text-2xl font-bold break-all">
               {formatNumber(QuickData?.quickState.data?.shopsCount ?? 0)}
             </p>
             <CardDescription>تجاری و اداری</CardDescription>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">پرداخت های معوق</CardTitle>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-base sm:text-lg">
+              پرداخت های معوق
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+            <p className="text-xl sm:text-2xl font-bold break-all">
               {formatNumber(QuickData?.quickState.data?.totalBalance ?? 0)}
             </p>
             <CardDescription>مانده حساب کلی</CardDescription>
           </CardContent>
         </Card>
-        {/* <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">اطلاعیه های جدید</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">2</p>
-            <p className="text-sm text-muted-foreground">New announcements</p>
-          </CardContent>
-        </Card> */}
       </div>
     </div>
   );

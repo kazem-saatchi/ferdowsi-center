@@ -16,19 +16,18 @@ function UserGreeting() {
       greeting = "عصر بخیر";
     }
   return (
-    <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold">
-          {greeting}{" "}
-          {session?.person?.lastName
-            ? `,${session.person.firstName} ${session.person.lastName}`
-            : ""}
-          
-        </h1>
-        <p className="text-muted-foreground">
-          به اپلیکیشن مجتع فردوسی خوش آمدید
-        </p>
-      </div>
-  )
+    <div>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold break-words">
+        {greeting}
+        {session?.person?.lastName
+          ? `، ${session.person.firstName} ${session.person.lastName}`
+          : ""}
+      </h1>
+      <p className="text-sm sm:text-base text-muted-foreground mt-1">
+        به اپلیکیشن مجتع فردوسی خوش آمدید
+      </p>
+    </div>
+  );
 }
 
 export default UserGreeting

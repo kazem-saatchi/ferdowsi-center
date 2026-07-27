@@ -9,10 +9,10 @@ import { labels } from "@/utils/label";
 function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
   return (
     <>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-2xl font-bold">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 px-0 sm:px-6">
+        <CardTitle className="text-xl sm:text-2xl font-bold">
           {isLoading ? (
-            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-8 w-40 sm:w-48" />
           ) : (
             `واحد #${shop?.plaque}`
           )}
@@ -23,8 +23,8 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
           </Badge>
         )}
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <CardContent className="px-0 sm:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <ShopProperty
               label={labels.type}
@@ -57,7 +57,7 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
         </div>
       </CardContent>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 m-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 my-2">
         <BankCard
           isLoading={isLoading}
           shopCard={shop.bankCardMonthly}
@@ -126,23 +126,31 @@ function BankCard({
     <Card
       className={cn(
         "bg-gradient-to-r from-neutral-200/70 to-gray-300/70",
-        " dark:from-neutral-700/70 dark:to-gray-700/70",
-        "h-64 w-[480px] cursor-pointer",
-        "flex flex-col items-center justify-center gap-6",
-        "hover:to-neutral-400 dark:hover:to-neutral-200"
+        "dark:from-neutral-700/70 dark:to-gray-700/70",
+        "min-h-40 sm:min-h-48 md:h-64 w-full max-w-full cursor-pointer",
+        "flex flex-col items-center justify-center gap-4 sm:gap-6 p-4",
+        "hover:to-neutral-400 dark:hover:to-neutral-200",
+        "touch-manipulation active:scale-[0.99] transition-transform"
       )}
       onClick={() => {
         handleCopyCardNumber(shopCard);
       }}
     >
-      <CardHeader>
-        <CardTitle className="text-lg">شماره کارت شارژ {title}</CardTitle>
+      <CardHeader className="p-0 sm:p-6 text-center">
+        <CardTitle className="text-base sm:text-lg">
+          شماره کارت شارژ {title}
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0 sm:p-6 w-full text-center">
         {isLoading ? (
           <Skeleton className="h-6 w-full" />
         ) : (
-          <p className="font-bold text-2xl tracking-wider">{formatBankCard(shopCard || "")}</p>
+          <p
+            dir="ltr"
+            className="font-bold text-base sm:text-xl md:text-2xl tracking-wider break-all"
+          >
+            {formatBankCard(shopCard || "")}
+          </p>
         )}
       </CardContent>
     </Card>

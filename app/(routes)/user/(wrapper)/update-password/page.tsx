@@ -2,10 +2,9 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { useStore } from "@/store/store";
 import { useUpdatePassword } from "@/tanstack/mutation/personMutation";
 import { labels } from "@/utils/label";
@@ -98,11 +97,11 @@ function UpdatePasswordPage() {
   };
 
   return (
-    <div className="mx-auto p-8 max-w-xl">
-      <h1 className="text-2xl font-bold mb-6">{labels.updatePassword}</h1>
+    <div className="w-full max-w-xl mx-auto space-y-4">
+      <h1 className="text-xl sm:text-2xl font-bold">{labels.updatePassword}</h1>
 
-      <CardContent className="mt-4 border rounded-lg px-4 py-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="border rounded-lg px-4 py-5 sm:px-6 sm:py-6">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="currentPassword">{labels.currentPassword}</Label>
             <Input
@@ -113,6 +112,7 @@ function UpdatePasswordPage() {
               value={formData.currentPassword}
               onChange={handleChange}
               required
+              className="h-11 text-base"
             />
           </div>
           <div className="space-y-2">
@@ -125,8 +125,9 @@ function UpdatePasswordPage() {
               value={formData.newPassword}
               onChange={handleChange}
               required
+              className="h-11 text-base"
             />
-            <div className="text-sm text-muted-foreground mt-1 p-2 mx-2">
+            <div className="text-sm text-muted-foreground mt-1 p-2">
               <Label>رمز عبور باید:</Label>
               <ul className="list-disc pr-5 mt-2 space-y-1">
                 <li>حداقل ۸ کاراکتر باشد</li>
@@ -146,11 +147,16 @@ function UpdatePasswordPage() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
+              className="h-11 text-base"
             />
           </div>
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isLoading}>
+          <div className="flex justify-stretch sm:justify-end">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full sm:w-auto h-11"
+            >
               {isLoading ? labels.updatingPassword : labels.updatePassword}
             </Button>
           </div>
@@ -158,7 +164,7 @@ function UpdatePasswordPage() {
       </CardContent>
 
       {error && (
-        <Alert variant="destructive" className="mt-4">
+        <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>خطا</AlertTitle>
           <AlertDescription>{error}</AlertDescription>

@@ -88,11 +88,11 @@ export default function BankReportFilters({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 sm:justify-end">
             <Button
               onClick={handleFilter}
               disabled={!canFilter || isLoading}
-              className="flex-1"
+              className="w-full h-11"
             >
               {isLoading ? "در حال بارگذاری..." : "اعمال فیلتر"}
             </Button>
@@ -100,9 +100,9 @@ export default function BankReportFilters({
               variant="outline"
               onClick={handleClear}
               disabled={isLoading}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2 w-full h-11"
             >
-              <RotateCcw className="h-4 w-4" />
+              <RotateCcw className="h-4 w-4 shrink-0" />
               پاک کردن فیلتر
             </Button>
           </div>

@@ -74,22 +74,22 @@ export default function BankReportTable({
           <CardTitle className="text-right">خلاصه گزارش بانکی</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-2xl font-bold text-success">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-success break-all">
                 {formatCurrency(totalIncome)}
               </p>
               <p className="text-sm text-muted-foreground">کل درآمدها</p>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-error">
+            <div className="min-w-0">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-error break-all">
                 {formatCurrency(totalPayments)}
               </p>
               <p className="text-sm text-muted-foreground">کل پرداخت‌ها</p>
             </div>
-            <div>
+            <div className="min-w-0">
               <p
-                className={`text-2xl font-bold ${
+                className={`text-lg sm:text-xl md:text-2xl font-bold break-all ${
                   netBalance >= 0 ? "text-success" : "text-error"
                 }`}
               >

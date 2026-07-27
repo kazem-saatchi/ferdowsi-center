@@ -5,7 +5,7 @@ import { useFindShopById } from "@/tanstack/query/shopQuery";
 import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
@@ -22,8 +22,6 @@ export default function ShopBalancePage() {
   const params = useParams();
   const path = usePathname();
   const shopId = params.id as string;
-
-  console.log(path);
 
   const {
     data: balanceData,
@@ -69,32 +67,36 @@ export default function ShopBalancePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <CardHeader>
-          <CardTitle>اطلاعات واحد</CardTitle>
+    <div className="w-full space-y-6">
+      <div className="space-y-4">
+        <CardHeader className="p-0">
+          <CardTitle className="text-xl sm:text-2xl">اطلاعات واحد</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-0 space-y-4">
           {shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
-            <p>هیچ اطلاعاتی برای این واحد پیدا نشد</p>
+            <p className="text-muted-foreground">
+              هیچ اطلاعاتی برای این واحد پیدا نشد
+            </p>
           )}
         </CardContent>
 
         {personsBalance && personsBalance.length > 0 && (
           <>
-            <CardHeader>
-              <CardTitle>حساب اشخاص روی واحد</CardTitle>
+            <CardHeader className="p-0 pt-2">
+              <CardTitle className="text-lg sm:text-xl">
+                حساب اشخاص روی واحد
+              </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <PersonsBalanceTable personsBalance={personsBalance} />
             </CardContent>
           </>
         )}
 
-        <div className="w-full my-4">
-          <Button asChild>
+        <div className="w-full my-2">
+          <Button asChild className="w-full sm:w-auto h-11">
             <Link href={`${path}/detail`}>مشاهده جزییات پرداخت و شارژها</Link>
           </Button>
         </div>
