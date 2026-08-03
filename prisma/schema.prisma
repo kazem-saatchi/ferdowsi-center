@@ -22,10 +22,13 @@ model Shop {
 
   isForRent           Boolean @default(false)
   rentAmount          Int     @default(0)
-  rentMortgage        Int     @default(0)
+  // BigInt: a رهن (mortgage deposit) in rial routinely exceeds INT4's
+  // 2,147,483,647 ceiling, so this would have failed on the first real value.
+  rentMortgage        BigInt  @default(0)
 
   isForSell           Boolean @default(false)
-  sellAmount          Int     @default(0)
+  // BigInt: a shop sale price in rial is comfortably past the INT4 ceiling.
+  sellAmount          BigInt  @default(0)
 
   bankCardMonthly     String
   bankCardYearly      String
@@ -275,8 +278,11 @@ model BankTransaction {
   id                  String   @id @default(uuid())
   recieverAccount     String?               // Bank account number (e.g., "1234-5678-9012-3456")
   senderAccount       String?               // Bank account number (e.g., "1234-5678-9012-3456")
-  amount              Int
-  balance             Int
+  // BigInt, not Int: a rial balance passed 2,147,483,647 (INT4 max) in
+  // 1405/04, and every statement row above it failed to insert. See
+  // utils/bankAmount.ts for the boundary where these reach Int columns.
+  amount              BigInt
+  balance             BigInt
   type                TransactionType       // INCOME or PAYMENT
   category            TransactionCategory?  // More specific category
   description         String
@@ -288,6 +294,11 @@ model BankTransaction {
   bankRecieptId       String? // شماره قبض
   chequeNumber        String? // شماره چک
   branch              Int?    // Bank Branch number
+
+  // Identity hash — see utils/bankRowHash.ts. Backs the unique index that makes
+  // re-importing an overlapping statement date range idempotent. Nullable only
+  // so the column could be added to a populated table; every row is backfilled.
+  rowHash             String? @unique
 
   //  reference fields for Cost/Income/Charge
   registered        Boolean @default(false)

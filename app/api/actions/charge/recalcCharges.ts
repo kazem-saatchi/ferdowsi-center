@@ -18,6 +18,15 @@ import { startOfDay, addDays, differenceInDays } from "date-fns";
  *
  * This never depends on ShopChargeReference (which may have changed since the
  * charge was generated), so the operation is a pure re-attribution.
+ *
+ * Payments are deliberately NOT touched: a payment stays attributed to whoever
+ * it was recorded against. Because charges move and payments do not, a re-split
+ * can leave money parked on a person who no longer carries the charge for that
+ * window (an artificial credit on one side, an artificial debt on the other).
+ * We therefore report, per person and per window, how much they have already
+ * paid into it, and flag the ones that need the payment side corrected by hand
+ * (see updatePaymentUser). The caller — previewHistoryDateChange — surfaces
+ * this before the admin commits.
  */
 
 const RELEVANT_TYPES: HistoryType[] = [
@@ -33,6 +42,17 @@ export interface ChargeDiffPerson {
   oldAmount: number;
   newDays: number;
   newAmount: number;
+  /**
+   * Monthly (non-proprietor) payments already recorded against this person
+   * inside this window. Payments are never moved automatically.
+   */
+  paidInWindow: number;
+  /**
+   * True when this person loses charge amount in this window while money is
+   * already parked on them for it — the payment must be reassigned manually,
+   * otherwise they keep a phantom credit and the other party a phantom debt.
+   */
+  needsPaymentReview: boolean;
 }
 
 export interface OperationChargeDiff {
@@ -43,6 +63,8 @@ export interface OperationChargeDiff {
   /** ISO date of the last day covered by the window (inclusive) */
   windowEnd: string;
   perPerson: ChargeDiffPerson[];
+  /** True when any person in this window has `needsPaymentReview`. */
+  hasPaymentConflict: boolean;
 }
 
 const maxDate = (a: Date, b: Date) => (a > b ? a : b);
@@ -80,6 +102,13 @@ export async function recomputeShopMonthlyCharges(
   const histories = await tx.shopHistory.findMany({
     where: { shopId, type: { in: RELEVANT_TYPES } },
     orderBy: { startDate: "asc" },
+  });
+
+  // Monthly payments of this shop, used only to report what a re-split would
+  // strand on the wrong person. Never modified here.
+  const payments = await tx.payment.findMany({
+    where: { shopId, proprietor: false },
+    select: { personId: true, amount: true, date: true },
   });
 
   const results: OperationChargeDiff[] = [];
@@ -168,7 +197,16 @@ export async function recomputeShopMonthlyCharges(
       ...newList.map((n) => n.personId),
     ]);
 
+    // Money already recorded inside this window, per person.
+    const paidByPerson = new Map<string, number>();
+    for (const p of payments) {
+      const day = startOfDay(p.date);
+      if (day < windowStart || day >= windowEndExclusive) continue;
+      paidByPerson.set(p.personId, (paidByPerson.get(p.personId) ?? 0) + p.amount);
+    }
+
     let changed = false;
+    let hasPaymentConflict = false;
     const perPerson: ChargeDiffPerson[] = [];
     for (const personId of Array.from(personIds)) {
       const old = oldByPerson.get(personId);
@@ -180,6 +218,12 @@ export async function recomputeShopMonthlyCharges(
 
       if (oldDays !== newDays || oldAmount !== newAmount) changed = true;
 
+      const paidInWindow = paidByPerson.get(personId) ?? 0;
+      // Charges leaving a person who has already paid into this window is the
+      // exact condition that produces a phantom credit/debt pair.
+      const needsPaymentReview = newAmount < oldAmount && paidInWindow > 0;
+      if (needsPaymentReview) hasPaymentConflict = true;
+
       perPerson.push({
         personId,
         personName: next?.personName ?? old?.personName ?? "",
@@ -187,6 +231,8 @@ export async function recomputeShopMonthlyCharges(
         oldAmount,
         newDays,
         newAmount,
+        paidInWindow,
+        needsPaymentReview,
       });
     }
 
@@ -198,6 +244,7 @@ export async function recomputeShopMonthlyCharges(
       windowStart: windowStart.toISOString(),
       windowEnd: addDays(windowEndExclusive, -1).toISOString(),
       perPerson,
+      hasPaymentConflict,
     });
 
     if (options.apply) {

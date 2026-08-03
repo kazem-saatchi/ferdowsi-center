@@ -6,9 +6,23 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
+export interface RenterChargeWarning {
+  operationName: string;
+  personName: string;
+  amount: number;
+  daysCount: number;
+}
+
 interface UpdateShopResponse {
   renterName: string | null; // Allow null if renter is being cleared
   message: string;
+  /**
+   * Monthly charges that were already generated for periods the new renter is
+   * being backdated into. They stay on the person they were billed to — the
+   * admin has to decide whether to re-split them (history date edit) and move
+   * the matching payments.
+   */
+  chargeWarnings: RenterChargeWarning[];
 }
 
 async function updateShop(data: UpdateShopRenterData, user: Person) {
@@ -61,6 +75,42 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
     where: { shopId, type: "ActiveByOwner", endDate: null },
   });
 
+  // The open owner period is closed at newStartDate below. Backdating past its
+  // own start would give it a negative length, which then breaks every
+  // day-based charge split built on top of it.
+  if (currentOwnerHistory) {
+    const ownerStartDate = new Date(currentOwnerHistory.startDate);
+    if (newStartDate < ownerStartDate) {
+      throw new Error(errorMSG.invalidEndDate);
+    }
+  }
+
+  // Monthly charges already generated for days the new renter now covers.
+  // These are NOT re-attributed here (that only happens on an explicit history
+  // date edit, which shows a full preview first) — we just report them.
+  const overlappingCharges = await db.charge.findMany({
+    where: {
+      shopId,
+      proprietor: false,
+      forRent: false,
+      date: { gte: newStartDate },
+    },
+    select: {
+      operationName: true,
+      personName: true,
+      amount: true,
+      daysCount: true,
+    },
+    orderBy: { date: "asc" },
+  });
+
+  const chargeWarnings: RenterChargeWarning[] = overlappingCharges.map((c) => ({
+    operationName: c.operationName,
+    personName: c.personName,
+    amount: c.amount,
+    daysCount: c.daysCount,
+  }));
+
   const transaction = await db.$transaction(async (prisma) => {
     const updatedShop = await prisma.shop.update({
       where: { id: shopId },
@@ -110,6 +160,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
   return {
     message: successMSG.shopUpdated,
     renterName,
+    chargeWarnings,
   };
 }
 

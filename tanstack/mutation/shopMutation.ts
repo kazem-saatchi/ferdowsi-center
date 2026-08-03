@@ -13,6 +13,7 @@ import { EndShopRenterData } from "@/schema/shopSchema";
 import endShopRenterId from "@/app/api/actions/shop/endShopRenter";
 import { UpdateShopStatusData } from "@/schema/shopSchema";
 import updateShopStatus from "@/app/api/actions/shop/updateShopStatus";
+import { labels } from "@/utils/label";
 
 //------------------SHOP--------------------
 
@@ -104,8 +105,20 @@ export function useAddShop() {
   
           queryClient.invalidateQueries({ queryKey: ["shop", variables.shopId] });
           queryClient.refetchQueries({ queryKey: ["shop", variables.shopId] });
-  
+
           toast.success(data.data?.message);
+
+          // Backdated over already-generated charges: they stay on the person
+          // they were billed to until the admin re-splits them explicitly.
+          const warnings = data.data?.chargeWarnings;
+          if (warnings?.length) {
+            toast.warning(labels.renterBackdatedChargeWarning, {
+              description: warnings
+                .map((w) => `${w.operationName} - ${w.personName}`)
+                .join(" | "),
+              duration: 10000,
+            });
+          }
         } else {
           toast.error(data.data?.message || data.message);
         }
@@ -115,7 +128,7 @@ export function useAddShop() {
       },
     });
   }
-  
+
   // remove shop renter
   export function useEndShopRenter() {
     const queryClient = useQueryClient();

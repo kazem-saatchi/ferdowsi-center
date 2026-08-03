@@ -35,6 +35,7 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
   } = await getRelatedHistories({
     startDate,
     endDate,
+    shopId,
   });
 
   if (!success) {

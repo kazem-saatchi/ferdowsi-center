@@ -2,6 +2,10 @@
 "use server";
 
 import { db } from "@/lib/db";
+import {
+  serializeBankTransaction,
+  SerializedBankTransaction,
+} from "@/utils/bankAmount";
 import { BankTransaction, Prisma } from "@prisma/client";
 
 // Define options for fetching, including pagination and sorting
@@ -19,7 +23,7 @@ interface GetTransactionsOptions {
 
 // Define the return type for better type checking
 interface GetTransactionsResult {
-  data: BankTransaction[];
+  data: SerializedBankTransaction[];
   totalCount: number;
   totalPages: number;
   currentPage: number;
@@ -70,7 +74,7 @@ export async function getBankIncomeTransfer(
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      data: transactions, // or serializableTransactions
+      data: transactions.map(serializeBankTransaction),
       totalCount,
       totalPages,
       currentPage: page,

@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { bankAmountToNumber } from "@/utils/bankAmount";
 import { TransactionType, TransactionCategory } from "@prisma/client";
 
 export interface BankTransactionData {
@@ -52,6 +53,13 @@ export async function getBankTransactionsForReport(
     },
   });
 
-  return transactions;
+  // amount/balance are BigInt in the database; this payload is declared in
+  // numbers and has to cross a server-action boundary, which cannot encode
+  // bigint. See utils/bankAmount.ts.
+  return transactions.map((t) => ({
+    ...t,
+    amount: bankAmountToNumber(t.amount),
+    balance: bankAmountToNumber(t.balance),
+  }));
 }
 

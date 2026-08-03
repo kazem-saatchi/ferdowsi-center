@@ -192,6 +192,16 @@ export function UpdateHistoryModal({
                   <p className="text-sm text-muted-foreground">
                     {labels.chargeRecalcNotice}
                   </p>
+                  {previewData.some((op) => op.hasPaymentConflict) && (
+                    <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 space-y-1">
+                      <div className="text-sm font-medium text-amber-700 dark:text-amber-500">
+                        {labels.paymentConflictTitle}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {labels.paymentConflictNotice}
+                      </p>
+                    </div>
+                  )}
                   {previewData.map((op) => (
                     <div
                       key={op.operationId}
@@ -217,6 +227,9 @@ export function UpdateHistoryModal({
                             <th className="text-center font-normal">
                               {labels.newValue}
                             </th>
+                            <th className="text-center font-normal">
+                              {labels.paidColumn}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -234,6 +247,17 @@ export function UpdateHistoryModal({
                                 <span className="text-xs mr-1">
                                   ({p.newDays} {labels.daysColumn})
                                 </span>
+                              </td>
+                              <td
+                                className={
+                                  p.needsPaymentReview
+                                    ? "text-center font-medium text-amber-600 dark:text-amber-500"
+                                    : "text-center text-muted-foreground"
+                                }
+                              >
+                                {p.paidInWindow > 0
+                                  ? formatAmount(p.paidInWindow)
+                                  : "-"}
                               </td>
                             </tr>
                           ))}

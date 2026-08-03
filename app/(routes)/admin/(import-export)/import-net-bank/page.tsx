@@ -157,9 +157,32 @@ export default function UploadNetBankDataPage() {
               />
             </div>
             <div className="text-xs  flex justify-between">
-              <span>موفق: {uploadStats.totalAdded}</span>
-              <span>ناموفق: {uploadStats.totalFailed}</span>
+              <span>ثبت شد: {uploadStats.totalAdded}</span>
+              <span className="text-muted-foreground">
+                تکراری: {uploadStats.totalSkipped}
+              </span>
+              <span className={uploadStats.totalFailed > 0 ? "text-destructive font-medium" : ""}>
+                ناموفق: {uploadStats.totalFailed}
+              </span>
             </div>
+          </div>
+        )}
+
+        {/* A partial import must be visible after the run, not just in a toast
+            that disappears. */}
+        {!isUploading && uploadStats.totalFailed > 0 && (
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 space-y-2">
+            <div className="text-sm font-medium text-destructive">
+              {uploadStats.totalFailed} ردیف ثبت نشد
+            </div>
+            <ul className="text-xs space-y-1 max-h-48 overflow-y-auto">
+              {uploadStats.failures.map((f, i) => (
+                <li key={i} className="flex flex-col sm:flex-row sm:gap-2">
+                  <span className="font-mono text-muted-foreground">{f.reference}</span>
+                  <span>{f.reason}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

@@ -13,6 +13,7 @@ import {
 import { BankTransaction, TransactionCategory } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
 import { labels } from "@/utils/label";
+import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -38,7 +39,9 @@ const getCategoryText = (category: TransactionCategory | null) => {
 };
 
 interface BankFailedTransactionTableProps {
-  transactions: BankTransaction[];
+  // Serialized: amount/balance arrive as numbers, since bigint cannot cross
+  // the server-action boundary. See utils/bankAmount.ts.
+  transactions: SerializedBankTransaction[];
   isLoading: boolean;
   isError: boolean;
 }

@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
+import { resolveShopPersonAtDate } from "./resolveOccupant";
+import { toInt4Amount } from "@/utils/bankAmount";
 
 type PaymentResponse = {
   success: boolean;
@@ -85,16 +87,22 @@ async function addPaymentFromCardTransfer(
 
       const isProprietor =
         shop.bankCardYearly === bankTransaction.recieverAccount;
-      const personName = isProprietor
-        ? shop.ownerName
-        : shop.renterName || shop.ownerName;
-      const personId = isProprietor
-        ? shop.ownerId
-        : shop.renterId || shop.ownerId;
+
+      // Attribute to whoever occupied the shop on the transaction date, so the
+      // payment lands on the same person the charge for those days did.
+      const { personId, personName } = await resolveShopPersonAtDate(
+        prisma,
+        shop,
+        bankTransaction.date,
+        isProprietor
+      );
 
       const payment = await prisma.payment.create({
         data: {
-          amount: bankTransaction.amount,
+          // Payment.amount is still Int while BankTransaction.amount is BigInt.
+          // Convert explicitly so an oversized transfer fails loudly here
+          // instead of vanishing the way the import used to.
+          amount: toInt4Amount(bankTransaction.amount, "مبلغ پرداخت"),
           date: bankTransaction.date,
           plaque: shop.plaque,
           description: bankTransaction.description,

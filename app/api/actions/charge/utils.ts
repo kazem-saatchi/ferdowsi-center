@@ -8,6 +8,8 @@ import { differenceInDays, startOfDay } from "date-fns";
 const getHistoriesSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
+  /** Restrict to a single shop. Omit to fetch every shop's histories. */
+  shopId: z.string().optional(),
 });
 
 export type getHistoriesResponse = {
@@ -31,7 +33,7 @@ export async function getRelatedHistories(
     };
   }
 
-  const { startDate, endDate } = validation.data;
+  const { startDate, endDate, shopId } = validation.data;
 
   if (endDate <= startDate) {
     return {
@@ -43,6 +45,7 @@ export async function getRelatedHistories(
   // Fetch ShopHistory entries of specified types
   const relevantHistories = await db.shopHistory.findMany({
     where: {
+      ...(shopId ? { shopId } : {}),
       type: { in: ["ActiveByOwner", "ActiveByRenter", "InActive"] }, // Exclude "Ownership"
       startDate: { lte: endDate },
       OR: [

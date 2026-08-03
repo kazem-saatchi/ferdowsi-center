@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
+import { resolveShopPersonAtDate } from "./resolveOccupant";
+import { toInt4Amount } from "@/utils/bankAmount";
 
 type PaymentResponse = {
   success: boolean;
@@ -85,12 +87,15 @@ async function addFailedPaymentFromCard(
 
       const isProprietor =
         shop.bankCardYearly === bankTransaction.recieverAccount;
-      const personName = isProprietor
-        ? shop.ownerName
-        : shop.renterName || shop.ownerName;
-      const personId = isProprietor
-        ? shop.ownerId
-        : shop.renterId || shop.ownerId;
+
+      // A returned transaction must be charged back to the person who was
+      // credited for it — i.e. the occupant on the transaction date.
+      const { personId, personName } = await resolveShopPersonAtDate(
+        prisma,
+        shop,
+        bankTransaction.date,
+        isProprietor
+      );
 
       const operation = await prisma.operation.create({
         data: {
@@ -101,7 +106,9 @@ async function addFailedPaymentFromCard(
 
       const charge = await prisma.charge.create({
         data: {
-          amount: bankTransaction.amount,
+          // Charge.amount is still Int while BankTransaction.amount is BigInt.
+          // Convert explicitly so an oversized return fails loudly.
+          amount: toInt4Amount(bankTransaction.amount, "مبلغ برگشتی"),
           date: bankTransaction.date,
           plaque: shop.plaque,
           description: bankTransaction.description,
