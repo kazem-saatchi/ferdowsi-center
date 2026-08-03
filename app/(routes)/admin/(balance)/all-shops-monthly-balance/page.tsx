@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
-import findBalanceAllShops from "@/app/api/actions/balance/getAllShopsBalance";
+import { useEffect } from "react";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -12,18 +11,8 @@ import { labels } from "@/utils/label";
 import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
-import {
-  ShopsBalanceData,
-  RawTransactionShopData,
-  ShopBalanceDetails,
-} from "@/schema/balanceSchema";
-import {
-  calculateAllShopsBalanceDetailsOnClient,
-  calculateTotalBalance,
-  calculateTotalOwnerBalance,
-  calculateTotalRenterBalance,
-  convertToShopsBalanceData,
-} from "@/utils/calculateBalanceClient";
+import { useGetAllShopsBalance } from "@/tanstack/query/balanceQuery";
+import { convertToShopsBalanceData } from "@/utils/calculateBalanceClient";
 import {
   Select,
   SelectContent,
@@ -43,31 +32,25 @@ import { Download } from "lucide-react";
 
 export default function AllShopsMonthlyBalancePage() {
   const proprietor: boolean = false;
-  const BATCH_SIZE = 10;
-  const hasStartedLoading = useRef(false);
-
-  const [totalBalance, setTotalBalance] = useState<number>(0);
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loadingProgress, setLoadingProgress] = useState<string>("");
-  const [error, setError] = useState<any>(null);
-  const [accumulatedData, setAccumulatedData] = useState<ShopBalanceDetails[]>(
-    []
-  );
 
   const {
-    allBalances,
+    data: response,
+    isLoading,
+    error,
+    isError,
+    refetch,
+  } = useGetAllShopsBalance(proprietor);
+
+  const {
     setAllBalances,
     setAllBalanceDetails,
     exportAllBalanceToExcel,
     exportAllBalanceToPdf,
     setAllBalanceFiltered,
-    allBalanceFiltered,
     exportAllBalanceToPDFFiltered,
     exportAllBalanceToExcelFiltered,
   } = useStore(
     useShallow((state) => ({
-      allBalances: state.allBalances,
       setAllBalances: state.setAllBalances,
       setAllBalanceDetails: state.setAllBalanceDetails,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
@@ -75,142 +58,42 @@ export default function AllShopsMonthlyBalancePage() {
       exportAllBalanceToPDFFiltered: state.exportAllBalanceToPDFFiltered,
       exportAllBalanceToExcelFiltered: state.exportAllBalanceToExcelFiltered,
       setAllBalanceFiltered: state.setAllBalanceFiltered,
-      allBalanceFiltered: state.allBalanceFiltered,
     }))
   );
 
-  const loadAllData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      setAccumulatedData([]);
-      setTotalBalance(0);
+  const shopsData = response?.data?.shopsData;
 
-      setLoadingProgress("Fetching initial data...");
-
-      // First request to get total count
-      const firstResponse = await findBalanceAllShops(
-        proprietor,
-        0,
-        BATCH_SIZE
-      );
-
-      if (!firstResponse.success || !firstResponse.data) {
-        throw new Error(firstResponse.message || "Failed to load balance data");
-      }
-
-      const totalCount = firstResponse.data.totalCount || 0;
-      const firstBatch =
-        (firstResponse.data.shopsData as RawTransactionShopData[]) || [];
-
-      // Calculate all three balance types for first batch on client side
-      // proprietor=false for monthly balances
-      const firstCalculated = calculateAllShopsBalanceDetailsOnClient(
-        firstBatch,
-        proprietor
-      );
-
-      setAccumulatedData(firstCalculated);
-      let runningTotal = calculateTotalBalance(firstCalculated);
-      let runningOwnerTotal = calculateTotalOwnerBalance(firstCalculated);
-      let runningRenterTotal = calculateTotalRenterBalance(firstCalculated);
-      setTotalBalance(runningTotal);
-
-      setLoadingProgress(
-        `Loading shops: ${firstCalculated.length}/${totalCount}`
-      );
-
-      const accumulated: ShopBalanceDetails[] = [...firstCalculated];
-
-      // Load remaining batches progressively
-      for (let skip = BATCH_SIZE; skip < totalCount; skip += BATCH_SIZE) {
-        setLoadingProgress(`Loading shops: ${skip}/${totalCount}`);
-
-        const response = await findBalanceAllShops(
-          proprietor,
-          skip,
-          BATCH_SIZE
-        );
-
-        if (!response.success || !response.data?.shopsData) {
-          throw new Error(response.message || "Failed to load batch");
-        }
-
-        const batchRawData = response.data
-          .shopsData as RawTransactionShopData[];
-        const batchCalculated = calculateAllShopsBalanceDetailsOnClient(
-          batchRawData,
-          proprietor
-        );
-
-        accumulated.push(...batchCalculated);
-
-        // Update incrementally
-        setAccumulatedData([...accumulated]);
-        runningTotal = calculateTotalBalance(accumulated);
-        runningOwnerTotal = calculateTotalOwnerBalance(accumulated);
-        runningRenterTotal = calculateTotalRenterBalance(accumulated);
-        setTotalBalance(runningTotal);
-
-        setLoadingProgress(
-          `Loading shops: ${accumulated.length}/${totalCount}`
-        );
-      }
-
-      // Final update - convert to ShopsBalanceData for store compatibility
-      setAllBalances(convertToShopsBalanceData(accumulated));
-      setAllBalanceDetails(accumulated);
-      setLoadingProgress("");
-      setIsLoading(false);
-
-      console.log(
-        "All batches loaded and calculated on client:",
-        accumulated.length,
-        "shops"
-      );
-    } catch (err: any) {
-      console.error("Error loading data:", err);
-      setError(err);
-      setIsLoading(false);
-    }
-  }, [proprietor, setAllBalances]);
-
+  // The store feeds the PDF/Excel exports, which read it on click.
   useEffect(() => {
-    // Prevent loading data multiple times
-    if (!hasStartedLoading.current) {
-      hasStartedLoading.current = true;
-      loadAllData();
-    }
-  }, [loadAllData]);
+    if (!shopsData) return;
+    setAllBalances(convertToShopsBalanceData(shopsData));
+    setAllBalanceDetails(shopsData);
+  }, [shopsData, setAllBalances, setAllBalanceDetails]);
 
-  if (isLoading && accumulatedData.length === 0) {
-    return <LoadingComponent text={loadingProgress || labels.loadingData} />;
+  if (isLoading) {
+    return <LoadingComponent text={labels.loadingData} />;
   }
 
-  if (error && accumulatedData.length === 0) {
+  if (isError || !response?.success) {
     return (
       <ErrorComponent
-        error={error}
-        message={labels.errorOccurred}
-        retry={loadAllData}
+        // A failed action resolves with success:false rather than throwing, so
+        // react-query reports no error object — carry its message across.
+        error={error ?? new Error(response?.message || labels.errorOccurred)}
+        message={response?.message || labels.errorOccurred}
+        retry={refetch}
       />
     );
   }
 
   const handleFilter = (value: string) => {
-    if (value === "all") {
-      setAllBalanceFiltered(null);
-    } else {
-      setAllBalanceFiltered(Number(value));
-    }
+    setAllBalanceFiltered(value === "all" ? null : Number(value));
   };
 
-  // Use accumulated data directly for table display (shows all three balance types)
-  // Convert for store compatibility
-  const convertedAccumulated = convertToShopsBalanceData(accumulatedData);
-
-  const displayData =
-    accumulatedData.length > 0 ? accumulatedData : allBalances || [];
+  const totalBalance = (shopsData ?? []).reduce(
+    (sum, shop) => sum + shop.totalBalance,
+    0
+  );
 
   return (
     <div>
@@ -218,13 +101,6 @@ export default function AllShopsMonthlyBalancePage() {
         <CardTitle>{labels.allShopsMonthlyBalance}</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading && loadingProgress && (
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-            <p className="text-sm text-blue-700 dark:text-blue-300">
-              {loadingProgress}
-            </p>
-          </div>
-        )}
         <div
           className={cn(
             "flex flex-col items-start justify-start",
@@ -247,8 +123,8 @@ export default function AllShopsMonthlyBalancePage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="50000000">5.000.000</SelectItem>
-                <SelectItem value="100000000">10.000.000</SelectItem>
+                <SelectItem value="50000000">50.000.000</SelectItem>
+                <SelectItem value="100000000">100.000.000</SelectItem>
               </SelectContent>
             </Select>
             <DropdownMenu>
@@ -280,8 +156,8 @@ export default function AllShopsMonthlyBalancePage() {
             </DropdownMenu>
           </div>
         </div>
-        {displayData && displayData.length > 0 ? (
-          <ShopsBalanceTable shopsBlances={displayData} />
+        {shopsData && shopsData.length > 0 ? (
+          <ShopsBalanceTable shopsBlances={shopsData} />
         ) : (
           <p>{labels.noDataFound}</p>
         )}
