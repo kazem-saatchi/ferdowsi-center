@@ -21,11 +21,19 @@ import { useState } from "react";
 import TransactionInfoDialog from "./TransactionInfoDialog";
 import ChangeUserDialog from "./ChangeUserDialog";
 import type { BalanceTransactionRow } from "./ChangeUser";
+import { calculateMonthlyShare } from "@/utils/monthlyChargeShare";
 
 interface BalanceTableProps {
   charges: Charge[];
   payments: Payment[];
   plaque?: string | number;
+  /** Newest bank statement row in the database — printed on the Excel report so
+   *  the reader knows later payments are not reflected yet. */
+  lastBankTransactionDate?: Date | null;
+  /** Current renter. Monthly charges booked to anyone else fall to the owner. */
+  renterId?: string | null;
+  ownerName?: string;
+  renterName?: string;
 }
 
 type TotalBalance = {
@@ -58,8 +66,16 @@ function computeTotals(
   };
 }
 
-export function BalanceDetailTable({ charges, payments, plaque }: BalanceTableProps) {
-  const { exportBalanceDetailToPDF, exportBalanceDetailToExcel } = useStore();
+export function BalanceDetailTable({
+  charges,
+  payments,
+  plaque,
+  lastBankTransactionDate,
+  renterId,
+  ownerName,
+  renterName,
+}: BalanceTableProps) {
+  const { exportBalanceDetailToExcel } = useStore();
   const [selectedTransactionId, setSelectedTransactionId] = useState<
     string | null
   >(null);
@@ -120,6 +136,12 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
   // filtered tabs show a single total row
   const totalActiveBalance = computeTotals(balanceData);
 
+  // ── monthly charge split ──────────────────────────────────────────────────
+  // Always computed over the full ledger, so the figure does not shift with the
+  // active tab. Only meaningful while monthly rows are on screen.
+  const monthlyShare = calculateMonthlyShare(charges, payments, renterId);
+  const showMonthlyShare = !!renterId && activeTab !== "proprietor";
+
   // ── export ────────────────────────────────────────────────────────────────
   const tabSuffix =
     activeTab === "proprietor"
@@ -131,18 +153,25 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
   const plaquePart = plaque != null ? `-Shop${plaque}` : "";
   const fileName = `Balance-Detail${plaquePart}-${tabSuffix}-Report`;
 
-  const isSingleFooter = activeTab !== "all";
   const footerLabel =
     activeTab === "proprietor"
       ? labels.totalProprietorBalance
       : labels.totalChargeBalance;
 
-  const handleExportPDF = () => {
-    exportBalanceDetailToPDF(activeCharges, activePayments, fileName, isSingleFooter, footerLabel);
-  };
-
   const handleExportExcel = () => {
-    exportBalanceDetailToExcel(activeCharges, activePayments, fileName, isSingleFooter, footerLabel);
+    // The "all" report splits into monthly + proprietor sections itself, so it
+    // receives the unfiltered ledger.
+    void exportBalanceDetailToExcel({
+      charges: activeCharges,
+      payments: activePayments,
+      variant: activeTab,
+      plaque,
+      lastBankTransactionDate,
+      renterId,
+      ownerName,
+      renterName,
+      fileName,
+    });
   };
 
   // ── balance colour helper ─────────────────────────────────────────────────
@@ -169,16 +198,42 @@ export function BalanceDetailTable({ charges, payments, plaque }: BalanceTablePr
         ))}
       </div>
 
-      {/* ── Export buttons ── */}
+      {/* ── Monthly charge split between renter and owner ── */}
+      {showMonthlyShare && (
+        <div className="rounded-md border p-3 space-y-2">
+          <p className="text-sm font-medium">{labels.monthlyShareTitle}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+              <span className="text-muted-foreground">
+                {labels.renterShareOfMonthly}
+                {renterName ? ` — ${renterName}` : ""}
+              </span>
+              <span
+                className={cn("font-bold", balanceColour(monthlyShare.renter))}
+              >
+                {monthlyShare.renter.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+              <span className="text-muted-foreground">
+                {labels.ownerShareOfMonthly}
+                {ownerName ? ` — ${ownerName}` : ""}
+              </span>
+              <span
+                className={cn("font-bold", balanceColour(monthlyShare.owner))}
+              >
+                {monthlyShare.owner.toLocaleString()}
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {labels.exRenterShareNote}
+          </p>
+        </div>
+      )}
+
+      {/* ── Export button ── */}
       <div className="flex gap-2 justify-end">
-        <Button
-          onClick={handleExportPDF}
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <Download size={16} />
-          Export PDF
-        </Button>
         <Button
           onClick={handleExportExcel}
           size="sm"

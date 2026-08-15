@@ -7,14 +7,12 @@ import {
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
 import { PersonInfoSafe } from "@/schema/personSchema";
+import { exportToExcel, exportToPDF } from "@/utils/tableExport";
 import {
-  exportToExcel,
-  exportToPDF,
-  exportBalanceDetailToPDF,
   exportBalanceDetailToExcel,
-} from "@/utils/tableExport";
+  type BalanceDetailExcelOptions,
+} from "@/utils/balanceDetailExcel";
 import { StateCreator } from "zustand";
-import { Charge, Payment } from "@prisma/client";
 
 type Balances = {
   allBalances: ShopsBalanceData[] | null;
@@ -39,8 +37,7 @@ type Balances = {
   exportAllBalanceToExcel: () => void;
   exportAllBalanceToPDFFiltered: () => void;
   exportAllBalanceToExcelFiltered: () => void;
-  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => void;
-  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => void;
+  exportBalanceDetailToExcel: (options: BalanceDetailExcelOptions) => Promise<void>;
 };
 
 export interface OwnerRenterBalance {
@@ -136,20 +133,12 @@ export const createBalanceSlice: StateCreator<
   setShopOwnerBalance: (data) => set({ shopOwnerBalanceData: data }),
   setShopRenterBalance: (data) => set({ shopRenterBalanceData: data }),
 
-  // New functions for balance detail export
-  exportBalanceDetailToPDF: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => {
-    if (!charges || !payments) {
+  exportBalanceDetailToExcel: async (options: BalanceDetailExcelOptions) => {
+    if (!options.charges || !options.payments) {
       console.error("No balance detail data to export");
       return;
     }
-    exportBalanceDetailToPDF({ charges, payments, singleFooter, footerLabel }, fileName ?? "Balance-Detail-Report");
-  },
-  exportBalanceDetailToExcel: (charges: Charge[], payments: Payment[], fileName?: string, singleFooter?: boolean, footerLabel?: string) => {
-    if (!charges || !payments) {
-      console.error("No balance detail data to export");
-      return;
-    }
-    exportBalanceDetailToExcel({ charges, payments, singleFooter, footerLabel }, fileName ?? "Balance-Detail-Report");
+    await exportBalanceDetailToExcel(options);
   },
 });
 

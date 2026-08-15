@@ -36,12 +36,18 @@ function ShopBalanceDetaiById() {
     );
   }
 
+  const { owner, renter } = balanceData.data;
+
   return (
     <div>
       <BalanceDetailTable
         charges={balanceData?.data?.charges}
         payments={balanceData?.data?.payments}
         plaque={balanceData?.data?.shopBalance?.plaque}
+        lastBankTransactionDate={balanceData?.data?.lastBankTransactionDate}
+        renterId={balanceData?.data?.renterId}
+        ownerName={owner && `${owner.firstName} ${owner.lastName}`}
+        renterName={renter && `${renter.firstName} ${renter.lastName}`}
       />
     </div>
   );

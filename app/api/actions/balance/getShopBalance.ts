@@ -19,6 +19,10 @@ import { Person, Charge, Payment } from "@prisma/client";
 interface FindBalanceResponse {
   owner?: PersonInfoSafe;
   renter?: PersonInfoSafe;
+  /** Id of the *current* renter. Anything charged to anyone else — the owner or
+   *  a previous renter — is the owner's responsibility, because unpaid charges
+   *  follow the shop. */
+  renterId?: string | null;
   success: boolean;
   message: string;
   charges?: Charge[];
@@ -29,6 +33,9 @@ interface FindBalanceResponse {
   ownerPaymentList: ChargePaymentData[];
   renterChargeList: ChargePaymentData[];
   renterPaymentList: ChargePaymentData[];
+  /** Newest bank statement row in the database. Reports print it so the reader
+   *  knows payments made after that date are not reflected yet. */
+  lastBankTransactionDate?: Date;
 }
 
 async function getAllBalance(
@@ -155,11 +162,19 @@ async function getAllBalance(
     })
   );
 
+  //-------------Last-Imported-Bank-Statement-Block-------------
+
+  const lastBankTransaction = await db.bankTransaction.aggregate({
+    _max: { date: true },
+  });
+
   return {
     owner: owner ? owner : undefined,
     renter: renter ? renter : undefined,
+    renterId: shop.renterId,
     success: true,
     message: successMSG.balancesFound,
+    lastBankTransactionDate: lastBankTransaction._max.date ?? undefined,
     charges: chargeList,
     payments: paymentList,
     shopBalance,

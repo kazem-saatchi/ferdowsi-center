@@ -145,6 +145,16 @@ export default function ShopBalanceDetailPage() {
               charges={balanceData?.data?.charges}
               payments={balanceData?.data?.payments}
               plaque={balanceData?.data?.shopBalance?.plaque}
+              lastBankTransactionDate={balanceData?.data?.lastBankTransactionDate}
+              renterId={balanceData?.data?.renterId}
+              ownerName={
+                balanceData?.data?.owner &&
+                `${balanceData.data.owner.firstName} ${balanceData.data.owner.lastName}`
+              }
+              renterName={
+                balanceData?.data?.renter &&
+                `${balanceData.data.renter.firstName} ${balanceData.data.renter.lastName}`
+              }
             />
           ) : (
             <p>{labels.noInformationFound}</p>

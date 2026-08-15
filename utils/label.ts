@@ -1,4 +1,29 @@
 export const labels = {
+  // ── printable balance-detail report ──────────────────────────────────────
+  complexName: "مجتمع تجاری فردوسی",
+  balanceDetailReportTitle: "ریز حساب واحد",
+  balanceDetailSheetName: "ریز حساب واحد",
+  reportType: "نوع گزارش",
+  reportDate: "تاریخ گزارش",
+  amountRials: "مبلغ (ریال)",
+  balanceRials: "مانده (ریال)",
+  monthlyChargeSection: "شارژ ماهانه",
+  proprietorChargeSection: "شارژ مالکانه",
+  allChargesSection: "کل",
+  noTransactionsInSection: "تراکنشی ثبت نشده است",
+  // Kept as plain strings — labels is indexed dynamically elsewhere, so every
+  // value has to stay a string.
+  lastBankTransactionNotePrefix: "آخرین تراکنش بانکی ثبت‌شده در سامانه:",
+  lastBankTransactionNoteSuffix:
+    "پرداخت‌های انجام‌شده پس از این تاریخ هنوز وارد سامانه نشده و در این گزارش لحاظ نشده‌اند.",
+  noBankTransactionNote:
+    "تاکنون هیچ تراکنش بانکی در سامانه ثبت نشده است؛ پرداخت‌های بانکی در این گزارش لحاظ نشده‌اند.",
+  monthlyShareTitle: "تفکیک مانده شارژ ماهانه",
+  renterShareOfMonthly: "سهم مستاجر فعلی",
+  ownerShareOfMonthly: "سهم مالک",
+  exRenterShareNote:
+    "مانده شارژ ماهانه مستاجران قبلی بر عهده مالک واحد است و در سهم مالک محاسبه شده است.",
+
   plaque: "پلاک",
   totalCharge: "کل جمع شارژ (ریال)",
   totalPayment: "کل جمع پرداخت (ریال)",
