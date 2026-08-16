@@ -11,6 +11,9 @@ interface FindAllShopsBalanceResponse {
   message: string;
   shopsData: ShopBalanceDetails[];
   totalCount: number;
+  /** Newest bank statement row in the database. Reports print it so the reader
+   *  knows payments made after that date are not reflected yet. */
+  lastBankTransactionDate?: Date;
 }
 
 // KIOSK pays a monthly charge AND a proprietor charge, on a different cadence
@@ -36,29 +39,31 @@ async function getAllShopsBalance(
   // so we ship one row per (shop, person) pair instead of one row per charge.
   // These are read-only aggregates: no transaction, so no pooled connection is
   // held open while the batch runs.
-  const [shops, chargeSums, paymentSums] = await Promise.all([
-    db.shop.findMany({
-      where: shopWhere,
-      orderBy: { plaque: "asc" },
-      select: {
-        id: true,
-        plaque: true,
-        ownerName: true,
-        renterName: true,
-        renterId: true,
-      },
-    }),
-    db.charge.groupBy({
-      by: ["shopId", "personId"],
-      where: { proprietor, shop: shopWhere },
-      _sum: { amount: true },
-    }),
-    db.payment.groupBy({
-      by: ["shopId", "personId"],
-      where: { proprietor, shop: shopWhere },
-      _sum: { amount: true },
-    }),
-  ]);
+  const [shops, chargeSums, paymentSums, lastBankTransaction] =
+    await Promise.all([
+      db.shop.findMany({
+        where: shopWhere,
+        orderBy: { plaque: "asc" },
+        select: {
+          id: true,
+          plaque: true,
+          ownerName: true,
+          renterName: true,
+          renterId: true,
+        },
+      }),
+      db.charge.groupBy({
+        by: ["shopId", "personId"],
+        where: { proprietor, shop: shopWhere },
+        _sum: { amount: true },
+      }),
+      db.payment.groupBy({
+        by: ["shopId", "personId"],
+        where: { proprietor, shop: shopWhere },
+        _sum: { amount: true },
+      }),
+      db.bankTransaction.aggregate({ _max: { date: true } }),
+    ]);
 
   const totals = new Map(
     shops.map((shop) => [
@@ -114,6 +119,7 @@ async function getAllShopsBalance(
     message: successMSG.balancesFound,
     shopsData,
     totalCount: shopsData.length,
+    lastBankTransactionDate: lastBankTransaction._max.date ?? undefined,
   };
 }
 

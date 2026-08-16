@@ -26,18 +26,19 @@ export default function AllShopsYearlyBalancePage() {
   const {
     setAllBalances,
     setAllBalanceDetails,
-    exportAllBalanceToExcel,
+    exportShopsBalanceToExcel,
     exportAllBalanceToPdf,
   } = useStore(
     useShallow((state) => ({
       setAllBalances: state.setAllBalances,
       setAllBalanceDetails: state.setAllBalanceDetails,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-      exportAllBalanceToExcel: state.exportAllBalanceToExcel,
+      exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
     }))
   );
 
   const shopsData = response?.data?.shopsData;
+  const lastBankTransactionDate = response?.data?.lastBankTransactionDate;
 
   // The store feeds the PDF/Excel exports, which read it on click.
   useEffect(() => {
@@ -72,7 +73,15 @@ export default function AllShopsYearlyBalancePage() {
           <Button onClick={exportAllBalanceToPdf} disabled={isLoading}>
             {labels.downloadAsPDF}
           </Button>
-          <Button onClick={exportAllBalanceToExcel} disabled={isLoading}>
+          <Button
+            onClick={() =>
+              void exportShopsBalanceToExcel({
+                variant: "yearly",
+                lastBankTransactionDate,
+              })
+            }
+            disabled={isLoading}
+          >
             {labels.downloadAsExcel}
           </Button>
         </div>

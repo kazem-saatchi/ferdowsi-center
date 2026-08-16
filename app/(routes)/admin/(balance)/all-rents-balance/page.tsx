@@ -23,16 +23,18 @@ export default function AllRentsBalancePage() {
   const {
     allBalances,
     setAllBalances,
-    exportAllBalanceToExcel,
+    exportShopsBalanceToExcel,
     exportAllBalanceToPdf,
   } = useStore(
     useShallow((state) => ({
       allBalances: state.allBalances,
       setAllBalances: state.setAllBalances,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-      exportAllBalanceToExcel: state.exportAllBalanceToExcel,
+      exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
     }))
   );
+
+  const lastBankTransactionDate = rentData?.data?.lastBankTransactionDate;
 
   useEffect(() => {
     if (rentData?.data?.shopsBalance) {
@@ -57,14 +59,21 @@ export default function AllRentsBalancePage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{labels.allShopsMonthlyBalance}</CardTitle>
+        <CardTitle>{labels.allRentsBalance}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
           <Button onClick={exportAllBalanceToPdf}>
             {labels.downloadAsPDF}
           </Button>
-          <Button onClick={exportAllBalanceToExcel}>
+          <Button
+            onClick={() =>
+              void exportShopsBalanceToExcel({
+                variant: "rent",
+                lastBankTransactionDate,
+              })
+            }
+          >
             {labels.downloadAsExcel}
           </Button>
         </div>

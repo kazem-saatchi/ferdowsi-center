@@ -1,10 +1,21 @@
-// ExcelJS is only pulled in when the user actually asks for the report — a
-// static import would add it to the first load of every balance page.
-import type { Borders, Row, Workbook, Worksheet } from "exceljs";
+import type { Row, Workbook, Worksheet } from "exceljs";
 import type { Charge, Payment } from "@prisma/client";
 import { labels } from "./label";
 import { formatPersianDate } from "./localeDate";
 import { calculateMonthlyShare } from "./monthlyChargeShare";
+import {
+  addBanner as addBannerRow,
+  borderRow,
+  createReportSheet,
+  downloadWorkbook,
+  fillRow,
+  type BannerOptions,
+  CURRENCY_FORMAT,
+  FONT,
+  GREY,
+  STRONG_BORDER,
+  THIN_BORDER,
+} from "./excelReport";
 
 /** Which slice of the shop ledger the sheet represents. Mirrors the tab ids in
  *  components/balance/BalanceDetaiTable.tsx. */
@@ -40,27 +51,6 @@ const COLUMNS = [
 ] as const;
 
 const LAST_COL = COLUMNS.length; // 7 → column G
-const CURRENCY_FORMAT = "#,##0;-#,##0";
-const FONT = "Tahoma";
-
-// The report is printed on a black-and-white laser printer, so the sheet is
-// greyscale only: structure is carried by borders, weight and light grey bands
-// rather than by hue. Payment rows get the faintest tint so they stay
-// distinguishable from charge rows once printed.
-const GREY = {
-  title: "FFD9D9D9",
-  band: "FFE6E6E6",
-  soft: "FFF2F2F2",
-  faint: "FFF7F7F7",
-  border: "FF7F7F7F",
-} as const;
-
-const THIN_BORDER: Partial<Borders> = {
-  top: { style: "thin", color: { argb: GREY.border } },
-  left: { style: "thin", color: { argb: GREY.border } },
-  bottom: { style: "thin", color: { argb: GREY.border } },
-  right: { style: "thin", color: { argb: GREY.border } },
-};
 
 /** Excel only auto-fits wrapped rows once it renders them, which some viewers
  *  skip when printing straight from the file. Estimating the height here keeps
@@ -128,55 +118,10 @@ function buildLedger(
 
 // ── sheet building ──────────────────────────────────────────────────────────
 
-function border(row: Row) {
-  for (let col = 1; col <= LAST_COL; col++) {
-    row.getCell(col).border = THIN_BORDER;
-  }
-}
-
-function fill(row: Row, argb?: string) {
-  if (!argb) return;
-  for (let col = 1; col <= LAST_COL; col++) {
-    row.getCell(col).fill = {
-      type: "pattern",
-      pattern: "solid",
-      fgColor: { argb },
-    };
-  }
-}
-
-/** Adds a row merged across the full sheet width and returns it. */
-function addBanner(
-  sheet: Worksheet,
-  text: string,
-  opts: {
-    height: number;
-    size: number;
-    bold?: boolean;
-    italic?: boolean;
-    fillColor?: string;
-    wrap?: boolean;
-  }
-): Row {
-  const row = sheet.addRow([text]);
-  sheet.mergeCells(row.number, 1, row.number, LAST_COL);
-  row.height = opts.height;
-  row.getCell(1).font = {
-    name: FONT,
-    size: opts.size,
-    bold: opts.bold ?? true,
-    italic: opts.italic ?? false,
-  };
-  row.getCell(1).alignment = {
-    horizontal: "center",
-    vertical: "middle",
-    wrapText: opts.wrap ?? false,
-    readingOrder: "rtl",
-  };
-  fill(row, opts.fillColor);
-  border(row);
-  return row;
-}
+const border = (row: Row) => borderRow(row, LAST_COL);
+const fill = (row: Row, argb?: string) => fillRow(row, LAST_COL, argb);
+const addBanner = (sheet: Worksheet, text: string, opts: BannerOptions) =>
+  addBannerRow(sheet, LAST_COL, text, opts);
 
 function variantLabel(variant: BalanceDetailVariant): string {
   if (variant === "proprietor") return labels.proprietorChargeSection;
@@ -385,15 +330,7 @@ function addTotalRow(
   fill(row, fillColor);
   border(row);
 
-  if (strong) {
-    for (let col = 1; col <= LAST_COL; col++) {
-      row.getCell(col).border = {
-        ...THIN_BORDER,
-        top: { style: "medium", color: { argb: "FF000000" } },
-        bottom: { style: "medium", color: { argb: "FF000000" } },
-      };
-    }
-  }
+  if (strong) borderRow(row, LAST_COL, STRONG_BORDER);
 }
 
 /** Prints the renter/owner split of the monthly balance directly underneath the
@@ -431,46 +368,14 @@ function addMonthlyShareBlock(
 
 // ── entry point ─────────────────────────────────────────────────────────────
 
-type WorkbookCtor = new () => Workbook;
-
-/** exceljs is CommonJS: Node exposes it only under `default`, webpack under
- *  both. Resolve whichever is present. */
-async function loadWorkbookCtor(): Promise<WorkbookCtor> {
-  const mod = (await import("exceljs")) as unknown as {
-    default?: { Workbook?: WorkbookCtor };
-    Workbook?: WorkbookCtor;
-  };
-  const ctor = mod.default?.Workbook ?? mod.Workbook;
-  if (!ctor) throw new Error("Failed to load exceljs");
-  return ctor;
-}
-
 export const buildBalanceDetailWorkbook = async (
   options: BalanceDetailExcelOptions
 ): Promise<Workbook> => {
-  const Workbook = await loadWorkbookCtor();
   const { charges, payments, variant } = options;
 
-  const workbook = new Workbook();
-  const sheet = workbook.addWorksheet(labels.balanceDetailSheetName, {
-    views: [{ rightToLeft: true, showGridLines: false }],
-    pageSetup: {
-      paperSize: 9, // A4
-      orientation: "portrait",
-      fitToPage: true,
-      fitToWidth: 1,
-      fitToHeight: 0,
-      horizontalCentered: true,
-      margins: {
-        left: 0.25,
-        right: 0.25,
-        top: 0.35,
-        bottom: 0.35,
-        header: 0.2,
-        footer: 0.2,
-      },
-    },
-  });
+  const { workbook, sheet } = await createReportSheet(
+    labels.balanceDetailSheetName
+  );
 
   sheet.columns = COLUMNS.map((column) => ({ width: column.width }));
 
@@ -529,16 +434,6 @@ export const exportBalanceDetailToExcel = async (
   options: BalanceDetailExcelOptions
 ) => {
   const { fileName = "Balance-Detail-Report" } = options;
-
   const workbook = await buildBalanceDetailWorkbook(options);
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${fileName}.xlsx`;
-  link.click();
-  URL.revokeObjectURL(url);
+  await downloadWorkbook(workbook, fileName);
 };

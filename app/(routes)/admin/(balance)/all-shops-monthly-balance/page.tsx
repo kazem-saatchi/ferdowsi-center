@@ -44,24 +44,23 @@ export default function AllShopsMonthlyBalancePage() {
   const {
     setAllBalances,
     setAllBalanceDetails,
-    exportAllBalanceToExcel,
+    exportShopsBalanceToExcel,
     exportAllBalanceToPdf,
     setAllBalanceFiltered,
     exportAllBalanceToPDFFiltered,
-    exportAllBalanceToExcelFiltered,
   } = useStore(
     useShallow((state) => ({
       setAllBalances: state.setAllBalances,
       setAllBalanceDetails: state.setAllBalanceDetails,
       exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-      exportAllBalanceToExcel: state.exportAllBalanceToExcel,
       exportAllBalanceToPDFFiltered: state.exportAllBalanceToPDFFiltered,
-      exportAllBalanceToExcelFiltered: state.exportAllBalanceToExcelFiltered,
+      exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
       setAllBalanceFiltered: state.setAllBalanceFiltered,
     }))
   );
 
   const shopsData = response?.data?.shopsData;
+  const lastBankTransactionDate = response?.data?.lastBankTransactionDate;
 
   // The store feeds the PDF/Excel exports, which read it on click.
   useEffect(() => {
@@ -88,6 +87,14 @@ export default function AllShopsMonthlyBalancePage() {
 
   const handleFilter = (value: string) => {
     setAllBalanceFiltered(value === "all" ? null : Number(value));
+  };
+
+  const handleExportExcel = (filtered: boolean) => {
+    void exportShopsBalanceToExcel({
+      variant: "monthly",
+      lastBankTransactionDate,
+      filtered,
+    });
   };
 
   const totalBalance = (shopsData ?? []).reduce(
@@ -143,13 +150,13 @@ export default function AllShopsMonthlyBalancePage() {
                 <DropdownMenuItem onClick={exportAllBalanceToPdf}>
                   {labels.downloadAsPDF}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={exportAllBalanceToExcel}>
+                <DropdownMenuItem onClick={() => handleExportExcel(false)}>
                   {labels.downloadAsExcel}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={exportAllBalanceToPDFFiltered}>
                   {labels.downloadAsPDFFiltered}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={exportAllBalanceToExcelFiltered}>
+                <DropdownMenuItem onClick={() => handleExportExcel(true)}>
                   {labels.downloadAsExcelFiltered}
                 </DropdownMenuItem>
               </DropdownMenuContent>
