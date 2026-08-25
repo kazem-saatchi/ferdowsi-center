@@ -2,6 +2,10 @@
 
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
+import {
+  getPersonNameMap,
+  withCurrentPersonNames,
+} from "@/utils/personNames";
 import { Person, Shop } from "@prisma/client";
 
 interface FindResponse {
@@ -16,6 +20,7 @@ interface PaymentDetail {
   amount: number;
   date: Date;
   description: string;
+  personId: string;
   personName: string;
   proprietor: boolean;
   bankTransactionId: string | null;
@@ -27,6 +32,7 @@ interface ChargeDetail {
   amount: number;
   date: Date;
   description: string;
+  personId: string;
   personName: string;
   proprietor: boolean;
   title: string;
@@ -52,6 +58,7 @@ async function getShopBalance(
       amount: true,
       date: true,
       description: true,
+      personId: true,
       personName: true,
       proprietor: true,
       bankTransactionId: true,
@@ -66,17 +73,25 @@ async function getShopBalance(
       amount: true,
       date: true,
       description: true,
+      personId: true,
       personName: true,
       proprietor: true,
       title: true,
     },
   });
 
+  // personName on these rows is a denormalized copy; resolve the persons'
+  // current names in one query so a rename shows up here too.
+  const personNames = await getPersonNameMap([
+    ...charges.map((charge) => charge.personId),
+    ...payments.map((payment) => payment.personId),
+  ]);
+
   return {
     success: true,
     shop,
-    payments,
-    charges,
+    payments: withCurrentPersonNames(payments, personNames),
+    charges: withCurrentPersonNames(charges, personNames),
   };
 }
 

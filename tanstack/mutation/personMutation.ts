@@ -67,22 +67,30 @@ export function useAddPerson() {
       mutationFn: async (data: UpdatePersonData) => await updatePersonInfo(data),
       onSuccess: (data, variables) => {
         if (data.success) {
-          console.log("personId", data.data?.personId);
           queryClient.invalidateQueries({
             queryKey: ["person", data.data?.personId],
           });
           queryClient.refetchQueries({
             queryKey: ["person", data.data?.personId],
           });
-  
+
           queryClient.invalidateQueries({
             queryKey: ["all-persons"],
           });
-  
+
           queryClient.refetchQueries({
             queryKey: ["all-persons"],
           });
-  
+
+          // A rename rewrites the person's name on every shop, history, charge
+          // and payment row, so any cached list that prints a name is now
+          // stale too — balances, histories, charge and payment tables. Drop
+          // the whole cache instead of listing a dozen keys that would drift
+          // out of date as new screens are added.
+          if (data.data?.renamedRows) {
+            queryClient.invalidateQueries();
+          }
+
           toast.success(data.data?.message);
         } else {
           toast.error(data.data?.message || data.message);

@@ -12,6 +12,10 @@ import {
   calculatePersonBalanceByShop,
   calculateShopBalance,
 } from "@/utils/calculateBalance";
+import {
+  getPersonNameMap,
+  withCurrentPersonNames,
+} from "@/utils/personNames";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Charge, Payment } from "@prisma/client";
@@ -86,6 +90,18 @@ async function getAllBalance(
     plaque: shop.plaque,
   });
 
+  // The rows carry a denormalized personName. One shop's charges and payments
+  // touch a handful of persons at most, so resolving their current names costs
+  // a single extra query and keeps the report right even if a stored copy
+  // drifted before the rename cascade existed.
+  const personNames = await getPersonNameMap([
+    ...chargeList.map((charge) => charge.personId),
+    ...paymentList.map((payment) => payment.personId),
+  ]);
+
+  const charges = withCurrentPersonNames(chargeList, personNames);
+  const payments = withCurrentPersonNames(paymentList, personNames);
+
   //-------------Shop-Owner-Renter-Balance-Block-------------
 
   let ownerChargeList: ChargePaymentData[] = [];
@@ -155,7 +171,8 @@ async function getAllBalance(
       // calculate person balance from the shop
       return await calculatePersonBalanceByShop({
         personId: person.personId,
-        personName: person.personName,
+        personName:
+          personNames.get(person.personId) ?? person.personName,
         shopId,
         plaque: shop.plaque,
       });
@@ -175,8 +192,8 @@ async function getAllBalance(
     success: true,
     message: successMSG.balancesFound,
     lastBankTransactionDate: lastBankTransaction._max.date ?? undefined,
-    charges: chargeList,
-    payments: paymentList,
+    charges,
+    payments,
     shopBalance,
     personsBalance,
     ownerChargeList,
