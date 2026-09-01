@@ -8,6 +8,7 @@ import { Filter, RotateCcw } from "lucide-react";
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { toUtcDayEnd, toUtcDayStart } from "@/utils/jalaliRange";
 
 interface BankReportFiltersProps {
   onFilter: (startDate: Date | null, endDate: Date | null) => void;
@@ -28,12 +29,6 @@ export default function BankReportFilters({
     // Create a new DateObject for the first day of the selected Jalali month
     const startDateObj = new DateObject(selectedMonth);
     startDateObj.setDay(1); // First day of the Jalali month
-    startDateObj.set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
 
     // Create a new DateObject for the last day of the selected Jalali month
     const endDateObj = new DateObject(selectedMonth);
@@ -41,18 +36,12 @@ export default function BankReportFilters({
     endDateObj.setMonth(endDateObj.month.number + 1);
     endDateObj.setDay(1);
     endDateObj.subtract(1, "day");
-    endDateObj.set({
-      hour: 23,
-      minute: 59,
-      second: 59,
-      millisecond: 999,
-    });
 
-    // Convert to JavaScript Date objects
-    const startDate = startDateObj.toDate();
-    const endDate = endDateObj.toDate();
-
-    onFilter(startDate, endDate);
+    // The bounds have to be UTC, not the picker's local midnight: the stored
+    // dates are UTC midnight, so a local bound shifted the whole window by the
+    // viewer's offset. See utils/jalaliRange.ts. getBankTransactionsForReport
+    // still uses an inclusive `lte`, hence the end-of-day upper bound.
+    onFilter(toUtcDayStart(startDateObj.toDate()), toUtcDayEnd(endDateObj.toDate()));
   };
 
   const handleClear = () => {
