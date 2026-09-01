@@ -1,7 +1,10 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBankCardTransfer } from "@/app/api/actions/bank/getBankCardTransfer";
 import { getBankTransactions } from "@/app/api/actions/bank/getBankTransactions";
-import { AccountType } from "@prisma/client";
+import {
+  BankTransactionFilters,
+  BankTransactionSortField,
+} from "@/utils/bankTransactionFilters";
 import { getBankFailedCardTransfer } from "@/app/api/actions/bank/getBankFailedCardTransfer";
 import { getBankIncomeTransfer } from "@/app/api/actions/bank/getBankIncomeTransfer";
 import { getTransactionData } from "@/app/api/actions/bank/getTransactionData";
@@ -29,33 +32,22 @@ export function useGetAllCardTransfer({
 }
 
 // Get All Bank Transactions
-export function useGetAllBankTransactions({
-  page,
-  limit,
-  sortBy,
-  sortOrder,
-  accountType,
-  type,
-}: {
+export type UseBankTransactionsArgs = BankTransactionFilters & {
   page: number;
   limit: number;
-  sortBy: "senderAccount" | "date";
-  sortOrder: "desc" | "asc";
-  accountType?: AccountType;
-  type?: "PAYMENT" | "INCOME";
-}) {
+  sortBy?: BankTransactionSortField;
+  sortOrder?: "desc" | "asc";
+};
+
+export function useGetAllBankTransactions(args: UseBankTransactionsArgs) {
   return useQuery({
-    queryKey: ["bankTransactions", page, limit, accountType, type],
+    // The whole argument object is the key. It used to be a hand-written list
+    // that had already fallen behind — sortBy and sortOrder were missing, so
+    // any change to them would have served stale rows from cache. Hashing the
+    // object means a filter can never be left out of the key again.
+    queryKey: ["bankTransactions", args],
     // Query function: Calls the server action
-    queryFn: () =>
-      getBankTransactions({
-        page,
-        limit,
-        sortBy,
-        sortOrder,
-        accountType,
-        type,
-      }),
+    queryFn: () => getBankTransactions(args),
     // Keep previous data while loading the next page for smoother pagination
     placeholderData: keepPreviousData,
   });

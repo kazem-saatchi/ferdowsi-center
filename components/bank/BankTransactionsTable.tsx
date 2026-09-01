@@ -11,33 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table"; // Adjust import path as needed
 import { Badge } from "@/components/ui/badge"; // For displaying type/category
-import {
-  BankTransaction,
-  TransactionType,
-  TransactionCategory,
-} from "@prisma/client";
+import { TransactionType } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
-import { labels } from "@/utils/label";
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
+import { labels, bankTransactionCategoryLabels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
+import type { BankTransactionSortField } from "@/utils/bankTransactionFilters";
 import { formatNumber } from "@/utils/formatNumber";
-
-// Helper function for currency formatting
-const formatCurrency = (amount: number) => {
-  // Assuming amount is in the smallest unit (like cents or rials)
-  // Adjust the divisor and locale as needed for your currency
-  return new Intl.NumberFormat("fa", {
-    style: "currency",
-    currency: "IRR", // Change to your currency (e.g., 'IRR')
-    minimumFractionDigits: 0, // Adjust if you store fractional units
-  }).format(amount / 100); // Divide by 100 if amount is in cents/rials
-};
-
-// Helper to get display text for enums (optional, but good for readability)
-const getCategoryText = (category: TransactionCategory | null) => {
-  if (!category) return "N/A";
-  // Simple mapping, you might want a more robust solution
-  return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-};
+import { cn } from "@/lib/utils";
 
 interface BankTransactionTableProps {
   // Serialized: amount/balance arrive as numbers, since bigint cannot cross
@@ -45,12 +26,20 @@ interface BankTransactionTableProps {
   transactions: SerializedBankTransaction[];
   isLoading: boolean;
   isError: boolean;
+  // Sorting is owned by the page (it drives the query); the table only reports
+  // clicks. Optional so the component still renders without it.
+  sortBy?: BankTransactionSortField;
+  sortOrder?: "asc" | "desc";
+  onSort?: (field: BankTransactionSortField) => void;
 }
 
 export function BankTransactionTable({
   transactions,
   isLoading,
   isError,
+  sortBy,
+  sortOrder,
+  onSort,
 }: BankTransactionTableProps) {
   if (isLoading) {
     return (
@@ -77,28 +66,72 @@ export function BankTransactionTable({
     );
   }
 
+  const SortableHead = ({
+    field,
+    children,
+    className,
+  }: {
+    field: BankTransactionSortField;
+    children: React.ReactNode;
+    className?: string;
+  }) => {
+    if (!onSort) {
+      return <TableHead className={className}>{children}</TableHead>;
+    }
+
+    const isActive = sortBy === field;
+    const Icon = !isActive
+      ? ChevronsUpDown
+      : sortOrder === "asc"
+      ? ArrowUp
+      : ArrowDown;
+
+    return (
+      <TableHead className={className}>
+        <button
+          type="button"
+          onClick={() => onSort(field)}
+          aria-label={`${labels.sortByColumn} ${
+            typeof children === "string" ? children : field
+          }`}
+          className={cn(
+            "inline-flex items-center gap-1 hover:text-foreground transition-colors",
+            isActive ? "text-foreground font-semibold" : "text-muted-foreground"
+          )}
+        >
+          {children}
+          <Icon className="h-3.5 w-3.5 shrink-0" />
+        </button>
+      </TableHead>
+    );
+  };
+
   return (
-    <div className="rounded-md border">
-      {" "}
-      {/* Added border and rounding */}
+    // Two more columns than before, so let the table scroll on its own rather
+    // than pushing the page sideways.
+    <div className="rounded-md border overflow-x-auto">
       <Table dir="rtl">
         <TableCaption>لیست تراکنش های بانک</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[120px] text-center">
+            <SortableHead field="date" className="w-[120px] text-center">
               {labels.date}
-            </TableHead>
+            </SortableHead>
             <TableHead className="text-right">{labels.description}</TableHead>
             <TableHead className="text-center w-[80px]">
               {labels.transactionCategory}
             </TableHead>
             <TableHead className="text-center">{labels.type}</TableHead>
-            <TableHead className="text-left">{labels.amount}</TableHead>
+            <TableHead className="text-center">
+              {labels.registrationStatus}
+            </TableHead>
+            <TableHead className="text-center">
+              {labels.receiptNumberShort}
+            </TableHead>
+            <SortableHead field="amount" className="text-left">
+              {labels.amount}
+            </SortableHead>
             <TableHead className="text-left">{labels.balance}</TableHead>
-            {/* Add other relevant columns if needed:
-            <TableHead>Reference</TableHead>
-            <TableHead>Bank Ref ID</TableHead>
-            */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -107,14 +140,23 @@ export function BankTransactionTable({
               <TableCell className="font-medium">
                 {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
               </TableCell>
-              <TableCell>{tx.description}</TableCell>
+              <TableCell
+                className="max-w-[320px] truncate"
+                title={tx.description}
+              >
+                {tx.description}
+              </TableCell>
               <TableCell>
                 {tx.category ? (
                   <Badge variant="outline">
-                    {getCategoryText(tx.category)}
+                    {/* The enum name itself used to be rendered, in English,
+                        in an otherwise Persian table. */}
+                    {bankTransactionCategoryLabels[tx.category] ?? tx.category}
                   </Badge>
                 ) : (
-                  <span className="text-xs text-muted-foreground">نامشخص</span>
+                  <span className="text-xs text-muted-foreground">
+                    {labels.uncategorized}
+                  </span>
                 )}
               </TableCell>
               <TableCell>
@@ -137,6 +179,28 @@ export function BankTransactionTable({
                     : "نامشخص"}
                 </Badge>
               </TableCell>
+              {/* Whether the row has been turned into a Payment/Cost/Income —
+                  the thing you actually need to see when reconciling an import */}
+              <TableCell className="text-center">
+                <Badge
+                  variant="outline"
+                  className={
+                    tx.registered
+                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100"
+                  }
+                >
+                  {tx.registered
+                    ? labels.registeredOnly
+                    : labels.unregisteredOnly}
+                </Badge>
+              </TableCell>
+              <TableCell
+                className="text-center text-xs max-w-[160px] truncate"
+                title={tx.bankRecieptId ?? undefined}
+              >
+                {tx.bankRecieptId?.trim() || "—"}
+              </TableCell>
               <TableCell
                 className={`text-left font-semibold ${
                   tx.type === TransactionType.INCOME
@@ -152,7 +216,6 @@ export function BankTransactionTable({
               <TableCell className="text-left">
                 {formatNumber(tx.balance)}
               </TableCell>
-              {/* Add other relevant cells if needed */}
             </TableRow>
           ))}
         </TableBody>

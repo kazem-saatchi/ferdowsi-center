@@ -12,6 +12,12 @@ interface CalendarProps {
   setDate: Dispatch<SetStateAction<Date | null>>;
   title: string;
   disabled?: boolean;
+  /**
+   * DOM id for the input, so the label points at the right one. Needed as soon
+   * as a page renders two of these — a date range, say — because the previous
+   * hardcoded "DatePicker" made both labels address the same element.
+   */
+  id?: string;
 }
 
 function JalaliDayCalendar({
@@ -19,10 +25,12 @@ function JalaliDayCalendar({
   setDate,
   title,
   disabled = false,
+  id = "DatePicker",
 }: CalendarProps) {
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
     return (
       <Input
+        id={id}
         onFocus={openCalendar}
         value={value}
         onChange={handleValueChange}
@@ -32,11 +40,10 @@ function JalaliDayCalendar({
   };
   return (
     <div className="space-y-2">
-      <Label htmlFor="DatePicker" className="ml-2">
+      <Label htmlFor={id} className="ml-2">
         {title}
       </Label>
       <DatePicker
-        id="DatePicker"
         calendar={persian}
         locale={persian_fa}
         calendarPosition="bottom-right"

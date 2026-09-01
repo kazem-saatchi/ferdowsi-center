@@ -501,6 +501,33 @@ export const labels = {
   transactionDateLabel: "تاریخ تراکنش",
   senderBankAccount: "شماره حساب مبدا",
   bankAccountNumberDestination: "شماره حساب مقصد",
+
+  // ── bank transactions list filters ───────────────────────────────────────
+  bankTransactionFilters: "جستجو و فیلتر تراکنش‌ها",
+  applyFilters: "اعمال فیلتر",
+  clearFilters: "پاک کردن فیلتر",
+  fromDate: "از تاریخ",
+  toDate: "تا تاریخ",
+  amountFrom: "از مبلغ (ریال)",
+  amountTo: "تا مبلغ (ریال)",
+  exactAmountOnly: "مبلغ دقیق",
+  searchTransactions: "جستجو در تراکنش‌ها",
+  searchTransactionsPlaceholder: "شرح تراکنش، شماره سند، شماره قبض یا شماره کارت",
+  registrationStatus: "وضعیت ثبت",
+  allRegistrationStatus: "همه",
+  registeredOnly: "ثبت‌شده",
+  unregisteredOnly: "ثبت‌نشده",
+  allCategories: "همه دسته‌ها",
+  uncategorized: "بدون دسته‌بندی",
+  transactionsFoundSuffix: "تراکنش یافت شد",
+  noTransactionMatchesFilters:
+    "هیچ تراکنشی با این فیلترها پیدا نشد. فیلترها را تغییر دهید یا پاک کنید.",
+  invalidAmountRange: "«از مبلغ» نمی‌تواند بزرگ‌تر از «تا مبلغ» باشد",
+  invalidDateRange: "«از تاریخ» نمی‌تواند بعد از «تا تاریخ» باشد",
+
+  // ── bank transactions table ──────────────────────────────────────────────
+  receiptNumberShort: "شماره قبض",
+  sortByColumn: "مرتب‌سازی",
 };
 
 /** Bank API transaction type → Persian label */
