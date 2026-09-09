@@ -16,6 +16,7 @@ import { useState } from "react";
 import { labels } from "@/utils/label";
 import { UpdateHistoryModal } from "./UpdateHistoryModal";
 import { Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type HistoryType =
   | "Ownership"
@@ -61,56 +62,70 @@ function HistoryTable({ allHistories }: TableProps) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">{labels.shopId}</TableHead>
-            <TableHead className="text-center">{labels.personId}</TableHead>
-            <TableHead className="text-center">{labels.type}</TableHead>
-            <TableHead className="text-center">{labels.startDate}</TableHead>
-            <TableHead className="text-center">{labels.endDate}</TableHead>
-            <TableHead className="text-center">{labels.status}</TableHead>
-            <TableHead className="text-center">{labels.edit}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedHistories?.map((history) => (
-            <TableRow key={history.id}>
-              <TableCell className="text-center">{history.plaque}</TableCell>
-              <TableCell className="text-center">
-                {history.personName}
-              </TableCell>
-              <TableCell className="text-center">
-                <Badge className={historyTypeColors[history.type]}>
-                  {history.type}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-center">
-                {format(new Date(history.startDate), "PPP")}
-              </TableCell>
-              <TableCell className="text-center">
-                {history.endDate
-                  ? format(new Date(history.endDate), "PPP")
-                  : "N/A"}
-              </TableCell>
-              <TableCell className="text-center">
-                <Badge variant={history.isActive ? "default" : "secondary"}>
-                  {history.isActive ? labels.active : labels.inactive}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleEditClick(history)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </TableCell>
+      {/* A unit can carry dozens of changes. Capping the table height keeps the
+       *  edit buttons and the pager reachable instead of pushing them past the
+       *  bottom of a page whose scrollbar is hidden. The inner wrapper Table
+       *  draws must give up its own overflow, otherwise it — and not this div —
+       *  becomes the scroll container the sticky header sticks to. */}
+      <div className="max-h-[60vh] overflow-auto rounded-md border [&>div]:overflow-visible">
+        <Table>
+          <TableHeader
+            className={cn(
+              "sticky top-0 z-10",
+              // The cells, not the row, carry the background and the rule: a
+              // collapsed table border does not paint on a sticky row.
+              "[&_th]:bg-background [&_th]:shadow-[inset_0_-1px_0_hsl(var(--border))]"
+            )}
+          >
+            <TableRow>
+              <TableHead className="text-center">{labels.shopId}</TableHead>
+              <TableHead className="text-center">{labels.personId}</TableHead>
+              <TableHead className="text-center">{labels.type}</TableHead>
+              <TableHead className="text-center">{labels.startDate}</TableHead>
+              <TableHead className="text-center">{labels.endDate}</TableHead>
+              <TableHead className="text-center">{labels.status}</TableHead>
+              <TableHead className="text-center">{labels.edit}</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {paginatedHistories?.map((history) => (
+              <TableRow key={history.id}>
+                <TableCell className="text-center">{history.plaque}</TableCell>
+                <TableCell className="text-center">
+                  {history.personName}
+                </TableCell>
+                <TableCell className="text-center">
+                  <Badge className={historyTypeColors[history.type]}>
+                    {history.type}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                  {format(new Date(history.startDate), "PPP")}
+                </TableCell>
+                <TableCell className="text-center">
+                  {history.endDate
+                    ? format(new Date(history.endDate), "PPP")
+                    : "N/A"}
+                </TableCell>
+                <TableCell className="text-center">
+                  <Badge variant={history.isActive ? "default" : "secondary"}>
+                    {history.isActive ? labels.active : labels.inactive}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEditClick(history)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       <UpdateHistoryModal
         history={selectedHistory}
         isOpen={isModalOpen}
