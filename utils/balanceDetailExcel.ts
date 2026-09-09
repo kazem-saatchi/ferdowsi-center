@@ -83,9 +83,9 @@ interface LedgerRow {
   balance: number;
 }
 
-/** Merges charges and payments into one ledger, accumulates the running balance
- *  chronologically (charges add, payments subtract), then returns the rows
- *  newest-first to match the on-screen table. */
+/** Merges charges and payments into one ledger and accumulates the running
+ *  balance chronologically (charges add, payments subtract). Rows stay
+ *  oldest-first, matching the on-screen table. */
 function buildLedger(
   charges: Charge[],
   payments: Payment[]
@@ -112,7 +112,6 @@ function buildLedger(
     };
   });
 
-  rows.reverse(); // newest first
   return { rows, total: running };
 }
 

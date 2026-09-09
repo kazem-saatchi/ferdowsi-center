@@ -111,16 +111,15 @@ export function BalanceDetailTable({
   ].sort((a, b) => {
     const dateA = a.date?.getTime() || 0;
     const dateB = b.date?.getTime() || 0;
-    return dateB - dateA; // newest first
+    return dateA - dateB; // oldest first, like a bank statement
   });
 
   // ── running balance per row ───────────────────────────────────────────────
-  // Accumulate chronologically (oldest → newest): charges add, payments subtract.
-  // Stored by row key so it can be displayed in the newest-first table order.
+  // Rows are already chronological, so the balance accumulates straight down the
+  // table: charges add, payments subtract.
   const runningBalances = new Map<string, number>();
   let runningBalance = 0;
-  for (let i = balanceData.length - 1; i >= 0; i--) {
-    const item = balanceData[i];
+  for (const item of balanceData) {
     runningBalance += item.type === "charge" ? item.amount : -item.amount;
     runningBalances.set(`${item.type}-${item.id}`, runningBalance);
   }
