@@ -9,7 +9,7 @@ function AdminDashboardPanel() {
             <SidebarMenuButton asChild>
               <Link href="/admin/dashboard">
                 <Home className="h-4 w-4" />
-                <span>دشبورد</span>
+                <span>داشبورد</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

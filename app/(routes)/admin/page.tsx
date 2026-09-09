@@ -1,90 +1,74 @@
-import Link from 'next/link'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Building, UserPlus, DollarSign, CreditCard } from 'lucide-react'
+import Link from "next/link";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BarChart2, CreditCard, Import, ReceiptText } from "lucide-react";
+import { labels } from "@/utils/label";
+import type { LucideIcon } from "lucide-react";
+
+/** The four pages the admins actually open every day, in the order the work
+ *  happens: import the statement, book what it brought in, then read balances. */
+const QUICK_LINKS: Array<{
+  title: string;
+  description: string;
+  href: string;
+  icon: LucideIcon;
+}> = [
+  {
+    title: labels.importBankDataCard,
+    description: labels.importBankDataCardHint,
+    href: "/admin/import-net-bank",
+    icon: Import,
+  },
+  {
+    title: labels.unregisteredPaymentsCard,
+    description: labels.unregisteredPaymentsCardHint,
+    href: "/admin/card-transfer",
+    icon: CreditCard,
+  },
+  {
+    title: labels.shopBalanceDetailCard,
+    description: labels.shopBalanceDetailCardHint,
+    href: "/admin/shop-balance-detail",
+    icon: ReceiptText,
+  },
+  {
+    title: labels.monthlyBalanceListCard,
+    description: labels.monthlyBalanceListCardHint,
+    href: "/admin/all-shops-monthly-balance",
+    icon: BarChart2,
+  },
+];
 
 export default function AdminMainPage() {
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-8">خوش آمدید</h1>
-      <p className="mb-8 text-lg">
-        به پنل مدیریت خوش آمدید. در اینجا لینک‌های سریع به بخش‌های مهم را مشاهده می‌کنید:
-      </p>
-      
+      <h1 className="text-3xl font-bold mb-4">{labels.adminWelcomeTitle}</h1>
+      <p className="mb-8 text-lg">{labels.adminWelcomeText}</p>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Building className="ml-2" />
-              افزودن مغازه
-            </CardTitle>
-            <CardDescription>ثبت مغازه جدید در سیستم</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm">
-              در این بخش می‌توانید اطلاعات مغازه‌های جدید را وارد کرده و به سیستم اضافه کنید. شامل مشخصات مغازه، مالک و مستاجر.
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/admin/add-shop">رفتن به صفحه افزودن مغازه</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <UserPlus className="ml-2" />
-              افزودن شخص
-            </CardTitle>
-            <CardDescription>ثبت شخص جدید در سیستم</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm">
-              در این قسمت می‌توانید اطلاعات افراد جدید را ثبت کنید. این شامل مالکان، مستاجران و سایر افراد مرتبط با مغازه‌ها می‌شود.
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/admin/add-person">رفتن به صفحه افزودن شخص</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <DollarSign className="ml-2" />
-              ثبت شارژ
-            </CardTitle>
-            <CardDescription>ثبت هزینه جدید برای مغازه یا شخص</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm">
-              در این بخش می‌توانید هزینه‌های مربوط به مغازه‌ها یا اشخاص را ثبت کنید. این شامل اجاره، شارژ و سایر هزینه‌های مرتبط می‌شود.
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/admin/add-charge-by-amount">رفتن به صفحه ثبت هزینه</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <CreditCard className="ml-2" />
-              ثبت پرداخت
-            </CardTitle>
-            <CardDescription>ثبت پرداخت جدید در سیستم</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm">
-              در این قسمت می‌توانید پرداخت‌های انجام شده توسط مستاجران یا مالکان را ثبت کنید. این شامل پرداخت اجاره، شارژ و سایر هزینه‌ها می‌شود.
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/admin/add-payment">رفتن به صفحه ثبت پرداخت</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        {QUICK_LINKS.map(({ title, description, href, icon: Icon }) => (
+          <Card key={href}>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Icon className="ml-2" />
+                {title}
+              </CardTitle>
+              <CardDescription>{description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <Link href={href}>{labels.goToPage}</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
-  )
+  );
 }
-
