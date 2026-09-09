@@ -347,6 +347,8 @@ export const labels = {
   downloadAsExcel: "دانلود به صورت EXCEL",
   downloadAsPDFFiltered: "دانلود به صورت PDF فیلتر شده",
   downloadAsExcelFiltered: "دانلود به صورت EXCEL فیلتر شده",
+  filterByDebt: "فیلتر بر اساس بدهی",
+  debtOver: "بدهی بیش از",
   noDataFound: "اطلاعاتی یافت نشد",
 
   // Add new labels for person balance page

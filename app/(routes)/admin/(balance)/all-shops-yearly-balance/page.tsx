@@ -3,12 +3,12 @@
 import { useEffect } from "react";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
-import { Button } from "@/components/ui/button";
 import { labels } from "@/utils/label";
 import { ShopsBalanceYearlyTable } from "@/components/balance/ShopsBalanceYearlyTable";
+import { ShopsBalanceToolbar } from "@/components/balance/ShopsBalanceToolbar";
 import { useGetAllShopsBalance } from "@/tanstack/query/balanceQuery";
 import { convertToShopsBalanceData } from "@/utils/calculateBalanceClient";
 
@@ -23,17 +23,10 @@ export default function AllShopsYearlyBalancePage() {
     refetch,
   } = useGetAllShopsBalance(proprietor);
 
-  const {
-    setAllBalances,
-    setAllBalanceDetails,
-    exportShopsBalanceToExcel,
-    exportAllBalanceToPdf,
-  } = useStore(
+  const { setAllBalances, setAllBalanceDetails } = useStore(
     useShallow((state) => ({
       setAllBalances: state.setAllBalances,
       setAllBalanceDetails: state.setAllBalanceDetails,
-      exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-      exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
     }))
   );
 
@@ -63,34 +56,28 @@ export default function AllShopsYearlyBalancePage() {
     );
   }
 
+  const totalBalance = (shopsData ?? []).reduce(
+    (sum, shop) => sum + shop.totalBalance,
+    0
+  );
+
   return (
-    <Card>
+    <div>
       <CardHeader>
         <CardTitle>{labels.allShopsYearlyBalance}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-row items-center justify-start gap-2 mb-4">
-          <Button onClick={exportAllBalanceToPdf} disabled={isLoading}>
-            {labels.downloadAsPDF}
-          </Button>
-          <Button
-            onClick={() =>
-              void exportShopsBalanceToExcel({
-                variant: "yearly",
-                lastBankTransactionDate,
-              })
-            }
-            disabled={isLoading}
-          >
-            {labels.downloadAsExcel}
-          </Button>
-        </div>
+        <ShopsBalanceToolbar
+          variant="yearly"
+          totalBalance={totalBalance}
+          lastBankTransactionDate={lastBankTransactionDate}
+        />
         {shopsData && shopsData.length > 0 ? (
           <ShopsBalanceYearlyTable shopsBlances={shopsData} />
         ) : (
           <p>{labels.noDataFound}</p>
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }
