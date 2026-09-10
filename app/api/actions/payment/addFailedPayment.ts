@@ -73,6 +73,7 @@ async function addFailedPaymentFromCard(
         select: {
           id: true,
           plaque: true,
+          type: true,
           ownerName: true,
           ownerId: true,
           renterName: true,

@@ -1,4 +1,4 @@
-import { HistoryType, Prisma } from "@prisma/client";
+import { HistoryType, Prisma, ShopType } from "@prisma/client";
 
 /**
  * Resolves which person an automatically-registered bank transaction belongs
@@ -15,9 +15,6 @@ import { HistoryType, Prisma } from "@prisma/client";
  * registered after the fact (the common case in this building), no history row
  * covers the transaction date yet and we necessarily fall back to the shop's
  * current state — the same answer as before.
- *
- * Proprietor (مالکانه) transactions always belong to the owner and are never
- * date-resolved: that charge follows ownership, not occupancy.
  */
 
 const OCCUPANCY_TYPES: HistoryType[] = [
@@ -26,8 +23,26 @@ const OCCUPANCY_TYPES: HistoryType[] = [
   HistoryType.InActive,
 ];
 
+/**
+ * Units the building management rents out. On these, `proprietor` does NOT mean
+ * مالکانه — it marks the rent owed to the proprietor, and addRentAllKiosks bills
+ * it to the occupant taken from ShopHistory (`forRent: true`). Their owner is a
+ * single management person, so crediting proprietor payments to the owner the
+ * way STORE/OFFICE do would charge the renter and pay the landlord.
+ */
+const RENTABLE_SHOP_TYPES: ShopType[] = [
+  ShopType.KIOSK,
+  ShopType.PARKING,
+  ShopType.BOARD,
+];
+
+export function isRentableShopType(type: ShopType): boolean {
+  return RENTABLE_SHOP_TYPES.includes(type);
+}
+
 export interface OccupantShop {
   id: string;
+  type: ShopType;
   ownerId: string;
   ownerName: string;
   renterId: string | null;
@@ -47,7 +62,11 @@ export async function resolveShopPersonAtDate(
   date: Date,
   isProprietor: boolean
 ): Promise<ResolvedOccupant> {
-  if (isProprietor) {
+  // مالکانه follows ownership rather than occupancy, so it is never
+  // date-resolved — but that is only true for STORE/OFFICE. On a rented-out
+  // unit the same flag means rent, which the occupant owes, so it falls
+  // through to the date lookup below like any monthly charge.
+  if (isProprietor && !isRentableShopType(shop.type)) {
     return {
       personId: shop.ownerId,
       personName: shop.ownerName,

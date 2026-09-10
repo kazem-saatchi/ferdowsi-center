@@ -1,6 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ShopType } from "@prisma/client";
 import {
   resolveShopPersonAtDate,
+  isRentableShopType,
   OccupantShop,
 } from "@/app/api/actions/payment/resolveOccupant";
 
@@ -14,6 +15,7 @@ const d = (iso: string) => {
 
 const shop: OccupantShop = {
   id: "shop-804",
+  type: ShopType.STORE,
   ownerId: OWNER.id,
   ownerName: OWNER.name,
   renterId: RENTER.id,
@@ -130,7 +132,7 @@ describe("resolveShopPersonAtDate", () => {
     expect(result.personId).toBe(RENTER.id);
   });
 
-  it("always attributes proprietor transactions to the owner without a lookup", async () => {
+  it("attributes a STORE proprietor transaction to the owner without a lookup", async () => {
     const { tx, calls } = makeTx(rows);
 
     // Dated deep inside the tenancy — مالکانه still follows ownership.
@@ -217,5 +219,136 @@ describe("resolveShopPersonAtDate", () => {
 
     const where = (calls[0] as { where: { shopId: string } }).where;
     expect(where.shopId).toBe("shop-804");
+  });
+
+  it("attributes an OFFICE proprietor transaction to the owner too", async () => {
+    const { tx, calls } = makeTx(rows);
+
+    const result = await resolveShopPersonAtDate(
+      tx,
+      { ...shop, type: ShopType.OFFICE },
+      d("2026-04-22"),
+      true
+    );
+
+    expect(result.personId).toBe(OWNER.id);
+    expect(calls).toHaveLength(0);
+  });
+});
+
+// The building management owns every rented-out unit, so on these types
+// `proprietor` marks rent that the OCCUPANT owes. Crediting it to the owner
+// billed the renter and paid the landlord: charge on one person, payment on the
+// other, forever.
+describe("resolveShopPersonAtDate on units the management rents out", () => {
+  const MGMT = { id: "mgmt-1", name: "مجتمع فردوسی آبادگران" };
+  const KIOSK_RENTER = { id: "renter-kiosk", name: "یاسین حمیدی" };
+
+  const kiosk: OccupantShop = {
+    id: "shop-239",
+    type: ShopType.KIOSK,
+    ownerId: MGMT.id,
+    ownerName: MGMT.name,
+    renterId: KIOSK_RENTER.id,
+    renterName: KIOSK_RENTER.name,
+  };
+
+  const kioskRows: Row[] = [
+    {
+      personId: MGMT.id,
+      personName: MGMT.name,
+      type: "ActiveByOwner",
+      startDate: d("2024-01-01"),
+      endDate: d("2025-03-01"),
+    },
+    {
+      personId: KIOSK_RENTER.id,
+      personName: KIOSK_RENTER.name,
+      type: "ActiveByRenter",
+      startDate: d("2025-03-01"),
+      endDate: null,
+    },
+  ];
+
+  it.each([ShopType.KIOSK, ShopType.PARKING, ShopType.BOARD])(
+    "date-resolves a proprietor payment on a %s to the renter who owes the rent",
+    async (type) => {
+      const { tx, calls } = makeTx(kioskRows);
+
+      const result = await resolveShopPersonAtDate(
+        tx,
+        { ...kiosk, type },
+        d("2026-04-22"),
+        true
+      );
+
+      expect(result).toEqual({
+        personId: KIOSK_RENTER.id,
+        personName: KIOSK_RENTER.name,
+        fromHistory: true,
+      });
+      // It must actually consult occupancy rather than short-circuit.
+      expect(calls).toHaveLength(1);
+    }
+  );
+
+  it("still credits the management owner while the unit sat vacant", async () => {
+    const { tx } = makeTx(kioskRows);
+
+    // Before the tenancy began the unit was held by management, so rent booked
+    // then really is theirs. This is what proves the lookup is date-driven and
+    // not just "renter on rentables".
+    const result = await resolveShopPersonAtDate(tx, kiosk, d("2024-06-15"), true);
+
+    expect(result).toEqual({
+      personId: MGMT.id,
+      personName: MGMT.name,
+      fromHistory: true,
+    });
+  });
+
+  it("splits a proprietor payment across the handover the same way rent is billed", async () => {
+    const { tx } = makeTx(kioskRows);
+
+    const dayBefore = await resolveShopPersonAtDate(tx, kiosk, d("2025-02-28"), true);
+    const handover = await resolveShopPersonAtDate(tx, kiosk, d("2025-03-01"), true);
+
+    expect(dayBefore.personId).toBe(MGMT.id);
+    expect(handover.personId).toBe(KIOSK_RENTER.id);
+  });
+
+  it("falls back to the renter when no history covers the date", async () => {
+    const { tx } = makeTx([]);
+
+    const result = await resolveShopPersonAtDate(tx, kiosk, d("2026-04-22"), true);
+
+    expect(result).toEqual({
+      personId: KIOSK_RENTER.id,
+      personName: KIOSK_RENTER.name,
+      fromHistory: false,
+    });
+  });
+});
+
+describe("isRentableShopType", () => {
+  it("covers exactly the units the management rents out", () => {
+    expect(isRentableShopType(ShopType.KIOSK)).toBe(true);
+    expect(isRentableShopType(ShopType.PARKING)).toBe(true);
+    expect(isRentableShopType(ShopType.BOARD)).toBe(true);
+    expect(isRentableShopType(ShopType.STORE)).toBe(false);
+    expect(isRentableShopType(ShopType.OFFICE)).toBe(false);
+  });
+
+  it("classifies every type in the enum, so a new one cannot slip through", () => {
+    // If a type is added to the schema this fails until someone decides which
+    // side of the rent/مالکانه line it belongs on.
+    const classified = Object.values(ShopType).map((t) => [t, isRentableShopType(t)]);
+    expect(classified).toEqual([
+      [ShopType.STORE, false],
+      [ShopType.OFFICE, false],
+      [ShopType.KIOSK, true],
+      [ShopType.PARKING, true],
+      [ShopType.BOARD, true],
+    ]);
   });
 });
