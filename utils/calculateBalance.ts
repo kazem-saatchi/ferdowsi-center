@@ -252,52 +252,43 @@ export async function calculateAllShopMonthlyBalance(
 }
 
 export async function calculateAllRentsBalance(): Promise<ShopsBalanceData[]> {
-  const BATCH_SIZE = 10;
+  // BOARD (تابلو) and PARKING are rented out by the building management and are
+  // billed only as rent, so they get their own list. KIOSK is deliberately not
+  // here: it carries a monthly charge as well as rent, so it stays in the
+  // all-shops views until that split is designed.
+  const shopType: ShopType[] = ["BOARD", "PARKING"];
 
-  // only claculate monthly charge for store, office, kiosk
-  // only claculate yearly charge for store, office
-  const shopType: ShopType[] = ["KIOSK", "BOARD", "PARKING"];
-  const allShops = await db.shop.findMany({
-    where: { type: { in: shopType } },
-    orderBy: { plaque: "asc" },
-  });
-  const results: ShopsBalanceData[] = [];
+  // Three aggregate queries for every unit rather than two per unit. On these
+  // types `proprietor` marks rent owed by the occupant, not a مالکانه levy.
+  const [shops, chargeSums, paymentSums] = await Promise.all([
+    db.shop.findMany({
+      where: { type: { in: shopType } },
+      orderBy: { plaque: "asc" },
+      select: { id: true, plaque: true, ownerName: true, renterName: true },
+    }),
+    db.charge.groupBy({
+      by: ["shopId"],
+      where: { proprietor: true, shop: { type: { in: shopType } } },
+      _sum: { amount: true },
+    }),
+    db.payment.groupBy({
+      by: ["shopId"],
+      where: { proprietor: true, shop: { type: { in: shopType } } },
+      _sum: { amount: true },
+    }),
+  ]);
 
-  for (let i = 0; i < allShops.length; i += BATCH_SIZE) {
-    const batch = allShops.slice(i, i + BATCH_SIZE);
+  const charged = new Map(
+    chargeSums.map((row) => [row.shopId, row._sum.amount ?? 0])
+  );
+  const paid = new Map(
+    paymentSums.map((row) => [row.shopId, row._sum.amount ?? 0])
+  );
 
-    const batchResults = await db.$transaction(
-      async (tx) => {
-        return Promise.all(
-          batch.map(async (shop) => {
-            const [charges, payments] = await Promise.all([
-              tx.charge.aggregate({
-                where: { shopId: shop.id, proprietor: true },
-                _sum: { amount: true },
-              }),
-              tx.payment.aggregate({
-                where: { shopId: shop.id, proprietor: true },
-                _sum: { amount: true },
-              }),
-            ]);
-
-            return {
-              plaque: shop.plaque,
-              balance: (payments._sum.amount || 0) - (charges._sum.amount || 0),
-              ownerName: shop.ownerName,
-              renterName: shop.renterName,
-            };
-          })
-        );
-      },
-      {
-        maxWait: 10000,
-        timeout: 30000,
-      }
-    );
-
-    results.push(...batchResults);
-  }
-
-  return results;
+  return shops.map((shop) => ({
+    plaque: shop.plaque,
+    balance: (paid.get(shop.id) ?? 0) - (charged.get(shop.id) ?? 0),
+    ownerName: shop.ownerName,
+    renterName: shop.renterName,
+  }));
 }
