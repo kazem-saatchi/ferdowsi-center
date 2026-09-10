@@ -142,8 +142,8 @@ export default function EditShopPage() {
         type: formData.type as ShopType,
         bankCardMonthly: formData.bankCardMonthly,
         bankCardYearly: formData.bankCardYearly,
-        rentAmount: formData.rentAmount || undefined,
-        chargeAmount: formData.chargeAmount || undefined,
+        rentAmount: formData.rentAmount ?? undefined,
+        chargeAmount: formData.chargeAmount ?? undefined,
         rentDate: rentDate?.toISOString() || undefined,
       });
       if (result.success) {
