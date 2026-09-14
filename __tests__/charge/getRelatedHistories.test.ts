@@ -1,5 +1,9 @@
-import { getRelatedHistories } from "@/app/api/actions/charge/utils";
+import {
+  getRelatedHistories,
+  isRentBillableHistory,
+} from "@/app/api/actions/charge/utils";
 import { db } from "@/lib/db";
+import { HistoryType, ShopType } from "@prisma/client";
 
 jest.mock("@/lib/db", () => ({
   db: {
@@ -77,5 +81,78 @@ describe("getRelatedHistories", () => {
 
     expect(result.success).toBe(false);
     expect(findMany).not.toHaveBeenCalled();
+  });
+});
+
+describe("isRentBillableHistory", () => {
+  const span = (shopType: ShopType, type: HistoryType) => ({ shopType, type });
+
+  it.each([ShopType.KIOSK, ShopType.BOARD, ShopType.PARKING])(
+    "bills a %s span that has a renter on it",
+    (shopType) => {
+      expect(
+        isRentBillableHistory(span(shopType, HistoryType.ActiveByRenter))
+      ).toBe(true);
+    }
+  );
+
+  it.each([ShopType.KIOSK, ShopType.BOARD, ShopType.PARKING])(
+    "does not bill a vacant %s span",
+    (shopType) => {
+      // These units belong to the building management, so an InActive span
+      // carries the management person — billing it invoices the landlord for
+      // their own empty unit. Four boards ran up 155,800,000 that way.
+      expect(isRentBillableHistory(span(shopType, HistoryType.InActive))).toBe(
+        false
+      );
+    }
+  );
+
+  it.each([ShopType.KIOSK, ShopType.BOARD, ShopType.PARKING])(
+    "does not bill a %s the management is holding itself",
+    (shopType) => {
+      // The six months KIOSK 346 stood empty between two tenants.
+      expect(
+        isRentBillableHistory(span(shopType, HistoryType.ActiveByOwner))
+      ).toBe(false);
+    }
+  );
+
+  it.each([ShopType.STORE, ShopType.OFFICE])(
+    "never bills rent on a %s, which the management does not let",
+    (shopType) => {
+      expect(
+        isRentBillableHistory(span(shopType, HistoryType.ActiveByRenter))
+      ).toBe(false);
+    }
+  );
+
+  it("classifies every shop type, so a new one cannot slip through", () => {
+    const billable = Object.values(ShopType).map((shopType) => [
+      shopType,
+      isRentBillableHistory(span(shopType, HistoryType.ActiveByRenter)),
+    ]);
+
+    expect(billable).toEqual([
+      [ShopType.STORE, false],
+      [ShopType.OFFICE, false],
+      [ShopType.KIOSK, true],
+      [ShopType.PARKING, true],
+      [ShopType.BOARD, true],
+    ]);
+  });
+
+  it("classifies every history type, so a new one cannot slip through", () => {
+    const billable = Object.values(HistoryType).map((type) => [
+      type,
+      isRentBillableHistory(span(ShopType.BOARD, type)),
+    ]);
+
+    expect(billable).toEqual([
+      [HistoryType.ActiveByOwner, false],
+      [HistoryType.ActiveByRenter, true],
+      [HistoryType.InActive, false],
+      [HistoryType.Ownership, false],
+    ]);
   });
 });

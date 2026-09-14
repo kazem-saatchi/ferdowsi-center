@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { errorMSG } from "@/utils/messages";
-import { ShopHistory, ShopType } from "@prisma/client";
+import { HistoryType, ShopHistory, ShopType } from "@prisma/client";
 import { differenceInDays, startOfDay } from "date-fns";
 
 
@@ -20,6 +20,29 @@ export type getHistoriesResponse = {
 };
 
 type getHistoriesData = z.infer<typeof getHistoriesSchema>;
+
+/** Units the building management rents out. On these a charge run bills rent
+ *  rather than a shared-cost charge. */
+const RENTABLE_SHOP_TYPES: ShopType[] = ["KIOSK", "BOARD", "PARKING"];
+
+/**
+ * Whether a history span should be billed rent by addRentAllKiosks.
+ *
+ * Rent is owed by whoever occupies the unit, and these units belong to the
+ * building management — so an unoccupied span would bill the landlord for their
+ * own empty unit. getRelatedHistories returns InActive (vacant) and
+ * ActiveByOwner (management holding it) spans alongside ActiveByRenter, and on
+ * these units the personId of the first two IS the management person. Only
+ * ActiveByRenter has someone who owes the rent.
+ */
+export function isRentBillableHistory(
+  history: Pick<ShopHistory, "shopType" | "type">
+): boolean {
+  return (
+    RENTABLE_SHOP_TYPES.includes(history.shopType) &&
+    history.type === HistoryType.ActiveByRenter
+  );
+}
 
 export async function getRelatedHistories(
   data: getHistoriesData
