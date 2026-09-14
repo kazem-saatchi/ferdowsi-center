@@ -5,7 +5,8 @@ import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { CustomSelect } from "@/components/CustomSelect";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
@@ -24,21 +25,10 @@ export default function PersonBalancePage() {
   const { data, isLoading, isError, error, refetch } =
     useGetPersonBalance(selectedPersonId);
 
-  const {
-    personsAll,
-    setPersonsAll,
-    setPersonBalance,
-    setPersonsBalance,
-    setShopsBalance,
-    setUserInfo,
-  } = useStore(
+  const { personsAll, setPersonsAll } = useStore(
     useShallow((state) => ({
       personsAll: state.personsAll,
       setPersonsAll: state.setPersonAll,
-      setPersonBalance: state.setPersonBalance,
-      setPersonsBalance: state.setPersonsBalance,
-      setShopsBalance: state.setShopsBalance,
-      setUserInfo: state.setUserInfo,
     }))
   );
 
@@ -47,21 +37,6 @@ export default function PersonBalancePage() {
       setPersonsAll(personsData.data.persons);
     }
   }, [personsData]);
-
-  useEffect(() => {
-    if (data?.data?.personBalance) {
-      setPersonBalance(data.data.personBalance.personBalance);
-    }
-    if (data?.data?.shopsBalance) {
-      setShopsBalance(data?.data.shopsBalance.map((data) => data.shopBalance));
-    }
-    if (data?.data?.personBalanceByShops) {
-      setPersonsBalance(data.data.personBalanceByShops);
-    }
-    if (data?.data?.person) {
-      setUserInfo(data.data.person);
-    }
-  }, [data, setPersonBalance, setPersonsBalance]);
 
   const personOptions =
     personsAll?.map((person) => ({
@@ -81,21 +56,21 @@ export default function PersonBalancePage() {
     );
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">{labels.personBalanceInfo}</h1>
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>{labels.selectPerson}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CustomSelect
-            options={personOptions}
-            value={selectedPersonId}
-            onChange={setSelectedPersonId}
-            label={labels.person}
-          />
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <CardHeader className="px-0 pb-0">
+        <CardTitle className="text-2xl">{labels.personBalanceInfo}</CardTitle>
+      </CardHeader>
+
+      <div className="max-w-md space-y-2">
+        <Label htmlFor="person">{labels.selectPerson}</Label>
+        <CustomSelect
+          options={personOptions}
+          value={selectedPersonId}
+          onChange={setSelectedPersonId}
+          label={labels.person}
+        />
+      </div>
+
       {selectedPersonId !== "" && isLoading && (
         <LoadingComponent text={labels.loadingFinancialData} />
       )}
@@ -106,11 +81,13 @@ export default function PersonBalancePage() {
           retry={refetch}
         />
       )}
-      {selectedPersonId !== "" &&
-        !isLoading &&
-        !isError &&
-        data?.data &&
-        data.data.personBalance && <PersonBalanceDisplay />}
+      {selectedPersonId !== "" && !isLoading && !isError && data?.data && (
+        <PersonBalanceDisplay
+          person={data.data.person}
+          summary={data.data.summary}
+          units={data.data.units}
+        />
+      )}
     </div>
   );
 }

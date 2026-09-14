@@ -531,6 +531,27 @@ export const labels = {
   receiptNumberShort: "شماره قبض",
   sortByColumn: "مرتب‌سازی",
 
+  // ── person balance ────────────────────────────────────────
+  personUnitsTitle: "مانده حساب به تفکیک واحد",
+  personUnitsHint:
+    "ارقام هر سطر مربوط به کل حساب آن واحد است؛ بدهی معوق روی واحد باقی می‌ماند و با تغییر مالک منتقل می‌شود.",
+  unitTotalCharge: "کل هزینه‌ها",
+  unitTotalPayment: "کل پرداختی‌ها",
+  personTotalCharge: "جمع هزینه‌های واحدها",
+  personTotalPayment: "جمع پرداختی‌ها",
+  personNetBalance: "مانده کل",
+  personUnitsHeld: "واحدهای مرتبط",
+  personDebtUnits: "واحد بدهکار",
+  personNoUnits: "واحدی به نام این شخص ثبت نشده است",
+  personRole: "نقش",
+  roleOwner: "مالک",
+  roleRenter: "مستاجر",
+  roleOwnerAndRenter: "مالک و مستاجر",
+  ownChargeShare: "هزینه ثبت‌شده به نام شخص",
+  ownPaymentShare: "پرداخت ثبت‌شده به نام شخص",
+  personBalanceSheetName: "مانده حساب شخص",
+  personBalanceReportTitle: "مانده حساب شخص به تفکیک واحد",
+
   // ── admin dashboard ──────────────────────────────────────────────────────
   dashboardTitle: "داشبورد مدیریت",
   dashboardSubtitle: "نمای کلی وضعیت مالی و حسابداری مجتمع",

@@ -24,6 +24,9 @@ export function useGetPersonBalance(personId: string) {
   return useQuery({
     queryKey: ["person-balance", personId],
     queryFn: async () => await findBalanceByPerson({ personId }),
+    // Without this the picker's empty initial value asks the server for a
+    // person that cannot exist, on every page load.
+    enabled: !!personId,
   });
 }
 

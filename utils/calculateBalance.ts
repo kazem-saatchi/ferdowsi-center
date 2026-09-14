@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import {
   PersonBalanceByShopData,
-  PersonBalanceData,
   ShopBalanceData,
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
@@ -11,12 +10,6 @@ export interface ShopBalanceResponce {
   chargeList: Charge[];
   paymentList: Payment[];
   shopBalance: ShopBalanceData;
-}
-
-export interface PersonBalanceResponce {
-  chargeList: Charge[];
-  paymentList: Payment[];
-  personBalance: PersonBalanceData;
 }
 
 //-------------Calculate-Shop-Balance-------------
@@ -79,50 +72,6 @@ export async function calculateShopBalance({
       totalChargeYearly,
       totalPaymentMonthly,
       totalPaymentYearly,
-    },
-  };
-}
-
-//-------------Calculate-Person-Balance-------------
-
-export async function calculatePersonBalance({
-  personId,
-  personName,
-}: {
-  personId: string;
-  personName: string;
-}): Promise<PersonBalanceResponce> {
-  // Get Shop Charges List
-  const chargeList = await db.charge.findMany({
-    where: { personId: personId },
-    orderBy: [{ date: "desc" }],
-  });
-
-  // Get Payment List
-  const paymentList = await db.payment.findMany({
-    where: { personId: personId },
-    orderBy: { date: "desc" },
-  });
-
-  const totalCharge = chargeList.reduce(
-    (total, charge) => total + charge.amount,
-    0
-  );
-
-  const totalPayment = paymentList.reduce(
-    (total, payment) => total + payment.amount,
-    0
-  );
-
-  return {
-    chargeList,
-    paymentList,
-    personBalance: {
-      personName,
-      personId,
-      totalCharge,
-      totalPayment,
-      balance: totalCharge - totalPayment,
     },
   };
 }

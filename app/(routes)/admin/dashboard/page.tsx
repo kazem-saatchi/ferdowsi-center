@@ -38,15 +38,9 @@ import type {
 import { formatNumber } from "@/utils/formatNumber";
 import { formatPersianDate } from "@/utils/localeDate";
 import { labels } from "@/utils/label";
+import { SHOP_TYPE_LABELS } from "@/utils/shopType";
 import type { ShopType } from "@prisma/client";
 
-const SHOP_TYPE_LABELS: Record<ShopType, string> = {
-  STORE: labels.store,
-  OFFICE: labels.office,
-  KIOSK: labels.kiosk,
-  PARKING: labels.parking,
-  BOARD: labels.board,
-};
 
 /** Share of everything charged that has actually been paid. */
 function collectionRate(summary: BucketSummary): string {
