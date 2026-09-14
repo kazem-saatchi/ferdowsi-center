@@ -7,7 +7,7 @@ import {
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma, ShopType } from "@prisma/client";
+import { HistoryType, Person, Prisma, ShopType } from "@prisma/client";
 import { differenceInDays, startOfDay } from "date-fns";
 import { getRelatedHistories } from "./utils";
 
@@ -68,8 +68,15 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
   const rentableShopType: ShopType[] = ["KIOSK", "BOARD", "PARKING"];
 
-  const relevantHistories = allHistories.filter((history) =>
-    rentableShopType.includes(history.shopType)
+  // Rent is owed by whoever occupies the unit, and these units belong to the
+  // building management — so an unoccupied span would bill the landlord for
+  // their own empty unit. getRelatedHistories also returns InActive (vacant)
+  // and ActiveByOwner (management holding it) spans, whose personId is the
+  // management person; only ActiveByRenter has someone who owes rent.
+  const relevantHistories = allHistories.filter(
+    (history) =>
+      rentableShopType.includes(history.shopType) &&
+      history.type === HistoryType.ActiveByRenter
   );
 
   // Calculate charges for each history period
