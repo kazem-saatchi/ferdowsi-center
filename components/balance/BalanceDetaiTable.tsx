@@ -51,17 +51,17 @@ const tabs: { id: TabType; label: string }[] = [
 ];
 
 function computeTotals(
-  balanceData: Array<{ type: "charge" | "payment"; amount: number; proprietor: boolean }>
+  balanceData: Array<{ rowKind: "charge" | "payment"; amount: number; proprietor: boolean }>
 ): TotalBalance {
   return {
     charge: balanceData
-      .filter((item) => item.type === "charge")
+      .filter((item) => item.rowKind === "charge")
       .reduce((sum, item) => sum + (item.amount || 0), 0),
     payment: balanceData
-      .filter((item) => item.type === "payment")
+      .filter((item) => item.rowKind === "payment")
       .reduce((sum, item) => sum + (item.amount || 0), 0),
     balance: balanceData.reduce((sum, item) => {
-      return item.type === "charge" ? sum + item.amount : sum - item.amount;
+      return item.rowKind === "charge" ? sum + item.amount : sum - item.amount;
     }, 0),
   };
 }
@@ -102,11 +102,11 @@ export function BalanceDetailTable({
   const balanceData = [
     ...activeCharges.map((charge) => ({
       ...charge,
-      type: "charge" as const,
+      rowKind: "charge" as const,
     })),
     ...activePayments.map((payment) => ({
       ...payment,
-      type: "payment" as const,
+      rowKind: "payment" as const,
     })),
   ].sort((a, b) => {
     const dateA = a.date?.getTime() || 0;
@@ -120,8 +120,8 @@ export function BalanceDetailTable({
   const runningBalances = new Map<string, number>();
   let runningBalance = 0;
   for (const item of balanceData) {
-    runningBalance += item.type === "charge" ? item.amount : -item.amount;
-    runningBalances.set(`${item.type}-${item.id}`, runningBalance);
+    runningBalance += item.rowKind === "charge" ? item.amount : -item.amount;
+    runningBalances.set(`${item.rowKind}-${item.id}`, runningBalance);
   }
 
   // ── footer totals ─────────────────────────────────────────────────────────
@@ -261,32 +261,23 @@ export function BalanceDetailTable({
             <TableHead className="text-center">
               {labels.description}
             </TableHead>
+            <TableHead className="text-center">{labels.edit}</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {balanceData.map((item) => (
             <TableRow
-              key={`${item.type}-${item.id}`}
+              key={`${item.rowKind}-${item.id}`}
               className={cn(
-                item.type === "charge" ? "bg-red-700/30" : "bg-green-700/30"
+                item.rowKind === "charge" ? "bg-red-700/30" : "bg-green-700/30"
               )}
             >
               <TableCell className="text-center capitalize">
-                {item.type === "charge" ? labels.charge : labels.payment}
+                {item.rowKind === "charge" ? labels.charge : labels.payment}
               </TableCell>
               <TableCell className="text-center">{item.title}</TableCell>
-              <TableCell className="text-center">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedTransactionId(null);
-                    setSelectedTransaction(item as BalanceTransactionRow);
-                  }}
-                >
-                  {item.personName}
-                </Button>
-              </TableCell>
+              <TableCell className="text-center">{item.personName}</TableCell>
               <TableCell className="text-center">
                 {formatPersianDate(item.date)}
               </TableCell>
@@ -296,10 +287,10 @@ export function BalanceDetailTable({
               <TableCell
                 className={cn(
                   "text-center font-medium",
-                  balanceColour(runningBalances.get(`${item.type}-${item.id}`) ?? 0)
+                  balanceColour(runningBalances.get(`${item.rowKind}-${item.id}`) ?? 0)
                 )}
               >
-                {(runningBalances.get(`${item.type}-${item.id}`) ?? 0).toLocaleString()}
+                {(runningBalances.get(`${item.rowKind}-${item.id}`) ?? 0).toLocaleString()}
               </TableCell>
               <TableCell className="text-center">
                 {item.bankTransactionId && (
@@ -316,6 +307,18 @@ export function BalanceDetailTable({
                 )}
               </TableCell>
               <TableCell className="text-center">{item.description}</TableCell>
+              <TableCell className="text-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedTransactionId(null);
+                    setSelectedTransaction(item as BalanceTransactionRow);
+                  }}
+                >
+                  {labels.edit}
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -339,7 +342,7 @@ export function BalanceDetailTable({
                 >
                   {totalNonProprietorBalance.balance.toLocaleString()}
                 </TableCell>
-                <TableCell colSpan={2} />
+                <TableCell colSpan={3} />
               </TableRow>
               <TableRow>
                 <TableCell
@@ -356,7 +359,7 @@ export function BalanceDetailTable({
                 >
                   {totalProprietorBalance.balance.toLocaleString()}
                 </TableCell>
-                <TableCell colSpan={2} />
+                <TableCell colSpan={3} />
               </TableRow>
             </>
           ) : (
@@ -376,7 +379,7 @@ export function BalanceDetailTable({
               >
                 {totalActiveBalance.balance.toLocaleString()}
               </TableCell>
-              <TableCell colSpan={2} />
+              <TableCell colSpan={3} />
             </TableRow>
           )}
         </TableFooter>

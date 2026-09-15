@@ -342,6 +342,22 @@ export const labels = {
   selectDifferentPersonHint:
     "برای ذخیره، باید شخصی غیر از شخص فعلی انتخاب شود.",
 
+  // Switching a payment between the monthly and مالکانه balance lists, in the
+  // same dialog as the person change.
+  editBalanceRow: "ویرایش ردیف مانده حساب",
+  editBalanceRowDescription:
+    "نوع شارژ یا شخص این ردیف را اصلاح کنید.",
+  changePaymentChargeType: "تغییر نوع شارژ",
+  currentChargeType: "نوع فعلی",
+  alsoUpdatePerson: "شخص هم بر اساس نوع شارژ اصلاح شود",
+  personAfterChange: "شخص پس از تغییر",
+  noHistoryForPaymentDateHint:
+    "برای تاریخ این پرداخت سابقه‌ای ثبت نشده است؛ وضعیت فعلی واحد مبنا قرار می‌گیرد.",
+  chargeTypeAlreadySetHint:
+    "این ردیف هم‌اکنون از همین نوع است.",
+  monthlyUnavailableForShopType:
+    "برای این نوع واحد فقط شارژ مالکانه شمارش می‌شود.",
+
   // Add new labels for balance page
   allShopsMonthlyBalance: "حساب ماهانه همه واحدها",
   allShopsYearlyBalance: "حساب مالکانه همه واحدها",

@@ -35,10 +35,10 @@ export default function ChangeUserDialog({ selectedTransaction, setSelectedTrans
     >
       <DialogHeader className="space-y-1 border-b bg-muted/40 px-6 py-4 text-right sm:text-right">
         <DialogTitle className="text-xl font-semibold tracking-tight">
-          {labels.changeBalanceRowPerson}
+          {labels.editBalanceRow}
         </DialogTitle>
         <DialogDescription className="text-sm font-normal text-muted-foreground">
-          {labels.changeBalanceRowPersonDescription}
+          {labels.editBalanceRowDescription}
         </DialogDescription>
       </DialogHeader>
       <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">

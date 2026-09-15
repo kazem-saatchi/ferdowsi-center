@@ -13,10 +13,14 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { CustomSelect } from "../CustomSelect";
+import ChangePaymentChargeType from "./ChangePaymentChargeType";
 
+/** `rowKind`, not `type`: Payment already has a `type` column (PaymentType),
+ *  so a `type: "payment"` tag intersects to `never` and the union stops
+ *  discriminating — narrowing silently collapses to the charge branch. */
 export type BalanceTransactionRow =
-  | (Charge & { type: "charge" })
-  | (Payment & { type: "payment" });
+  | (Charge & { rowKind: "charge" })
+  | (Payment & { rowKind: "payment" });
 
 interface ChangeUserProps {
   transaction: BalanceTransactionRow;
@@ -48,7 +52,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
 
   useEffect(() => {
     setSelectedPersonId("");
-  }, [transaction.id, transaction.type]);
+  }, [transaction.id, transaction.rowKind]);
 
   const personOptions =
     personsAll?.map((person) => ({
@@ -84,7 +88,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
     };
 
     try {
-      if (transaction.type === "charge") {
+      if (transaction.rowKind === "charge") {
         const result = await updateCharge.mutateAsync({
           ...payloadBase,
           chargeId: transaction.id,
@@ -106,7 +110,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
       toast.error(
         error instanceof Error
           ? error.message
-          : transaction.type === "charge"
+          : transaction.rowKind === "charge"
             ? labels.errorLoadingCharges
             : labels.errorLoadingPayments,
       );
@@ -114,7 +118,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
   };
 
   const kindLabel =
-    transaction.type === "charge" ? labels.charge : labels.payment;
+    transaction.rowKind === "charge" ? labels.charge : labels.payment;
 
   return (
     <div className="space-y-4">
@@ -140,6 +144,12 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
           {transaction.personName}
         </p>
       </div>
+      {/* Charges are not switchable yet: the balance lists split on the same
+          flag for both sides, but moving a charge changes what the unit owes,
+          not just where the payment is counted. */}
+      {transaction.rowKind === "payment" && (
+        <ChangePaymentChargeType payment={transaction} onSuccess={onSuccess} />
+      )}
       <div className="space-y-2">
         <Label htmlFor="balance-change-person-trigger">{labels.personName}</Label>
         <div id="balance-change-person-trigger">

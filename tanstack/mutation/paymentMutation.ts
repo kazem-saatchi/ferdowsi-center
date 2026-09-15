@@ -6,6 +6,9 @@ import deletePaymentById from "@/app/api/actions/payment/deletePayment";
 import updatePaymentUserAction, {
   UpdatePaymentUserProps,
 } from "@/app/api/actions/payment/updatePaymentUser";
+import updatePaymentProprietorAction, {
+  UpdatePaymentProprietorProps,
+} from "@/app/api/actions/payment/updatePaymentProprietor";
 import {
   addPaymentByBankIdData,
   AddPaymentByInfoData,
@@ -190,6 +193,43 @@ export function useUpdatePaymentUser() {
         queryClient.invalidateQueries({
           queryKey: ["shop-balance", variables.shopId],
         });
+
+        const payload = data.data as { message?: string } | undefined;
+        toast.success(payload?.message ?? successMSG.paymentUpdated);
+      } else {
+        toast.error(data.data?.message || data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+/**
+ * Moves a payment between the monthly and مالکانه balance lists. Invalidates
+ * the same keys as the person change, plus the bank report — the payment's bank
+ * row carries the bucket as its category and is updated alongside.
+ */
+export function useUpdatePaymentProprietor() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: UpdatePaymentProprietorProps) =>
+      await updatePaymentProprietorAction(data),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-payments", variables.shopId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["shop-balance", variables.shopId],
+        });
+
+        queryClient.invalidateQueries({ queryKey: ["bankReport"] });
 
         const payload = data.data as { message?: string } | undefined;
         toast.success(payload?.message ?? successMSG.paymentUpdated);
