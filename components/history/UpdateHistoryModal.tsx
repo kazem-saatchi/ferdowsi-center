@@ -192,6 +192,16 @@ export function UpdateHistoryModal({
                   <p className="text-sm text-muted-foreground">
                     {labels.chargeRecalcNotice}
                   </p>
+                  {previewData.some((op) => op.noOccupantInWindow) && (
+                    <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 space-y-1">
+                      <div className="text-sm font-medium text-amber-700 dark:text-amber-500">
+                        {labels.noOccupantWindowTitle}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {labels.noOccupantWindowNotice}
+                      </p>
+                    </div>
+                  )}
                   {previewData.some((op) => op.hasPaymentConflict) && (
                     <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 space-y-1">
                       <div className="text-sm font-medium text-amber-700 dark:text-amber-500">
