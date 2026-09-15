@@ -39,6 +39,12 @@ async function fetchBankTransactionsForReport(
         gte: startDate,
         lte: endDate,
       },
+      // A row an admin removed from /card-transfer carries registerAble =
+      // false: a duplicate import or an artifact that is not real account
+      // activity. This query filtered on date alone, so those rows still
+      // reached bankReportCalculations and inflated totalIncome even after
+      // being hidden from every other list.
+      registerAble: true,
     },
     orderBy: { date: "desc" },
     select: {
