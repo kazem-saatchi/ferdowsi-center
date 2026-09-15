@@ -1,5 +1,10 @@
 import { Prisma, HistoryType } from "@prisma/client";
-import { startOfDay, addDays, differenceInDays } from "date-fns";
+import { startOfDay, addDays } from "date-fns";
+import {
+  BillingWindow,
+  allocateByDays,
+  segmentWindowBySpans,
+} from "./utils";
 
 /**
  * Recalculation of monthly service charges (proprietor:false, forRent:false)
@@ -12,9 +17,11 @@ import { startOfDay, addDays, differenceInDays } from "date-fns";
  *      totalDays   = Σ(charge.daysCount)      // authoritative length of the window
  *      window      = [windowStart, windowStart + totalDays)   (half-open)
  *  - Keep the shop's TOTAL charge for that window constant and only re-split it
- *    between owner/renter using the (already updated) ShopHistory spans:
- *      dailyRate = Σ(charge.amount) / totalDays
- *  - Rounding is absorbed on the largest segment so the window total is preserved.
+ *    between owner/renter in proportion to the days each of them occupies,
+ *    using the (already updated) ShopHistory spans.
+ *  - The split itself is delegated to the shared proration helpers in ./utils,
+ *    which own the half-open span convention and the whole-Rial rounding, so
+ *    the re-split and the original generators can never disagree.
  *
  * This never depends on ShopChargeReference (which may have changed since the
  * charge was generated), so the operation is a pure re-attribution.
@@ -65,9 +72,23 @@ export interface OperationChargeDiff {
   perPerson: ChargeDiffPerson[];
   /** True when any person in this window has `needsPaymentReview`. */
   hasPaymentConflict: boolean;
+  /**
+   * True when the updated history spans leave NOBODY occupying this window, so
+   * the re-split has no one to bill.
+   *
+   * In that case the existing charge rows are deliberately LEFT IN PLACE and
+   * nothing is written, even when `apply` is true: deleting a month's charges
+   * with no replacement silently erases already-billed revenue from every
+   * balance report. `perPerson` still reports the proposed split (all zeros) so
+   * the admin can see what was found — but it was NOT applied.
+   *
+   * The caller must surface this rather than treat it as an ordinary
+   * recalculation: a window that reaches the admin with this flag needs a
+   * deliberate decision (fix the dates, or delete the charge explicitly).
+   */
+  noOccupantInWindow: boolean;
 }
 
-const maxDate = (a: Date, b: Date) => (a > b ? a : b);
 const minDate = (a: Date, b: Date) => (a < b ? a : b);
 
 /**
@@ -125,55 +146,51 @@ export async function recomputeShopMonthlyCharges(
         opCharges[0].date
       )
     );
-    // Half-open window of exactly totalOldDays days, independent of any
-    // +1/-1 convention differences between the original generators.
+    // Window of exactly totalOldDays days, independent of any +1/-1 convention
+    // differences between the original generators.
     const windowEndExclusive = addDays(windowStart, totalOldDays);
-    const dailyRate = totalOldAmount / totalOldDays;
+    const window: BillingWindow = {
+      startDate: windowStart,
+      // BillingWindow.endDate is the last billed day, i.e. inclusive.
+      endDate: addDays(windowStart, totalOldDays - 1),
+    };
 
-    // New segments derived from the (updated) history spans.
+    // New segments derived from the (updated) history spans, aggregated per
+    // person — one person may hold several consecutive spans in one window.
     const newByPerson = new Map<
       string,
       { personName: string; days: number; startDate: Date }
     >();
 
-    for (const h of histories) {
-      const segStart = maxDate(startOfDay(h.startDate), windowStart);
-      const histEnd = h.endDate ? startOfDay(h.endDate) : windowEndExclusive;
-      const segEnd = minDate(histEnd, windowEndExclusive);
-      const days = differenceInDays(segEnd, segStart);
-      if (days <= 0) continue;
-
+    for (const segment of segmentWindowBySpans(histories, window)) {
+      const h = segment.span;
       const existing = newByPerson.get(h.personId);
       if (existing) {
-        existing.days += days;
-        existing.startDate = minDate(existing.startDate, segStart);
+        existing.days += segment.days;
+        existing.startDate = minDate(existing.startDate, segment.startDate);
       } else {
         newByPerson.set(h.personId, {
           personName: h.personName,
-          days,
-          startDate: segStart,
+          days: segment.days,
+          startDate: segment.startDate,
         });
       }
     }
 
     // Assign amounts, preserving the window total exactly.
-    const newList = Array.from(newByPerson.entries()).map(
-      ([personId, value]) => ({
+    const newList = allocateByDays(
+      Array.from(newByPerson.entries()).map(([personId, value]) => ({
         personId,
         personName: value.personName,
         days: value.days,
         startDate: value.startDate,
-        amount: Math.round(value.days * dailyRate),
-      })
+      })),
+      totalOldDays,
+      totalOldAmount
     );
 
-    const roundedTotal = newList.reduce((sum, n) => sum + n.amount, 0);
-    const remainder = totalOldAmount - roundedTotal;
-    if (remainder !== 0 && newList.length) {
-      // Absorb rounding drift on the segment with the most days.
-      const target = newList.reduce((a, b) => (b.days > a.days ? b : a));
-      target.amount += remainder;
-    }
+    // Nobody occupies this window any more. Never silently delete the money.
+    const noOccupantInWindow = newList.length === 0;
 
     // Old split, aggregated per person.
     const oldByPerson = new Map<
@@ -245,9 +262,13 @@ export async function recomputeShopMonthlyCharges(
       windowEnd: addDays(windowEndExclusive, -1).toISOString(),
       perPerson,
       hasPaymentConflict,
+      noOccupantInWindow,
     });
 
-    if (options.apply) {
+    // Applying an empty split would run the deleteMany and create nothing,
+    // wiping a billed month with no trace. Leave the rows alone and let the
+    // caller act on `noOccupantInWindow` instead.
+    if (options.apply && !noOccupantInWindow) {
       const template = opCharges[0];
 
       await tx.charge.deleteMany({

@@ -7,9 +7,12 @@ import {
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma } from "@prisma/client";
-import { differenceInDays, startOfDay } from "date-fns";
-import { getRelatedHistories, isRentBillableHistory } from "./utils";
+import { Person, Prisma, ShopHistory } from "@prisma/client";
+import {
+  getRelatedHistories,
+  isRentBillableHistory,
+  prorateWindow,
+} from "./utils";
 
 interface AddChargeResponse {
   message: string;
@@ -68,66 +71,55 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 
   const relevantHistories = allHistories.filter(isRentBillableHistory);
 
-  // Calculate charges for each history period
-  const charges = relevantHistories.reduce<Prisma.ChargeCreateManyInput[]>(
+  // Each unit's rent is split only among that unit's own tenancy spans, so the
+  // per-unit slices always sum back to that unit's reference total.
+  const historiesByShop = relevantHistories.reduce<Map<string, ShopHistory[]>>(
     (acc, history) => {
-      const shopChargeReference = shopsChargeList.find(
-        (charge) => charge.shopId === history.shopId
-      );
-
-      console.log("--------------------------------------------------------");
-
-      console.log(
-        "shopCharge reference",
-        shopChargeReference ?? "undefined",
-        history
-      );
-
-      if (!shopChargeReference) {
-        console.warn(
-          `*** No Rent Reference found for shop ${history.shopId} ***`
-        );
-        // throw new Error(
-        //   `No charge reference found for shopId: ${history.shopId}`
-        // );
-      }
-
-      const dailyAmount = shopChargeReference
-        ? shopChargeReference.totalAmount / totalDays
-        : 0;
-
-      const historyStartDate = startOfDay(new Date(history.startDate));
-
-      const historyEndDate = history.endDate
-        ? startOfDay(new Date(history.endDate))
-        : endDate;
-
-      const chargeStartDate =
-        historyStartDate > startDate ? historyStartDate : startDate;
-      const chargeEndDate = historyEndDate < endDate ? historyEndDate : endDate;
-
-      const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
-
-      if (days > 0 && dailyAmount > 0) {
-        acc.push({
-          title: operation.title,
-          amount: days * dailyAmount,
-          shopId: history.shopId,
-          plaque: history.plaque,
-          personId: history.personId,
-          personName: history.personName,
-          date: chargeStartDate,
-          operationId: operation.id,
-          operationName: operation.title,
-          daysCount: days,
-          proprietor: true,
-          forRent: true,
-        });
-      }
+      const list = acc.get(history.shopId) ?? [];
+      list.push(history);
+      acc.set(history.shopId, list);
       return acc;
     },
-    []
+    new Map()
   );
+
+  // Calculate charges for each history period
+  const charges: Prisma.ChargeCreateManyInput[] = [];
+
+  for (const [shopId, shopHistories] of Array.from(historiesByShop.entries())) {
+    const shopChargeReference = shopsChargeList.find(
+      (charge) => charge.shopId === shopId
+    );
+
+    if (!shopChargeReference || shopChargeReference.totalAmount <= 0) {
+      console.warn(`*** No Rent Reference found for shop ${shopId} ***`);
+      continue;
+    }
+
+    const segments = prorateWindow(
+      shopHistories,
+      { startDate, endDate },
+      shopChargeReference.totalAmount,
+      totalDays
+    );
+
+    for (const { span: history, days, startDate: chargeStartDate, amount } of segments) {
+      charges.push({
+        title: operation.title,
+        amount,
+        shopId: history.shopId,
+        plaque: history.plaque,
+        personId: history.personId,
+        personName: history.personName,
+        date: chargeStartDate,
+        operationId: operation.id,
+        operationName: operation.title,
+        daysCount: days,
+        proprietor: true,
+        forRent: true,
+      });
+    }
+  }
 
   // Batch insert charges
   if (charges.length) {

@@ -308,6 +308,90 @@ describe("recomputeShopMonthlyCharges", () => {
     });
   });
 
+  describe("a window nobody occupies any more", () => {
+    /**
+     * The admin moves the owner's span forward, past the whole billed month.
+     * Nothing overlaps the window, so the re-split has nobody to bill. The old
+     * code still ran the deleteMany and created nothing: a billed 11,600,000
+     * vanished from every balance report while updateHistory reported success.
+     */
+    const noOccupantCase = () => ({
+      charges: [
+        charge({ amount: 11_600_000, daysCount: 31, date: d("2025-07-22") }),
+      ],
+      histories: [history({ startDate: d("2025-09-01"), endDate: null })],
+    });
+
+    it("reports the window instead of passing as an ordinary re-split", async () => {
+      const { tx } = makeTx(noOccupantCase());
+
+      const diffs = await recomputeShopMonthlyCharges(tx, SHOP_ID, {
+        apply: false,
+      });
+
+      expect(diffs).toHaveLength(1);
+      expect(diffs[0].noOccupantInWindow).toBe(true);
+
+      const owner = diffs[0].perPerson.find((p) => p.personId === OWNER.id)!;
+      expect(owner.oldAmount).toBe(11_600_000);
+      expect(owner.newAmount).toBe(0);
+    });
+
+    it("keeps the charges rather than deleting a month of revenue", async () => {
+      const { tx, deleted, created } = makeTx(noOccupantCase());
+
+      await recomputeShopMonthlyCharges(tx, SHOP_ID, { apply: true });
+
+      // Neither half of the delete-then-recreate may run: on its own the
+      // deleteMany is an untraceable write-off.
+      expect(deleted).toEqual([]);
+      expect(created).toEqual([]);
+    });
+
+    it("still applies the windows that do have an occupant", async () => {
+      const { tx, deleted, created } = makeTx({
+        charges: [
+          // op-1 keeps its occupants; op-2 loses them.
+          charge({ amount: 11_600_000, daysCount: 31, date: d("2025-07-22") }),
+          charge({
+            operationId: "op-2",
+            operationName: "شارژ شهریور 1404",
+            title: "شارژ شهریور 1404",
+            amount: 11_600_000,
+            daysCount: 31,
+            date: d("2025-08-22"),
+          }),
+        ],
+        histories: [
+          history({ endDate: d("2025-07-27"), isActive: false }),
+          history({
+            personId: RENTER.id,
+            personName: RENTER.name,
+            type: "ActiveByRenter",
+            startDate: d("2025-07-27"),
+            endDate: d("2025-08-22"),
+          }),
+        ],
+      });
+
+      const diffs = await recomputeShopMonthlyCharges(tx, SHOP_ID, {
+        apply: true,
+      });
+
+      const first = diffs.find((o) => o.operationId === "op-1")!;
+      const second = diffs.find((o) => o.operationId === "op-2")!;
+
+      expect(first.noOccupantInWindow).toBe(false);
+      expect(second.noOccupantInWindow).toBe(true);
+
+      // Only the occupied window is rewritten.
+      expect(deleted).toEqual([
+        { where: { shopId: SHOP_ID, operationId: "op-1", proprietor: false, forRent: false } },
+      ]);
+      expect(created.every((c) => c.operationId === "op-1")).toBe(true);
+    });
+  });
+
   describe("rounding", () => {
     it("preserves the window total exactly, absorbing drift on the longest segment", async () => {
       // 10,000,000 over 3 days does not divide evenly.

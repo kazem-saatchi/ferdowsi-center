@@ -7,9 +7,8 @@ import {
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, Prisma } from "@prisma/client";
-import { differenceInDays, startOfDay, endOfDay, addDays } from "date-fns";
-import { getRelatedHistories } from "./utils";
+import { Person, Prisma, ShopHistory } from "@prisma/client";
+import { getRelatedHistories, prorateWindow } from "./utils";
 
 interface AddChargeResponse {
   message: string;
@@ -66,75 +65,54 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
     throw new Error("No shop charge references found in the database.");
   }
 
-  // Calculate charges for each history period
-  const charges = relevantHistories.reduce<Prisma.ChargeCreateManyInput[]>(
+  // Each shop's total is split only among that shop's own spans, so the
+  // per-shop slices always sum back to that shop's reference total.
+  const historiesByShop = relevantHistories.reduce<Map<string, ShopHistory[]>>(
     (acc, history) => {
-      const shopChargeReference = shopsChargeRefList.find(
-        (charge) => charge.shopId === history.shopId
-      );
-
-      console.log("--------------------------------------------------------");
-
-      console.log(
-        "shopCharge reference",
-        shopChargeReference ?? "undefined",
-        history
-      );
-
-      if (!shopChargeReference) {
-        console.warn(`No monthly charge found for shop ${history.shopId}`);
-
-        // throw new Error(
-        //   `No charge reference found for shopId: ${history.shopId}`
-        // );
-      }
-
-      const dailyAmount = shopChargeReference
-        ? shopChargeReference.totalAmount / totalDays
-        : 0;
-
-      console.log("dailyAmount", dailyAmount);
-      console.log("totalDays", totalDays);
-
-      const historyStartDate = startOfDay(history.startDate);
-
-      const historyEndDate = history.endDate
-        ? startOfDay(history.endDate)
-        : startOfDay(endDate);
-
-      const chargeStartDate =
-        historyStartDate > startOfDay(startDate)
-          ? historyStartDate
-          : startOfDay(startDate);
-      const chargeEndDate =
-        historyEndDate < startOfDay(endDate)
-          ? startOfDay(historyEndDate)
-          : addDays(startOfDay(endDate), 1);
-
-      const days = differenceInDays(chargeEndDate, chargeStartDate);
-
-      console.log("shop plaque", history.plaque);
-      console.log("days", days);
-
-      if (days > 0 && dailyAmount > 0) {
-        acc.push({
-          title: operation.title,
-          amount: days * dailyAmount,
-          shopId: history.shopId,
-          plaque: history.plaque,
-          personId: history.personId,
-          personName: history.personName,
-          date: chargeStartDate,
-          operationId: operation.id,
-          operationName: operation.title,
-          daysCount: days,
-          proprietor: false,
-        });
-      }
+      const list = acc.get(history.shopId) ?? [];
+      list.push(history);
+      acc.set(history.shopId, list);
       return acc;
     },
-    []
+    new Map()
   );
+
+  // Calculate charges for each history period
+  const charges: Prisma.ChargeCreateManyInput[] = [];
+
+  for (const [shopId, shopHistories] of Array.from(historiesByShop.entries())) {
+    const shopChargeReference = shopsChargeRefList.find(
+      (charge) => charge.shopId === shopId
+    );
+
+    if (!shopChargeReference || shopChargeReference.totalAmount <= 0) {
+      console.warn(`No monthly charge found for shop ${shopId}`);
+      continue;
+    }
+
+    const segments = prorateWindow(
+      shopHistories,
+      { startDate, endDate },
+      shopChargeReference.totalAmount,
+      totalDays
+    );
+
+    for (const { span: history, days, startDate: chargeStartDate, amount } of segments) {
+      charges.push({
+        title: operation.title,
+        amount,
+        shopId: history.shopId,
+        plaque: history.plaque,
+        personId: history.personId,
+        personName: history.personName,
+        date: chargeStartDate,
+        operationId: operation.id,
+        operationName: operation.title,
+        daysCount: days,
+        proprietor: false,
+      });
+    }
+  }
 
   // Batch insert charges
   if (charges.length) {

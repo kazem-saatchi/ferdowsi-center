@@ -8,8 +8,7 @@ import {
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
-import { differenceInDays, startOfDay } from "date-fns";
-import { getRelatedHistories } from "./utils";
+import { getRelatedHistories, prorateWindow } from "./utils";
 
 async function createCharge(data: AddChargeByShopData, person: Person) {
   // Authorization check
@@ -55,48 +54,32 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
     throw new Error(errorMSG.shopChargeReferenceNotFound);
   }
 
-  const dailyAmount = shopChargeReference.totalAmount / totalDays;
-
   // Create a new operation record
   const currentTime = new Date().toISOString();
   const operation = await db.operation.create({
     data: { date: currentTime, title },
   });
 
-  // Prepare charges for batch insertion
-  const charges = relevantHistories.reduce<Prisma.ChargeCreateManyInput[]>(
-    (acc, history) => {
-      const historyStartDate = startOfDay(new Date(history.startDate));
-      const historyEndDate = history.endDate
-        ? startOfDay(new Date(history.endDate))
-        : endDate;
-
-      const chargeStartDate =
-        historyStartDate > startDate ? historyStartDate : startDate;
-      const chargeEndDate = historyEndDate < endDate ? historyEndDate : endDate;
-
-      const days = differenceInDays(chargeEndDate, chargeStartDate) + 1;
-
-      if (days > 0) {
-        acc.push({
-          title: operation.title,
-          amount: days * dailyAmount,
-          shopId: history.shopId,
-          plaque: history.plaque,
-          personId: history.personId,
-          personName: history.personName,
-          date: chargeStartDate,
-          operationId: operation.id,
-          operationName: operation.title,
-          daysCount: days,
-          proprietor: false,
-        });
-      }
-
-      return acc;
-    },
-    []
-  );
+  // Prepare charges for batch insertion. The shared helper owns both the
+  // half-open day count and the whole-Rial split of the shop's total.
+  const charges: Prisma.ChargeCreateManyInput[] = prorateWindow(
+    relevantHistories,
+    { startDate, endDate },
+    shopChargeReference.totalAmount,
+    totalDays
+  ).map(({ span: history, days, startDate: chargeStartDate, amount }) => ({
+    title: operation.title,
+    amount,
+    shopId: history.shopId,
+    plaque: history.plaque,
+    personId: history.personId,
+    personName: history.personName,
+    date: chargeStartDate,
+    operationId: operation.id,
+    operationName: operation.title,
+    daysCount: days,
+    proprietor: false,
+  }));
 
   if (!charges.length) {
     throw new Error(errorMSG.noChargeGenerated);
