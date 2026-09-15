@@ -129,6 +129,7 @@ function AddPaymentBankForm({
         setProprietor(false);
         setUploadPage(false);
       } else {
+        toast.error(result.message || labels.paymentAddedError);
       }
     } catch (error) {
       console.error("Error adding payment:", error);
@@ -258,6 +259,7 @@ function AddPaymentBankForm({
       <CardFooter className="flex flex-col items-center gap-2">
         <div className="flex w-full flex-row items-center gap-2">
           <Button
+            type="button"
             onClick={() => {
               cancelFn(null);
             }}

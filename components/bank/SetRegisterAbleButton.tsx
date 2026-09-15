@@ -28,6 +28,7 @@ function SetRegisterAbleButton({
 
   return (
     <Button
+      type="button"
       variant="destructive"
       disabled={isMutating || isRegistred}
       onClick={registerHandler}

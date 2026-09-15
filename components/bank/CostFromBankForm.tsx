@@ -185,7 +185,11 @@ export default function CostFromBankForm({
             )}
           </CardContent>
           <CardFooter className="flex flex-row items-center justify-start gap-2">
-            <Button variant="destructive" onClick={() => cancelFn(null)}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => cancelFn(null)}
+            >
               {labels.close}
             </Button>
             <Button

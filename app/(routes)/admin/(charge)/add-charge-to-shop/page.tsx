@@ -25,17 +25,22 @@ import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { labels } from "@/utils/label";
 
 export default function AddChargeToShopPage() {
-  const [formData, setFormData] = useState({
-    month: "",
+  // Single source of truth for everything that is submitted. Previously the
+  // payload lived in a second `dataState` that only copied `shopId` when the
+  // month was picked, so the charge could be posted to the wrong shop (or to
+  // an empty shopId) while the UI showed something else.
+  const [formData, setFormData] = useState<{
+    month: DateObject | null;
+    startDate: Date | null;
+    endDate: Date | null;
+    shopId: string;
+    title: string;
+  }>({
+    month: null,
+    startDate: null,
+    endDate: null,
     shopId: "",
     title: "",
-  });
-
-  const [dataState, setDataState] = useState<AddChargeByShopData>({
-    startDate: new Date(),
-    endDate: new Date(),
-    title: "",
-    shopId: "",
   });
 
   const addChargeMutation = useAddChargeByShop();
@@ -65,42 +70,51 @@ export default function AddChargeToShopPage() {
   const handleDateChange = (date: DateObject) => {
     if (date) {
       const persianDate = new DateObject(date).convert(persian, persian_fa);
-      const formattedDate = `${persianDate.year}-${String(
-        persianDate.month.number
-      ).padStart(2, "0")}`;
       const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
-      setFormData((prev) => ({
-        ...prev,
-        title,
-        month: formattedDate,
-      }));
+      // `toFirstOfMonth`/`toLastOfMonth` mutate `date`, so keep a copy for the
+      // picker before deriving the range from it.
+      const month = new DateObject(date);
       const startDate = date.toFirstOfMonth().toDate();
       const endDate = date.toLastOfMonth().toDate();
       // endDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
-      setDataState({
+      setFormData((prev) => ({
+        ...prev,
+        month,
+        title,
         startDate,
         endDate,
-        title,
-        shopId: formData.shopId,
-      });
+      }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      if (!formData.shopId) {
-        toast.error(labels.pleaseSelectShop);
-        return;
-      }
+    if (!formData.shopId) {
+      toast.error(labels.pleaseSelectShop);
+      return;
+    }
+    if (!formData.startDate || !formData.endDate || !formData.title) {
+      toast.error(labels.selectShopAndDate);
+      return;
+    }
 
-      const result = await addChargeMutation.mutateAsync(dataState);
+    const chargeData: AddChargeByShopData = {
+      shopId: formData.shopId,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      title: formData.title,
+    };
+
+    try {
+      const result = await addChargeMutation.mutateAsync(chargeData);
 
       if (result.success) {
         toast.success(labels.chargeAddedSuccess);
         // Reset form after successful submission
         setFormData({
-          month: "",
+          month: null,
+          startDate: null,
+          endDate: null,
           shopId: "",
           title: "",
         });
@@ -139,7 +153,10 @@ export default function AddChargeToShopPage() {
                 label={labels.unit}
               />
             </div>
-            <JalaliMonthCalendar handleDateChange={handleDateChange} />
+            <JalaliMonthCalendar
+              handleDateChange={handleDateChange}
+              value={formData.month}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
@@ -157,7 +174,13 @@ export default function AddChargeToShopPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addChargeMutation.isPending}
+              disabled={
+                addChargeMutation.isPending ||
+                !formData.shopId ||
+                !formData.startDate ||
+                !formData.endDate ||
+                !formData.title
+              }
             >
               {addChargeMutation.isPending
                 ? labels.addingChargeToShop
