@@ -3,14 +3,14 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
+import { SafePerson } from "@/schema/personSchema";
 
 interface findPersonByShopResponse {
-  persons: Person[];
+  persons: SafePerson[];
   message: string;
 }
 
-async function findPerson(shopId: string, user: Person) {
+async function findPerson(shopId: string, user: SafePerson) {
   // check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
@@ -20,9 +20,9 @@ async function findPerson(shopId: string, user: Person) {
   const shop = await db.shop.findUnique({
     where: { id: shopId },
     include: {
-      owner: true,
-      renter: true,
-      histories: true && { include: { person: true } },
+      owner: { omit: { password: true } },
+      renter: { omit: { password: true } },
+      histories: { include: { person: { omit: { password: true } } } },
     },
   });
 
@@ -30,7 +30,7 @@ async function findPerson(shopId: string, user: Person) {
     throw new Error(errorMSG.shopNotFound);
   }
 
-  const personsSet = new Set<Person>();
+  const personsSet = new Set<SafePerson>();
 
   // Add owners
   if (shop.owner) {

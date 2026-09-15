@@ -28,10 +28,10 @@ import {
   roleOf,
 } from "@/utils/personBalanceExcel";
 import { cn } from "@/lib/utils";
-import { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 
 interface PersonBalanceDisplayProps {
-  person: Person;
+  person: SafePerson;
   summary: PersonBalanceSummary;
   units: PersonUnitBalance[];
 }

@@ -3,21 +3,24 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
+import { SafePerson } from "@/schema/personSchema";
 
 interface findPersonsAllResponse {
-  persons: Person[];
+  persons: SafePerson[];
   message: string;
 }
 
-async function findPersons(user: Person) {
+async function findPersons(user: SafePerson) {
   // check authentication
   if (user.role !== "ADMIN" && user.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
 
   // find Persons
-  const persons = await db.person.findMany({ where: { visable: true } });
+  const persons = await db.person.findMany({
+    where: { visable: true },
+    omit: { password: true },
+  });
 
   return { message: successMSG.personIdFound, persons: persons };
 }

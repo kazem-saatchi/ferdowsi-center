@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 import { PersonSearchForm } from "@/components/person/PersonSearchForm";
 import { PersonList } from "@/components/person/PersonList";
 import findPersonByFilter from "@/app/api/actions/person/findPersonByFilter";
 import { Separator } from "@/components/ui/separator";
 
 export default function SearchPersonsPage() {
-  const [persons, setPersons] = useState<Person[]>([]);
+  const [persons, setPersons] = useState<SafePerson[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = async (filters: any) => {

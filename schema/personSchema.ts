@@ -1,4 +1,13 @@
 import { z } from "zod";
+// Type-only import keeps @prisma/client out of the browser bundle: this file is
+// reached from client components.
+import type { Person } from "@prisma/client";
+
+//--------------------------------------------------------------------------------------
+/** A `Person` row as it is allowed to leave the server: every column except the
+ *  bcrypt hash. Prisma hands back every scalar unless it is told otherwise, so
+ *  each query that produces one of these pairs it with `omit: { password: true }`. */
+export type SafePerson = Omit<Person, "password">;
 
 //--------------------------------------------------------------------------------------
 export const addPersonSchema = z.object({

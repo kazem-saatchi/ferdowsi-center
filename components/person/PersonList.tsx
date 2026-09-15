@@ -6,14 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import DeletePerson from "./DeletePerson";
 import { labels } from "@/utils/label";
 
 interface PersonListProps {
-  persons: Person[];
+  persons: SafePerson[];
 }
 
 export function PersonList({ persons }: PersonListProps) {

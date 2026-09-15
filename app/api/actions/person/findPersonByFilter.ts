@@ -4,17 +4,17 @@ import { db } from "@/lib/db";
 import {
   findPersonByFilterSchema,
   FindPersonByFilterData,
+  SafePerson,
 } from "@/schema/personSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
 
 interface FindPersonByFilterResponse {
-  persons: Person[];
+  persons: SafePerson[];
   message: string;
 }
 
-async function findPersons(data: FindPersonByFilterData, user: Person) {
+async function findPersons(data: FindPersonByFilterData, user: SafePerson) {
   // Check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
@@ -47,6 +47,7 @@ async function findPersons(data: FindPersonByFilterData, user: Person) {
   // Fetch persons based on filters
   const persons = await db.person.findMany({
     where: whereClause,
+    omit: { password: true },
   });
 
   if (persons.length === 0) {

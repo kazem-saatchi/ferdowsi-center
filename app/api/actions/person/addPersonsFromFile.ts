@@ -3,21 +3,26 @@
 import { handleServerAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, PrismaClient } from "@prisma/client";
-import { AddPersonData, addPersonSchema } from "@/schema/personSchema";
+import { PrismaClient } from "@prisma/client";
+import {
+  AddPersonData,
+  addPersonSchema,
+  SafePerson,
+} from "@/schema/personSchema";
 
 interface AddPersonResponse {
   message: string;
   count: number;
-  insertedPersons: Person[];
+  /** National IDs already on file, so the caller can show what was left out.
+   *  The rows themselves stay on the server: they carry the bcrypt hash. */
+  skippedIdNumbers: string[];
 }
 
-async function createPersons(personsArray: AddPersonData[], person: Person) {
+async function createPersons(personsArray: AddPersonData[], person: SafePerson) {
   // Only admins or authorized roles can add new people
   if (person.role !== "ADMIN") {
     throw new Error(errorMSG.noPermission);
   }
-  console.log("data:", personsArray);
 
   const prisma = new PrismaClient();
 
@@ -55,25 +60,30 @@ async function createPersons(personsArray: AddPersonData[], person: Person) {
 
   // Transaction: Check duplicates and insert non-duplicates
   return await prisma.$transaction(async (tx) => {
-    const insertedPersons = [];
+    let insertedCount = 0;
+    const skippedIdNumbers: string[] = [];
 
     for (const person of persons) {
       // Check for duplicate IdNumber
       const existingPerson = await tx.person.findUnique({
         where: { IdNumber: person.IdNumber },
+        select: { id: true },
       });
 
-      if (!existingPerson) {
-        // Insert the non-duplicate row
-        const newPerson = await tx.person.create({ data: person });
-        insertedPersons.push(newPerson);
+      if (existingPerson) {
+        skippedIdNumbers.push(person.IdNumber);
+        continue;
       }
+
+      // Insert the non-duplicate row
+      await tx.person.create({ data: person });
+      insertedCount += 1;
     }
 
     return {
       message: "Successfully added new persons.",
-      count: insertedPersons.length,
-      insertedPersons,
+      count: insertedCount,
+      skippedIdNumbers,
     };
   });
 }

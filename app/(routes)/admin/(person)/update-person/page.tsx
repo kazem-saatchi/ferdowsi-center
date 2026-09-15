@@ -9,12 +9,12 @@ import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 import { labels } from "@/utils/label";
 
 export default function UpdatePersonPage() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [selectedPerson, setSelectedPerson] = useState<SafePerson | null>(null);
 
   const { data, error, isError, isLoading, refetch } = useFindAllPersons();
 

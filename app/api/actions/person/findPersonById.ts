@@ -3,14 +3,14 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person } from "@prisma/client";
+import { SafePerson } from "@/schema/personSchema";
 
 interface findPersonResponse {
-  person: Person;
+  person: SafePerson;
   message: string;
 }
 
-async function findPerson(id: string, user: Person) {
+async function findPerson(id: string, user: SafePerson) {
   // check authentication
   if (!user) {
     throw new Error(errorMSG.unauthorized);
@@ -19,6 +19,7 @@ async function findPerson(id: string, user: Person) {
   // find Person by Id
   const person = await db.person.findUnique({
     where: { IdNumber: id },
+    omit: { password: true },
   });
   if (!person) {
     throw new Error(errorMSG.personIdNotFound);

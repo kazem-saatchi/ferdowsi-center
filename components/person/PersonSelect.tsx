@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
 import { labels } from "@/utils/label";
@@ -31,7 +31,7 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
     }))
   );
 
-  const [filteredPersons, setFilteredPersons] = useState<Person[]>([]);
+  const [filteredPersons, setFilteredPersons] = useState<SafePerson[]>([]);
 
   useEffect(() => {
     if (personsAll) {

@@ -3,7 +3,8 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Person, ShopType } from "@prisma/client";
+import { SafePerson } from "@/schema/personSchema";
+import { ShopType } from "@prisma/client";
 
 /** One unit this person holds, with the unit's own totals — not the slice that
  *  happens to carry this person's id.
@@ -42,23 +43,31 @@ export interface PersonBalanceSummary {
 interface FindBalanceResponse {
   success: boolean;
   message: string;
-  person: Person;
+  person: SafePerson;
   summary: PersonBalanceSummary;
   units: PersonUnitBalance[];
 }
 
 async function getPersonBalance(
   personId: string,
-  user: Person
+  user: SafePerson
 ): Promise<FindBalanceResponse> {
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }
 
-  const person = await db.person.findUnique({ where: { id: personId } });
+  const person = await db.person.findUnique({
+    where: { id: personId },
+    omit: { password: true },
+  });
 
   if (!person) {
     throw new Error(errorMSG.personNotFound);
+  }
+
+  // Check authentication
+  if (person.id !== user.id && user.role !== "ADMIN") {
+    throw new Error(errorMSG.unauthorized);
   }
 
   const shops = await db.shop.findMany({

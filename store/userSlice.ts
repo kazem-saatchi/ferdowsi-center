@@ -1,14 +1,14 @@
 import { StateCreator } from "zustand";
-import { Person } from "@prisma/client";
+import type { SafePerson } from "@/schema/personSchema";
 import { PersonBalancesResponse } from "@/app/api/actions/user/findAllShopsByPerson";
 
 type Persons = {
-  userInfo: Person | null;
-  setUserInfo: (person: Person) => void;
-  personById: Person | null;
-  setPersonById: (person: Person) => void;
-  personsAll: Person[] | null;
-  setPersonAll: (persons: Person[]) => void;
+  userInfo: SafePerson | null;
+  setUserInfo: (person: SafePerson) => void;
+  personById: SafePerson | null;
+  setPersonById: (person: SafePerson) => void;
+  personsAll: SafePerson[] | null;
+  setPersonAll: (persons: SafePerson[]) => void;
   personShopsBalance: PersonBalancesResponse | null;
   setPersonShopsBalance: (data: PersonBalancesResponse) => void;
 };

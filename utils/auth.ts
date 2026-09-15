@@ -1,14 +1,14 @@
 'use server'
 
 import { db } from "@/lib/db";
-import { Person } from "@prisma/client";
+import { SafePerson } from "@/schema/personSchema";
 import { cookies } from "next/headers";
 import { errorMSG, successMSG } from "./messages";
 
 export interface AuthResult {
   success: boolean;
   message: string;
-  person?: Person;
+  person?: SafePerson;
 }
 
 export async function verifyToken(): Promise<AuthResult> {
@@ -30,8 +30,11 @@ export async function verifyToken(): Promise<AuthResult> {
       return {success:false, message:errorMSG.sessionExpired}
     }
 
+    // This result is serialized to the browser: `personQuery` calls verifyToken
+    // as an RPC from a client component on every page load.
     const person = await db.person.findUnique({
       where: { id: session.personId },
+      omit: { password: true },
     });
 
     // check authentication
