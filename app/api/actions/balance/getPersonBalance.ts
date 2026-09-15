@@ -66,7 +66,11 @@ async function getPersonBalance(
   }
 
   // Check authentication
-  if (person.id !== user.id && user.role !== "ADMIN") {
+  if (
+    person.id !== user.id &&
+    user.role !== "ADMIN" &&
+    user.role !== "MANAGER"
+  ) {
     throw new Error(errorMSG.unauthorized);
   }
 

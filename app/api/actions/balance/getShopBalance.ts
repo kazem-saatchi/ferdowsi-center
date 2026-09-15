@@ -67,7 +67,8 @@ async function getAllBalance(
   if (
     shop.ownerId !== user.id &&
     shop.renterId !== user.id &&
-    user.role !== "ADMIN"
+    user.role !== "ADMIN" &&
+    user.role !== "MANAGER"
   ) {
     throw new Error(errorMSG.unauthorized);
   }
