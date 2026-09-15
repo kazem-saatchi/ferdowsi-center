@@ -16,11 +16,18 @@ export function useGetBankReportTransactions({
       startDate?.toISOString() || "",
       endDate?.toISOString() || "",
     ],
-    queryFn: () => {
+    queryFn: async () => {
       if (!startDate || !endDate) {
         throw new Error("Start date and end date are required");
       }
-      return getBankTransactionsForReport(startDate, endDate);
+      // getBankTransactionsForReport is wrapped in handleServerAction, which
+      // returns a {success, message, data} envelope. BankReportClient consumes
+      // the plain row array, so unwrap it here.
+      const response = await getBankTransactionsForReport(startDate, endDate);
+      if (!response.success || !response.data) {
+        throw new Error(response.message);
+      }
+      return response.data;
     },
     placeholderData: keepPreviousData,
     enabled: enabled && !!startDate && !!endDate, // Only run when dates are selected

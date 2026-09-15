@@ -10,9 +10,9 @@ interface deletePersonResponse {
 }
 
 async function deletePerson(id: string, user: Person) {
-  // check authentication
-  if (!user) {
-    throw new Error(errorMSG.unauthorized);
+  // Only admins or authorized roles can delete people
+  if (user.role !== "ADMIN") {
+    throw new Error(errorMSG.noPermission);
   }
 
   const person = await db.person.findUnique({ where: { id } });

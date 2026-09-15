@@ -78,4 +78,6 @@ export const successMSG = {
 
   personsAndShopsAdded: "اشخاص و فروشگاهها با موفقیت اضافه شد",
   historyUpdated: "تاریخچه با موفقیت به‌روزرسانی شد.",
+  historyUpdatedChargesKept:
+    "تاریخچه به‌روزرسانی شد، اما در برخی دوره‌ها هیچ فردی در واحد نبود و شارژ آن دوره‌ها بدون تغییر باقی ماند.",
 };

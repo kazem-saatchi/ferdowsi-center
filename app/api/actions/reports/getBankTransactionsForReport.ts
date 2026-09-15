@@ -1,8 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { handleServerAction } from "@/utils/handleServerAction";
+import { errorMSG } from "@/utils/messages";
 import { bankAmountToNumber } from "@/utils/bankAmount";
-import { TransactionType, TransactionCategory } from "@prisma/client";
+import { Person, TransactionType, TransactionCategory } from "@prisma/client";
 
 export interface BankTransactionData {
   id: string;
@@ -22,10 +24,15 @@ export interface BankTransactionData {
   branch?: number | null;
 }
 
-export async function getBankTransactionsForReport(
+async function fetchBankTransactionsForReport(
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  user: Person
 ): Promise<BankTransactionData[]> {
+  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
+    throw new Error(errorMSG.unauthorized);
+  }
+
   const transactions = await db.bankTransaction.findMany({
     where: {
       date: {
@@ -61,5 +68,14 @@ export async function getBankTransactionsForReport(
     amount: bankAmountToNumber(t.amount),
     balance: bankAmountToNumber(t.balance),
   }));
+}
+
+export async function getBankTransactionsForReport(
+  startDate: Date,
+  endDate: Date
+) {
+  return handleServerAction<BankTransactionData[]>((user) =>
+    fetchBankTransactionsForReport(startDate, endDate, user)
+  );
 }
 

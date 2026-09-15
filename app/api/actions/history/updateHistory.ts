@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
-import { Prisma, HistoryType } from "@prisma/client";
+import { Prisma, HistoryType, Person } from "@prisma/client";
 import {
   recomputeShopMonthlyCharges,
   OperationChargeDiff,
@@ -21,6 +21,7 @@ export interface UpdateHistoryResponse {
   success: boolean;
   message: string;
   recalculated?: OperationChargeDiff[];
+  noOccupantWindows?: boolean;
 }
 
 /**
@@ -141,20 +142,33 @@ export async function applyHistoryDateChange(
 }
 
 async function updateHistory(
-  data: UpdateHistoryData
+  data: UpdateHistoryData,
+  user: Person
 ): Promise<UpdateHistoryResponse> {
+  // Check authentication
+  if (!user || user.role !== "ADMIN") {
+    throw new Error(errorMSG.unauthorized);
+  }
+
   const recalculated = await db.$transaction(async (tx) => {
     const { shopId } = await applyHistoryDateChange(tx, data);
     return recomputeShopMonthlyCharges(tx, shopId, { apply: true });
   });
 
+  const noOccupantWindows = recalculated.some((op) => op.noOccupantInWindow);
+
   return {
     success: true,
-    message: successMSG.historyUpdated,
+    message: noOccupantWindows
+      ? successMSG.historyUpdatedChargesKept
+      : successMSG.historyUpdated,
     recalculated,
+    noOccupantWindows,
   };
 }
 
 export default async function updateHistoryAction(data: UpdateHistoryData) {
-  return handleServerAction<UpdateHistoryResponse>(() => updateHistory(data));
+  return handleServerAction<UpdateHistoryResponse>((user) =>
+    updateHistory(data, user)
+  );
 }

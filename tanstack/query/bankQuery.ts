@@ -11,6 +11,21 @@ import { getTransactionData } from "@/app/api/actions/bank/getTransactionData";
 
 //------------------Bank--------------------
 
+// The bank readers are wrapped in handleServerAction, which returns a
+// {success, message, data} envelope. The pages below consume the raw paginated
+// result, so the envelope is unwrapped here and a failure is turned into a
+// rejected query.
+function unwrap<T>(response: {
+  success: boolean;
+  message: string;
+  data?: T;
+}): T {
+  if (!response.success || !response.data) {
+    throw new Error(response.message);
+  }
+  return response.data;
+}
+
 // Get All Card Transfer - Card To Card
 export function useGetAllCardTransfer({
   page,
@@ -22,10 +37,12 @@ export function useGetAllCardTransfer({
   return useQuery({
     queryKey: ["cardTransfer", page, limit],
     queryFn: async () => {
-      return getBankCardTransfer({
-        page: Number(page),
-        limit: Number(limit),
-      });
+      return unwrap(
+        await getBankCardTransfer({
+          page: Number(page),
+          limit: Number(limit),
+        })
+      );
     },
     placeholderData: keepPreviousData,
   });
@@ -47,7 +64,7 @@ export function useGetAllBankTransactions(args: UseBankTransactionsArgs) {
     // object means a filter can never be left out of the key again.
     queryKey: ["bankTransactions", args],
     // Query function: Calls the server action
-    queryFn: () => getBankTransactions(args),
+    queryFn: async () => unwrap(await getBankTransactions(args)),
     // Keep previous data while loading the next page for smoother pagination
     placeholderData: keepPreviousData,
   });
@@ -64,10 +81,12 @@ export function useGetAllFailedCardTransfer({
   return useQuery({
     queryKey: ["failedCardTransfer", page, limit],
     queryFn: async () => {
-      return getBankFailedCardTransfer({
-        page: Number(page),
-        limit: Number(limit),
-      });
+      return unwrap(
+        await getBankFailedCardTransfer({
+          page: Number(page),
+          limit: Number(limit),
+        })
+      );
     },
     placeholderData: keepPreviousData,
   });
@@ -84,10 +103,12 @@ export function useGetAllIncomeTransfer({
   return useQuery({
     queryKey: ["incomeTransfer", page, limit],
     queryFn: async () => {
-      return getBankIncomeTransfer({
-        page: Number(page),
-        limit: Number(limit),
-      });
+      return unwrap(
+        await getBankIncomeTransfer({
+          page: Number(page),
+          limit: Number(limit),
+        })
+      );
     },
     placeholderData: keepPreviousData,
   });

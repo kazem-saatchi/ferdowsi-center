@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { handleServerAction } from "@/utils/handleServerAction";
+import { errorMSG } from "@/utils/messages";
 import {
   getPersonNameMap,
   withCurrentPersonNames,
@@ -49,6 +50,15 @@ async function getShopBalance(
     return {
       success: false,
     };
+  }
+
+  // Check authentication
+  if (
+    shop.ownerId !== user.id &&
+    shop.renterId !== user.id &&
+    user.role !== "ADMIN"
+  ) {
+    throw new Error(errorMSG.unauthorized);
   }
 
   const payments = await db.payment.findMany({

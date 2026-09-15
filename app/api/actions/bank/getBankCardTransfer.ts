@@ -2,11 +2,13 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { handleServerAction } from "@/utils/handleServerAction";
+import { errorMSG } from "@/utils/messages";
 import {
   serializeBankTransaction,
   SerializedBankTransaction,
 } from "@/utils/bankAmount";
-import { BankTransaction, Prisma } from "@prisma/client";
+import { BankTransaction, Person, Prisma } from "@prisma/client";
 
 // Define options for fetching, including pagination and sorting
 interface GetTransactionsOptions {
@@ -29,9 +31,14 @@ interface GetTransactionsResult {
   currentPage: number;
 }
 
-export async function getBankCardTransfer(
-  options: GetTransactionsOptions = {}
+async function fetchBankCardTransfer(
+  options: GetTransactionsOptions,
+  user: Person
 ): Promise<GetTransactionsResult> {
+  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
+    throw new Error(errorMSG.unauthorized);
+  }
+
   const {
     page = 1,
     limit = 100, // Default limit
@@ -111,4 +118,12 @@ export async function getBankCardTransfer(
     // Or return a structured error:
     // return { data: [], totalCount: 0, totalPages: 0, currentPage: 1, error: 'Failed to fetch data' };
   }
+}
+
+export async function getBankCardTransfer(
+  options: GetTransactionsOptions = {}
+) {
+  return handleServerAction<GetTransactionsResult>((user) =>
+    fetchBankCardTransfer(options, user)
+  );
 }

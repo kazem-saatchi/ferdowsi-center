@@ -1,11 +1,29 @@
 "use server";
 
 import { S3 } from "aws-sdk";
+import { verifyToken } from "@/utils/auth";
+import { errorMSG } from "@/utils/messages";
 
 const accessKeyId = process.env.LIARA_ACCESS_KEY!;
 const secretAccessKey = process.env.LIARA_SECRET_KEY!;
 const bucket = process.env.LIARA_BUCKET_NAME!;
 const endpoint = process.env.LIARA_ENDPOINT!;
+
+// Mirrors the accepted types the picker enforces in
+// components/upload-file/UploadImage.tsx — the client check is a convenience,
+// this one is the real gate.
+const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+
+// A key segment is interpolated straight into the S3 Key, so anything that
+// could climb out of the intended folder is rejected rather than rewritten.
+function isSafeKeySegment(value: string): boolean {
+  return (
+    value.length > 0 &&
+    !value.includes("/") &&
+    !value.includes("\\") &&
+    !value.includes("..")
+  );
+}
 
 interface GenerateUploadUrlResponse {
   success: boolean;
@@ -19,6 +37,20 @@ export default async function generateUploadUrl(
   fileType: string,
   folderName: string
 ): Promise<GenerateUploadUrlResponse> {
+  const auth = await verifyToken();
+
+  if (!auth.success || !auth.person) {
+    return { success: false, message: errorMSG.unauthorized };
+  }
+
+  if (!ACCEPTED_FILE_TYPES.includes(fileType)) {
+    return { success: false, message: errorMSG.invalidInput };
+  }
+
+  if (!isSafeKeySegment(id) || !isSafeKeySegment(folderName)) {
+    return { success: false, message: errorMSG.invalidInput };
+  }
+
   const fileName = `${id}`;
   const dateTime = new Date().getTime();
 

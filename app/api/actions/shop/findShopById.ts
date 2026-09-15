@@ -11,17 +11,21 @@ interface findShopResponse {
 }
 
 async function findShop(id: string, user: Person) {
-  // check authentication
-  if (!user) {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   // find Shop by Id
   const shop = await db.shop.findUnique({
     where: { id },
   });
   if (!shop) {
     throw new Error(errorMSG.shopIdNotFound);
+  }
+
+  // Check authentication
+  if (
+    shop.ownerId !== user.id &&
+    shop.renterId !== user.id &&
+    user.role !== "ADMIN"
+  ) {
+    throw new Error(errorMSG.unauthorized);
   }
 
   return { message: successMSG.shopIdFound, shop: shop };

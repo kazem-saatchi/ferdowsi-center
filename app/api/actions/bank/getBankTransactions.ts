@@ -2,6 +2,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { handleServerAction } from "@/utils/handleServerAction";
+import { errorMSG } from "@/utils/messages";
 import {
   serializeBankTransaction,
   SerializedBankTransaction,
@@ -11,6 +13,7 @@ import {
   BankTransactionFilters,
   BankTransactionSortField,
 } from "@/utils/bankTransactionFilters";
+import { Person } from "@prisma/client";
 
 // Pagination and sorting on top of the shared filter set. Every filter is
 // optional, so existing callers that pass only page/limit keep working.
@@ -29,16 +32,27 @@ interface GetTransactionsResult {
   currentPage: number;
 }
 
-export async function getBankTransactions(
-  options: GetTransactionsOptions = {}
+// Upper bound on page size, so one call cannot page the whole ledger out in a
+// single request.
+const MAX_LIMIT = 100;
+
+async function fetchBankTransactions(
+  options: GetTransactionsOptions,
+  user: Person
 ): Promise<GetTransactionsResult> {
+  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
+    throw new Error(errorMSG.unauthorized);
+  }
+
   const {
     page = 1,
-    limit = 10, // Default limit
+    limit: requestedLimit = 10, // Default limit
     sortBy = "date", // Default sort field
     sortOrder = "desc", // Default sort order
     ...filters
   } = options;
+
+  const limit = Math.min(requestedLimit, MAX_LIMIT);
 
   const skip = (page - 1) * limit;
 
@@ -74,4 +88,12 @@ export async function getBankTransactions(
     // It's often better to throw the error and let TanStack Query handle it
     throw new Error("Failed to fetch bank transactions.");
   }
+}
+
+export async function getBankTransactions(
+  options: GetTransactionsOptions = {}
+) {
+  return handleServerAction<GetTransactionsResult>((user) =>
+    fetchBankTransactions(options, user)
+  );
 }
