@@ -8,6 +8,7 @@ import {
 import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { CostCategory, Person } from "@prisma/client";
+import { claimBankTransaction } from "@/utils/bankRegistration";
 
 interface AddCostResponse {
   costId: string;
@@ -29,6 +30,9 @@ async function addCostData(
     );
   }
 
+  // Fast, friendly pre-check only. The authoritative check is the conditional
+  // claim inside the transaction below — this read cannot be trusted, because
+  // another request can register the row between here and the write.
   const checkCost = await db.cost.findFirst({
     where: { bankTransactionId: validation.data.bankTransactionId },
   });
@@ -37,7 +41,7 @@ async function addCostData(
     throw new Error(errorMSG.txAlreadyExist);
   }
 
-  const { newCost, updatedBankTx } = await db.$transaction(async (prisma) => {
+  const newCost = await db.$transaction(async (prisma) => {
     const newCost = await prisma.cost.create({
       data: {
         title: validation.data.title,
@@ -51,17 +55,17 @@ async function addCostData(
       },
     });
 
-    const updatedBankTx = await prisma.bankTransaction.update({
-      where: { id: validation.data.bankTransactionId },
-      data: {
-        registered: true,
-        referenceId: newCost.id,
-        referenceType: "COST",
-        category: validation.data.proprietor ? "YEARLY" : "MONTHLY",
-      },
+    // Claim after creating, inside the same transaction: a losing claim throws
+    // and rolls the cost back, so one bank row can never become two costs — or
+    // a cost on top of a payment.
+    await claimBankTransaction(prisma, {
+      bankTransactionId: validation.data.bankTransactionId,
+      referenceId: newCost.id,
+      referenceType: "COST",
+      category: validation.data.proprietor ? "YEARLY" : "MONTHLY",
     });
 
-    return { newCost, updatedBankTx };
+    return newCost;
   });
 
   return {

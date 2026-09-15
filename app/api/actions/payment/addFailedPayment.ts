@@ -6,6 +6,7 @@ import { errorMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 import { resolveShopPersonAtDate } from "./resolveOccupant";
 import { toInt4Amount } from "@/utils/bankAmount";
+import { claimBankTransaction } from "@/utils/bankRegistration";
 
 type PaymentResponse = {
   success: boolean;
@@ -36,6 +37,9 @@ async function addFailedPaymentFromCard(
     return { success: false, message: "تراکنش یافت نشد" };
   }
 
+  // Fast, friendly pre-check only. The authoritative check is the conditional
+  // claim inside the transaction below — this read cannot be trusted, because
+  // another request can register the row between here and the write.
   if (bankTransaction.registered) {
     return { success: false, message: "تراکنش قبلا ثبت شده" };
   }
@@ -125,19 +129,18 @@ async function addFailedPaymentFromCard(
         },
       });
 
-      await prisma.bankTransaction.update({
-        where: { id },
-        data: {
-          registered: true,
-          referenceId: charge.id,
-          // NOTE: referenceId points at a Charge record, but the ReferenceType
-          // enum has no "CHARGE" value — "PAYMENT" is the closest available option.
-          // If a CHARGE enum value is added in the future, update this field.
-          referenceType: "PAYMENT",
-          category: isProprietor ? "YEARLY" : "MONTHLY",
-        },
+      // Claim after creating, inside the same transaction: a losing claim
+      // throws and rolls the charge (and its operation) back, so one returned
+      // transfer can never be charged back twice.
+      await claimBankTransaction(prisma, {
+        bankTransactionId: id,
+        referenceId: charge.id,
+        // NOTE: referenceId points at a Charge record, but the ReferenceType
+        // enum has no "CHARGE" value — "PAYMENT" is the closest available option.
+        // If a CHARGE enum value is added in the future, update this field.
+        referenceType: "PAYMENT",
+        category: isProprietor ? "YEARLY" : "MONTHLY",
       });
-
 
       return charge;
     });
@@ -154,7 +157,10 @@ async function addFailedPaymentFromCard(
     });
     return {
       success: false,
-      message: "ثبت اطلاعات ناموفق بود",
+      // Surface the real reason — "تراکنش قبلا ثبت شده است", "واحد پیدا نشد",
+      // or the overflow diagnostic from utils/bankAmount.ts — instead of one
+      // opaque sentence that hides every useful diagnostic.
+      message: error instanceof Error ? error.message : "ثبت اطلاعات ناموفق بود",
       errorCode: "PROCESSING_ERROR",
     };
   }

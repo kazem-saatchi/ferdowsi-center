@@ -3,79 +3,79 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model Shop {
-  id                  String  @id @unique @default(uuid())
-  plaque              Int     @unique
-  area                Float
-  floor               Int
-  type                ShopType
-  ownerId             String
-  renterId            String?
-  isActive            Boolean @default(true)
-  ownerName           String  @default("")
-  renterName          String?
+  id         String   @id @unique @default(uuid())
+  plaque     Int      @unique
+  area       Float
+  floor      Int
+  type       ShopType
+  ownerId    String
+  renterId   String?
+  isActive   Boolean  @default(true)
+  ownerName  String   @default("")
+  renterName String?
 
-  isForRent           Boolean @default(false)
-  rentAmount          Int     @default(0)
+  isForRent    Boolean @default(false)
+  rentAmount   Int     @default(0)
   // BigInt: a رهن (mortgage deposit) in rial routinely exceeds INT4's
   // 2,147,483,647 ceiling, so this would have failed on the first real value.
-  rentMortgage        BigInt  @default(0)
+  rentMortgage BigInt  @default(0)
 
-  isForSell           Boolean @default(false)
+  isForSell  Boolean @default(false)
   // BigInt: a shop sale price in rial is comfortably past the INT4 ceiling.
-  sellAmount          BigInt  @default(0)
+  sellAmount BigInt  @default(0)
 
-  bankCardMonthly     String
-  bankCardYearly      String
+  bankCardMonthly String
+  bankCardYearly  String
 
-  owner               Person  @relation("ShopOwner", fields: [ownerId], references: [id])
-  renter              Person? @relation("ShopRenter", fields: [renterId], references: [id])
+  owner  Person  @relation("ShopOwner", fields: [ownerId], references: [id])
+  renter Person? @relation("ShopRenter", fields: [renterId], references: [id])
 
-  description         String?
+  description String?
 
-  RentAmount          Int?      // For Kiost and Parking and Board Monthly Rent
-  ChargeAmount        Int?      // For Kiost and Parking and Board Monthly Charge
-  rentDate            DateTime? // For Kiost and Parking and Board Rent Date
+  RentAmount   Int? // For Kiost and Parking and Board Monthly Rent
+  ChargeAmount Int? // For Kiost and Parking and Board Monthly Charge
+  rentDate     DateTime? // For Kiost and Parking and Board Rent Date
 
-  chargeData          ShopChargeReference[]
-  histories           ShopHistory[]
-  charges             Charge[]
-  payments            Payment[]
+  chargeData ShopChargeReference[]
+  histories  ShopHistory[]
+  charges    Charge[]
+  payments   Payment[]
 }
 
 enum ShopType {
   STORE
   OFFICE
-  KIOSK     // مشاعات
-  PARKING   // پارکینگ
-  BOARD     // تابلو
+  KIOSK // مشاعات
+  PARKING // پارکینگ
+  BOARD // تابلو
 }
 
 model Person {
-  id            String @id @unique @default(uuid())
-  phoneOne      String
-  phoneTwo      String?
-  IdNumber      String @unique
-  firstName     String
-  lastName      String
-  password      String
-  isActive      Boolean @default(true)
-  role          Role @default(USER)
-  address       String?
+  id        String  @id @unique @default(uuid())
+  phoneOne  String
+  phoneTwo  String?
+  IdNumber  String  @unique
+  firstName String
+  lastName  String
+  password  String
+  isActive  Boolean @default(true)
+  role      Role    @default(USER)
+  address   String?
 
-  visable       Boolean @default(true)
+  visable Boolean @default(true)
 
-  ownedShops    Shop[] @relation("ShopOwner")
-  rentedShops   Shop[] @relation("ShopRenter")
+  ownedShops  Shop[] @relation("ShopOwner")
+  rentedShops Shop[] @relation("ShopRenter")
 
-  histories     ShopHistory[]
-  charges       Charge[]
-  payments      Payment[]
+  histories ShopHistory[]
+  charges   Charge[]
+  payments  Payment[]
 }
 
 enum Role {
@@ -86,21 +86,21 @@ enum Role {
 }
 
 model ShopHistory {
-  id            String   @id @unique @default(uuid())
-  shopId        String
-  plaque        Int
-  personId      String
-  personName    String
-  type          HistoryType
-  startDate     DateTime
-  endDate       DateTime?
-  isActive      Boolean  @default(true)
-  shopType      ShopType
+  id         String      @id @unique @default(uuid())
+  shopId     String
+  plaque     Int
+  personId   String
+  personName String
+  type       HistoryType
+  startDate  DateTime
+  endDate    DateTime?
+  isActive   Boolean     @default(true)
+  shopType   ShopType
 
-  shop          Shop     @relation(fields: [shopId], references: [id])
-  person        Person   @relation(fields: [personId], references: [id])
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  person Person @relation(fields: [personId], references: [id])
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([shopId])
   @@index([personId])
@@ -114,25 +114,30 @@ enum HistoryType {
 }
 
 model Charge {
-  id            String   @id @unique @default(uuid())
-  title         String
-  amount        Int
-  shopId        String
-  plaque        Int
-  personId      String
-  personName    String
-  date          DateTime
-  operationId   String
-  operationName String
-  daysCount     Int
-  proprietor    Boolean     @default(false)  //مالکانه
-  description   String      @default("") @db.Text
-  forRent       Boolean     @default(false)
-  bankTransactionId String?
+  id                String   @id @unique @default(uuid())
+  title             String
+  amount            Int
+  shopId            String
+  plaque            Int
+  personId          String
+  personName        String
+  date              DateTime
+  operationId       String
+  operationName     String
+  daysCount         Int
+  proprietor        Boolean  @default(false) //مالکانه
+  description       String   @default("") @db.Text
+  forRent           Boolean  @default(false)
+  // At most one Charge per bank row. Nullable, and Postgres allows unlimited
+  // NULLs in a unique index, so ordinary charges (no bank row) are unaffected
+  // while a bounced transfer can be charged back exactly once. The unique
+  // constraint also supplies the index the duplicate check needs — do not add
+  // a second @@index for this column.
+  bankTransactionId String?  @unique
 
-  shop          Shop    @relation(fields: [shopId],references: [id])
-  person        Person  @relation(fields: [personId],references: [id])
-  operation     Operation @relation(fields: [operationId],references: [id])
+  shop      Shop      @relation(fields: [shopId], references: [id])
+  person    Person    @relation(fields: [personId], references: [id])
+  operation Operation @relation(fields: [operationId], references: [id])
 
   @@index([operationId])
   @@index([shopId])
@@ -140,9 +145,9 @@ model Charge {
 }
 
 model Payment {
-  id                String   @id @unique @default(uuid())
+  id                String      @id @unique @default(uuid())
   amount            Int
-  title             String  @default("")
+  title             String      @default("")
   shopId            String
   plaque            Int
   personId          String
@@ -152,10 +157,14 @@ model Payment {
   type              PaymentType @default(CASH)
   description       String      @default("") @db.Text
   receiptImageUrl   String      @default("")
-  bankTransactionId String?
+  // At most one Payment per bank row — the database-level backstop for the
+  // conditional claim in utils/bankRegistration.ts. NULLs are unconstrained, so
+  // manually entered payments are unaffected. Also the index the duplicate
+  // check needs; do not add a second @@index for this column.
+  bankTransactionId String?     @unique
 
-  shop              Shop    @relation(fields: [shopId],references: [id])
-  person            Person  @relation(fields: [personId],references: [id])
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  person Person @relation(fields: [personId], references: [id])
 
   @@index([shopId])
   @@index([personId])
@@ -170,93 +179,94 @@ enum PaymentType {
 }
 
 model Operation {
-  id            String   @id @unique @default(uuid())
-  title         String
-  date          DateTime
+  id    String   @id @unique @default(uuid())
+  title String
+  date  DateTime
 
-  createdAt     DateTime @default(now())
-  deleted       Boolean @default(false)
+  createdAt     DateTime      @default(now())
+  deleted       Boolean       @default(false)
   operationType OperationType @default(CHARGE)
 
-  charges       Charge[]
+  charges Charge[]
 }
 
 enum OperationType {
   CHARGE
   BANK
-
 }
 
 model Log {
   id          String   @id @unique @default(uuid())
-  action      String   // Description of the action (e.g., "Payment Added")
-  details     String?  // Optional JSON or text for additional information
-  performedBy String   // ID of the user who performed the action
-  shopId      String?  // Optional reference to the shop (if relevant)
-  personId    String?  // Optional reference to the person (if relevant)
+  action      String // Description of the action (e.g., "Payment Added")
+  details     String? // Optional JSON or text for additional information
+  performedBy String // ID of the user who performed the action
+  shopId      String? // Optional reference to the shop (if relevant)
+  personId    String? // Optional reference to the person (if relevant)
   timestamp   DateTime @default(now()) // Automatically logs the time
 }
 
 model Session {
-  id          String   @id @default(uuid())
-  personId    String
-  idNumber    String
-  createdAt   DateTime @default(now())
-  expireAt    DateTime
+  id        String   @id @default(uuid())
+  personId  String
+  idNumber  String
+  createdAt DateTime @default(now())
+  expireAt  DateTime
 
   @@index([personId])
 }
 
 model ShopChargeReference {
-  id              String    @id @unique @default(uuid())
-  shopId          String
-  plaque          Int
-  area            Float
-  shopType        ShopType  @default(STORE)
+  id       String   @id @unique @default(uuid())
+  shopId   String
+  plaque   Int
+  area     Float
+  shopType ShopType @default(STORE)
 
-  constantAmount  Int
-  metricAmount    Int
-  totalAmount     Int
-  year            Int       @default(2000)
-  proprietor      Boolean   @default(false) //مالکانه
-  forRent         Boolean   @default(false)
+  constantAmount Int
+  metricAmount   Int
+  totalAmount    Int
+  year           Int     @default(2000)
+  proprietor     Boolean @default(false) //مالکانه
+  forRent        Boolean @default(false)
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  shop            Shop      @relation(fields: [shopId], references: [id])
+  shop Shop @relation(fields: [shopId], references: [id])
 
+  @@unique([shopId, proprietor])
   @@index([shopId])
   @@index([year])
-  @@unique([shopId,proprietor])
 }
 
 model Cost {
-  id                String   @id @unique @default(uuid())
+  id                String       @id @unique @default(uuid())
   title             String
   amount            Int
   date              DateTime
-  description       String  @db.Text @default("")
+  description       String       @default("") @db.Text
   category          CostCategory
-  billImage         String    @default("")
-  proprietor        Boolean   @default(false) //مالکانه
-  name              String    @default("") // نام فرد یا شرکت
-  bankTransactionId String?  // ID from BankTransaction Table
+  billImage         String       @default("")
+  proprietor        Boolean      @default(false) //مالکانه
+  name              String       @default("") // نام فرد یا شرکت
+  // At most one Cost per bank row. NULLs are unconstrained, so costs entered by
+  // hand are unaffected. Also the index this lookup needs.
+  bankTransactionId String?      @unique // ID from BankTransaction Table
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 enum CostCategory {
-  ELECTRICITY   // قبض برق
-  WATER         // قبض آب
-  GAS           // قبض گاز
-  ELEVATOR      // تعمیرات آسانسور
-  ESCALATOR     // تعمیرات پله برقی
-  CHILLER       // تعمیرات موتورخانه
-  CLEANING      // خدمات نظافت
-  SECURITY      // خدمات نگهبانی
-  SALARY        // حقوق کارمندان
-  UTILITIES     // تجهیزات
-  TAX           // مالیات
+  ELECTRICITY // قبض برق
+  WATER // قبض آب
+  GAS // قبض گاز
+  ELEVATOR // تعمیرات آسانسور
+  ESCALATOR // تعمیرات پله برقی
+  CHILLER // تعمیرات موتورخانه
+  CLEANING // خدمات نظافت
+  SECURITY // خدمات نگهبانی
+  SALARY // حقوق کارمندان
+  UTILITIES // تجهیزات
+  TAX // مالیات
   OTHER_PAYMENT // سایر خدمات
 }
 
@@ -265,47 +275,47 @@ model Income {
   title         String
   amount        Int
   date          DateTime
-  description   String  @db.VarChar(255) @default("")
-  billImage     String    @default("")
-  proprietor    Boolean   @default(false) //مالکانه
-  name          String    @default("") // نام فرد یا شرکت
-  transactionId String?     // BankTransaction reference ID
+  description   String   @default("") @db.VarChar(255)
+  billImage     String   @default("")
+  proprietor    Boolean  @default(false) //مالکانه
+  name          String   @default("") // نام فرد یا شرکت
+  transactionId String? // BankTransaction reference ID
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model BankTransaction {
-  id                  String   @id @default(uuid())
-  recieverAccount     String?               // Bank account number (e.g., "1234-5678-9012-3456")
-  senderAccount       String?               // Bank account number (e.g., "1234-5678-9012-3456")
+  id                String               @id @default(uuid())
+  recieverAccount   String? // Bank account number (e.g., "1234-5678-9012-3456")
+  senderAccount     String? // Bank account number (e.g., "1234-5678-9012-3456")
   // BigInt, not Int: a rial balance passed 2,147,483,647 (INT4 max) in
   // 1405/04, and every statement row above it failed to insert. See
   // utils/bankAmount.ts for the boundary where these reach Int columns.
-  amount              BigInt
-  balance             BigInt
-  type                TransactionType       // INCOME or PAYMENT
-  category            TransactionCategory?  // More specific category
-  description         String
-  date                DateTime @default(now()) // Transaction date
-  createdAt           DateTime @default(now()) // When record was created
-  bankAccountNumber   String  // Bank Account Number
-  accountType         AccountType
-  bankReferenceId     String  // Bank Transaction Id // شماره سند
-  bankRecieptId       String? // شماره قبض
-  chequeNumber        String? // شماره چک
-  branch              Int?    // Bank Branch number
+  amount            BigInt
+  balance           BigInt
+  type              TransactionType // INCOME or PAYMENT
+  category          TransactionCategory? // More specific category
+  description       String
+  date              DateTime             @default(now()) // Transaction date
+  createdAt         DateTime             @default(now()) // When record was created
+  bankAccountNumber String // Bank Account Number
+  accountType       AccountType
+  bankReferenceId   String // Bank Transaction Id // شماره سند
+  bankRecieptId     String? // شماره قبض
+  chequeNumber      String? // شماره چک
+  branch            Int? // Bank Branch number
 
   // Identity hash — see utils/bankRowHash.ts. Backs the unique index that makes
   // re-importing an overlapping statement date range idempotent. Nullable only
   // so the column could be added to a populated table; every row is backfilled.
-  rowHash             String? @unique
+  rowHash String? @unique
 
   //  reference fields for Cost/Income/Charge
-  registered        Boolean @default(false)
-  referenceId       String?
-  referenceType     ReferenceType?
+  registered    Boolean        @default(false)
+  referenceId   String?
+  referenceType ReferenceType?
 
-  registerAble      Boolean @default(true)
+  registerAble Boolean @default(true)
 
   @@index([recieverAccount])
   @@index([date])
@@ -319,9 +329,9 @@ enum AccountType {
 }
 
 enum ReferenceType {
-  PAYMENT       // in Payment Table
-  COST          // in Cost Table
-  INCOME        // in Income Table
+  PAYMENT // in Payment Table
+  COST // in Cost Table
+  INCOME // in Income Table
 }
 
 enum TransactionType {
@@ -332,27 +342,26 @@ enum TransactionType {
 
 enum TransactionCategory {
   // Income categories
-  KIOSK         // درآمد مشاعات
-  MONTHLY       // درآمد شارژ ماهانه
-  YEARLY        // درآمد شارژ مالکانه
-  RENT          // درآمد از اجاره
-  SELL          // دزآمد فروش
-  ADVERTISMENT  // درآمد تبلیغات
-  CONTRACT_FEE   // درآمد
-  OTHER_INCOME  // سایر درآمدها
+  KIOSK // درآمد مشاعات
+  MONTHLY // درآمد شارژ ماهانه
+  YEARLY // درآمد شارژ مالکانه
+  RENT // درآمد از اجاره
+  SELL // دزآمد فروش
+  ADVERTISMENT // درآمد تبلیغات
+  CONTRACT_FEE // درآمد
+  OTHER_INCOME // سایر درآمدها
 
   // Payment categories
-  ELECTRICITY   // قبض برق
-  WATER         // قبض آب
-  GAS           // قبض گاز
-  ELEVATOR      // تعمیرات آسانسور
-  ESCALATOR     // تعمیرات پله برقی
-  CHILLER       // تعمیرات موتورخانه
-  CLEANING      // خدمات نظافت
-  SECURITY      // خدمات نگهبانی
-  SALARY        // حقوق کارمندان
-  UTILITIES     // تجهیزات
-  TAX           // مالیات
+  ELECTRICITY // قبض برق
+  WATER // قبض آب
+  GAS // قبض گاز
+  ELEVATOR // تعمیرات آسانسور
+  ESCALATOR // تعمیرات پله برقی
+  CHILLER // تعمیرات موتورخانه
+  CLEANING // خدمات نظافت
+  SECURITY // خدمات نگهبانی
+  SALARY // حقوق کارمندان
+  UTILITIES // تجهیزات
+  TAX // مالیات
   OTHER_PAYMENT // سایر خدمات
-
 }

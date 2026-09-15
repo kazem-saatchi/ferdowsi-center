@@ -1,0 +1,103 @@
+-- One bank row, one financial record.
+--
+-- A BankTransaction becomes exactly one of a Payment, a Charge (bounced
+-- transfer) or a Cost. That invariant was enforced only by a read-then-write in
+-- application code, which is a TOCTOU race: two concurrent registrations both
+-- read `registered = false` and both insert, crediting the same money twice.
+-- The application side is now a conditional UPDATE (utils/bankRegistration.ts);
+-- these indexes are the database-level backstop behind it.
+--
+-- The columns are nullable and Postgres permits unlimited NULLs in a unique
+-- index, so this constrains only rows that actually link to a bank row —
+-- hand-entered payments, ordinary monthly charges and manual costs are
+-- untouched. A unique index is also a usable index, so the duplicate-check
+-- queries stop sequential-scanning Payment and Charge; no separate plain index
+-- is created, as that would be redundant.
+--
+-- Written by hand rather than generated: `prisma migrate dev` needs DIRECT_URL
+-- (port 5432), while only the pooler (6543) is reliably reachable here. Every
+-- statement is idempotent, so this is safe to apply through either connection
+-- and safe to re-run.
+--
+-- ============================================================================
+-- WARNING — THIS MIGRATION CAN FAIL ON EXISTING DATA. CHECK FIRST.
+-- ============================================================================
+-- Production may already contain the duplicates these indexes forbid: that is
+-- the bug being fixed. `CREATE UNIQUE INDEX` on a table that already violates
+-- the constraint ABORTS — it does not delete anything, and this migration
+-- deliberately deletes nothing. Financial records are resolved by a human, not
+-- by a migration.
+--
+-- Run the three queries below BEFORE applying. Each returns zero rows on a
+-- clean database. Any row it does return is a bank transaction that produced
+-- more than one record of that kind, or (the cross-table query) one that
+-- produced records of different kinds — exactly the double-counted money. Have
+-- an operator review each one, delete or re-point the wrong record through the
+-- application, then apply this migration.
+--
+--   -- 1. Bank rows with more than one Payment:
+--   SELECT "bankTransactionId", COUNT(*) AS payments
+--   FROM "Payment"
+--   WHERE "bankTransactionId" IS NOT NULL
+--   GROUP BY "bankTransactionId"
+--   HAVING COUNT(*) > 1;
+--
+--   -- 2. Bank rows with more than one Charge:
+--   SELECT "bankTransactionId", COUNT(*) AS charges
+--   FROM "Charge"
+--   WHERE "bankTransactionId" IS NOT NULL
+--   GROUP BY "bankTransactionId"
+--   HAVING COUNT(*) > 1;
+--
+--   -- 3. Bank rows with more than one Cost:
+--   SELECT "bankTransactionId", COUNT(*) AS costs
+--   FROM "Cost"
+--   WHERE "bankTransactionId" IS NOT NULL
+--   GROUP BY "bankTransactionId"
+--   HAVING COUNT(*) > 1;
+--
+-- The indexes below cannot catch a bank row consumed once as a Payment AND
+-- once as a Charge or Cost — the cross-table case from the original bug, where
+-- a shop is both charged and credited for one transfer. Only the application
+-- claim prevents new ones. This query finds the existing ones, which are worth
+-- reviewing at the same time (it returns rows on a database that the unique
+-- indexes would still accept):
+--
+--   SELECT b.id,
+--          b.amount,
+--          b.date,
+--          b.description,
+--          p.id AS payment_id,
+--          c.id AS charge_id,
+--          k.id AS cost_id
+--   FROM "BankTransaction" b
+--   LEFT JOIN "Payment" p ON p."bankTransactionId" = b.id
+--   LEFT JOIN "Charge"  c ON c."bankTransactionId" = b.id
+--   LEFT JOIN "Cost"    k ON k."bankTransactionId" = b.id
+--   WHERE (p.id IS NOT NULL)::int
+--       + (c.id IS NOT NULL)::int
+--       + (k.id IS NOT NULL)::int > 1;
+--
+-- A third class of damage predates this migration and is not addressed by it:
+-- bank rows left `registered = true` pointing at a Payment that was since
+-- deleted, which vanish from /card-transfer and can never be re-registered.
+-- deletePayment now releases the row on delete; the already-stranded rows are
+-- found with this query and must be released by an operator:
+--
+--   SELECT b.id, b.amount, b.date, b."referenceId"
+--   FROM "BankTransaction" b
+--   WHERE b.registered = true
+--     AND b."referenceId" IS NOT NULL
+--     AND NOT EXISTS (SELECT 1 FROM "Payment" p WHERE p.id = b."referenceId")
+--     AND NOT EXISTS (SELECT 1 FROM "Charge"  c WHERE c.id = b."referenceId")
+--     AND NOT EXISTS (SELECT 1 FROM "Cost"    k WHERE k.id = b."referenceId");
+-- ============================================================================
+
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "Payment_bankTransactionId_key" ON "Payment"("bankTransactionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "Charge_bankTransactionId_key" ON "Charge"("bankTransactionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "Cost_bankTransactionId_key" ON "Cost"("bankTransactionId");

@@ -30,8 +30,30 @@ async function deletePayment(
     throw new Error(errorMSG.paymentNotFound);
   }
 
-  // Delete Payment
-  await db.payment.delete({ where: { id: paymentId } });
+  // Delete Payment, and release the bank transaction it consumed in the same
+  // transaction. Without the release the row stays `registered = true` and
+  // points at a deleted Payment: it is filtered out of /card-transfer (which
+  // requires `registered: false`), so the money sits in the bank, absent from
+  // every balance, and can never be re-registered through the UI.
+  await db.$transaction(async (prisma) => {
+    await prisma.payment.delete({ where: { id: paymentId } });
+
+    if (payment.bankTransactionId) {
+      // `referenceId: paymentId` guards against clobbering a link that was
+      // since re-pointed at another record.
+      await prisma.bankTransaction.updateMany({
+        where: {
+          id: payment.bankTransactionId,
+          referenceId: paymentId,
+        },
+        data: {
+          registered: false,
+          referenceId: null,
+          referenceType: null,
+        },
+      });
+    }
+  });
 
   return {
     success: true,

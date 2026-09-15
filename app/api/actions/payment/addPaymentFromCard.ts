@@ -6,6 +6,7 @@ import { errorMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 import { resolveShopPersonAtDate } from "./resolveOccupant";
 import { toInt4Amount } from "@/utils/bankAmount";
+import { claimBankTransaction } from "@/utils/bankRegistration";
 
 type PaymentResponse = {
   success: boolean;
@@ -36,6 +37,9 @@ async function addPaymentFromCardTransfer(
     return { success: false, message: "تراکنش یافت نشد" };
   }
 
+  // Fast, friendly pre-check only. The authoritative check is the conditional
+  // claim inside the transaction below — this read cannot be trusted, because
+  // another request can register the row between here and the write.
   if (bankTransaction.registered) {
     return { success: false, message: "تراکنش قبلا ثبت شده" };
   }
@@ -117,16 +121,15 @@ async function addPaymentFromCardTransfer(
         },
       });
 
-      await prisma.bankTransaction.update({
-        where: { id },
-        data: {
-          registered: true,
-          referenceId: payment.id,
-          referenceType: "PAYMENT",
-          category:isProprietor ? "YEARLY" : "MONTHLY"
-        },
+      // Claim after creating, inside the same transaction: a losing claim
+      // throws and rolls the payment back, so a double submit can never credit
+      // the shop twice for one bank row.
+      await claimBankTransaction(prisma, {
+        bankTransactionId: id,
+        referenceId: payment.id,
+        referenceType: "PAYMENT",
+        category: isProprietor ? "YEARLY" : "MONTHLY",
       });
-
 
       return payment;
     });
@@ -143,7 +146,11 @@ async function addPaymentFromCardTransfer(
     });
     return {
       success: false,
-      message: "ثبت اطلاعات ناموفق بود",
+      // Surface the real reason — "تراکنش قبلا ثبت شده است", "واحد پیدا نشد",
+      // or the overflow diagnostic from utils/bankAmount.ts. Collapsing every
+      // failure into one opaque sentence hid exactly the messages the operator
+      // needs. Every throw on this path carries a Persian, user-facing message.
+      message: error instanceof Error ? error.message : "ثبت اطلاعات ناموفق بود",
       errorCode: "PROCESSING_ERROR",
     };
   }
