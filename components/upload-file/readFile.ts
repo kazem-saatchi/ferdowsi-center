@@ -1,6 +1,13 @@
 import * as XLSX from "xlsx";
 import { parse, isValid } from "date-fns-jalali";
 import { format } from "date-fns";
+import {
+  parseAmount,
+  parseBalance,
+  parseOptionalInt,
+  parseOptionalText,
+  parseReference,
+} from "@/utils/bankRowParsing";
 
 interface ExcelRow {
   [index: number]: any;
@@ -10,23 +17,27 @@ export interface BankTransactionData {
   date: string; // Changed from Date to string
   // time: string;
   description: string;
-  transactionId: number;
+  /** شماره سند — a string, not a number: see utils/bankRowParsing.ts. */
+  transactionId: string;
   inputAmount: number;
   outputAmount: number;
   balanceAmount: number;
-  branch: number;
+  /** `Int?` in the schema, so an absent branch code is null, not branch 0. */
+  branch: number | null;
 }
 
 export interface NetBankTransactionData {
   date: string; // Changed from Date to string
   description: string;
-  transactionId: number;
-  bankRecieptId: string;
-  chequeNumber: string;
+  /** شماره سند — a string, not a number: see utils/bankRowParsing.ts. */
+  transactionId: string;
+  bankRecieptId: string | null;
+  chequeNumber: string | null;
   inputAmount: number;
   outputAmount: number;
   balanceAmount: number;
-  branch: number;
+  /** `Int?` in the schema, so an absent branch code is null, not branch 0. */
+  branch: number | null;
 }
 
 // Utility functions
@@ -74,15 +85,6 @@ function jalaliToISO(jalaliDate: string): Date {
   }
 
   return parsedDate;
-}
-
-function parseNumber(value: unknown): number {
-  if (typeof value === "string") {
-    const cleanedValue = value.replace(/,/g, "").trim();
-    const num = parseFloat(cleanedValue);
-    return isNaN(num) ? 0 : num;
-  }
-  return Number(value) || 0;
 }
 
 // Parse Excel File General
@@ -137,15 +139,17 @@ export const parseNetBankFile = async (
 
 
         result.push({
-          branch: parseNumber(row[1]),
+          branch: parseOptionalInt(row[1]),
           date: isoDate, // Now a string
-          transactionId: parseNumber(row[5]),
-          bankRecieptId: String(row[6]),
-          chequeNumber: String(row[7]),
+          transactionId: parseReference(row[5]),
+          bankRecieptId: parseOptionalText(row[6]),
+          chequeNumber: parseOptionalText(row[7]),
+          // Left as-is on purpose: description is hashed exactly as stored, so
+          // normalising it here would stop matching every row already imported.
           description: String(row[8] || ""),
-          outputAmount: parseNumber(row[9]),
-          inputAmount: parseNumber(row[10]),
-          balanceAmount: parseNumber(row[11]),
+          outputAmount: parseAmount(row[9]),
+          inputAmount: parseAmount(row[10]),
+          balanceAmount: parseBalance(row[11]),
         });
       } catch (error) {
         console.warn(`Skipping row ${rowIndex} due to error:`, error);
@@ -202,12 +206,13 @@ export const parseBankFile = async (
         result.push({
           date: isoDate, // Now a string
           // time: String(row[2] || ""),
+          // Left as-is on purpose: see the note in parseNetBankFile.
           description: String(row[3] || ""),
-          transactionId: parseNumber(row[4]),
-          inputAmount: parseNumber(row[5]),
-          outputAmount: parseNumber(row[6]),
-          balanceAmount: parseNumber(row[7]),
-          branch: parseNumber(row[8]),
+          transactionId: parseReference(row[4]),
+          inputAmount: parseAmount(row[5]),
+          outputAmount: parseAmount(row[6]),
+          balanceAmount: parseBalance(row[7]),
+          branch: parseOptionalInt(row[8]),
         });
       } catch (error) {
         console.warn(`Skipping row ${rowIndex} due to error:`, error);

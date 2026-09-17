@@ -79,7 +79,7 @@ function toCreateInput(
     receiverCard = extractedNumber[1];
   }
 
-  const bankReferenceId = row.transactionId.toString();
+  const bankReferenceId = row.transactionId;
 
   return {
     date: new Date(row.date).toISOString(),

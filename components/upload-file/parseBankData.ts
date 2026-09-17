@@ -1,7 +1,7 @@
 import { BankTransactionData } from "./readFile";
 
 interface BankCardTransfer {
-  refrenceId: number;
+  refrenceId: string;
   senderCard: string;
   receiverCard: string;
   amount: number;

@@ -80,7 +80,7 @@ export function NetBankPreviewTable({ data }: PreviewTableProps) {
                     format(new Date(row[header]), "yyyy/MM/dd")}
                   {header === "branch" && row[header]}
                   {header === "transactionId" && row[header]}
-                  {header === "chequeNumber" && String(row[header])}
+                  {header === "chequeNumber" && row[header]}
                   {header === "description" && row[header]}
                   {header === "inputAmount" && formatNumber(row[header])}
                   {header === "outputAmount" && formatNumber(row[header])}

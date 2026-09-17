@@ -67,7 +67,7 @@ async function addBankDataInternal(
 
           const bankRow = await prisma.bankTransaction.findFirst({
             where: {
-              bankReferenceId: row.transactionId.toString(),
+              bankReferenceId: row.transactionId,
               amount: amountValue,
               balance: row.balanceAmount,
             },
@@ -83,7 +83,7 @@ async function addBankDataInternal(
             data: {
               date: new Date(row.date).toISOString(),
               description: row.description,
-              bankReferenceId: row.transactionId.toString(),
+              bankReferenceId: row.transactionId,
               balance: row.balanceAmount,
               amount: amountValue,
               type: typeState,

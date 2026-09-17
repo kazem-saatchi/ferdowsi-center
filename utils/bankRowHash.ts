@@ -25,6 +25,10 @@ import { createHash } from "crypto";
  *     time (the importer never stores ساعت), so the stored value is always
  *     midnight UTC and this is stable.
  *  4. `description` is hashed exactly as stored — no trimming or normalising.
+ *  5. An absent `bankReferenceId` hashes as `"0"`. Rows imported before
+ *     `utils/bankRowParsing.ts` stored the literal `"0"` for a missing سند, and
+ *     their hashes are already in the database; re-importing an overlapping
+ *     date range must still match them rather than insert a second copy.
  */
 
 export interface BankRowIdentity {
@@ -51,7 +55,8 @@ export function bankRowIdentityTuple(row: BankRowIdentity): string {
   return [
     row.accountType,
     row.bankAccountNumber,
-    row.bankReferenceId,
+    // See stability rule 5: "" and "0" are the same absent reference.
+    row.bankReferenceId === "" ? "0" : row.bankReferenceId,
     row.amount.toString(),
     row.balance.toString(),
     identityDay(row.date),

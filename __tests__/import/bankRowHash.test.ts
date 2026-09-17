@@ -106,5 +106,18 @@ describe("bankRowHash", () => {
 
       expect(bankRowHash(a)).not.toBe(bankRowHash(b));
     });
+
+    it("hashes an absent reference the same as the legacy '0'", () => {
+      // Rows imported before utils/bankRowParsing.ts stored "0" for a missing
+      // سند and their hashes are already in the database. The parser now yields
+      // "" instead, so re-importing an overlapping date range would insert a
+      // second copy of every one of those rows unless the two agree here.
+      expect(bankRowHash({ ...row, bankReferenceId: "" })).toBe(
+        bankRowHash({ ...row, bankReferenceId: "0" }),
+      );
+      expect(bankRowIdentityTuple({ ...row, bankReferenceId: "" })).toBe(
+        bankRowIdentityTuple({ ...row, bankReferenceId: "0" }),
+      );
+    });
   });
 });
