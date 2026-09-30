@@ -98,10 +98,10 @@ function toCreateInput(
     chequeNumber: row.chequeNumber,
     // Identity: the unique index on this column is what makes re-importing an
     // overlapping date range idempotent.
+    // bankReferenceId is deliberately absent — see utils/bankRowHash.ts.
     rowHash: bankRowHash({
       accountType,
       bankAccountNumber,
-      bankReferenceId,
       amount: amountValue,
       balance: row.balanceAmount,
       date: row.date,

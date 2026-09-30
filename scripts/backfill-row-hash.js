@@ -15,6 +15,16 @@
  *
  *   node scripts/backfill-row-hash.js            # dry run: verify + report only
  *   node scripts/backfill-row-hash.js --apply    # add column, index, backfill
+ *
+ * When the identity tuple itself changes (see stability rule 1 in
+ * utils/bankRowHash.ts), every stored hash is stale, not just the NULL ones:
+ *
+ *   node scripts/backfill-row-hash.js --rehash            # dry run: how many change
+ *   node scripts/backfill-row-hash.js --rehash --apply    # rewrite them
+ *
+ * The rewrite is a single UPDATE statement, so it is atomic: the table holds
+ * either every old hash or every new one, never a mix. A mix is the dangerous
+ * state — an import during it would duplicate every row still on the old hash.
  */
 
 const fs = require("fs");
@@ -24,6 +34,7 @@ const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const APPLY = process.argv.includes("--apply");
+const REHASH = process.argv.includes("--rehash");
 const BATCH_SIZE = 200;
 const MAX_ATTEMPTS = 5;
 
@@ -155,9 +166,32 @@ async function backfill(db, hash) {
   return { done, batches };
 }
 
+/**
+ * Lists every row whose stored hash differs from the current tuple.
+ * Idempotent: once applied, a second run finds nothing stale.
+ */
+async function staleHashes(db, all, hash) {
+  const current = await resilient("load stored hashes", () =>
+    db.bankTransaction.findMany({ select: { id: true, rowHash: true } }));
+  const stored = new Map(current.map((r) => [r.id, r.rowHash]));
+  const changes = all
+    .map((r) => ({ id: r.id, next: hash(r) }))
+    .filter((c) => c.next !== stored.get(c.id));
+
+  // Old and new hashes are sha256 over different tuples, so a new value can
+  // only equal another row's old value by a sha256 collision. Checked anyway:
+  // the unique index is enforced row by row during the UPDATE.
+  const oldValues = new Set(stored.values());
+  const clash = changes.filter((c) => oldValues.has(c.next));
+  return { changes, clash };
+}
+
 // --- main -------------------------------------------------------------------
 (async () => {
-  console.log(APPLY ? "=== APPLYING rowHash migration + backfill ===\n" : "=== DRY RUN (no writes) ===\n");
+  console.log(
+    REHASH
+      ? (APPLY ? "=== REHASH: rewriting stale rowHash values ===\n" : "=== REHASH DRY RUN (no writes) ===\n")
+      : (APPLY ? "=== APPLYING rowHash migration + backfill ===\n" : "=== DRY RUN (no writes) ===\n"));
 
   const hasher = loadHasher();
   const hash = (row) => hasher.bankRowHash(row);
@@ -186,6 +220,38 @@ async function backfill(db, hash) {
       return;
     }
     console.log("  ✓ safe to enforce as a unique index");
+
+    if (REHASH) {
+      const { changes, clash } = await staleHashes(db, all, hash);
+      console.log(`\n[rehash] rows whose stored hash is stale: ${changes.length}/${all.length}`);
+      console.log(`  sample tuple: ${hasher.bankRowIdentityTuple(all[0]).slice(0, 110)}...`);
+      if (clash.length) {
+        console.error(`  ✗ ABORT: ${clash.length} new hashes equal an existing stored hash`);
+        process.exitCode = 1;
+        return;
+      }
+      if (!APPLY) {
+        console.log("\nNo changes written. Re-run with --rehash --apply to commit.");
+        return;
+      }
+      if (!changes.length) {
+        console.log("  nothing to do");
+        return;
+      }
+      // One statement for every row: atomic, one round trip, and well under
+      // Postgres's 65,535 bind-parameter limit (2 per row).
+      const values = changes.map((c) => Prisma.sql`(${c.id}, ${c.next})`);
+      const updated = await resilient("rehash update", () =>
+        db.$executeRaw`
+          UPDATE "BankTransaction" AS b
+          SET "rowHash" = v.hash
+          FROM (VALUES ${Prisma.join(values)}) AS v(id, hash)
+          WHERE b.id = v.id`);
+      const after = await staleHashes(db, all, hash);
+      console.log(`  ✓ updated ${updated} rows; still stale: ${after.changes.length}`);
+      if (after.changes.length) process.exitCode = 1;
+      return;
+    }
 
     if (!APPLY) {
       const hasColumn = await columnExists(db);

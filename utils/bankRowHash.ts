@@ -8,33 +8,43 @@ import { createHash } from "crypto";
  * it backs a UNIQUE index, which makes re-importing an overlapping range
  * idempotent at the database level instead of relying on a lookup query.
  *
- * Why these seven fields:
+ * Why these six fields:
  *  - accountType + bankAccountNumber scope identity to one account, so two
  *    accounts can never shadow each other.
- *  - bankReferenceId (سند), amount, balance, date and description together are
- *    unique across all 3,329 existing rows. `balance` is a running total and
- *    does most of the work; description settles the rare cases where the bank
- *    reports the same balance for two distinct transactions on one day.
+ *  - `balance` is the account balance AFTER this transaction, not a daily
+ *    closing figure, so it changes with every row. Two genuine transactions
+ *    cannot share amount, balance, day and description: the second would have
+ *    left a different balance. That is what makes these fields an identity.
+ *
+ * Why NOT the سند (`bankReferenceId`): it was the one field that kept changing
+ * for the same statement line, and every change turned an overlapping
+ * re-import into duplicates the unique index could not see. The old parser
+ * flattened unreadable سند cells to "0"; when a later import read the real
+ * number, 13 rows on 2026-09-21 were inserted a second time, and 26 more in
+ * 2025 the same way. Across all 3,728 rows left after removing those 39, the
+ * six fields below have no collisions, so the سند adds nothing but risk.
+ *
+ * Accepted residual risk: a debit, an equal credit, then the same debit again
+ * on one day, with identical descriptions, would return the balance to the same
+ * value and collapse into one row. It has never occurred in this account's
+ * history, whereas the سند-driven duplicates occurred twice.
  *
  * Stability rules — breaking any of these silently orphans every existing hash
  * and turns the next import into a duplicate storm:
- *  1. Never reorder, add or remove a field.
+ *  1. Never reorder, add or remove a field. If you must, re-run
+ *     `node scripts/backfill-row-hash.js --rehash` in the same release.
  *  2. Amounts are stringified, so widening amount/balance from Int to BigInt
  *     does NOT change the hash (`(123).toString() === (123n).toString()`).
  *  3. The date contributes only its UTC calendar day. Statement rows carry no
  *     time (the importer never stores ساعت), so the stored value is always
  *     midnight UTC and this is stable.
  *  4. `description` is hashed exactly as stored — no trimming or normalising.
- *  5. An absent `bankReferenceId` hashes as `"0"`. Rows imported before
- *     `utils/bankRowParsing.ts` stored the literal `"0"` for a missing سند, and
- *     their hashes are already in the database; re-importing an overlapping
- *     date range must still match them rather than insert a second copy.
+ *     A parser change to description would reopen the same hole the سند did.
  */
 
 export interface BankRowIdentity {
   accountType: string;
   bankAccountNumber: string;
-  bankReferenceId: string;
   amount: number | bigint;
   balance: number | bigint;
   date: Date | string;
@@ -55,8 +65,6 @@ export function bankRowIdentityTuple(row: BankRowIdentity): string {
   return [
     row.accountType,
     row.bankAccountNumber,
-    // See stability rule 5: "" and "0" are the same absent reference.
-    row.bankReferenceId === "" ? "0" : row.bankReferenceId,
     row.amount.toString(),
     row.balance.toString(),
     identityDay(row.date),

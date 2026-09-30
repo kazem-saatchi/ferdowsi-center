@@ -8,7 +8,6 @@ import {
 const row: BankRowIdentity = {
   accountType: "PROPRIETOR",
   bankAccountNumber: "2504-306",
-  bankReferenceId: "0",
   amount: 92_970_000,
   balance: 2_213_220_086,
   date: new Date("2026-07-26T00:00:00.000Z"),
@@ -56,21 +55,22 @@ describe("bankRowHash", () => {
     it("pins the field order of the identity tuple", () => {
       // Guards against a reorder, which would silently invalidate every
       // backfilled hash in the database.
-      expect(bankRowIdentityTuple(row).split("|").slice(0, 6)).toEqual([
+      expect(bankRowIdentityTuple(row).split("|")).toEqual([
         "PROPRIETOR",
         "2504-306",
-        "0",
         "92970000",
         "2213220086",
         "2026-07-26",
+        row.description,
       ]);
     });
 
     it("pins the hash of a known row", () => {
       // A change here means the identity contract changed and every stored
-      // hash needs re-backfilling. Never update this value casually.
+      // hash needs `backfill-row-hash.js --rehash`. Never update it casually.
+      // Last changed 2026-09-30, when the سند was dropped from the tuple.
       expect(bankRowHash(row)).toBe(
-        "773f34f9a274960abd64c1e66a7d2ce92a21d754e8746558e5d99fb7de257255"
+        "94b80e70d2371eede375c97f333b11bfd286be8be9b60f6788f0f0fa649d0741"
       );
     });
   });
@@ -79,7 +79,6 @@ describe("bankRowHash", () => {
     const cases: Array<[string, Partial<BankRowIdentity>]> = [
       ["a different account type", { accountType: "BUSINESS" }],
       ["a different account number", { bankAccountNumber: "2504-101" }],
-      ["a different سند", { bankReferenceId: "22491025" }],
       ["a different amount", { amount: 92_970_001 }],
       ["a different balance", { balance: 2_213_220_087 }],
       ["a different day", { date: new Date("2026-07-27T00:00:00.000Z") }],
@@ -90,34 +89,27 @@ describe("bankRowHash", () => {
       expect(bankRowHash({ ...row, ...patch })).not.toBe(bankRowHash(row));
     });
 
-    it("separates the two real rows that share amount and balance", () => {
-      // 26 such pairs exist in production, differing only by سند. The identity
-      // tuple must keep them apart or the backfill's unique index fails.
-      const a: BankRowIdentity = {
-        accountType: "PROPRIETOR",
-        bankAccountNumber: "2504-306",
-        bankReferenceId: "15758356",
-        amount: 15_600,
-        balance: 506_559_613,
-        date: new Date("2025-04-17T00:00:00.000Z"),
-        description: "برداشت از سپرده بابت انتقال از کارت روي شتاب_سند تراکنش کارت",
-      };
-      const b = { ...a, bankReferenceId: "15751439" };
+    // The 2026-09-21 incident: the same statement line was imported with سند
+    // "0" (old parser) and again with "23329190" (the real value). Both copies
+    // had to hash the same for the unique index to absorb the second import.
+    it("ignores the سند, so a re-read reference cannot duplicate a row", () => {
+      // Plain objects, not literals: this is what the backfill passes — a
+      // Prisma row that carries bankReferenceId whether or not it is hashed.
+      const oldParser = { ...row, bankReferenceId: "0" };
+      const newParser = { ...row, bankReferenceId: "23329190" };
+      const absent = { ...row, bankReferenceId: "" };
 
-      expect(bankRowHash(a)).not.toBe(bankRowHash(b));
+      expect(bankRowHash(newParser)).toBe(bankRowHash(oldParser));
+      expect(bankRowHash(absent)).toBe(bankRowHash(oldParser));
+      expect(bankRowHash(oldParser)).toBe(bankRowHash(row));
     });
 
-    it("hashes an absent reference the same as the legacy '0'", () => {
-      // Rows imported before utils/bankRowParsing.ts stored "0" for a missing
-      // سند and their hashes are already in the database. The parser now yields
-      // "" instead, so re-importing an overlapping date range would insert a
-      // second copy of every one of those rows unless the two agree here.
-      expect(bankRowHash({ ...row, bankReferenceId: "" })).toBe(
-        bankRowHash({ ...row, bankReferenceId: "0" }),
-      );
-      expect(bankRowIdentityTuple({ ...row, bankReferenceId: "" })).toBe(
-        bankRowIdentityTuple({ ...row, bankReferenceId: "0" }),
-      );
+    it("still separates a transaction from its fee on the same transfer", () => {
+      // A 150,000,000 transfer and its 60,000 fee share description style and
+      // day but never amount or balance — the pairs seen on 2026-09-21.
+      const transfer = { ...row, amount: 150_000_000, balance: 2_390_936_947 };
+      const fee = { ...row, amount: 60_000, balance: 2_390_876_947 };
+      expect(bankRowHash(transfer)).not.toBe(bankRowHash(fee));
     });
   });
 });
