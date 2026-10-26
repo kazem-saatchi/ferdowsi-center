@@ -5,12 +5,17 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
-import { House, User, ShieldPlus, SquareChartGantt } from "lucide-react";
-import { Person } from "@prisma/client";
+import {
+  Banknote,
+  House,
+  User,
+  ShieldPlus,
+  SquareChartGantt,
+} from "lucide-react";
+import { labels } from "@/utils/label";
 import UserPanelFooter from "./UserPanelFooter";
 import UserPanelHeader from "./UserPanelHeader";
 
@@ -25,7 +30,7 @@ function UserSidePanel() {
             <SidebarMenuButton asChild>
               <Link href="/user/dashboard">
                 <SquareChartGantt className="me-2 h-4 w-4" />
-                <span> دشبورد </span>
+                <span>{labels.userDashboard}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -33,7 +38,15 @@ function UserSidePanel() {
             <SidebarMenuButton asChild>
               <Link href="/user/my-shops">
                 <House className="me-2 h-4 w-4" />
-                <span> واحد‌های من </span>
+                <span>{labels.myUnits}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/user/building-info/bank-report">
+                <Banknote className="me-2 h-4 w-4" />
+                <span>{labels.buildingBankReport}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -42,7 +55,7 @@ function UserSidePanel() {
             <SidebarMenuButton asChild>
               <Link href="/user/user-info">
                 <User className="me-2 h-4 w-4" />
-                <span> اطلاعات کاربر </span>
+                <span>{labels.userInfo}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -50,7 +63,7 @@ function UserSidePanel() {
             <SidebarMenuButton asChild>
               <Link href="/user/update-password">
                 <ShieldPlus className="me-2 h-4 w-4" />
-                <span> تغییر رمز عبور </span>
+                <span>{labels.updatePassword}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -2,17 +2,27 @@
 
 import React, { useState, useMemo } from "react";
 import BankReportTable from "@/components/reports/BankReportTable";
-import BankReportFilters from "@/components/reports/BankReportFilters";
+import BankReportFilters, {
+  bankReportRange,
+  lastFullMonth,
+} from "@/components/reports/BankReportFilters";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Calendar } from "lucide-react";
 import { useGetBankReportTransactions } from "@/tanstack/query/bankReportQuery";
 import { processTransactionsForReport } from "@/utils/bankReportCalculations";
 import { formatNumber } from "@/utils/formatNumber";
 import { formatJalaliDate, formatJalaliDateTime } from "@/utils/localeDate";
+import { fromUtcDay } from "@/utils/jalaliRange";
 
 export default function BankReportClient() {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  // Open on the last full month rather than an empty "pick a month" card.
+  const [initialMonth] = useState(lastFullMonth);
+  const [startDate, setStartDate] = useState<Date | null>(
+    () => bankReportRange(initialMonth).start
+  );
+  const [endDate, setEndDate] = useState<Date | null>(
+    () => bankReportRange(initialMonth).end
+  );
 
   // Fetch transactions using TanStack Query
   const {
@@ -54,6 +64,7 @@ export default function BankReportClient() {
         onFilter={handleFilter}
         onClear={handleClearFilter}
         isLoading={isLoading}
+        initialMonth={initialMonth}
       />
 
       {/* Show initial message when no month is selected */}
@@ -97,7 +108,7 @@ export default function BankReportClient() {
                   <p className="text-sm text-muted-foreground">بازه زمانی</p>
                   <p className="font-medium">
                     {startDate && endDate
-                      ? `${formatJalaliDate(startDate)} تا ${formatJalaliDate(endDate)}`
+                      ? `${formatJalaliDate(fromUtcDay(startDate))} تا ${formatJalaliDate(fromUtcDay(endDate))}`
                       : "-"}
                   </p>
                 </div>

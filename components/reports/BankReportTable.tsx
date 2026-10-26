@@ -19,8 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
-import { useState } from "react";
-import { formatRial } from "@/utils/formatNumber";
+import { Fragment, useState } from "react";
+import { formatNumber, formatRial } from "@/utils/formatNumber";
 import { formatJalaliDate } from "@/utils/localeDate";
 
 interface BankReportTableProps {
@@ -120,9 +120,10 @@ export default function BankReportTable({
                   );
 
                   return (
-                    <>
+                    <Fragment
+                      key={`${categoryData.type}-${categoryData.category}`}
+                    >
                       <TableRow
-                        key={`${categoryData.type}-${categoryData.category}`}
                         className="text-start"
                       >
                         <TableCell className="font-medium">
@@ -133,7 +134,7 @@ export default function BankReportTable({
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">
-                            {categoryData.transactionCount}
+                            {formatNumber(categoryData.transactionCount)}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -214,7 +215,7 @@ export default function BankReportTable({
                           </TableCell>
                         </TableRow>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </TableBody>
@@ -248,9 +249,10 @@ export default function BankReportTable({
                   );
 
                   return (
-                    <>
+                    <Fragment
+                      key={`${categoryData.type}-${categoryData.category}`}
+                    >
                       <TableRow
-                        key={`${categoryData.type}-${categoryData.category}`}
                         className="text-start"
                       >
                         <TableCell className="font-medium">
@@ -261,7 +263,7 @@ export default function BankReportTable({
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">
-                            {categoryData.transactionCount}
+                            {formatNumber(categoryData.transactionCount)}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -342,7 +344,7 @@ export default function BankReportTable({
                           </TableCell>
                         </TableRow>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </TableBody>

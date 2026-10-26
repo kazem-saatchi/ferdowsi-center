@@ -48,3 +48,10 @@ export function toUtcNextDayStart(date: Date): Date {
 export function toUtcDayEnd(date: Date): Date {
   return new Date(toUtcNextDayStart(date).getTime() - 1);
 }
+
+/** The inverse of the helpers above, for showing a bound: local midnight of
+ *  the calendar day a UTC bound falls on. Formatting a UTC bound directly
+ *  shows the end-of-day bound as the next day east of UTC. */
+export function fromUtcDay(date: Date): Date {
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}

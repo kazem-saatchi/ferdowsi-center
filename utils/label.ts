@@ -687,6 +687,18 @@ export const labels = {
   confirmRenterChangeTitle: "مستاجر واحد تغییر کند؟",
   confirmStatusChangeTitle: "وضعیت واحد تغییر کند؟",
   confirmEndRentalTitle: "قرارداد اجاره پایان یابد؟",
+  userDashboard: "داشبورد",
+  myUnits: "واحدهای من",
+  buildingBankReport: "گزارش بانکی مجتمع",
+  logout: "خروج",
+  viewDetails: "مشاهده جزئیات",
+  myProfile: "پروفایل من",
+  myProfileHint: "مشاهده اطلاعات شخصی",
+  myUnitsHint: "مانده حساب و سوابق مغازه‌ها و دفترهای شما",
+  newsTitle: "اخبار",
+  newsHint: "اخبار و اطلاعیه‌های مجتمع",
+  buildingInfoTitle: "اطلاعات مجتمع",
+  buildingInfoHint: "گزارش ماهانه درآمدها و هزینه‌های بانکی مجتمع",
 };
 
 /** Bank API transaction type → Persian label */
