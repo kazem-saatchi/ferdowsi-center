@@ -36,6 +36,7 @@ async function getAllChargesReference(
       forRent: true,
       shopType: { in: [ShopType.BOARD, ShopType.KIOSK, ShopType.PARKING] },
     },
+    orderBy: { plaque: "asc" },
   });
 
   const annualChargeList = await db.shopChargeReference.findMany({
@@ -46,10 +47,6 @@ async function getAllChargesReference(
     },
     orderBy: { plaque: "asc" },
   });
-
-  console.log("charge List", chargeList);
-  console.log("rent List", rentList);
-  console.log("annual Charge List", annualChargeList);
 
   return {
     success: true,

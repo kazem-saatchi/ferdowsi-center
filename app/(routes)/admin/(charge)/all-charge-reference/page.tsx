@@ -11,6 +11,28 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { labels } from "@/utils/label";
 import ChargeReferenceTable from "@/components/charge/ChargeReferenceTable";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
+import {
+  exportChargeReferenceToExcel,
+  type ChargeReferenceVariant,
+} from "@/utils/chargeReferenceExcel";
+import { exportToPDF } from "@/utils/tableExport";
+import { Download, FileText } from "lucide-react";
+
+/** The page's three tabs, in the vocabulary the report builder uses. */
+const VARIANTS: Record<"CHARGE" | "ANNUAL" | "RENT", ChargeReferenceVariant> = {
+  CHARGE: "monthly",
+  ANNUAL: "yearly",
+  RENT: "rent",
+};
+
+const PDF_COLUMNS = [
+  { header: labels.referenceYear, accessor: "year" },
+  { header: labels.referenceAmount, accessor: "totalAmount" },
+  { header: labels.metricAmount, accessor: "metricAmount" },
+  { header: labels.constAmount, accessor: "constantAmount" },
+  { header: labels.areaM2, accessor: "area" },
+  { header: labels.plaque, accessor: "plaque" },
+];
 
 export default function ChargeReferenceListPage() {
   const { data, isLoading, isError, error, refetch } =
@@ -32,8 +54,6 @@ export default function ChargeReferenceListPage() {
     setAllAnnualChargesReference,
     allRentReference,
     setAllRentReference,
-    exportChargeListToPDF,
-    exportChargeListToExcel,
   } = useStore(
     useShallow((state) => ({
       allChargesReference: state.allChargesReference,
@@ -42,8 +62,6 @@ export default function ChargeReferenceListPage() {
       setAllAnnualChargesReference: state.setAllAnnualChargesReference,
       allRentReference: state.allRentReference,
       setAllRentReference: state.setAllRentReference,
-      exportChargeListToPDF: state.exportChargeListToPDF,
-      exportChargeListToExcel: state.exportChargeListToExcel,
     }))
   );
 
@@ -89,6 +107,31 @@ export default function ChargeReferenceListPage() {
     allRentReference,
   ]);
 
+  const reportTitle = `${labels.chargeReferenceSheetName} - ${
+    tableType === "ANNUAL"
+      ? labels.proprietorCharge
+      : tableType === "RENT"
+        ? labels.rentCharge
+        : labels.monthlyCharge
+  }`;
+
+  const handleExportExcel = () => {
+    void exportChargeReferenceToExcel({
+      rows: tableData,
+      variant: VARIANTS[tableType],
+      shopTypeFilter,
+      fileName: reportTitle,
+    });
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF({
+      fileName: reportTitle,
+      data: tableData,
+      columns: PDF_COLUMNS,
+    });
+  };
+
   if (isLoading) return <LoadingComponent text={labels.loadingData} />;
   if (
     isError ||
@@ -97,8 +140,6 @@ export default function ChargeReferenceListPage() {
     !allRentReference
   )
     return <ErrorComponentSimple message={labels.errorOccurred} />;
-
-  console.log("tableData", tableType, shopTypeFilter, tableData);
 
   return (
     <div>
@@ -174,10 +215,21 @@ export default function ChargeReferenceListPage() {
           </div>
         </div>
         <div className="flex flex-col items-end justify-end gap-2 mb-4 px-2">
-          <Button onClick={exportChargeListToPDF} className="w-40">
+          <Button
+            onClick={handleExportPDF}
+            className="w-44"
+            variant="outline"
+            disabled={tableData.length === 0}
+          >
+            <FileText className="ml-2 h-4 w-4" />
             {labels.downloadAsPDF}
           </Button>
-          <Button onClick={exportChargeListToExcel} className="w-40">
+          <Button
+            onClick={handleExportExcel}
+            className="w-44"
+            disabled={tableData.length === 0}
+          >
+            <Download className="ml-2 h-4 w-4" />
             {labels.downloadAsExcel}
           </Button>
         </div>

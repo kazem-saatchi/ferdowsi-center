@@ -551,6 +551,21 @@ export const labels = {
   receiptNumberShort: "شماره قبض",
   sortByColumn: "مرتب‌سازی",
 
+  // ── charge reference report ────────────────────────────
+  chargeReferenceMonthlyTitle: "لیست مرجع شارژ ماهانه",
+  chargeReferenceYearlyTitle: "لیست مرجع شارژ مالکانه",
+  chargeReferenceRentTitle: "لیست مرجع اجاره",
+  chargeReferenceSheetName: "شارژ مرجع",
+  unitTypeFilter: "نوع واحد",
+  referenceYear: "سال",
+  referenceAmount: "مبلغ مرجع (ریال)",
+  totalArea: "جمع مساحت (متر مربع)",
+  averageAmount: "میانگین مبلغ هر واحد",
+  typeSummaryTitle: "تفکیک بر اساس نوع واحد",
+  noChargeReferenceRows: "ردیفی برای این گزارش ثبت نشده است",
+  zeroRateNote:
+    "برای مشاعات، پارکینگ و بورد مبلغ ثابت و متری ثبت نمی‌شود و مبلغ مستقیم روی واحد تعیین می‌شود.",
+
   // ── person balance ────────────────────────────────────────
   personUnitsTitle: "مانده حساب به تفکیک واحد",
   personUnitsHint:
