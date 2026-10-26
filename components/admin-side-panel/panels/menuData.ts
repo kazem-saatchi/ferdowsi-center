@@ -13,7 +13,6 @@ import {
   ClipboardList,
   User,
   Users,
-  Search,
   UserCog,
   UserCheck,
   ShoppingBag,
@@ -274,12 +273,6 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت شخص جدید",
         href: "/add-person",
         icon: UserPlus,
-      },
-      {
-        id: 3,
-        name: "جستجوی اشخاص",
-        href: "/search-persons",
-        icon: Search,
       },
       {
         id: 4,

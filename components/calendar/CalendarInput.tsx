@@ -9,12 +9,14 @@ import { Input } from "../ui/input";
 export default function CalendarInput({
   id,
   disabled,
+  placeholder,
   openCalendar,
   value,
   handleValueChange,
 }: {
   id?: string;
   disabled?: boolean;
+  placeholder?: string;
   openCalendar?: () => void;
   value?: string;
   handleValueChange?: React.ChangeEventHandler<HTMLInputElement>;
@@ -27,6 +29,7 @@ export default function CalendarInput({
       value={value ?? ""}
       onChange={handleValueChange}
       disabled={disabled}
+      placeholder={placeholder}
       readOnly
     />
   );

@@ -1,15 +1,25 @@
 import { GetChargeByPersonData, GetChargeByShopData } from "@/schema/chargeSchema";
-import { useQuery } from "@tanstack/react-query";
-import findAllCharges from "@/app/api/actions/charge/getAllCharges";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import getChargesPage from "@/app/api/actions/charge/getChargesPage";
+import { LedgerListOptions } from "@/utils/ledgerListQuery";
 import findChargesByPerson from "@/app/api/actions/charge/getChargesByPerson";
 import findChargesByShop from "@/app/api/actions/charge/getChargesByShop";
 import findAllChargesReference from "@/app/api/actions/reference/getAllChargesReference";
 
 //------------------CHARGE--------------------
-export function useFindAllCharges() {
+/** One page of the all-charges list. The key starts with "all-charges", so
+ *  the charge mutations that invalidate that key refresh every page. */
+export function useChargesPage(options: LedgerListOptions) {
   return useQuery({
-    queryKey: ["all-charges"],
-    queryFn: async () => await findAllCharges(),
+    queryKey: ["all-charges", options],
+    queryFn: async () => {
+      const response = await getChargesPage(options);
+      if (!response.success || !response.data) {
+        throw new Error(response.message);
+      }
+      return response.data;
+    },
+    placeholderData: keepPreviousData,
   });
 }
 

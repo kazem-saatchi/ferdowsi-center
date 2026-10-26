@@ -1,57 +1,6 @@
-"use client";
-import { labels } from "@/utils/label";
+import { redirect } from "next/navigation";
 
-import { useState } from "react";
-import { toast } from "sonner";
-import type { SafePerson } from "@/schema/personSchema";
-import { PersonSearchForm } from "@/components/person/PersonSearchForm";
-import { PersonList } from "@/components/person/PersonList";
-import findPersonByFilter from "@/app/api/actions/person/findPersonByFilter";
-import { Separator } from "@/components/ui/separator";
-
+// The person search now lives on the all-persons list; keep old links working.
 export default function SearchPersonsPage() {
-  const [persons, setPersons] = useState<SafePerson[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSearch = async (filters: any) => {
-    setIsLoading(true);
-    try {
-      const result = await findPersonByFilter(filters);
-      if (result.success && result.data?.persons) {
-        setPersons(result.data.persons);
-        toast.success(result.message);
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : labels.somethingWentWrong
-      );
-      setPersons([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex flex-col">
-        <PersonSearchForm onSearch={handleSearch} />
-        <div className="mt-4">
-          {isLoading && <p className="text-center">در حال بارگذاری...</p>}
-          {!isLoading && persons.length > 0 && (
-            <>
-              <Separator />
-              <PersonList persons={persons} />
-            </>
-          )}
-          {!isLoading && persons.length === 0 && (
-            <p className="text-center">شخصی یافت نشد</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  redirect("/admin/all-persons");
 }

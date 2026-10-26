@@ -1,14 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import findPaymentsByPerson from "@/app/api/actions/payment/getAllPaymentsByPerson";
 import findPaymentsByShop from "@/app/api/actions/payment/getAllPaymentsByShop";
-import findAllPayments from "@/app/api/actions/payment/getAllPayments";
+import getPaymentsPage from "@/app/api/actions/payment/getPaymentsPage";
+import { PaymentListOptions } from "@/utils/ledgerListQuery";
 import getPaymentBucketPreviewAction from "@/app/api/actions/payment/getPaymentBucketPreview";
 
 //------------------PAYMENT--------------------
-export function useFindAllPayments() {
+/** One page of the all-payments list. The key starts with "all-payments", so
+ *  the payment mutations that invalidate that key refresh every page. */
+export function usePaymentsPage(options: PaymentListOptions) {
   return useQuery({
-    queryKey: ["all-payments"],
-    queryFn: async () => await findAllPayments(),
+    queryKey: ["all-payments", options],
+    queryFn: async () => {
+      const response = await getPaymentsPage(options);
+      if (!response.success || !response.data) {
+        throw new Error(response.message);
+      }
+      return response.data;
+    },
+    placeholderData: keepPreviousData,
   });
 }
 

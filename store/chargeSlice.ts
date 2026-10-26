@@ -2,8 +2,6 @@ import { StateCreator } from "zustand";
 import { Charge, ShopChargeReference } from "@prisma/client";
 
 type Charges = {
-  allCharges: Charge[] | null;
-  setAllCharges: (charges: Charge[]) => void;
   shopCharges: Charge[] | null;
   setShopCharges: (charges: Charge[]) => void;
   
@@ -28,7 +26,6 @@ export const createChargeSlice: StateCreator<
   ChargeSlice
 > = (set) => ({
   // State
-  allCharges: null,
   shopCharges: null,
   allRentReference: null,
   personCharges: null,
@@ -36,7 +33,6 @@ export const createChargeSlice: StateCreator<
   allAnnualChargesReference: null,
 
   // Set utils
-  setAllCharges: (charges) => set({ allCharges: charges }),
   setShopCharges: (charges) => set({ shopCharges: charges }),
   setAllRentReference: (charges) => set({ allRentReference: charges }),
   setPersonCharges: (charges) => set({ personCharges: charges }),

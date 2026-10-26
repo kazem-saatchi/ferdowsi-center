@@ -12,6 +12,10 @@ interface CalendarProps {
   value?: DateObject | null;
   id?: string;
   title?: string;
+  placeholder?: string;
+  /** The picker selects the current month as soon as it opens unless this is
+   *  false. A filter wants false, so opening it changes nothing by itself. */
+  pickOnOpen?: boolean;
 }
 
 function JalaliMonthCalendar({
@@ -19,6 +23,8 @@ function JalaliMonthCalendar({
   value,
   id = "MonthPicker",
   title = "ماه",
+  placeholder,
+  pickOnOpen = true,
 }: CalendarProps) {
   return (
     <div className="space-y-2">
@@ -30,7 +36,8 @@ function JalaliMonthCalendar({
         onlyMonthPicker
         onChange={handleDateChange}
         value={value}
-        render={<CalendarInput id={id} />}
+        onOpenPickNewDate={pickOnOpen}
+        render={<CalendarInput id={id} placeholder={placeholder} />}
         format="MMMM YYYY"
       />
     </div>

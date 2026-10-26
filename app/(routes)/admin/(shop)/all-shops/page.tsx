@@ -3,14 +3,15 @@ import EmptyState from "@/components/EmptyState";
 
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
+import Pager from "@/components/Pager";
+import ListToolbar from "@/components/table/ListToolbar";
 import { ShopsTable } from "@/components/shop/ShopTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useStore } from "@/store/store";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
-import { useEffect, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { useClientList } from "@/hooks/useClientList";
+import { useState } from "react";
 import { labels } from "@/utils/label";
-import { ShopType } from "@prisma/client";
+import { Shop, ShopType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 
 const SHOP_FILTERS: { type: ShopType | undefined; label: string }[] = [
@@ -27,19 +28,11 @@ export default function AllShopsPage() {
 
   const [shopFilter, setShopFilter] = useState<ShopType | undefined>(undefined);
 
-  // Zustand State
-  const { setShopsAll, shopsAll } = useStore(
-    useShallow((state) => ({
-      shopsAll: state.shopsAll,
-      setShopsAll: state.setshopsAll,
-    }))
+  const list = useClientList<Shop>(
+    data?.data?.shops,
+    (shop) => [shop.plaque, shop.ownerName, shop.renterName],
+    (shop) => shopFilter === undefined || shop.type === shopFilter
   );
-
-  useEffect(() => {
-    if (!!data && !!data.data?.shops) {
-      setShopsAll(data?.data?.shops);
-    }
-  }, [data]);
 
   if (isLoading) {
     return <LoadingComponent text={labels.loadingData} />;
@@ -55,31 +48,50 @@ export default function AllShopsPage() {
     );
   }
 
-  const filteredShops = shopsAll?.filter((shop) => {
-    if (shopFilter === undefined) return true;
-    return shop.type === shopFilter;
-  });
-
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="space-y-4">
         <CardTitle>{labels.allShops}</CardTitle>
-        <div className="flex flex-wrap items-center justify-start gap-2">
-          {SHOP_FILTERS.map(({ type, label }) => (
-            <Button
-              key={label}
-              variant={shopFilter === type ? "default" : "outline"}
-              aria-pressed={shopFilter === type}
-              onClick={() => setShopFilter(type)}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
+        <ListToolbar
+          query={list.query}
+          onQueryChange={list.setQuery}
+          placeholder={labels.searchShopsPlaceholder}
+          pageSize={list.pageSize}
+          onPageSizeChange={list.setPageSize}
+          matchCount={list.matchCount}
+        >
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label={labels.type}
+          >
+            {SHOP_FILTERS.map(({ type, label }) => (
+              <Button
+                key={label}
+                size="sm"
+                variant={shopFilter === type ? "default" : "outline"}
+                aria-pressed={shopFilter === type}
+                onClick={() => {
+                  setShopFilter(type);
+                  list.resetPage();
+                }}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+        </ListToolbar>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-        {filteredShops && filteredShops.length > 0 ? (
-          <ShopsTable shops={filteredShops} />
+        {list.pageItems.length > 0 ? (
+          <>
+            <ShopsTable shops={list.pageItems} />
+            <Pager
+              page={list.page}
+              totalPages={list.totalPages}
+              onPageChange={list.setPage}
+            />
+          </>
         ) : (
           <EmptyState message={labels.noDataFound} />
         )}

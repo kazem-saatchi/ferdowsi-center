@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Badge } from "../ui/badge";
 import ReceiptImage from "./ReceiptImage";
 import { labels } from "@/utils/label";
+import { PAYMENT_TYPE_LABELS } from "@/utils/paymentType";
 
 interface PaymentTableProps {
   payments: Payment[];
@@ -22,14 +23,6 @@ interface PaymentTableProps {
 export function PaymentTable({ payments }: PaymentTableProps) {
   const [viewImage, setViewImage] = useState<boolean>(false);
   const [viewImageSrc, setViewImageSrc] = useState<string>("");
-
-  const paymentTypeMap = {
-    CASH: "نقدی",
-    CHEQUE: "چک",
-    POS_MACHINE: "کارت خوان",
-    BANK_TRANSFER: "کارت به کارت",
-    OTHER: "سایر روش‌ها",
-  };
 
   return (
     <>
@@ -61,7 +54,7 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                 {formatJalaliDate(payment.date)}
               </TableCell>
               <TableCell className="text-center">
-                {paymentTypeMap[payment.type]}
+                {PAYMENT_TYPE_LABELS[payment.type]}
               </TableCell>
               <TableCell className="text-center">
                 <Badge variant={payment.proprietor ? "secondary" : "default"}>
