@@ -109,14 +109,18 @@ export function UpdateHistoryModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[480px]" dir="rtl">
+      <DialogContent
+        className="sm:max-w-[480px] max-h-[90vh] flex flex-col"
+        dir="rtl"
+      >
         <DialogHeader>
           <DialogTitle>
             {showingPreview ? labels.chargeRecalcTitle : labels.updateHistoryDate}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        {/* Only the body scrolls, so the footer buttons stay reachable */}
+        <div className="space-y-4 py-4 flex-1 min-h-0 overflow-y-auto">
           {/* Date Type Selection */}
           {!dateType && (
             <div className="space-y-3">
