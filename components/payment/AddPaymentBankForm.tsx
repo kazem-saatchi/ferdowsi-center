@@ -117,6 +117,7 @@ function AddPaymentBankForm({
 
       const result = await addPaymentMutation.mutateAsync(validatedData);
 
+      // The mutation hook toasts the server's own success or error message.
       if (result.success) {
         cancelFn(null);
         // Reset form after successful submission
@@ -125,12 +126,10 @@ function AddPaymentBankForm({
         setPaymentDate(null);
         setAmount("");
         setAmountPersian("");
-        setType("CASH");
+        setType("BANK_TRANSFER");
         setDescription("");
         setProprietor(false);
         setUploadPage(false);
-      } else {
-        toast.error(result.message || labels.paymentAddedError);
       }
     } catch (error) {
       console.error("Error adding payment:", error);
@@ -238,7 +237,7 @@ function AddPaymentBankForm({
         <div className="space-y-2">
           <Label htmlFor="type">{labels.paymentMethod}</Label>
           <Select
-            defaultValue="BANK_TRANSFER"
+            value={type}
             onValueChange={(value) => setType(value as PaymentType)}
             disabled={true}
           >

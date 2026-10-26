@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
@@ -60,18 +61,32 @@ export default function UpdateShopRenterPage() {
     }
   }, [selectedShopId, shopsAll]);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedRenterId || !renterChangeDate) {
       toast.error(labels.selectRequiredFieldsRenter);
       return;
     }
+    const shop = shopsAll?.find((s) => s.id === selectedShopId);
+    const person = personsAll?.find((p) => p.id === selectedRenterId);
+    const ok = await confirm({
+      title: labels.confirmRenterChangeTitle,
+      description: `${shop ? shopOptionLabel(shop) : ""} — ${labels.newRenter}: ${
+        person ? `${person.firstName} ${person.lastName}` : ""
+      } ${labels.fromDate} ${renterChangeDate.toLocaleDateString("fa-IR")}`,
+    });
+    if (!ok) return;
+    // The mutation hook toasts the server's own success or error message.
     try {
-      await updateShopRenterMutation.mutateAsync({
+      const result = await updateShopRenterMutation.mutateAsync({
         shopId: selectedShopId,
         renterId: selectedRenterId,
         startDate: renterChangeDate.toISOString(),
       });
+      // Keep the input when the server refused the change.
+      if (!result.success) return;
       // Reset form after successful submission
       setSelectedShopId("");
       setSelectedRenterId("");
@@ -79,7 +94,6 @@ export default function UpdateShopRenterPage() {
       setCurrentRenterName("");
     } catch (error) {
       console.error("Error updating shop renter:", error);
-      toast.error(labels.renterUpdateError);
     }
   };
 
@@ -179,6 +193,7 @@ export default function UpdateShopRenterPage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

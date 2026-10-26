@@ -12,6 +12,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
@@ -53,12 +54,23 @@ export default function RemoveShopRenterPage() {
     }
   }, [selectedShopId, shopsAll]);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !currentRenterId || !endDate) {
       toast.error(labels.selectShopWithRenterAndEndDate);
       return;
     }
+    const shop = shopsAll?.find((s) => s.id === selectedShopId);
+    const ok = await confirm({
+      title: labels.confirmEndRentalTitle,
+      description: `${shop ? shopOptionLabel(shop) : ""} — ${currentRenterName}، ${
+        labels.endDate
+      } ${endDate.toLocaleDateString("fa-IR")}`,
+      destructive: true,
+    });
+    if (!ok) return;
     // useEndShopRenter toasts the server's own success or error message.
     try {
       const result = await endShopRenterMutation.mutateAsync({
@@ -158,6 +170,7 @@ export default function RemoveShopRenterPage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

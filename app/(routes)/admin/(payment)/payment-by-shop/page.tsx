@@ -60,15 +60,17 @@ export default function ShopPaymentsPage() {
     })) || [];
 
   if (shopsIsLoading) {
-    <LoadingComponent text={labels.loadingShopData} />;
+    return <LoadingComponent text={labels.loadingShopData} />;
   }
 
   if (shopsIsError) {
-    <ErrorComponent
-      error={shopsError}
-      message={labels.errorLoadingShops}
-      retry={shopsRefetch}
-    />;
+    return (
+      <ErrorComponent
+        error={shopsError}
+        message={labels.errorLoadingShops}
+        retry={shopsRefetch}
+      />
+    );
   }
 
   return (

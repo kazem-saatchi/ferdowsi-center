@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import { useSetRegisterAble } from "@/tanstack/mutation/incomeCostMutation";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 function SetRegisterAbleButton({
   id,
@@ -12,8 +13,17 @@ function SetRegisterAbleButton({
   const [isMutating, setIsMutating] = React.useState<boolean>(false);
   const [isRegistred, setIsRegistred] = React.useState<boolean>(false);
   const addMutation = useSetRegisterAble();
+  const { confirm, dialog } = useConfirm();
 
-  function registerHandler() {
+  async function registerHandler() {
+    const ok = await confirm({
+      title: "این تراکنش از لیست پرداخت‌های ثبت‌نشده حذف شود؟",
+      description:
+        "برای تراکنش‌هایی که پرداخت شارژ نیستند. پرداختی برای هیچ واحدی ثبت نمی‌شود.",
+      confirmLabel: "حذف از لیست",
+      destructive: true,
+    });
+    if (!ok) return;
     setIsMutating(true);
     addMutation.mutate(id, {
       onSuccess: (data) => {
@@ -27,17 +37,20 @@ function SetRegisterAbleButton({
   }
 
   return (
-    <Button
-      type="button"
-      variant="destructive"
-      disabled={isMutating || isRegistred}
-      onClick={registerHandler}
-      className="w-36"
-    >
-      {!isRegistred && isMutating && "در حال انجام"}
-      {!isRegistred && !isMutating && "حذف"}
-      {isRegistred && "انجام شد"}
-    </Button>
+    <>
+      <Button
+        type="button"
+        variant="destructive"
+        disabled={isMutating || isRegistred}
+        onClick={registerHandler}
+        className="w-36"
+      >
+        {!isRegistred && isMutating && "در حال انجام"}
+        {!isRegistred && !isMutating && "حذف"}
+        {isRegistred && "انجام شد"}
+      </Button>
+      {dialog}
+    </>
   );
 }
 

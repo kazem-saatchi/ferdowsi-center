@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { AddChargeAllShopsData } from "@/schema/chargeSchema";
@@ -32,6 +33,7 @@ export default function AddChargesToAllShopsPage() {
     title: "",
   });
 
+  const { confirm, dialog } = useConfirm();
   const addChargeAllShopMutation = useAddChargeAllShop();
 
   const handleDateChange = (date: DateObject) => {
@@ -58,11 +60,23 @@ export default function AddChargesToAllShopsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Without a month the request would charge every unit for "now" with an
+    // empty title, so refuse before asking.
+    if (!formData.month || !dataState.title) {
+      toast.error(labels.selectMonthFirst);
+      return;
+    }
+    const ok = await confirm({
+      title: `${labels.addChargesToAllShops}؟`,
+      description: `«${dataState.title}» — ${labels.bulkChargeUndoHint}`,
+      confirmLabel: labels.addChargesToAllShops,
+    });
+    if (!ok) return;
     try {
+      // The mutation hook toasts the server's own success or error message.
       const result = await addChargeAllShopMutation.mutateAsync(dataState);
 
       if (result.success) {
-        toast.success(labels.chargesAddedSuccess);
         // Reset form after successful submission
         setFormData({
           month: "",
@@ -73,12 +87,9 @@ export default function AddChargesToAllShopsPage() {
           endDate: new Date(),
           title: "",
         });
-      } else {
-        toast.error(result.message || labels.failedToAddCharges);
       }
     } catch (error) {
       console.error("Error adding charges:", error);
-      toast.error(labels.failedToAddCharges);
     }
   };
 
@@ -107,7 +118,7 @@ export default function AddChargesToAllShopsPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={addChargeAllShopMutation.isPending}
+              disabled={addChargeAllShopMutation.isPending || !formData.month}
             >
               {addChargeAllShopMutation.isPending
                 ? labels.addingChargesToAllShops
@@ -116,6 +127,7 @@ export default function AddChargesToAllShopsPage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

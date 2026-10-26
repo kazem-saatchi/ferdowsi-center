@@ -124,7 +124,9 @@ function AddChargeToListPage() {
     };
 
     try {
-      await addChargeToShopListMutation.mutateAsync(submitData);
+      // The mutation hook toasts the server message; keep the form on failure.
+      const result = await addChargeToShopListMutation.mutateAsync(submitData);
+      if (!result.success) return;
       // Reset form
       setFormData({
         date: new Date(),
@@ -134,7 +136,7 @@ function AddChargeToListPage() {
         description: "",
       });
       setSelectedShops([]);
-      router.push("/admin/charge");
+      router.push("/admin/all-charges-list");
     } catch (error) {
       console.error("Error adding charges:", error);
     }

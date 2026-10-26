@@ -6,10 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Shop, ShopType } from "@prisma/client";
+import { Shop } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { labels } from "@/utils/label"
+import { labels } from "@/utils/label";
+import { shopTypeLabel } from "@/utils/shopType";
 
 interface ShopsTableProps {
   shops: Shop[];
@@ -27,7 +28,7 @@ export function ShopsTable({ shops }: ShopsTableProps) {
           <TableHead className="text-center">{labels.ownerName}</TableHead>
           <TableHead className="text-center">{labels.renterName}</TableHead>
           <TableHead className="text-center">{labels.status}</TableHead>
-          <TableHead className="text-center">{labels.storeOrOffice}</TableHead>
+          <TableHead className="text-center">{labels.type}</TableHead>
           <TableHead className="text-center">{labels.histories}</TableHead>
           <TableHead className="text-center">{labels.charges}</TableHead>
           <TableHead className="text-center">{labels.balance}</TableHead>
@@ -48,9 +49,7 @@ export function ShopsTable({ shops }: ShopsTableProps) {
               {shop.isActive ? labels.active : labels.inactive}
             </TableCell>
             <TableCell className="text-center">
-              {shop.type === "STORE" && labels.store}
-              {shop.type === "OFFICE" && labels.office}
-              {shop.type === "KIOSK" && labels.kiosk}
+              {shopTypeLabel(shop.type)}
             </TableCell>
             <TableCell className="text-center">
               <Link href={`/admin/history-by-shop/${shop.id}`} passHref>

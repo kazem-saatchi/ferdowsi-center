@@ -62,7 +62,7 @@ export default function HistoryByShopInfo() {
         message={
           shopsError instanceof Error
             ? shopsError.message
-            : labels.generalErrorMessage
+            : labels.somethingWentWrong
         }
         retry={shopsRefetch}
       />
@@ -102,7 +102,7 @@ export default function HistoryByShopInfo() {
             message={
               error instanceof Error
                 ? error.message
-                : labels.generalErrorMessage
+                : labels.somethingWentWrong
             }
             retry={refetch}
           />

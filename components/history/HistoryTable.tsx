@@ -17,6 +17,7 @@ import { labels } from "@/utils/label";
 import { UpdateHistoryModal } from "./UpdateHistoryModal";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatNumber } from "@/utils/formatNumber";
 
 type HistoryType =
   | "Ownership"
@@ -124,6 +125,8 @@ function HistoryTable({ allHistories }: TableProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleEditClick(history)}
+                    aria-label={labels.edit}
+                    title={labels.edit}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -139,24 +142,26 @@ function HistoryTable({ allHistories }: TableProps) {
         onClose={handleCloseModal}
       />
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4 space-x-2">
-          <button
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             disabled={page === 1}
-            className="px-3 py-1 bg-gray-200 rounded"
           >
             {labels.previous}
-          </button>
-          <span>
-            {labels.page} {page} {labels.of} {totalPages}
+          </Button>
+          <span className="text-sm">
+            {labels.page} {formatNumber(page)} {labels.of} {formatNumber(totalPages)}
           </span>
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={page === totalPages}
-            className="px-3 py-1 bg-gray-200 rounded"
           >
             {labels.next}
-          </button>
+          </Button>
         </div>
       )}
     </>

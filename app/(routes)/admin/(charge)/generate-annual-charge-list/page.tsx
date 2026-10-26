@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { toast } from "sonner"
+import { useConfirm } from "@/components/ConfirmDialog"
 import { ShopAnnualChargeReferenceSchema } from "@/schema/chargeSchema"
 import { labels } from "@/utils/label"
 
@@ -26,8 +27,15 @@ export default function GenerateShopAnnualChargeReferencePage() {
     }))
   }
 
+  const { confirm, dialog } = useConfirm()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const ok = await confirm({
+      title: "مرجع شارژ دوباره ساخته شود؟",
+      description: "مرجع شارژ فعلی همه واحدها حذف و با این مقادیر جایگزین می‌شود.",
+    })
+    if (!ok) return
     try {
       const validatedData = ShopAnnualChargeReferenceSchema.parse({
         storeMetric: Number(formData.storeMetric),
@@ -94,6 +102,7 @@ export default function GenerateShopAnnualChargeReferencePage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   )
 }

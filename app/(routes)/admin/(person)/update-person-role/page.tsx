@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { updatePersonRoleSchema } from "@/schema/personSchema";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -47,21 +48,29 @@ export default function UpdatePersonRolePage() {
     }
   }, [personsData, setPersonsAll]);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPersonId || !selectedRole) {
       toast.error("لطفاً یک شخص و نقش را انتخاب کنید");
       return;
     }
+    const person = personsAll?.find((p) => p.id === selectedPersonId);
+    const roleLabel = roleOptions.find((r) => r.value === selectedRole)?.label;
+    const ok = await confirm({
+      title: "نقش این شخص تغییر کند؟",
+      description: `${person?.firstName ?? ""} ${person?.lastName ?? ""} ← ${roleLabel ?? selectedRole}`,
+    });
+    if (!ok) return;
     try {
       const validatedData = updatePersonRoleSchema.parse({
         userId: selectedPersonId,
         role: selectedRole,
       });
       const result = await updatePersonRoleMutation.mutateAsync(validatedData);
-      if (result.success) {
-      } else {
-      }
+      // The mutation hook toasts the server's own success or error message.
+      if (result.success) setSelectedRole("");
     } catch (error) {
       console.error("Error updating person role:", error);
       toast.error("خطا در به‌روزرسانی نقش شخص");
@@ -159,6 +168,7 @@ export default function UpdatePersonRolePage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { updatePersonRoleSchema } from "@/schema/personSchema";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -48,10 +49,12 @@ export default function UpdatePersonRolePage() {
     }
   }, [personsData, setPersonsAll]);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPersonId || !newPassword) {
-      toast.error("لطفاً یک شخص و نقش را انتخاب کنید");
+      toast.error("لطفاً شخص و رمز عبور جدید را وارد کنید");
       return;
     }
 
@@ -60,15 +63,20 @@ export default function UpdatePersonRolePage() {
       return;
     }
 
+    const person = personsAll?.find((p) => p.id === selectedPersonId);
+    const ok = await confirm({
+      title: "رمز عبور این شخص تغییر کند؟",
+      description: `${person?.firstName ?? ""} ${person?.lastName ?? ""} — رمز عبور فعلی دیگر کار نمی‌کند.`,
+    });
+    if (!ok) return;
     try {
       const result = await updatePasswordMutation.mutateAsync({
         currentPassword: newPassword,
         password: newPassword,
         userId: selectedPersonId,
       });
-      if (result.success) {
-      } else {
-      }
+      // The mutation hook toasts the server's own success or error message.
+      if (result.success) setNewPassword("");
     } catch (error) {
       console.error("Error updating person password:", error);
       toast.error("خطا در به‌روزرسانی رمز عبور ");
@@ -89,7 +97,7 @@ export default function UpdatePersonRolePage() {
     <div className="container mx-auto py-10">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>به‌روزرسانی نقش شخص</CardTitle>
+          <CardTitle>تغییر رمز عبور شخص</CardTitle>
         </CardHeader>
 
         <Separator className="mt-2 mb-4" />
@@ -123,6 +131,7 @@ export default function UpdatePersonRolePage() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 value={newPassword}
                 onChange={(event) => {
                   setNewPassword(event.target.value);
@@ -148,6 +157,7 @@ export default function UpdatePersonRolePage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

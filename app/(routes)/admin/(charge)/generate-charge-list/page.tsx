@@ -14,6 +14,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { ShopChargeReferenceSchema } from "@/schema/chargeSchema";
 import { labels } from "@/utils/label";
 import { AlertCircle } from "lucide-react";
@@ -38,8 +39,15 @@ export default function GenerateShopChargeReferencePage() {
     }));
   };
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const ok = await confirm({
+      title: "مرجع شارژ دوباره ساخته شود؟",
+      description: "مرجع شارژ فعلی همه واحدها حذف و با این مقادیر جایگزین می‌شود.",
+    });
+    if (!ok) return;
     try {
       const validatedData = ShopChargeReferenceSchema.parse({
         storeConst: Number(formData.storeConst.replace(/,/g, "")),
@@ -48,8 +56,6 @@ export default function GenerateShopChargeReferencePage() {
         officeMetric: Number(formData.officeMetric.replace(/,/g, "")),
         savingPercent: Number(formData.savingPercent.replace(/,/g, "")),
       });
-
-      console.log("data validation", validatedData);
 
       const result = await createChargeReferenceMutation.mutateAsync(
         validatedData
@@ -166,6 +172,7 @@ export default function GenerateShopChargeReferencePage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

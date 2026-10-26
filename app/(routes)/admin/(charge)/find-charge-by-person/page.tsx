@@ -58,7 +58,7 @@ export default function FindChargesByPerson() {
     return (
       <ErrorComponent
         error={personsError}
-        message={data?.message || labels.generalErrorMessage}
+        message={data?.message || labels.somethingWentWrong}
         retry={personsRefetch}
       />
     );
@@ -93,7 +93,7 @@ export default function FindChargesByPerson() {
         {personId !== "" && isError && (
           <ErrorComponent
             error={error}
-            message={data?.message || labels.generalErrorMessage}
+            message={data?.message || labels.somethingWentWrong}
             retry={refetch}
           />
         )}

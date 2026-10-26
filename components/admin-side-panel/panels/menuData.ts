@@ -178,7 +178,7 @@ export const adminMenuData: AdminMenuCollection = {
     ],
   },
   cost: {
-    title: "هزینه‌ها",
+    title: "هزینه‌ها و درآمدها",
     baseUrl: "/admin",
     icon: DollarSign,
     items: [
@@ -193,6 +193,12 @@ export const adminMenuData: AdminMenuCollection = {
         name: "لیست هزینه‌ها",
         href: "/all-costs",
         icon: List,
+      },
+      {
+        id: 3,
+        name: "ثبت درآمد",
+        href: "/add-income",
+        icon: CircleDollarSign,
       },
     ],
   },
@@ -372,6 +378,12 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت شارژ مالکانه با فایل",
         href: "/import-proprietor-charge",
         icon: CircleDollarSign,
+      },
+      {
+        id: 5,
+        name: "ثبت اطلاعات بانک با فایل اکسل",
+        href: "/import-bank-data",
+        icon: FileText,
       },
     ],
   },

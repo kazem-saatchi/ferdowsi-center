@@ -40,7 +40,7 @@ export default function FindChargesByPersonPage() {
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || labels.generalErrorMessage}
+        message={data?.message || labels.somethingWentWrong}
         retry={refetch}
       />
     );

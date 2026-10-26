@@ -102,9 +102,10 @@ function AddPaymentForm() {
       } else {
         const result = await addPaymentMutation.mutateAsync(validatedData);
 
+        // The mutation hook toasts the server's own success or error message.
         if (result.success) {
-          toast.success(labels.paymentAddedSuccess);
-          // Reset form after successful submission
+          // Reset form after successful submission. The receipt must go too,
+          // or the next payment silently reuses this one's image.
           setSelectedShopId("");
           setSelectedPersonId("");
           setPaymentDate(null);
@@ -113,9 +114,8 @@ function AddPaymentForm() {
           setType("CASH");
           setDescription("");
           setProprietor(false);
+          setReceiptImageUrl("");
           setUploadPage(false);
-        } else {
-          toast.error(result.message || labels.paymentAddedError);
         }
       }
     } catch (error) {
@@ -221,7 +221,7 @@ function AddPaymentForm() {
         <div className="space-y-2">
           <Label htmlFor="type">{labels.paymentMethod}</Label>
           <Select
-            defaultValue="CASH"
+            value={type}
             onValueChange={(value) => setType(value as PaymentType)}
           >
             <SelectTrigger className="w-[180px]">

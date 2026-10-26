@@ -47,15 +47,6 @@ export const shopHistoryTypeEnum = z.enum([
   "InActive",
 ]);
 
-export const addShopHistorySchema = z.object({
-  shopId: z.string().uuid(),
-  personId: z.string().uuid(),
-  type: shopHistoryTypeEnum,
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime().optional(),
-});
-
-export type AddShopHistoryData = z.infer<typeof addShopHistorySchema>;
 //--------------------------------------------------------------------------------------
 export const updateShopOwner = z.object({
   shopId: z.string(),

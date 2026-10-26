@@ -646,6 +646,22 @@ export const labels = {
   activeByRenter: "فعال توسط مستاجر",
   debtor: "بدهکار",
   creditor: "بستانکار",
+  confirm: "تأیید",
+  irreversibleWarning: "این کار قابل برگشت نیست.",
+  undoOperationTitle: "شارژهای این عملیات حذف شود؟",
+  undoOperationConfirm: "حذف شارژها",
+  undoOperationFailed: "حذف شارژها ناموفق بود",
+  undoOperationAria: "حذف شارژهای این عملیات",
+  operationDeleted: "حذف شده است",
+  operationsTitle: "لیست عملیات‌های قابل برگشت",
+  operationsNotFound: "عملیاتی ثبت نشده است",
+  selectMonthFirst: "ابتدا ماه را انتخاب کنید",
+  bulkChargeUndoHint:
+    "در صورت اشتباه، از «عملیات‌های قابل بازگشت» قابل حذف است.",
+  confirmOwnerChangeTitle: "مالک واحد تغییر کند؟",
+  confirmRenterChangeTitle: "مستاجر واحد تغییر کند؟",
+  confirmStatusChangeTitle: "وضعیت واحد تغییر کند؟",
+  confirmEndRentalTitle: "قرارداد اجاره پایان یابد؟",
 };
 
 /** Bank API transaction type → Persian label */

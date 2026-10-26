@@ -62,7 +62,7 @@ export default function HistoryByPersonInfo() {
         message={
           personsError instanceof Error
             ? personsError.message
-            : labels.generalErrorMessage
+            : labels.somethingWentWrong
         }
         retry={personsRefetch}
       />
@@ -102,7 +102,7 @@ export default function HistoryByPersonInfo() {
             message={
               error instanceof Error
                 ? error.message
-                : labels.generalErrorMessage
+                : labels.somethingWentWrong
             }
             retry={refetch}
           />

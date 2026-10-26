@@ -30,7 +30,7 @@ function UserQuickState() {
     return (
       <ErrorComponent
         error={error}
-        message={labels.errorMessage}
+        message={labels.somethingWentWrong}
         retry={refetch}
       />
     );

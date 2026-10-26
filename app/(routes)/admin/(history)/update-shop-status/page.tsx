@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { CustomSelect } from "@/components/CustomSelect";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import DatePicker from "react-multi-date-picker";
@@ -45,22 +46,31 @@ export default function UpdateShopStatusPage() {
 
   const selectedShop = shopsAll?.find((shop) => shop.id === selectedShopId);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !statusChangeDate) {
       toast.error(labels.selectShopAndDate);
       return;
     }
+    const ok = await confirm({
+      title: labels.confirmStatusChangeTitle,
+      description: `${selectedShop ? shopOptionLabel(selectedShop) : ""} — ${
+        selectedShop?.isActive ? labels.deactivateShop : labels.activateShop
+      } ${labels.fromDate} ${statusChangeDate.toLocaleDateString("fa-IR")}`,
+    });
+    if (!ok) return;
+    // useUpdateShopStatus toasts the server's own success or error message;
+    // a success toast here also fired when the server refused the change.
     try {
       await updateShopStatusMutation.mutateAsync({
         shopId: selectedShopId,
         newStatus: selectedShop?.isActive ? "INACTIVATE" : "ACTIVATE",
         date: statusChangeDate.toISOString(),
       });
-      toast.success(labels.shopStatusUpdateSuccess);
     } catch (error) {
       console.error("Error updating shop status:", error);
-      toast.error(labels.shopStatusUpdateError);
     }
   };
 
@@ -168,6 +178,7 @@ export default function UpdateShopStatusPage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

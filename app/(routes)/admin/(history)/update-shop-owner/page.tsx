@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
@@ -58,18 +59,32 @@ export default function UpdateShopOwnerPage() {
     }
   }, [selectedShopId, shopsAll]);
 
+  const { confirm, dialog } = useConfirm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedOwnerId || !ownerChangeDate) {
       toast.error(labels.selectRequiredFields);
       return;
     }
+    const shop = shopsAll?.find((s) => s.id === selectedShopId);
+    const person = personsAll?.find((p) => p.id === selectedOwnerId);
+    const ok = await confirm({
+      title: labels.confirmOwnerChangeTitle,
+      description: `${shop ? shopOptionLabel(shop) : ""} — ${labels.newOwner}: ${
+        person ? `${person.firstName} ${person.lastName}` : ""
+      } ${labels.fromDate} ${ownerChangeDate.toLocaleDateString("fa-IR")}`,
+    });
+    if (!ok) return;
+    // The mutation hook toasts the server's own success or error message.
     try {
-      await updateShopOwnerMutation.mutateAsync({
+      const result = await updateShopOwnerMutation.mutateAsync({
         shopId: selectedShopId,
         ownerId: selectedOwnerId,
         startDate: ownerChangeDate.toISOString(),
       });
+      // Keep the input when the server refused the change.
+      if (!result.success) return;
       // Reset form after successful submission
       setSelectedShopId("");
       setSelectedOwnerId("");
@@ -77,7 +92,6 @@ export default function UpdateShopOwnerPage() {
       setCurrentOwnerName("");
     } catch (error) {
       console.error("Error updating shop owner:", error);
-      toast.error(labels.ownerUpdateError);
     }
   };
 
@@ -151,6 +165,7 @@ export default function UpdateShopOwnerPage() {
           </CardFooter>
         </form>
       </Card>
+      {dialog}
     </div>
   );
 }

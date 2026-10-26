@@ -36,7 +36,7 @@ export type AddChargeByAmountToShopListData = z.infer<typeof addChargeByAmountTo
 export const addChargeAllShopsSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
-  title: z.string(),
+  title: z.string().min(1, "ماه انتخاب نشده است"),
 });
 
 export type AddChargeAllShopsData = z.infer<typeof addChargeAllShopsSchema>;

@@ -15,7 +15,6 @@ import updatePersonInfo from "@/app/api/actions/person/updatePerson";
 import deletePersonById from "@/app/api/actions/person/deletePerson";
 import {
   AddShopData,
-  AddShopHistoryData,
   EndShopRenterData,
   UpdateShopInfoData,
   UpdateShopOwnerData,
@@ -24,7 +23,6 @@ import {
 } from "@/schema/shopSchema";
 import addShop from "@/app/api/actions/shop/addShop";
 import updateShopInfo from "@/app/api/actions/shop/updateShopInfo";
-import addShopHistory from "@/app/api/actions/history/addShopHistory";
 import updateShopOwnerId from "@/app/api/actions/shop/updateShopOwner";
 import updateShopRenterId from "@/app/api/actions/shop/updateShopRenter";
 import endShopRenterId from "@/app/api/actions/shop/endShopRenter";

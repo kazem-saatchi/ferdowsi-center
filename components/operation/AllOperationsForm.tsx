@@ -10,7 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader, Trash2, X } from "lucide-react";
+import { useConfirm } from "@/components/ConfirmDialog";
+import { labels } from "@/utils/label";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -23,20 +27,35 @@ interface DataItem {
 }
 
 export function AllOperationsTable({ data }: { data: DataItem[] }) {
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const handleDelete = async (operationId: string) => {
-    setIsDeleting(true);
-    setDeletingId(operationId);
+  const { confirm, dialog } = useConfirm();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
+  const handleDelete = async (item: DataItem) => {
+    // One operation is a whole run (e.g. a month's charge for every unit).
+    const ok = await confirm({
+      title: labels.undoOperationTitle,
+      description: `«${item.title}» — ${labels.irreversibleWarning}`,
+      confirmLabel: labels.undoOperationConfirm,
+      destructive: true,
+    });
+    if (!ok) return;
+
+    setDeletingId(item.id);
     try {
-      const res = await deleteChargesByOperation(operationId);
-      console.log("Deleting operation with id:", operationId);
-      toast.error("با موفقیت حذف شد");
-    } catch (error) {
-      toast.error("عملیات ناموفق بود");
+      const res = await deleteChargesByOperation(item.id);
+      if (res.success && res.data?.success) {
+        toast.success(res.data.message);
+        // Charges and every balance built on them just changed.
+        queryClient.invalidateQueries();
+        router.refresh();
+      } else {
+        toast.error(res.message || labels.undoOperationFailed);
+      }
+    } catch {
+      toast.error(labels.undoOperationFailed);
     } finally {
-      setIsDeleting(false);
       setDeletingId(null);
     }
   };
@@ -51,46 +70,57 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
     });
   };
 
-  return (
-    <Table className="border rounded-lg max-w-2xl">
-      <TableHeader className="">
-        <TableRow>
-          <TableHead className="text-right">عنوان</TableHead>
-          <TableHead className="text-right">تاریخ</TableHead>
-          <TableHead className="text-right w-[100px]">عملیات</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((item) => (
-          <TableRow key={item.id}>
-            <TableCell className="font-medium text-right">
-              {item.title}
-            </TableCell>
-            <TableCell className="text-right">
-              {formatDate(item.createdAt)}
-            </TableCell>
-            <TableCell className="text-right">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-600 hover:text-red-700"
-                onClick={() => handleDelete(item.id)}
-                disabled={isDeleting || item.deleted}
-              >
-                {!isDeleting ? (
-                  <Trash2 className="h-4 w-4" />
-                ) : item.id === deletingId ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4 animate-pulse" />
-                )}
+  if (data.length === 0) {
+    return <p className="text-muted-foreground">{labels.operationsNotFound}</p>;
+  }
 
-                {item.deleted && "حذف شده است"}
-              </Button>
-            </TableCell>
+  return (
+    <>
+      <Table className="border rounded-lg max-w-2xl">
+        <TableHeader className="">
+          <TableRow>
+            <TableHead className="text-right">عنوان</TableHead>
+            <TableHead className="text-right">تاریخ</TableHead>
+            <TableHead className="text-right w-[100px]">عملیات</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell className="font-medium text-right">
+                {item.title}
+              </TableCell>
+              <TableCell className="text-right">
+                {formatDate(item.createdAt)}
+              </TableCell>
+              <TableCell className="text-right">
+                {item.deleted ? (
+                  <span className="text-sm text-muted-foreground">
+                    {labels.operationDeleted}
+                  </span>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => handleDelete(item)}
+                    disabled={deletingId !== null}
+                    aria-label={labels.undoOperationAria}
+                    title={labels.undoOperationAria}
+                  >
+                    {deletingId === item.id ? (
+                      <Loader className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {dialog}
+    </>
   );
 }

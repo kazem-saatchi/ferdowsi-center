@@ -143,7 +143,10 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
               <TableCell className="text-center">
                 <Button
                   variant="ghost"
-                  onClick={() => setDescription(cost.description)}
+                  onClick={() => {
+                    setViewImageSrc(cost.billImage);
+                    setViewImage(true);
+                  }}
                   disabled={cost.billImage === ""}
                 >
                   {cost.billImage === "" ? labels.noImage : labels.view}
