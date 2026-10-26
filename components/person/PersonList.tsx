@@ -1,3 +1,4 @@
+import { toPersianDigits } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -37,12 +38,12 @@ export function PersonList({ persons }: PersonListProps) {
       <TableBody>
         {persons.map((person) => (
           <TableRow key={person.id}>
-            <TableCell className="text-center">{person.IdNumber}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(person.IdNumber)}</TableCell>
             <TableCell className="text-center">{person.firstName}</TableCell>
             <TableCell className="text-center">{person.lastName}</TableCell>
-            <TableCell className="text-center">{person.phoneOne}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(person.phoneOne)}</TableCell>
             <TableCell className="text-center">
-              {person.phoneTwo || labels.notAvailable}
+              {person.phoneTwo ? toPersianDigits(person.phoneTwo) : labels.notAvailable}
             </TableCell>
             <TableCell className="text-center">
               {person.isActive ? labels.active : labels.inactive}

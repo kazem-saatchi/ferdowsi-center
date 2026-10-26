@@ -20,7 +20,7 @@ import type {
   PersonBalanceSummary,
   PersonUnitBalance,
 } from "@/app/api/actions/balance/getPersonBalance";
-import { formatNumber } from "@/utils/formatNumber";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
 import { shopTypeLabel } from "@/utils/shopType";
 import {
@@ -57,8 +57,8 @@ export function PersonBalanceDisplay({
             {person.firstName} {person.lastName}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {labels.idNumber}: {person.IdNumber} — {labels.primaryPhone}:{" "}
-            {person.phoneOne}
+            {labels.idNumber}: {toPersianDigits(person.IdNumber)} — {labels.primaryPhone}:{" "}
+            {toPersianDigits(person.phoneOne)}
           </p>
         </div>
         <Button
@@ -74,7 +74,7 @@ export function PersonBalanceDisplay({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title={labels.personNetBalance}
-          value={formatNumber(summary.balance)}
+          value={formatNumber(Math.abs(summary.balance))}
           hint={statusHint(summary.balance)}
           icon={Scale}
           emphasis={summary.balance > 0 ? "warning" : "default"}
@@ -158,7 +158,7 @@ export function PersonBalanceDisplay({
                     <TableCell
                       className={cn("text-center font-semibold", toneOf(unit.balance))}
                     >
-                      {formatNumber(unit.balance)}
+                      {formatNumber(Math.abs(unit.balance))}
                     </TableCell>
                     <TableCell className="text-center">
                       <StatusBadge balance={unit.balance} />
@@ -187,7 +187,7 @@ export function PersonBalanceDisplay({
                   <TableCell
                     className={cn("text-center font-bold", toneOf(summary.balance))}
                   >
-                    {formatNumber(summary.balance)}
+                    {formatNumber(Math.abs(summary.balance))}
                   </TableCell>
                   <TableCell className="text-center">
                     <StatusBadge balance={summary.balance} />

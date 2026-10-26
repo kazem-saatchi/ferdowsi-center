@@ -6,7 +6,9 @@ import TanstackProvider from "@/provider/TanstackProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const fontFamily = Vazirmatn({ subsets: ["arabic"] });
+// "latin" too: Latin digits, Latin letters and punctuation otherwise fall back
+// to a system font next to Vazirmatn text.
+const fontFamily = Vazirmatn({ subsets: ["arabic", "latin"] });
 
 export const metadata: Metadata = {
   title: "مجتمع تجاری فردوسی",

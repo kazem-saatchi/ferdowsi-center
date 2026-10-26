@@ -1,3 +1,4 @@
+import { formatJalaliDate } from "@/utils/localeDate";
 import {
   Table,
   TableBody,
@@ -6,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatNumber } from "@/utils/formatNumber";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
 import { Charge } from "@prisma/client";
 
@@ -33,15 +34,15 @@ export function ChargeTable({ charges }: ChargeTableProps) {
           <TableRow key={charge.id}>
             <TableCell className="text-center">{charge.title}</TableCell>
             <TableCell className="text-center text-xl">{formatNumber(charge.amount)}</TableCell>
-            <TableCell className="text-center">{charge.plaque}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(charge.plaque)}</TableCell>
             <TableCell className="text-center">{charge.personName}</TableCell>
             <TableCell className="text-center text-xl">
-              {new Date(charge.date).toLocaleDateString('fa-IR')}
+              {formatJalaliDate(charge.date)}
             </TableCell>
             <TableCell className="text-center">
               {charge.operationName}
             </TableCell>
-            <TableCell className="text-center">{charge.daysCount}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(charge.daysCount)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

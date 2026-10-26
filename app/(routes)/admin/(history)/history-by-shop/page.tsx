@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
@@ -115,7 +116,7 @@ export default function HistoryByShopInfo() {
           shopHistories.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4">
-                {`${labels.plaque} ${shopHistories[0].plaque}`}
+                {`${labels.plaque} ${toPersianDigits(shopHistories[0].plaque)}`}
               </h3>
               <HistoryTable allHistories={shopHistories} />
             </div>

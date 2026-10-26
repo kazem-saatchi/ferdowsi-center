@@ -1,5 +1,6 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
   Table,
@@ -16,24 +17,12 @@ import {
   TransactionType,
   TransactionCategory,
 } from "@prisma/client";
-import { format } from "date-fns-jalali"; // For date formatting
 import { bankTransactionCategoryLabels, labels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import CostFromBankForm from "./CostFromBankForm";
-
-// Helper function for currency formatting
-const formatCurrency = (amount: number) => {
-  // Assuming amount is in the smallest unit (like cents or rials)
-  // Adjust the divisor and locale as needed for your currency
-  return new Intl.NumberFormat("fa", {
-    style: "currency",
-    currency: "IRR", // Change to your currency (e.g., 'IRR')
-    minimumFractionDigits: 0, // Adjust if you store fractional units
-  }).format(amount / 100); // Divide by 100 if amount is in cents/rials
-};
 
 const getCategoryText = (category: TransactionCategory | null) => {
   if (!category) return labels.noValue;
@@ -104,7 +93,7 @@ export function BankTransactionCostTable({
             <>
               <TableRow key={tx.id}>
                 <TableCell className="font-medium">
-                  {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
+                  {formatJalaliDate(tx.date)}
                 </TableCell>
                 <TableCell>{tx.description}</TableCell>
                 <TableCell>

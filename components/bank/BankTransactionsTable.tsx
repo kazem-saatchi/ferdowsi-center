@@ -1,5 +1,6 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
   Table,
@@ -12,7 +13,6 @@ import {
 } from "@/components/ui/table"; // Adjust import path as needed
 import { Badge } from "@/components/ui/badge"; // For displaying type/category
 import { TransactionType } from "@prisma/client";
-import { format } from "date-fns-jalali"; // For date formatting
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { labels, bankTransactionCategoryLabels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
@@ -138,7 +138,7 @@ export function BankTransactionTable({
           {transactions.map((tx) => (
             <TableRow key={tx.id}>
               <TableCell className="font-medium">
-                {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
+                {formatJalaliDate(tx.date)}
               </TableCell>
               <TableCell
                 className="max-w-[320px] truncate"

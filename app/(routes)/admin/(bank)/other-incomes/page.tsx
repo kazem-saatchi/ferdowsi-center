@@ -1,6 +1,7 @@
 // app/transactions/page.tsx
 "use client"; // Required because we are using hooks (useQuery)
 
+import { formatNumber } from "@/utils/formatNumber";
 import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button"; // For pagination
@@ -69,7 +70,7 @@ export default function TransactionsPage() {
             قبلی
           </Button>
           <span className="text-sm font-medium">
-            صفحه {queryResult?.currentPage ?? page} از {totalPages}
+            صفحه {formatNumber(queryResult?.currentPage ?? page)} از {formatNumber(totalPages)}
           </span>
           <Button
             variant="outline"

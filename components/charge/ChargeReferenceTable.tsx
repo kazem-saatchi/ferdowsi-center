@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { labels } from "@/utils/label";
-import { formatNumber } from "@/utils/formatNumber";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { ShopChargeReference } from "@prisma/client";
 
 function ChargeReferenceTable({
@@ -43,9 +43,9 @@ function ChargeReferenceTable({
       <TableBody>
         {chargeReferences.map((reference) => (
           <TableRow key={reference.id}>
-            <TableCell className="text-center">{reference.plaque}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(reference.plaque)}</TableCell>
             <TableCell className="text-center">
-              {reference.area.toFixed(2)}
+              {toPersianDigits(reference.area.toFixed(2))}
             </TableCell>
             <TableCell className="text-center text-2xl">
               {formatNumber(reference.constantAmount)}
@@ -56,7 +56,7 @@ function ChargeReferenceTable({
             <TableCell className="text-center text-2xl">
               {formatNumber(reference.totalAmount)}
             </TableCell>
-            <TableCell className="text-center">{reference.year}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(reference.year)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

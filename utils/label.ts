@@ -29,7 +29,7 @@ export const labels = {
   totalDebtors: "جمع مانده بدهکاران",
   totalCreditors: "جمع مانده بستانکاران",
   statusDebtor: "بدهکار",
-  statusCreditor: "طلبکار",
+  statusCreditor: "بستانکار",
   statusSettled: "تسویه",
   noShopsInReport: "واحدی برای نمایش وجود ندارد",
   debtFilterNotePrefix: "این گزارش تنها واحدهایی را در بر می‌گیرد که بدهی آنها بیش از",

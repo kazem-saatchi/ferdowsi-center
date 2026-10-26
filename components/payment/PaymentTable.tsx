@@ -1,3 +1,5 @@
+import { formatJalaliDate } from "@/utils/localeDate";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -8,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { useDeletePaymentById } from "@/tanstack/mutation/paymentMutation";
 import { Payment } from "@prisma/client";
-import { format } from "date-fns-jalali";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
@@ -67,14 +68,14 @@ export function PaymentTable({ payments }: PaymentTableProps) {
           {payments.map((payment) => (
             <TableRow key={payment.id}>
               <TableCell className="text-center">
-                {payment.amount.toLocaleString()}
+                {formatNumber(payment.amount)}
               </TableCell>
-              <TableCell className="text-center">{payment.plaque}</TableCell>
+              <TableCell className="text-center">{toPersianDigits(payment.plaque)}</TableCell>
               <TableCell className="text-center">
                 {payment.personName}
               </TableCell>
               <TableCell className="text-center">
-                {format(new Date(payment.date), "yyyy/MM/dd")}
+                {formatJalaliDate(payment.date)}
               </TableCell>
               <TableCell className="text-center">
                 {paymentTypeMap[payment.type]}

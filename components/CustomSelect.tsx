@@ -1,5 +1,6 @@
 "use client";
 
+import { normalizeForSearch } from "@/utils/formatNumber";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,7 +90,7 @@ export function CustomSelect({
   useEffect(() => {
     setFilteredOptions(
       options.filter((option) =>
-        option.label.toLowerCase().includes(search.toLowerCase()),
+        normalizeForSearch(option.label).includes(normalizeForSearch(search)),
       ),
     );
   }, [search, options]);

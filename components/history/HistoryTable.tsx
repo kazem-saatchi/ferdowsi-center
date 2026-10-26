@@ -1,5 +1,6 @@
 "use client";
 
+import { formatJalaliDate } from "@/utils/localeDate";
 import {
   Table,
   TableBody,
@@ -10,14 +11,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns-jalali";
 import { ShopHistory } from "@prisma/client";
 import { useState } from "react";
 import { labels } from "@/utils/label";
 import { UpdateHistoryModal } from "./UpdateHistoryModal";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatNumber } from "@/utils/formatNumber";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 
 type HistoryType =
   | "Ownership"
@@ -98,7 +98,7 @@ function HistoryTable({ allHistories }: TableProps) {
           <TableBody>
             {paginatedHistories?.map((history) => (
               <TableRow key={history.id}>
-                <TableCell className="text-center">{history.plaque}</TableCell>
+                <TableCell className="text-center">{toPersianDigits(history.plaque)}</TableCell>
                 <TableCell className="text-center">
                   {history.personName}
                 </TableCell>
@@ -108,11 +108,11 @@ function HistoryTable({ allHistories }: TableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">
-                  {format(new Date(history.startDate), "PPP")}
+                  {formatJalaliDate(history.startDate)}
                 </TableCell>
                 <TableCell className="text-center">
                   {history.endDate
-                    ? format(new Date(history.endDate), "PPP")
+                    ? formatJalaliDate(history.endDate)
                     : labels.noValue}
                 </TableCell>
                 <TableCell className="text-center">

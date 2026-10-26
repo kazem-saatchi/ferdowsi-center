@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import React, { useState, useEffect } from "react";
 import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
@@ -41,7 +42,7 @@ export default function PersonBalancePage() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   if (personsIsLoading)

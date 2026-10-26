@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useState, useEffect } from "react";
 import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
@@ -68,7 +69,7 @@ export default function UpdatePersonPage() {
 
   const personOptions = personsAll.map((person) => ({
     id: person.id,
-    label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+    label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
   }));
 
   return (

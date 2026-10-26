@@ -1,5 +1,7 @@
 "use client";
 
+import { formatJalaliDate } from "@/utils/localeDate";
+import { formatNumber } from "@/utils/formatNumber";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -48,7 +50,7 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                   </div>
                 )}
                 <span className="text-xs text-muted-foreground">
-                  {new Date(transaction.date).toLocaleDateString("fa-IR")}
+                  {formatJalaliDate(transaction.date)}
                 </span>
               </div>
 
@@ -72,7 +74,7 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                       : "text-red-600"
                   }`}
                 >
-                  {transaction.amount.toLocaleString("fa-IR")} ریال
+                  {formatNumber(transaction.amount)} ریال
                 </span>
               </div>
 
@@ -121,7 +123,7 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                   )}
                 </TableCell>
                 <TableCell className="text-center">
-                  {new Date(transaction.date).toLocaleDateString("fa-IR")}
+                  {formatJalaliDate(transaction.date)}
                 </TableCell>
                 <TableCell className="text-center">
                   {transaction.title}
@@ -145,7 +147,7 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                       : "text-red-600 text-center"
                   }
                 >
-                  {transaction.amount.toLocaleString("fa-IR")} ریال
+                  {formatNumber(transaction.amount)} ریال
                 </TableCell>
                 <TableCell className="text-center">
                   {transaction.bankTransactionId ? <Badge>دارد</Badge> : null}

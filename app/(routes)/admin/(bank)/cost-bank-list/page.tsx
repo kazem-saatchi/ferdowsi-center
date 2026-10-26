@@ -1,4 +1,5 @@
 "use client";
+import { formatNumber } from "@/utils/formatNumber";
 import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
 import { BankTransactionCostTable } from "@/components/bank/BankTransactionsCostTable";
 import { LimitSelector } from "@/components/bank/LimitSelector";
@@ -84,7 +85,7 @@ function BankCostListPage() {
             قبلی
           </Button>
           <span className="text-sm font-medium">
-            صفحه {queryResult?.currentPage ?? page} از {totalPages}
+            صفحه {formatNumber(queryResult?.currentPage ?? page)} از {formatNumber(totalPages)}
           </span>
           <Button
             variant="outline"

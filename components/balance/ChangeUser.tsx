@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { Label } from "@radix-ui/react-label";
 import React, { useEffect, useState } from "react";
 import { labels } from "@/utils/label";
@@ -57,7 +58,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   const hasSelection = Boolean(selectedPersonId);
@@ -136,7 +137,7 @@ export default function ChangeUser({ transaction, onSuccess }: ChangeUserProps) 
         </p>
         <p>
           <span className="text-muted-foreground">{labels.amount}:</span>{" "}
-          {transaction.amount.toLocaleString()}
+          {formatNumber(transaction.amount)}
         </p>
         <p>
           <span className="text-muted-foreground">{labels.currentPerson}</span>

@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
+import { formatRial } from "@/utils/formatNumber";
+import { formatJalaliDate } from "@/utils/localeDate";
 
 interface BankReportTableProps {
   reportData: BankReportCategoryData[];
@@ -50,17 +52,8 @@ export default function BankReportTable({
     setExpandedCategories(newExpanded);
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fa-IR").format(amount) + " ریال";
-  };
-
-  const formatDate = (date: Date | string) => {
-    return new Intl.DateTimeFormat("fa-IR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date(date));
-  };
+  const formatCurrency = formatRial;
+  const formatDate = formatJalaliDate;
 
   // Split data into income and payment categories
   const incomeCategories = reportData.filter((cat) => cat.type === "INCOME");

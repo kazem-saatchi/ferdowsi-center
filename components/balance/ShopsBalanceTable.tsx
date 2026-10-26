@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { ShopsBalanceData, ShopBalanceDetails } from "@/schema/balanceSchema";
-import { formatNumber } from "@/utils/formatNumber";
+import { toPersianDigits } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
+import BalanceAmount, { balanceStatusLabel } from "./BalanceAmount";
 
 interface BalanceTableProps {
   shopsBlances: ShopsBalanceData[] | ShopBalanceDetails[];
@@ -61,26 +62,26 @@ ShopsBalanceTable({ shopsBlances }: BalanceTableProps) {
                 balance === 0 && "text-blue-500"
               )}
             >
-              <TableCell className="text-center">{shop.plaque}</TableCell>
+              <TableCell className="text-center">{toPersianDigits(shop.plaque)}</TableCell>
               <TableCell className="text-center">{shop.ownerName}</TableCell>
               <TableCell className="text-center">
-                {shop.renterName ? shop.renterName : "------"}
+                {shop.renterName || labels.noValue}
               </TableCell>
               {isDetailed && (
                 <>
-                  <TableCell className="text-center font-semibold text-green-600 dark:text-green-400">
-                    {formatNumber(shop.ownerBalance)}
+                  <TableCell className="text-center font-semibold">
+                    <BalanceAmount value={shop.ownerBalance} debtSign="negative" hideLabel />
                   </TableCell>
-                  <TableCell className="text-center font-semibold text-orange-600 dark:text-orange-400">
-                    {formatNumber(shop.renterBalance)}
+                  <TableCell className="text-center font-semibold">
+                    <BalanceAmount value={shop.renterBalance} debtSign="negative" hideLabel />
                   </TableCell>
                 </>
               )}
               <TableCell className="text-center font-semibold">
-                {formatNumber(balance)}
+                <BalanceAmount value={balance} debtSign="negative" hideLabel />
               </TableCell>
               <TableCell className="text-center">
-                {balance > 0 ? "طلبکار" : balance == 0 ? "تسویه" : " بدهکار"}
+                {balanceStatusLabel(balance, "negative")}
               </TableCell>
             </TableRow>
           );

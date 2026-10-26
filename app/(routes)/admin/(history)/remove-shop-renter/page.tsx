@@ -1,5 +1,6 @@
 "use client";
 
+import { formatJalaliDate } from "@/utils/localeDate";
 import { useEffect, useState } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useEndShopRenter } from "@/tanstack/mutation/shopMutation";
@@ -67,7 +68,7 @@ export default function RemoveShopRenterPage() {
       title: labels.confirmEndRentalTitle,
       description: `${shop ? shopOptionLabel(shop) : ""} — ${currentRenterName}، ${
         labels.endDate
-      } ${endDate.toLocaleDateString("fa-IR")}`,
+      } ${formatJalaliDate(endDate)}`,
       destructive: true,
     });
     if (!ok) return;

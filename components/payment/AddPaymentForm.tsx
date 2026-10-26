@@ -1,3 +1,4 @@
+import { toPersianDigits } from "@/utils/formatNumber";
 import React, { useState } from "react";
 import { CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
@@ -56,7 +57,7 @@ function AddPaymentForm() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

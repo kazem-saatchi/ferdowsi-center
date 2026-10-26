@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -274,7 +275,7 @@ function AddChargeToListPage() {
                               >
                                 <div className="text-right">
                                   <div className="font-medium">
-                                    پلاک {shop.plaque} - طبقه {shop.floor}
+                                    پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
                                   </div>
                                   <div className="text-sm text-gray-600">
                                     مالک: {shop.ownerName}
@@ -282,7 +283,7 @@ function AddChargeToListPage() {
                                       ` | مستاجر: ${shop.renterName}`}
                                   </div>
                                   <div className="text-xs text-gray-500">
-                                    نوع: {shop.type} | مساحت: {shop.area} متر
+                                    نوع: {shop.type} | مساحت: {toPersianDigits(shop.area)} متر
                                   </div>
                                 </div>
                               </div>
@@ -319,7 +320,7 @@ function AddChargeToListPage() {
                             >
                               <div className="text-right flex-1">
                                 <div className="font-medium">
-                                  پلاک {shop.plaque} - طبقه {shop.floor}
+                                  پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
                                 </div>
                                 <div className="text-sm text-gray-600">
                                   مالک: {shop.ownerName}

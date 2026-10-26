@@ -1,3 +1,4 @@
+import { formatNumber } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { PersonBalanceByShopData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
+import BalanceAmount from "./BalanceAmount";
 
 interface PersonBalanceProps {
   personsBalance: PersonBalanceByShopData[];
@@ -29,7 +31,7 @@ function PersonsBalanceTable({ personsBalance }: PersonBalanceProps) {
                     {labels.totalCharge}
                   </span>
                   <span className="break-all">
-                    {person.totalCharge.toLocaleString()}
+                    {formatNumber(person.totalCharge)}
                   </span>
                 </div>
                 <div className="flex justify-between gap-2">
@@ -37,13 +39,13 @@ function PersonsBalanceTable({ personsBalance }: PersonBalanceProps) {
                     {labels.totalPayment}
                   </span>
                   <span className="break-all">
-                    {person.totalPayment.toLocaleString()}
+                    {formatNumber(person.totalPayment)}
                   </span>
                 </div>
                 <div className="flex justify-between gap-2 border-t pt-2">
                   <span className="font-medium">{labels.totalBalance}</span>
                   <span className="font-bold break-all">
-                    {person.balance.toLocaleString()}
+                    <BalanceAmount value={person.balance} debtSign="positive" />
                   </span>
                 </div>
               </div>
@@ -75,13 +77,13 @@ function PersonsBalanceTable({ personsBalance }: PersonBalanceProps) {
                     {person.personName}
                   </TableCell>
                   <TableCell className="text-center">
-                    {person.totalCharge.toLocaleString()}
+                    {formatNumber(person.totalCharge)}
                   </TableCell>
                   <TableCell className="text-center">
-                    {person.totalPayment.toLocaleString()}
+                    {formatNumber(person.totalPayment)}
                   </TableCell>
                   <TableCell className="text-center">
-                    {person.balance.toLocaleString()}
+                    <BalanceAmount value={person.balance} debtSign="positive" />
                   </TableCell>
                 </TableRow>
               ))}

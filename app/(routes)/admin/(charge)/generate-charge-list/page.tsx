@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useCreateChargeReference } from "@/tanstack/mutation/chargeMutation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -18,7 +17,7 @@ import { useConfirm } from "@/components/ConfirmDialog";
 import { ShopChargeReferenceSchema } from "@/schema/chargeSchema";
 import { labels } from "@/utils/label";
 import { AlertCircle } from "lucide-react";
-import { NumericFormat } from "react-number-format";
+import NumericInput from "@/components/NumericInput";
 
 export default function GenerateShopChargeReferencePage() {
   const [formData, setFormData] = useState({
@@ -31,12 +30,8 @@ export default function GenerateShopChargeReferencePage() {
 
   const createChargeReferenceMutation = useCreateChargeReference();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const setField = (name: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const { confirm, dialog } = useConfirm();
@@ -61,8 +56,8 @@ export default function GenerateShopChargeReferencePage() {
         validatedData
       );
 
+      // The mutation hook toasts the server's own success or error message.
       if (result.success) {
-        toast.success(labels.successMessage);
         setFormData({
           storeConst: "",
           storeMetric: "",
@@ -70,8 +65,6 @@ export default function GenerateShopChargeReferencePage() {
           officeMetric: "",
           savingPercent: "0",
         });
-      } else {
-        toast.error(result.message || labels.errorMessage);
       }
     } catch (error) {
       console.error("Error generating shop charge reference:", error);
@@ -98,63 +91,58 @@ export default function GenerateShopChargeReferencePage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="storeConst">{labels.shopConstantValue}</Label>
-              <NumericFormat
+              <NumericInput
                 id="storeConst"
                 name="storeConst"
                 value={formData.storeConst}
-                onChange={handleChange}
-                thousandSeparator
-                customInput={Input}
+                onChange={(value) => setField("storeConst", value)}
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="storeMetric">{labels.shopMetricValue}</Label>
-              <NumericFormat
+              <NumericInput
                 id="storeMetric"
                 name="storeMetric"
                 value={formData.storeMetric}
-                onChange={handleChange}
-                thousandSeparator
-                customInput={Input}
+                onChange={(value) => setField("storeMetric", value)}
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="officeConst">{labels.officeConstantValue}</Label>
-              <NumericFormat
+              <NumericInput
                 id="officeConst"
                 name="officeConst"
                 value={formData.officeConst}
-                onChange={handleChange}
-                thousandSeparator
-                customInput={Input}
+                onChange={(value) => setField("officeConst", value)}
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="officeMetric">{labels.officeMetricValue}</Label>
 
-              <NumericFormat
+              <NumericInput
                 id="officeMetric"
                 name="officeMetric"
                 value={formData.officeMetric}
-                onChange={handleChange}
-                thousandSeparator
-                customInput={Input}
+                onChange={(value) => setField("officeMetric", value)}
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="savingPercent">{labels.savingPercentValue}</Label>
 
-              <NumericFormat
+              <NumericInput
                 id="savingPercent"
                 name="savingPercent"
                 value={formData.savingPercent}
-                onChange={handleChange}
-                thousandSeparator
-                customInput={Input}
+                onChange={(value) => setField("savingPercent", value)}
+                allowDecimal
                 required
               />
             </div>
@@ -177,49 +165,3 @@ export default function GenerateShopChargeReferencePage() {
   );
 }
 
-{
-  /*  <Input
-                id="storeConst"
-                name="storeConst"
-                type="text"
-                value={
-                  formatNumberFromString(formData.storeConst)
-                    .formattedPersianNumber
-                }
-                onChange={handleChange}
-                required
-              />
-  <Input
-                id="storeMetric"
-                name="storeMetric"
-                type="text"
-                value={
-                  formatNumberFromString(formData.storeMetric)
-                    .formattedPersianNumber
-                }
-                onChange={handleChange}
-                required
-              /> */
-  /* <Input
-                id="officeConst"
-                name="officeConst"
-                type="text"
-                value={
-                  formatNumberFromString(formData.officeConst)
-                    .formattedPersianNumber
-                }
-                onChange={handleChange}
-                required
-              /> */
-  /* <Input
-                id="officeMetric"
-                name="officeMetric"
-                type="text"
-                value={
-                  formatNumberFromString(formData.officeMetric)
-                    .formattedPersianNumber
-                }
-                onChange={handleChange}
-                required
-              /> */
-}

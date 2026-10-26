@@ -1,3 +1,4 @@
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { ShopBalanceData } from "@/schema/balanceSchema";
 import { labels } from "@/utils/label";
+import BalanceAmount from "./BalanceAmount";
 
 interface ShopBalanceProps {
   shopBalance: ShopBalanceData;
@@ -29,14 +31,14 @@ function ShopBalanceTable({ shopBalance }: ShopBalanceProps) {
             <span className="text-sm text-muted-foreground">
               {labels.plaque}
             </span>
-            <span className="font-bold">{shopBalance?.plaque}</span>
+            <span className="font-bold">{toPersianDigits(shopBalance?.plaque)}</span>
           </div>
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm text-muted-foreground">
               {labels.totalBalanceMonthly}
             </span>
             <span className="font-medium break-all">
-              {monthlyBalance.toLocaleString()}
+              <BalanceAmount value={monthlyBalance} debtSign="positive" />
             </span>
           </div>
           <div className="flex items-center justify-between gap-2">
@@ -44,13 +46,13 @@ function ShopBalanceTable({ shopBalance }: ShopBalanceProps) {
               {labels.totalBalanceYearly}
             </span>
             <span className="font-medium break-all">
-              {yearlyBalance.toLocaleString()}
+              <BalanceAmount value={yearlyBalance} debtSign="positive" />
             </span>
           </div>
           <div className="flex items-center justify-between gap-2 border-t pt-3">
             <span className="text-sm font-medium">{labels.totalBalance}</span>
             <span className="font-bold break-all">
-              {shopBalance?.balance.toLocaleString()}
+              <BalanceAmount value={shopBalance?.balance ?? 0} debtSign="positive" />
             </span>
           </div>
         </CardContent>
@@ -76,16 +78,16 @@ function ShopBalanceTable({ shopBalance }: ShopBalanceProps) {
           <TableBody>
             <TableRow>
               <TableCell className="text-center">
-                {shopBalance?.plaque}
+                {toPersianDigits(shopBalance?.plaque)}
               </TableCell>
               <TableCell className="text-center">
-                {monthlyBalance.toLocaleString()}
+                <BalanceAmount value={monthlyBalance} debtSign="positive" />
               </TableCell>
               <TableCell className="text-center">
-                {yearlyBalance.toLocaleString()}
+                <BalanceAmount value={yearlyBalance} debtSign="positive" />
               </TableCell>
               <TableCell className="text-center">
-                {shopBalance?.balance.toLocaleString()}
+                <BalanceAmount value={shopBalance?.balance ?? 0} debtSign="positive" />
               </TableCell>
             </TableRow>
           </TableBody>

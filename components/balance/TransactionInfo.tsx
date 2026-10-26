@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +13,8 @@ import {
   bankTransactionTypeLabels,
   labels,
 } from "@/utils/label";
-import { formatPersianDate } from "@/utils/localeDate";
+import { formatJalaliDate } from "@/utils/localeDate";
+import LtrDigits from "@/components/LtrDigits";
 import { AccountType } from "@prisma/client";
 import { AlertCircle, Banknote, Calendar, Hash, Landmark } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
@@ -142,7 +144,7 @@ export default function TransactionInfo({
           <div className="flex items-baseline gap-1.5">
             <Banknote className="h-4 w-4 shrink-0 text-primary" />
             <span className="text-lg font-bold tabular-nums tracking-tight text-primary">
-              {data.amount.toLocaleString("fa-IR")}
+              {formatNumber(data.amount)}
             </span>
           </div>
           <span className="text-[11px] text-muted-foreground">
@@ -162,12 +164,12 @@ export default function TransactionInfo({
           <DetailRow
             icon={Calendar}
             label={labels.transactionDateLabel}
-            value={formatPersianDate(data.date)}
+            value={formatJalaliDate(data.date)}
           />
           <DetailRow
             icon={Calendar}
             label={labels.systemRecordedAt}
-            value={formatPersianDate(data.createdAt)}
+            value={formatJalaliDate(data.createdAt)}
           />
           <DetailRow
             label={labels.transactionCategory}
@@ -175,38 +177,38 @@ export default function TransactionInfo({
           />
           <DetailRow
             label={labels.senderBankAccount}
-            value={data.senderAccount?.trim() || labels.notAvailable}
+            value={data.senderAccount?.trim() ? <LtrDigits value={data.senderAccount} /> : labels.notAvailable}
           />
           <DetailRow
             label={labels.bankAccountNumberDestination}
-            value={data.recieverAccount?.trim() || labels.notAvailable}
+            value={data.recieverAccount?.trim() ? <LtrDigits value={data.recieverAccount} /> : labels.notAvailable}
           />
           <DetailRow
             label={labels.bankAccountNumber}
-            value={data.bankAccountNumber?.trim() || labels.notAvailable}
+            value={data.bankAccountNumber?.trim() ? <LtrDigits value={data.bankAccountNumber} /> : labels.notAvailable}
           />
           <DetailRow
             icon={Hash}
             label={labels.bankStatementNumber}
-            value={data.bankReferenceId}
+            value={<LtrDigits value={data.bankReferenceId} />}
           />
           <DetailRow
             label={labels.bankReceiptNumberLabel}
             value={
-              data.bankRecieptId?.trim() ? data.bankRecieptId : labels.notAvailable
+              data.bankRecieptId?.trim() ? <LtrDigits value={data.bankRecieptId} /> : labels.notAvailable
             }
           />
           <DetailRow
             label={labels.branchCode}
             value={
               data.branch != null
-                ? data.branch.toLocaleString("fa-IR")
+                ? toPersianDigits(data.branch)
                 : labels.notAvailable
             }
           />
           <DetailRow
             label={labels.balanceAfterTransaction}
-            value={data.balance.toLocaleString("fa-IR")}
+            value={formatNumber(data.balance)}
             valueClassName="tabular-nums"
           />
         </CardContent>

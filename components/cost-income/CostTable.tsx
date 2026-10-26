@@ -1,3 +1,5 @@
+import { formatJalaliDate } from "@/utils/localeDate";
+import { formatNumber } from "@/utils/formatNumber";
 import React, { useState } from "react";
 import {
   Table,
@@ -9,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
-import { format } from "date-fns-jalali";
 import { labels } from "@/utils/label";
 import { Cost } from "@prisma/client";
 import { Textarea } from "../ui/textarea";
@@ -118,10 +119,10 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
             <TableRow key={cost.id}>
               <TableCell className="text-center">{cost.title}</TableCell>
               <TableCell className="text-center">
-                {cost.amount.toLocaleString()}
+                {formatNumber(cost.amount)}
               </TableCell>
               <TableCell className="text-center">
-                {format(new Date(cost.date), "yyyy/MM/dd")}
+                {formatJalaliDate(cost.date)}
               </TableCell>
               <TableCell className="text-center">
                 {labels[cost.category.toLowerCase() as keyof typeof labels]}

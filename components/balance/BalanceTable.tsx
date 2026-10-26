@@ -1,3 +1,4 @@
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -27,15 +28,15 @@ export function BalanceTable({ balances }: BalanceTableProps) {
       <TableBody>
         {balances.map((balance) => (
           <TableRow key={balance.shopId}>
-            <TableCell className="text-center">{balance.plaque}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(balance.plaque)}</TableCell>
             <TableCell className="text-center">
-              {balance.totalCharge.toLocaleString()}
+              {formatNumber(balance.totalCharge)}
             </TableCell>
             <TableCell className="text-center">
-              {balance.totalPayment.toLocaleString()}
+              {formatNumber(balance.totalPayment)}
             </TableCell>
             <TableCell className="text-center">
-              {(balance.totalCharge - balance.totalPayment).toLocaleString()}{" "}
+              {formatNumber(balance.totalCharge - balance.totalPayment)}{" "}
             </TableCell>
           </TableRow>
         ))}

@@ -1,4 +1,5 @@
 "use client";
+import { normalizeForSearch, toPersianDigits } from "@/utils/formatNumber";
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -38,9 +39,9 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
       setFilteredPersons(
         personsAll.filter(
           (person) =>
-            person.firstName.toLowerCase().includes(search.toLowerCase()) ||
-            person.lastName.toLowerCase().includes(search.toLowerCase()) ||
-            person.IdNumber.includes(search)
+            normalizeForSearch(
+              `${person.firstName} ${person.lastName} ${person.IdNumber}`
+            ).includes(normalizeForSearch(search))
         )
       );
     }
@@ -62,7 +63,7 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
         type="button"
       >
         {selectedPerson
-          ? `${selectedPerson.firstName} ${selectedPerson.lastName} (${selectedPerson.IdNumber})`
+          ? `${selectedPerson.firstName} ${selectedPerson.lastName} (${toPersianDigits(selectedPerson.IdNumber)})`
           : `انتخاب ${label}`}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -87,7 +88,7 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
                 }}
                 // type="button"
               >
-                {person.firstName} {person.lastName} ({person.IdNumber})
+                {person.firstName} {person.lastName} ({toPersianDigits(person.IdNumber)})
               </div>
             ))}
           </div>

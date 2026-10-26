@@ -1,8 +1,9 @@
 "use client";
 
+import { formatJalaliDate } from "@/utils/localeDate";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { useState } from "react";
 import { ShopHistory } from "@prisma/client";
-import { format } from "date-fns-jalali";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +29,6 @@ interface UpdateHistoryModalProps {
   onClose: () => void;
 }
 
-const formatAmount = (amount: number) => amount.toLocaleString("fa-IR");
 
 export function UpdateHistoryModal({
   history,
@@ -226,8 +226,8 @@ export function UpdateHistoryModal({
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {labels.chargePeriod}:{" "}
-                        {format(new Date(op.windowStart), "PPP")} -{" "}
-                        {format(new Date(op.windowEnd), "PPP")}
+                        {formatJalaliDate(op.windowStart)} -{" "}
+                        {formatJalaliDate(op.windowEnd)}
                       </div>
                       <table className="w-full text-sm">
                         <thead>
@@ -251,13 +251,13 @@ export function UpdateHistoryModal({
                             <tr key={p.personId} className="border-t">
                               <td className="py-1">{p.personName}</td>
                               <td className="text-center text-muted-foreground">
-                                {formatAmount(p.oldAmount)}
+                                {formatNumber(p.oldAmount)}
                                 <span className="text-xs mr-1">
                                   ({p.oldDays} {labels.daysColumn})
                                 </span>
                               </td>
                               <td className="text-center font-medium">
-                                {formatAmount(p.newAmount)}
+                                {formatNumber(p.newAmount)}
                                 <span className="text-xs mr-1">
                                   ({p.newDays} {labels.daysColumn})
                                 </span>
@@ -270,7 +270,7 @@ export function UpdateHistoryModal({
                                 }
                               >
                                 {p.paidInWindow > 0
-                                  ? formatAmount(p.paidInWindow)
+                                  ? formatNumber(p.paidInWindow)
                                   : "-"}
                               </td>
                             </tr>
@@ -288,7 +288,7 @@ export function UpdateHistoryModal({
           <div className="space-y-2 text-sm border-t pt-4">
             <div className="flex justify-between">
               <span className="text-muted-foreground">{labels.shopId}:</span>
-              <span>{history.plaque}</span>
+              <span>{toPersianDigits(history.plaque)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">{labels.personId}:</span>

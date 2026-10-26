@@ -35,8 +35,8 @@ import { useGetAdminDashboard } from "@/tanstack/query/dashboardQuery";
 import type {
   BucketSummary,
 } from "@/app/api/actions/reports/getAdminDashboard";
-import { formatNumber } from "@/utils/formatNumber";
-import { formatPersianDate } from "@/utils/localeDate";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
+import { formatJalaliDate } from "@/utils/localeDate";
 import { labels } from "@/utils/label";
 import { SHOP_TYPE_LABELS } from "@/utils/shopType";
 import type { ShopType } from "@prisma/client";
@@ -95,7 +95,7 @@ export default function AdminDashboardPage() {
           {labels.dashboardDataAsOf}
           {": "}
           {bank.lastTransactionDate
-            ? formatPersianDate(new Date(bank.lastTransactionDate))
+            ? formatJalaliDate(new Date(bank.lastTransactionDate))
             : labels.noBankDataYet}
         </p>
       </div>
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
           }
           hint={
             bank.lastTransactionDate
-              ? `${labels.lastBankTransactionTitle}: ${formatPersianDate(
+              ? `${labels.lastBankTransactionTitle}: ${formatJalaliDate(
                   new Date(bank.lastTransactionDate)
                 )}`
               : undefined
@@ -233,7 +233,7 @@ export default function AdminDashboardPage() {
                       {debtor.ownerName}
                     </TableCell>
                     <TableCell className="text-center">
-                      {debtor.renterName || "------"}
+                      {debtor.renterName || labels.noValue}
                     </TableCell>
                     <TableCell className="text-center font-semibold text-red-600 dark:text-red-400">
                       {formatNumber(debtor.debt)}

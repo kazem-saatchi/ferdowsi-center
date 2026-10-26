@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useStore } from "@/store/store";
 import { formatNumber } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
+import BalanceAmount from "./BalanceAmount";
 import type { ShopsBalanceVariant } from "@/utils/shopsBalanceExcel";
 
 /** Debt thresholds the list can be narrowed to, in rials. */
@@ -78,9 +79,11 @@ export function ShopsBalanceToolbar({
     >
       <div className="flex flex-row items-center justify-start gap-2">
         <span className="text-sm font-semibold">{labels.grandTotal}:</span>
-        <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          {formatNumber(totalBalance)}
-        </span>
+        <BalanceAmount
+          value={totalBalance}
+          debtSign="negative"
+          className="text-xl font-bold"
+        />
       </div>
       <div className="flex flex-row items-center justify-start gap-2 mb-4">
         <Select onValueChange={handleFilter} defaultValue="all">

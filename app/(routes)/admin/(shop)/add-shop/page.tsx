@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -23,6 +22,7 @@ import { labels } from "@/utils/label";
 import LoadingComponent from "@/components/LoadingComponent";
 import BankCardOTP from "@/components/shop/BankCardOTP";
 import ShopFloorSelect from "@/components/shop/ShopFloorSelect";
+import NumericInput from "@/components/NumericInput";
 
 export default function AddShopPage() {
   // Tansack Query and Mutation
@@ -41,6 +41,13 @@ export default function AddShopPage() {
       setNewShop: state.setNewShop,
       resetNewShop: state.resetNewShop,
     }))
+  );
+  // The store keeps a half-filled form across navigation, so start from it.
+  const [plaqueText, setPlaqueText] = useState(
+    newShop.plaque ? String(newShop.plaque) : ""
+  );
+  const [areaText, setAreaText] = useState(
+    newShop.area ? String(newShop.area) : ""
   );
 
   useEffect(() => {
@@ -63,6 +70,8 @@ export default function AddShopPage() {
       addShopMutation.mutate(validation.data, {
         onSuccess: () => {
           resetNewShop();
+          setPlaqueText("");
+          setAreaText("");
         },
         onSettled: () => {
           setSaving(false);
@@ -83,13 +92,16 @@ export default function AddShopPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
-              <Input
+              <NumericInput
                 id="plaque"
+                grouping={false}
                 name="plaque"
-                type="number"
-                value={newShop.plaque}
-                onChange={(event) => {
-                  setNewShop("plaque", parseInt(event.target.value));
+                value={plaqueText}
+                onChange={(value) => {
+                  setPlaqueText(value);
+                  // An empty field stays 0 so the schema reports it, rather than
+                  // NaN showing up in the input.
+                  setNewShop("plaque", value ? parseInt(value, 10) : 0);
                 }}
               />
               {formErrors.plaque && (
@@ -100,14 +112,15 @@ export default function AddShopPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="area">{labels.areaM2}</Label>
-              <Input
+              <NumericInput
                 id="area"
                 name="area"
-                type="number"
-                step="0.01"
-                value={newShop.area}
-                onChange={(event) => {
-                  setNewShop("area", parseFloat(event.target.value));
+                value={areaText}
+                allowDecimal
+                onChange={(value) => {
+                  // Kept as text so a half-typed "12." survives until the next digit.
+                  setAreaText(value);
+                  setNewShop("area", value ? parseFloat(value) : 0);
                 }}
               />
               {formErrors.area && (

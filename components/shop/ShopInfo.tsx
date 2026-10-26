@@ -1,3 +1,4 @@
+import { toPersianDigits } from "@/utils/formatNumber";
 import { Shop } from "@prisma/client";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -15,7 +16,7 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
           {isLoading ? (
             <Skeleton className="h-8 w-40 sm:w-48" />
           ) : (
-            `واحد #${shop?.plaque}`
+            `واحد #${toPersianDigits(shop?.plaque)}`
           )}
         </CardTitle>
         {!isLoading && (
@@ -34,12 +35,12 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
             />
             <ShopProperty
               label={labels.floorNumber}
-              value={shop?.floor}
+              value={shop?.floor != null ? toPersianDigits(shop.floor) : null}
               isLoading={isLoading}
             />
             <ShopProperty
               label={labels.areaM2}
-              value={shop?.area ? `${shop.area}` : null}
+              value={shop?.area ? toPersianDigits(shop.area) : null}
               isLoading={isLoading}
             />
           </div>

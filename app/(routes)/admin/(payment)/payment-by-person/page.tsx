@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
 import { useFindPaymentsByPerson } from "@/tanstack/query/paymentQuery";
@@ -56,7 +57,7 @@ export default function PersonPaymentsPage() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   if (personsIsLoading) {

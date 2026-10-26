@@ -20,6 +20,7 @@ import { AddChargeAllShopsData } from "@/schema/chargeSchema";
 import DateObject from "react-date-object";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { labels } from "@/utils/label";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 export default function AddChargesToAllShopsPage() {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ export default function AddChargesToAllShopsPage() {
       const formattedDate = `${persianDate.year}-${String(
         persianDate.month.number
       ).padStart(2, "0")}`;
-      const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
+      const title = `شارژ ${persianDate.month.name} ${toPersianDigits(persianDate.year)}`;
       setFormData({
         title,
         month: formattedDate,

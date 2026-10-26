@@ -1,29 +1,66 @@
-import React from "react";
-import { NumericFormat } from "react-number-format";
+import React, { useId } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { formatNumericInput, parseNumericInput } from "@/utils/formatNumber";
 
 interface NumericInputProps {
+  /** Latin digits without separators, e.g. "1250000". */
   value: string;
   onChange: (value: string) => void;
-  label: string;
+  label?: string;
+  id?: string;
+  name?: string;
   disabled?: boolean;
+  required?: boolean;
+  allowDecimal?: boolean;
+  allowNegative?: boolean;
+  /** Thousands separators; off for identifiers such as a plaque or floor. */
+  grouping?: boolean;
 }
 
-function NumericInput({ value, onChange, label, disabled }: NumericInputProps) {
+/** Number field that accepts Persian, Arabic or Latin digits, shows Persian
+ *  digits with grouping, and hands back a plain Latin string. */
+function NumericInput({
+  value,
+  onChange,
+  label,
+  id,
+  name,
+  disabled,
+  required,
+  allowDecimal = false,
+  allowNegative = false,
+  grouping = true,
+}: NumericInputProps) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
   return (
-    <div className="flex flex-col w-full">
-      <Label htmlFor="numericInput" className="text-sm text-gray-500">
-        {label}
-      </Label>
-      <NumericFormat
-        id="numericInput"
-        name="numericInput"
-        value={value}
-        onChange={(event) => onChange(event.target.value.replace(/,/g, ""))}
-        thousandSeparator
-        customInput={Input}
+    <div className="flex flex-col w-full gap-2">
+      {label && (
+        <Label htmlFor={inputId} className="text-sm text-gray-500">
+          {label}
+        </Label>
+      )}
+      <Input
+        id={inputId}
+        name={name}
+        type="text"
+        // "numeric" keyboards on phones have no minus key.
+        inputMode={allowNegative ? "text" : allowDecimal ? "decimal" : "numeric"}
+        dir="ltr"
+        className="text-right"
+        value={formatNumericInput(value, grouping)}
+        onChange={(event) =>
+          onChange(
+            parseNumericInput(event.target.value, {
+              allowDecimal,
+              allowNegative,
+            })
+          )
+        }
         disabled={disabled}
+        required={required}
       />
     </div>
   );

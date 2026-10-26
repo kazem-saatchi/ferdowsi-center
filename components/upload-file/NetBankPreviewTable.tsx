@@ -1,3 +1,4 @@
+import { formatJalaliDate } from "@/utils/localeDate";
 import {
   Table,
   TableBody,
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
-import { format } from "date-fns-jalali";
 import { NetBankTransactionData } from "./readFile";
 
 export type BankDataHeaderLabels = {
@@ -77,7 +77,7 @@ export function NetBankPreviewTable({ data }: PreviewTableProps) {
               {filteredHeaders.map((header) => (
                 <TableCell key={header} className={cn("text-center text-xs max-w-96")}>
                   {header === "date" &&
-                    format(new Date(row[header]), "yyyy/MM/dd")}
+                    formatJalaliDate(row[header])}
                   {header === "branch" && row[header]}
                   {header === "transactionId" && row[header]}
                   {header === "chequeNumber" && row[header]}

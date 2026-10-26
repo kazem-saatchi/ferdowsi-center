@@ -18,6 +18,7 @@ import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
+import NumericInput from "@/components/NumericInput";
 import { ShopType } from "@prisma/client";
 
 export default function EditShopPageById() {
@@ -52,14 +53,6 @@ export default function EditShopPageById() {
       setShopType(data.data.shop.type);
     }
   }, [data]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,35 +98,41 @@ export default function EditShopPageById() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
-              <Input
+              <NumericInput
                 id="plaque"
+                grouping={false}
                 name="plaque"
-                type="number"
                 value={formData.plaque}
-                onChange={handleChange}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, plaque: value }))
+                }
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="area">{labels.areaM2}</Label>
-              <Input
+              <NumericInput
                 id="area"
                 name="area"
-                type="number"
-                step="0.01"
                 value={formData.area}
-                onChange={handleChange}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, area: value }))
+                }
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="floor">{labels.floorNumber}</Label>
-              <Input
+              <NumericInput
                 id="floor"
+                grouping={false}
                 name="floor"
-                type="number"
                 value={formData.floor}
-                onChange={handleChange}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, floor: value }))
+                }
+                allowNegative
                 required
               />
             </div>

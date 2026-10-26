@@ -6,6 +6,7 @@ import {
   addAnnualChargeAllShopsSchema,
 } from "@/schema/chargeSchema";
 import { handleServerAction } from "@/utils/handleServerAction";
+import { toPersianDigits } from "@/utils/formatNumber";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma, ShopChargeReference } from "@prisma/client";
 
@@ -60,7 +61,7 @@ async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
       const amount = annualChargeReferenceListMap[shop.id]?.totalAmount;
 
       acc.push({
-        title: `شارژ مالکانه ${year}`,
+        title: `شارژ مالکانه ${toPersianDigits(year)}`,
         amount: amount,
         shopId: shop.id,
         plaque: shop.plaque,

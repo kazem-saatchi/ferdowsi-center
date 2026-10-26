@@ -1,5 +1,6 @@
 "use client";
 
+import { formatJalaliDate } from "@/utils/localeDate";
 import { useState, useEffect } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useUpdateShopStatus } from "@/tanstack/mutation/shopMutation";
@@ -58,7 +59,7 @@ export default function UpdateShopStatusPage() {
       title: labels.confirmStatusChangeTitle,
       description: `${selectedShop ? shopOptionLabel(selectedShop) : ""} — ${
         selectedShop?.isActive ? labels.deactivateShop : labels.activateShop
-      } ${labels.fromDate} ${statusChangeDate.toLocaleDateString("fa-IR")}`,
+      } ${labels.fromDate} ${formatJalaliDate(statusChangeDate)}`,
     });
     if (!ok) return;
     // useUpdateShopStatus toasts the server's own success or error message;

@@ -1,5 +1,6 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
   Table,
@@ -10,8 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Adjust import path as needed
-import { BankTransaction, TransactionCategory } from "@prisma/client";
-import { format } from "date-fns-jalali"; // For date formatting
+import { BankTransaction } from "@prisma/client";
 import { labels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
@@ -19,24 +19,6 @@ import AddPaymentButton from "../payment/AddPaymentButton";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import PaymentFromBankForm from "./PaymentFromBankForm";
-
-// Helper function for currency formatting
-const formatCurrency = (amount: number) => {
-  // Assuming amount is in the smallest unit (like cents or rials)
-  // Adjust the divisor and locale as needed for your currency
-  return new Intl.NumberFormat("fa", {
-    style: "currency",
-    currency: "IRR", // Change to your currency (e.g., 'IRR')
-    minimumFractionDigits: 0, // Adjust if you store fractional units
-  }).format(amount / 100); // Divide by 100 if amount is in cents/rials
-};
-
-// Helper to get display text for enums (optional, but good for readability)
-const getCategoryText = (category: TransactionCategory | null) => {
-  if (!category) return "N/A";
-  // Simple mapping, you might want a more robust solution
-  return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-};
 
 interface BankOtherIncomeTableProps {
   // Serialized: amount/balance arrive as numbers, since bigint cannot cross
@@ -106,7 +88,7 @@ export function BankOtherIncomeTable({
             <>
               <TableRow key={tx.id}>
                 <TableCell className="font-medium">
-                  {format(new Date(tx.date), "yyyy-MM-dd")} {/* Format date */}
+                  {formatJalaliDate(tx.date)}
                 </TableCell>
                 <TableCell className="text-justify max-w-[300px]">
                   {tx.description}

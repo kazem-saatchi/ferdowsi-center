@@ -1,4 +1,5 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
@@ -67,7 +68,7 @@ export default function FindChargesByPerson() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   return (

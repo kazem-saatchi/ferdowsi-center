@@ -1,5 +1,7 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
+import { formatJalaliDate } from "@/utils/localeDate";
 import { useEffect, useState } from "react";
 import { useUpdateShopRenter } from "@/tanstack/mutation/shopMutation";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
@@ -75,7 +77,7 @@ export default function UpdateShopRenterPage() {
       title: labels.confirmRenterChangeTitle,
       description: `${shop ? shopOptionLabel(shop) : ""} — ${labels.newRenter}: ${
         person ? `${person.firstName} ${person.lastName}` : ""
-      } ${labels.fromDate} ${renterChangeDate.toLocaleDateString("fa-IR")}`,
+      } ${labels.fromDate} ${formatJalaliDate(renterChangeDate)}`,
     });
     if (!ok) return;
     // The mutation hook toasts the server's own success or error message.
@@ -106,7 +108,7 @@ export default function UpdateShopRenterPage() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {

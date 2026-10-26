@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useCreateAnnualChargeReference } from "@/tanstack/mutation/chargeMutation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import NumericInput from "@/components/NumericInput"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { toast } from "sonner"
@@ -19,12 +19,8 @@ export default function GenerateShopAnnualChargeReferencePage() {
 
   const createChargeReferenceMutation = useCreateAnnualChargeReference()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  const setField = (name: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const { confirm, dialog } = useConfirm()
@@ -44,14 +40,12 @@ export default function GenerateShopAnnualChargeReferencePage() {
 
       const result = await createChargeReferenceMutation.mutateAsync(validatedData)
 
+      // The mutation hook toasts the server's own success or error message.
       if (result.success) {
-        toast.success(labels.successMessage)
         setFormData({
           storeMetric: "",
           officeMetric: "",
         })
-      } else {
-        toast.error(result.message || labels.errorMessage)
       }
     } catch (error) {
       console.error("Error generating shop charge reference:", error)
@@ -74,23 +68,23 @@ export default function GenerateShopAnnualChargeReferencePage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="storeMetric">{labels.shopMetricValue}</Label>
-              <Input
+              <NumericInput
                 id="storeMetric"
                 name="storeMetric"
-                type="number"
                 value={formData.storeMetric}
-                onChange={handleChange}
+                onChange={(value) => setField("storeMetric", value)}
+                allowDecimal
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="officeMetric">{labels.officeMetricValue}</Label>
-              <Input
+              <NumericInput
                 id="officeMetric"
                 name="officeMetric"
-                type="number"
                 value={formData.officeMetric}
-                onChange={handleChange}
+                onChange={(value) => setField("officeMetric", value)}
+                allowDecimal
                 required
               />
             </div>

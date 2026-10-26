@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Calendar } from "lucide-react";
 import { useGetBankReportTransactions } from "@/tanstack/query/bankReportQuery";
 import { processTransactionsForReport } from "@/utils/bankReportCalculations";
+import { formatNumber } from "@/utils/formatNumber";
+import { formatJalaliDate, formatJalaliDateTime } from "@/utils/localeDate";
 
 export default function BankReportClient() {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -82,37 +84,20 @@ export default function BankReportClient() {
                     آخرین بروزرسانی
                   </p>
                   <p className="font-medium">
-                    {new Intl.DateTimeFormat("fa-IR", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }).format(new Date())}
+                    {formatJalaliDateTime(new Date())}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">کل تراکنش‌ها</p>
                   <p className="font-medium">
-                    {reportData?.totalTransactions || 0}
+                    {formatNumber(reportData?.totalTransactions || 0)}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">بازه زمانی</p>
                   <p className="font-medium">
                     {startDate && endDate
-                      ? `${new Intl.DateTimeFormat("fa-IR", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        }).format(startDate)} تا ${new Intl.DateTimeFormat(
-                          "fa-IR",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        ).format(endDate)}`
+                      ? `${formatJalaliDate(startDate)} تا ${formatJalaliDate(endDate)}`
                       : "-"}
                   </p>
                 </div>

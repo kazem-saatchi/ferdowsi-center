@@ -1,3 +1,4 @@
+import { toPersianDigits } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -38,9 +39,9 @@ export function ShopsTable({ shops }: ShopsTableProps) {
       <TableBody>
         {shops.map((shop) => (
           <TableRow key={shop.id}>
-            <TableCell className="text-center">{shop.plaque}</TableCell>
-            <TableCell className="text-center">{shop.area}</TableCell>
-            <TableCell className="text-center">{shop.floor}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(shop.plaque)}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(shop.area)}</TableCell>
+            <TableCell className="text-center">{toPersianDigits(shop.floor)}</TableCell>
             <TableCell className="text-center">{shop.ownerName}</TableCell>
             <TableCell className="text-center">
               {shop.renterName || labels.noValue}

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { labels } from "@/utils/label";
+import { formatJalaliDateTime } from "@/utils/localeDate";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -60,16 +61,6 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
     }
   };
 
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleString("fa-IR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   if (data.length === 0) {
     return <p className="text-muted-foreground">{labels.operationsNotFound}</p>;
   }
@@ -91,7 +82,7 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
                 {item.title}
               </TableCell>
               <TableCell className="text-right">
-                {formatDate(item.createdAt)}
+                {formatJalaliDateTime(item.createdAt)}
               </TableCell>
               <TableCell className="text-right">
                 {item.deleted ? (

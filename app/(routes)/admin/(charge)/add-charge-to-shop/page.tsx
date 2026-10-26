@@ -23,6 +23,7 @@ import DateObject from "react-date-object";
 import { AddChargeByShopData } from "@/schema/chargeSchema";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { labels } from "@/utils/label";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 import { shopOptionLabel } from "@/utils/shopType";
 export default function AddChargeToShopPage() {
@@ -71,7 +72,7 @@ export default function AddChargeToShopPage() {
   const handleDateChange = (date: DateObject) => {
     if (date) {
       const persianDate = new DateObject(date).convert(persian, persian_fa);
-      const title = `شارژ ${persianDate.month.name} ${persianDate.year}`;
+      const title = `شارژ ${persianDate.month.name} ${toPersianDigits(persianDate.year)}`;
       // `toFirstOfMonth`/`toLastOfMonth` mutate `date`, so keep a copy for the
       // picker before deriving the range from it.
       const month = new DateObject(date);

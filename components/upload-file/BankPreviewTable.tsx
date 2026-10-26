@@ -1,3 +1,4 @@
+import { formatJalaliDate } from "@/utils/localeDate";
 import {
   Table,
   TableBody,
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/formatNumber";
-import { format } from "date-fns-jalali";
 import { BankTransactionData } from "./readFile";
 
 // export interface BankTransaction {
@@ -82,7 +82,7 @@ export function BankPreviewTable({ data }: PreviewTableProps) {
               {headers.map((header) => (
                 <TableCell key={header} className={cn("text-center text-xs")}>
                   {header === "date" &&
-                    format(new Date(row[header]), "yyyy/MM/dd")}
+                    formatJalaliDate(row[header])}
                   {header === "description" && row[header]}
                   {header === "transactionId" && row[header]}
                   {header === "inputAmount" && formatNumber(row[header])}

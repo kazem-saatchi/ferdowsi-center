@@ -22,11 +22,8 @@ import { labels } from "@/utils/label";
 import { errorMSG } from "@/utils/messages";
 import { Loader } from "lucide-react";
 import { Shop } from "@prisma/client";
-import { formatNumber } from "@/utils/formatNumber";
+import { formatRial, toPersianDigits } from "@/utils/formatNumber";
 import { shopTypeLabel } from "@/utils/shopType";
-
-const formatRial = (amount: number) =>
-  `${formatNumber(amount)} ${labels.rial}`;
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
@@ -85,7 +82,7 @@ export default function MyShopsPage() {
 
             return (
               <TableRow key={shop.id}>
-                <TableCell className="text-center">{shop.plaque}</TableCell>
+                <TableCell className="text-center">{toPersianDigits(shop.plaque)}</TableCell>
                 <TableCell className="text-center">
                   {shopTypeLabel(shop.type)}
                 </TableCell>
@@ -142,7 +139,7 @@ export default function MyShopsPage() {
                   <p className="text-sm text-muted-foreground">
                     {labels.plaque}
                   </p>
-                  <p className="text-lg font-bold">{shop.plaque}</p>
+                  <p className="text-lg font-bold">{toPersianDigits(shop.plaque)}</p>
                 </div>
                 <Badge variant="outline">{shopTypeLabel(shop.type)}</Badge>
               </div>

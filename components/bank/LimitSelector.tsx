@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { labels } from "@/utils/label";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 export function LimitSelector({
   limit,
@@ -26,10 +27,10 @@ export function LimitSelector({
           <SelectValue placeholder={labels.rowsPerPage} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="10">10</SelectItem>
-          <SelectItem value="25">25</SelectItem>
-          <SelectItem value="50">50</SelectItem>
-          <SelectItem value="100">100</SelectItem>
+          <SelectItem value="10">{toPersianDigits(10)}</SelectItem>
+          <SelectItem value="25">{toPersianDigits(25)}</SelectItem>
+          <SelectItem value="50">{toPersianDigits(50)}</SelectItem>
+          <SelectItem value="100">{toPersianDigits(100)}</SelectItem>
         </SelectContent>
       </Select>
     </div>

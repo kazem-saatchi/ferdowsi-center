@@ -1,5 +1,7 @@
 "use client";
+import { toPersianDigits } from "@/utils/formatNumber";
 
+import { formatJalaliDate } from "@/utils/localeDate";
 import { useEffect, useState } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
@@ -73,7 +75,7 @@ export default function UpdateShopOwnerPage() {
       title: labels.confirmOwnerChangeTitle,
       description: `${shop ? shopOptionLabel(shop) : ""} — ${labels.newOwner}: ${
         person ? `${person.firstName} ${person.lastName}` : ""
-      } ${labels.fromDate} ${ownerChangeDate.toLocaleDateString("fa-IR")}`,
+      } ${labels.fromDate} ${formatJalaliDate(ownerChangeDate)}`,
     });
     if (!ok) return;
     // The mutation hook toasts the server's own success or error message.
@@ -104,7 +106,7 @@ export default function UpdateShopOwnerPage() {
   const personOptions =
     personsAll?.map((person) => ({
       id: person.id,
-      label: `${person.firstName} ${person.lastName} (${person.IdNumber})`,
+      label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
   return (

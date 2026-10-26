@@ -1,3 +1,4 @@
+import { formatNumber } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
 import { ChargePaymentData } from "@/schema/balanceSchema";
 import { OwnerRenterBalance } from "@/store/balanceSlice";
 import { labels } from "@/utils/label";
+import BalanceAmount from "./BalanceAmount";
 
 interface BalanceProps {
   ownerData: OwnerRenterBalance;
@@ -65,22 +67,31 @@ function OwnerRenterBalanceTable({ ownerData, renterData }: BalanceProps) {
             <TableCell className="text-center">{labels.owner}</TableCell>
             <TableCell className="text-center">{`${ownerData.person.firstName} ${ownerData.person.lastName}`}</TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 ownerData.chargeList,
                 ownerData.paymentList
-              ).monthlyBalance.toLocaleString()}
+              ).monthlyBalance}
+                debtSign="positive"
+              />
             </TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 ownerData.chargeList,
                 ownerData.paymentList
-              ).yearlyBalance.toLocaleString()}
+              ).yearlyBalance}
+                debtSign="positive"
+              />
             </TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 ownerData.chargeList,
                 ownerData.paymentList
-              ).totalBalance.toLocaleString()}
+              ).totalBalance}
+                debtSign="positive"
+              />
             </TableCell>
           </TableRow>
         )}
@@ -89,22 +100,31 @@ function OwnerRenterBalanceTable({ ownerData, renterData }: BalanceProps) {
             <TableCell className="text-center">{labels.renter}</TableCell>
             <TableCell className="text-center">{`${renterData.person.firstName} ${renterData.person.lastName}`}</TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 renterData.chargeList,
                 renterData.paymentList
-              ).monthlyBalance.toLocaleString()}
+              ).monthlyBalance}
+                debtSign="positive"
+              />
             </TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 renterData.chargeList,
                 renterData.paymentList
-              ).yearlyBalance.toLocaleString()}
+              ).yearlyBalance}
+                debtSign="positive"
+              />
             </TableCell>
             <TableCell className="text-center">
-              {totalCalculator(
+              <BalanceAmount
+                value={totalCalculator(
                 renterData.chargeList,
                 renterData.paymentList
-              ).totalBalance.toLocaleString()}
+              ).totalBalance}
+                debtSign="positive"
+              />
             </TableCell>
           </TableRow>
         )}

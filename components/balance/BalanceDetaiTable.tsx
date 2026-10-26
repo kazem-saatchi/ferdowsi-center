@@ -1,5 +1,6 @@
 "use client";
 
+import { formatNumber } from "@/utils/formatNumber";
 import {
   Table,
   TableBody,
@@ -10,8 +11,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { labels } from "@/utils/label";
+import BalanceAmount from "./BalanceAmount";
 import { Charge, Payment } from "@prisma/client";
-import { formatPersianDate } from "@/utils/localeDate";
+import { formatJalaliDate } from "@/utils/localeDate";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/store";
 import { Button } from "@/components/ui/button";
@@ -173,10 +175,6 @@ export function BalanceDetailTable({
     });
   };
 
-  // ── balance colour helper ─────────────────────────────────────────────────
-  const balanceColour = (balance: number) =>
-    balance > 0 ? "text-red-500" : balance < 0 ? "text-green-500" : "";
-
   return (
     <div className="space-y-4">
       {/* ── Tabs ── */}
@@ -207,22 +205,22 @@ export function BalanceDetailTable({
                 {labels.renterShareOfMonthly}
                 {renterName ? ` — ${renterName}` : ""}
               </span>
-              <span
-                className={cn("font-bold", balanceColour(monthlyShare.renter))}
-              >
-                {monthlyShare.renter.toLocaleString()}
-              </span>
+              <BalanceAmount
+                value={monthlyShare.renter}
+                debtSign="positive"
+                className="font-bold"
+              />
             </div>
             <div className="flex items-center justify-between rounded border px-3 py-2 text-sm">
               <span className="text-muted-foreground">
                 {labels.ownerShareOfMonthly}
                 {ownerName ? ` — ${ownerName}` : ""}
               </span>
-              <span
-                className={cn("font-bold", balanceColour(monthlyShare.owner))}
-              >
-                {monthlyShare.owner.toLocaleString()}
-              </span>
+              <BalanceAmount
+                value={monthlyShare.owner}
+                debtSign="positive"
+                className="font-bold"
+              />
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -239,7 +237,7 @@ export function BalanceDetailTable({
           className="flex items-center gap-2"
         >
           <Download size={16} />
-          Export Excel
+          {labels.download}
         </Button>
       </div>
 
@@ -279,18 +277,18 @@ export function BalanceDetailTable({
               <TableCell className="text-center">{item.title}</TableCell>
               <TableCell className="text-center">{item.personName}</TableCell>
               <TableCell className="text-center">
-                {formatPersianDate(item.date)}
+                {formatJalaliDate(item.date)}
               </TableCell>
               <TableCell className="text-center">
-                {item.amount.toLocaleString()}
+                {formatNumber(item.amount)}
               </TableCell>
               <TableCell
-                className={cn(
-                  "text-center font-medium",
-                  balanceColour(runningBalances.get(`${item.rowKind}-${item.id}`) ?? 0)
-                )}
+                className="text-center font-medium"
               >
-                {(runningBalances.get(`${item.rowKind}-${item.id}`) ?? 0).toLocaleString()}
+                <BalanceAmount
+                  value={runningBalances.get(`${item.rowKind}-${item.id}`) ?? 0}
+                  debtSign="positive"
+                />
               </TableCell>
               <TableCell className="text-center">
                 {item.bankTransactionId && (
@@ -335,12 +333,9 @@ export function BalanceDetailTable({
                   {labels.totalChargeBalance}
                 </TableCell>
                 <TableCell
-                  className={cn(
-                    "text-center font-bold border-2",
-                    balanceColour(totalNonProprietorBalance.balance)
-                  )}
+                  className="text-center font-bold border-2"
                 >
-                  {totalNonProprietorBalance.balance.toLocaleString()}
+                  <BalanceAmount value={totalNonProprietorBalance.balance} debtSign="positive" />
                 </TableCell>
                 <TableCell colSpan={3} />
               </TableRow>
@@ -352,12 +347,9 @@ export function BalanceDetailTable({
                   {labels.totalProprietorBalance}
                 </TableCell>
                 <TableCell
-                  className={cn(
-                    "text-center font-bold border-2",
-                    balanceColour(totalProprietorBalance.balance)
-                  )}
+                  className="text-center font-bold border-2"
                 >
-                  {totalProprietorBalance.balance.toLocaleString()}
+                  <BalanceAmount value={totalProprietorBalance.balance} debtSign="positive" />
                 </TableCell>
                 <TableCell colSpan={3} />
               </TableRow>
@@ -372,12 +364,9 @@ export function BalanceDetailTable({
                 {footerLabel}
               </TableCell>
               <TableCell
-                className={cn(
-                  "text-center font-bold border-2",
-                  balanceColour(totalActiveBalance.balance)
-                )}
+                className="text-center font-bold border-2"
               >
-                {totalActiveBalance.balance.toLocaleString()}
+                <BalanceAmount value={totalActiveBalance.balance} debtSign="positive" />
               </TableCell>
               <TableCell colSpan={3} />
             </TableRow>
