@@ -136,6 +136,7 @@ export const labels = {
   mobile: "شماره موبایل",
   secondMobile: "شماره تماس دوم",
 
+  rowActions: "عملیات",
   editInfo: "ویرایش اطلاعات",
   histories: "تاریخچه",
   charges: "شارژها",

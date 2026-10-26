@@ -55,7 +55,7 @@ export default function AllPersonsPage() {
       <CardHeader>
         <CardTitle>لیست اشخاص</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {personsAll && personsAll.length > 0 ? (
           <PersonList persons={personsAll} />
         ) : (

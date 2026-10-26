@@ -45,7 +45,7 @@ function HistoryByPerson() {
       <CardHeader>
         <CardTitle>{`${labels.personHistory} - ${histories[0].personName}`}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <HistoryTable allHistories={histories} />
       </CardContent>
     </Card>

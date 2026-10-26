@@ -226,7 +226,7 @@ function AddPaymentForm() {
             value={type}
             onValueChange={(value) => setType(value as PaymentType)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder={labels.paymentMethod} />
             </SelectTrigger>
             <SelectContent dir="rtl">

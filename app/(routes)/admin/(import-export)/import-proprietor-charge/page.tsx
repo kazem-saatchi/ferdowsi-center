@@ -69,7 +69,7 @@ export default function UploadProprietorCharge() {
       <CardHeader>
         <CardTitle>آپلود شارژ مالکانه با فایل</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
         <p className="text-sm text-muted-foreground">
           فایل اکسل باید دارای دو ستون <span className="font-medium">plaque</span>{" "}
           (پلاک) و <span className="font-medium">amount</span> (مبلغ) باشد. عنوان،

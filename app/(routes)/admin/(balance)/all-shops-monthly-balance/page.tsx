@@ -67,7 +67,7 @@ export default function AllShopsMonthlyBalancePage() {
       <CardHeader>
         <CardTitle>{labels.allShopsMonthlyBalance}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <ShopsBalanceToolbar
           variant="monthly"
           totalBalance={totalBalance}

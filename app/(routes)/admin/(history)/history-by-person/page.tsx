@@ -82,7 +82,7 @@ export default function HistoryByPersonInfo() {
       <CardHeader>
         <CardTitle>{labels.personHistory}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect id="person"

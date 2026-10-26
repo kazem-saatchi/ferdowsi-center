@@ -105,7 +105,12 @@ function HistoryTable({ allHistories }: TableProps) {
                   {history.personName}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Badge className={historyTypeColors[history.type]}>
+                  <Badge
+                    className={cn(
+                      "whitespace-nowrap",
+                      historyTypeColors[history.type]
+                    )}
+                  >
                     {historyTypeLabels[history.type]}
                   </Badge>
                 </TableCell>

@@ -143,9 +143,9 @@ export default function ChargeReferenceListPage() {
 
   return (
     <div>
-      <CardHeader className="flex flex-row items-center justify-between gap-2 mb-4 px-2">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-4 px-2">
         <div className="flex flex-col items-start justify-start gap-2 mb-4 px-2">
-          <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
+          <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
             <Button
               variant={tableType === "CHARGE" ? "default" : "outline"}
               onClick={() => setTableType("CHARGE")}
@@ -165,7 +165,7 @@ export default function ChargeReferenceListPage() {
               {labels.rentCharge}
             </Button>
           </div>
-          <div className="flex flex-row items-center justify-start gap-2 mb-4 px-2">
+          <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
             <Button
               variant={shopTypeFilter === undefined ? "default" : "outline"}
               onClick={() => setShopTypeFilter(undefined)}
@@ -214,7 +214,7 @@ export default function ChargeReferenceListPage() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col items-end justify-end gap-2 mb-4 px-2">
+        <div className="flex flex-row flex-wrap sm:flex-col sm:items-end gap-2 mb-4 px-2">
           <Button
             onClick={handleExportPDF}
             className="w-44"
@@ -234,7 +234,7 @@ export default function ChargeReferenceListPage() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <ChargeReferenceTable chargeReferences={tableData} />
       </CardContent>
     </div>

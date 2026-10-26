@@ -46,7 +46,7 @@ export default function AllPaymentsPage() {
       <CardHeader>
         <CardTitle>{labels.allPaymentsList}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {allPayments && allPayments.length > 0 ? (
           <PaymentTable payments={allPayments} />
         ) : (

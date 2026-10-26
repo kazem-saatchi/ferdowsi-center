@@ -64,7 +64,7 @@ export default function ShopBalanceById() {
         <CardHeader>
           <CardTitle>{labels.unitAccountBalance}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
           {shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (
@@ -78,7 +78,7 @@ export default function ShopBalanceById() {
           <CardHeader>
             <CardTitle>{labels.personsAccountBalance}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
             <PersonsBalanceTable personsBalance={personsBalance} />
           </CardContent>
         </Card>

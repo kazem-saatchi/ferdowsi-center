@@ -42,7 +42,7 @@ export default function UploadKioskData() {
       <CardHeader>
         <CardTitle>آپلود اطلاعات غرفه ها، تابلوها و پارکینگ</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
         <DataFileUpload
           onFileChange={handleFileChange}
           onUpload={handleUpload}

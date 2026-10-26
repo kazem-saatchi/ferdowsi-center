@@ -80,7 +80,7 @@ export default function PersonPaymentsPage() {
       <CardHeader>
         <CardTitle>{labels.searchPaymentsByPerson}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect id="person"

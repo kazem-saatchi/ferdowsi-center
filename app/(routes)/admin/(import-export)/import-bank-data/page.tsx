@@ -56,7 +56,7 @@ export default function UploadBankData() {
       <CardHeader>
         <CardTitle>آپلود اطلاعات بانک</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
         <div className="space-y-2">
           <Label htmlFor="bankAccountNumber">{labels.bankAccountNumber}</Label>
           <Input

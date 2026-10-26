@@ -87,7 +87,7 @@ export function ShopsBalanceToolbar({
       </div>
       <div className="flex flex-row items-center justify-start gap-2 mb-4">
         <Select onValueChange={handleFilter} defaultValue="all">
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder={labels.filterByDebt} />
           </SelectTrigger>
           <SelectContent>

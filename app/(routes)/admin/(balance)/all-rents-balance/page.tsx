@@ -62,7 +62,7 @@ export default function AllRentsBalancePage() {
       <CardHeader>
         <CardTitle>{labels.allRentsBalance}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
           <Button onClick={exportAllBalanceToPdf}>
             {labels.downloadAsPDF}

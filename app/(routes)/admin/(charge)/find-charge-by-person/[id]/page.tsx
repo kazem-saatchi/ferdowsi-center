@@ -52,7 +52,7 @@ export default function FindChargesByPersonPage() {
       <CardHeader>
         <CardTitle>{labels.personCharges}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {shopCharges && shopCharges.length > 0 ? (
           <ChargeTable charges={shopCharges} />
         ) : (

@@ -150,7 +150,7 @@ function AddChargeToListPage() {
   }
 
   return (
-    <div className="border-2 rounded-md mx-auto p-6 max-w-5xl lg:max-w-7xl max-h-[90vh] overflow-y-hidden">
+    <div className="border-2 rounded-md mx-auto p-3 sm:p-6 max-w-5xl lg:max-w-7xl">
       <>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
@@ -244,7 +244,7 @@ function AddChargeToListPage() {
                           افزودن واحد
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[600px]">
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>انتخاب واحد</DialogTitle>
                         </DialogHeader>

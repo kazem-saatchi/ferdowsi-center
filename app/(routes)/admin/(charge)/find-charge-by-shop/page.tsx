@@ -76,7 +76,7 @@ export default function FindChargesByShopPage() {
       <CardHeader>
         <CardTitle>{labels.findChargesByShop}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectShop}</Label>
           <CustomSelect id="shop"

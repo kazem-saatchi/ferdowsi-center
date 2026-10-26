@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
           </CardTitle>
           <CardDescription>{labels.topDebtorsHint}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           {topDebtors.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               {labels.noDebtorsFound}
@@ -214,10 +214,10 @@ export default function AdminDashboardPage() {
                   <TableHead className="text-center">
                     {labels.ownerName}
                   </TableHead>
-                  <TableHead className="text-center">
+                  <TableHead className="hidden text-center md:table-cell">
                     {labels.renterName}
                   </TableHead>
-                  <TableHead className="text-center">
+                  <TableHead className="whitespace-nowrap text-center">
                     {labels.totalBalance}
                   </TableHead>
                   <TableHead className="text-center" />
@@ -232,10 +232,10 @@ export default function AdminDashboardPage() {
                     <TableCell className="text-center">
                       {debtor.ownerName}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="hidden text-center md:table-cell">
                       {debtor.renterName || labels.noValue}
                     </TableCell>
-                    <TableCell className="text-center font-semibold text-red-600 dark:text-red-400">
+                    <TableCell className="whitespace-nowrap text-center font-semibold tabular-nums text-red-600 dark:text-red-400">
                       {formatNumber(debtor.debt)}
                     </TableCell>
                     <TableCell className="text-center">

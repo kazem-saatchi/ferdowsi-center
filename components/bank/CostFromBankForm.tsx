@@ -145,7 +145,7 @@ export default function CostFromBankForm({
                 dir="rtl"
                 value={category}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder={labels.selectType} />
                 </SelectTrigger>
                 <SelectContent>

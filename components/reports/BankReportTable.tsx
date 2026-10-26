@@ -158,7 +158,7 @@ export default function BankReportTable({
                       </TableRow>
                       {isExpanded && categoryData.transactionCount > 0 && (
                         <TableRow>
-                          <TableCell colSpan={4} className="p-0">
+                          <TableCell colSpan={4} className="p-0 sm:p-0">
                             <div className="bg-success/10 p-4 rounded-md m-2">
                               <Table>
                                 <TableHeader>
@@ -286,7 +286,7 @@ export default function BankReportTable({
                       </TableRow>
                       {isExpanded && categoryData.transactionCount > 0 && (
                         <TableRow>
-                          <TableCell colSpan={4} className="p-0">
+                          <TableCell colSpan={4} className="p-0 sm:p-0">
                             <div className="bg-error/10 p-4 rounded-md m-2">
                               <Table>
                                 <TableHeader>

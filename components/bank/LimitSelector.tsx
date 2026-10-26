@@ -17,13 +17,13 @@ export function LimitSelector({
   setLimit: (value: number) => void;
 }) {
   return (
-    <div className="flex flex-row items-center justify-start gap-4 w-[180px]">
-      <Label className="w-20" htmlFor="limit-select">تعداد </Label>
+    <div className="flex items-center gap-2">
+      <Label htmlFor="limit-select">{labels.rowsPerPage}</Label>
       <Select
         value={limit.toString()}
         onValueChange={(value) => setLimit(Number(value))}
       >
-        <SelectTrigger id="limit-select" className="w-[180px]">
+        <SelectTrigger id="limit-select" className="w-24">
           <SelectValue placeholder={labels.rowsPerPage} />
         </SelectTrigger>
         <SelectContent>

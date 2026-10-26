@@ -79,7 +79,7 @@ export default function ShopPaymentsPage() {
       <CardHeader>
         <CardTitle>{labels.searchPaymentsByShop}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectUnit}</Label>
           <CustomSelect id="shop"

@@ -77,7 +77,7 @@ export default function AllShopsPage() {
           ))}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {filteredShops && filteredShops.length > 0 ? (
           <ShopsTable shops={filteredShops} />
         ) : (

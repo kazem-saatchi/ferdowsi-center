@@ -35,7 +35,7 @@ export default function AllCostsPage() {
           <CardTitle>{labels.allCostsTitle}</CardTitle>
           <Button onClick={() => router.push("/admin/add-cost")}>{labels.addNewCost}</Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           {allCosts && allCosts.length > 0 ? (
             <CostsTable costs={allCosts} />
           ) : (
