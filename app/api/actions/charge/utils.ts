@@ -84,7 +84,7 @@ export async function getRelatedHistories(
 
   return {
     success: true,
-    message: "Histories fetched successfully",
+    message: "تاریخچه‌ها دریافت شد.",
     data: relevantHistories,
     totalDays,
   };

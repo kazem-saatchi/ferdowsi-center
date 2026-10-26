@@ -442,6 +442,10 @@ export const labels = {
 
   // Add these new labels
   somethingWentWrong: "خطایی رخ داده است",
+  errorTitle: "خطا",
+  homePage: "صفحه اصلی",
+  retry: "تلاش مجدد",
+  nothingFound: "موردی یافت نشد",
   shopNotFound: "واحد یافت نشد",
 
   // cost labels
@@ -502,6 +506,7 @@ export const labels = {
   updatePassword: "تغییر رمز عبور",
   currentPassword: "رمز فعلی",
   newPassword: "رمز عبور جدید",
+  passwordsDoNotMatch: "رمز عبور و تکرار آن یکسان نیست",
   confirmPassword: "تکرار رمز عبور جدید",
   currentPasswordDescription: "رمز عبور فعلی را وارد کنید",
   newPasswordDescription: "رمز عبور جدید را وارد کنید",
@@ -527,6 +532,8 @@ export const labels = {
   // ── bank transactions list filters ───────────────────────────────────────
   bankTransactionFilters: "جستجو و فیلتر تراکنش‌ها",
   applyFilters: "اعمال فیلتر",
+  invalidFormData: "اطلاعات وارد‌شده معتبر نیست؛ توضیحات حداکثر ۲۵۵ نویسه است.",
+  removeFromList: "حذف از لیست",
   clearFilters: "پاک کردن فیلتر",
   fromDate: "از تاریخ",
   toDate: "تا تاریخ",
@@ -637,6 +644,7 @@ export const labels = {
   noValue: "—",
   comingSoon: "به‌زودی",
   rowsPerPage: "تعداد ردیف",
+  bankRefId: "شماره پیگیری بانک",
   loginFailed: "خطا در ورود؛ دوباره تلاش کنید",
   fileParseFailed: "خواندن فایل ممکن نشد؛ دوباره تلاش کنید",
   selectShopAndPerson: "واحد و شخص را انتخاب کنید",

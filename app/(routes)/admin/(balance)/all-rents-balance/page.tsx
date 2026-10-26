@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import ErrorComponent from "@/components/ErrorComponent";
@@ -80,7 +81,7 @@ export default function AllRentsBalancePage() {
         {allBalances && allBalances.length > 0 ? (
           <ShopsBalanceTable shopsBlances={allBalances} />
         ) : (
-          <p>{labels.noDataFound}</p>
+          <EmptyState message={labels.noDataFound} />
         )}
       </CardContent>
     </Card>

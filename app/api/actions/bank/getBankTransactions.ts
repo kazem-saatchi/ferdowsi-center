@@ -86,7 +86,7 @@ async function fetchBankTransactions(
   } catch (error) {
     console.error("Failed to fetch bank transactions:", error);
     // It's often better to throw the error and let TanStack Query handle it
-    throw new Error("Failed to fetch bank transactions.");
+    throw new Error("دریافت تراکنش‌های بانکی انجام نشد.");
   }
 }
 

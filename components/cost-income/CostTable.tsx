@@ -1,6 +1,6 @@
 import { formatJalaliDate } from "@/utils/localeDate";
 import { formatNumber } from "@/utils/formatNumber";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { labels } from "@/utils/label";
+import { COST_CATEGORY_OPTIONS, costCategoryLabel } from "@/utils/costCategory";
 import { Cost } from "@prisma/client";
 import { Textarea } from "../ui/textarea";
 import ReceiptImage from "../payment/ReceiptImage";
@@ -23,19 +24,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Badge } from "../ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "../ui/dialog";
+import EmptyState from "../EmptyState";
 
-type SortKey = keyof Cost;
+type SortKey = "title" | "amount" | "date" | "category" | "proprietor";
+type CategoryType = AddCostData["category"];
 
 export function CostsTable({ costs }: { costs: Cost[] }) {
-  type CategoryType = AddCostData["category"];
-
+  const [filter, setFilter] = useState<CategoryType | "ALL">("ALL");
   const [sortConfig, setSortConfig] = useState<{
-    filter: CategoryType | "ALL";
     key: SortKey;
     direction: "asc" | "desc";
   }>({
-    filter: "ALL",
     key: "date",
     direction: "desc",
   });
@@ -45,69 +50,75 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
   const [viewImageSrc, setViewImageSrc] = useState<string>("");
 
   function requestSort(key: SortKey) {
-    let direction: "asc" | "desc" = "asc";
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
   }
+
+  const visibleCosts = useMemo(() => {
+    const filtered =
+      filter === "ALL" ? costs : costs.filter((c) => c.category === filter);
+    const { key, direction } = sortConfig;
+    const sign = direction === "asc" ? 1 : -1;
+    return [...filtered].sort((a, b) => {
+      const x = a[key];
+      const y = b[key];
+      if (x instanceof Date && y instanceof Date)
+        return (x.getTime() - y.getTime()) * sign;
+      if (typeof x === "string" && typeof y === "string")
+        return x.localeCompare(y, "fa") * sign;
+      return (Number(x) - Number(y)) * sign;
+    });
+  }, [costs, filter, sortConfig]);
 
   return (
     <>
-      <div
-        className="flex flex-row items-center justify-between
-       mt-6 mb-4 max-w-[180px]"
-      >
+      <div className="mt-6 mb-4 max-w-[220px]">
         <Select
-          onValueChange={(value) =>
-            setSortConfig((prev) => ({
-              ...prev,
-              filter: value as CategoryType | "ALL",
-            }))
-          }
+          onValueChange={(value) => setFilter(value as CategoryType | "ALL")}
           dir="rtl"
-          defaultValue="ALL"
+          value={filter}
         >
-          <SelectTrigger>
-            <SelectValue>{labels.costCategory}</SelectValue>
+          <SelectTrigger aria-label={labels.costCategory}>
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">{labels.all}</SelectItem>
-            <SelectItem value="ELECTRICITY">{labels.electricity}</SelectItem>
-            <SelectItem value="WATER">{labels.water}</SelectItem>
-            <SelectItem value="GAS">{labels.gas}</SelectItem>
-            <SelectItem value="CHILLER">{labels.chiller}</SelectItem>
-            <SelectItem value="ELEVATOR">{labels.elevator}</SelectItem>
-            <SelectItem value="ESCALATOR">{labels.elevator}</SelectItem>
-            <SelectItem value="SECURITY">{labels.security}</SelectItem>
-            <SelectItem value="CLEANING">{labels.cleaning}</SelectItem>
-            <SelectItem value="OTHER">{labels.other}</SelectItem>
+            {COST_CATEGORY_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-        <Badge>{sortConfig.filter}</Badge>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="text-center">
               <Button variant="ghost" onClick={() => requestSort("title")}>
-                {labels.title} <ArrowUpDown className="ml-2 h-4 w-4" />
+                {labels.title} <ArrowUpDown className="ms-2 h-4 w-4" />
               </Button>
             </TableHead>
             <TableHead className="text-center">
               <Button variant="ghost" onClick={() => requestSort("amount")}>
-                {labels.amount} <ArrowUpDown className="ml-2 h-4 w-4" />
+                {labels.amount} <ArrowUpDown className="ms-2 h-4 w-4" />
               </Button>
             </TableHead>
             <TableHead className="text-center">
               <Button variant="ghost" onClick={() => requestSort("date")}>
-                {labels.date} <ArrowUpDown className="ml-2 h-4 w-4" />
+                {labels.date} <ArrowUpDown className="ms-2 h-4 w-4" />
               </Button>
             </TableHead>
             <TableHead className="text-center">
               <Button variant="ghost" onClick={() => requestSort("category")}>
-                {labels.type} <ArrowUpDown className="ml-2 h-4 w-4" />
+                {labels.type} <ArrowUpDown className="ms-2 h-4 w-4" />
               </Button>
             </TableHead>
             <TableHead className="text-center">
               <Button variant="ghost" onClick={() => requestSort("proprietor")}>
-                {labels.costCategory} <ArrowUpDown className="ml-2 h-4 w-4" />
+                {labels.costCategory} <ArrowUpDown className="ms-2 h-4 w-4" />
               </Button>
             </TableHead>
             <TableHead className="text-center">{labels.description}</TableHead>
@@ -115,7 +126,7 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {costs.map((cost) => (
+          {visibleCosts.map((cost) => (
             <TableRow key={cost.id}>
               <TableCell className="text-center">{cost.title}</TableCell>
               <TableCell className="text-center">
@@ -125,7 +136,7 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
                 {formatJalaliDate(cost.date)}
               </TableCell>
               <TableCell className="text-center">
-                {labels[cost.category.toLowerCase() as keyof typeof labels]}
+                {costCategoryLabel(cost.category)}
               </TableCell>
               <TableCell className="text-center">
                 {cost.proprietor
@@ -155,25 +166,29 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
               </TableCell>
             </TableRow>
           ))}
+          {visibleCosts.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={7}>
+                <EmptyState />
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
-      {description !== "" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full">
-          <div
-            className="bg-white p-4 rounded-lg max-w-3xl max-h-[90vh] overflow-auto
-             min-w-[400px] min-h-[300px] flex flex-col justify-between"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Textarea className="min-h-[200px]">{description}</Textarea>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-              onClick={() => setDescription("")}
-            >
+      <Dialog
+        open={description !== ""}
+        onOpenChange={(open) => !open && setDescription("")}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogTitle>{labels.description}</DialogTitle>
+          <Textarea className="min-h-[200px]" value={description} readOnly />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDescription("")}>
               {labels.close}
-            </button>
-          </div>
-        </div>
-      )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {viewImage && viewImageSrc !== "" && (
         <ReceiptImage src={viewImageSrc} viewPage={setViewImage} />
       )}

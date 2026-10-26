@@ -35,7 +35,7 @@ export default function AllShopHistoryPage() {
   if (isError) {
     return (
       <ErrorComponent
-        message={error instanceof Error ? error.message : "Unknown error"}
+        message={error instanceof Error ? error.message : labels.somethingWentWrong}
         retry={refetch}
         error={error}
       />

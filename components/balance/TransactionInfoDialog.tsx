@@ -36,7 +36,7 @@ export default function TransactionInfoDialog({
           "[&>button.absolute]:hidden",
         )}
       >
-        <DialogHeader className="space-y-1 border-b bg-muted/40 px-6 py-4 text-right sm:text-right">
+        <DialogHeader className="space-y-1 border-b bg-muted/40 px-6 py-4 text-start sm:text-start">
           <DialogTitle className="text-xl font-semibold tracking-tight">
             {labels.transactionInfo}
           </DialogTitle>

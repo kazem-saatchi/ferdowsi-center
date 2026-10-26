@@ -19,9 +19,7 @@ import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import { labels } from "@/utils/label";
 
 import { shopOptionLabel } from "@/utils/shopType";
@@ -81,16 +79,6 @@ export default function UpdateShopStatusPage() {
       label: shopOptionLabel(shop),
     })) || [];
 
-  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
-    return (
-      <Input
-        onFocus={openCalendar}
-        value={value}
-        onChange={handleValueChange}
-        readOnly
-      />
-    );
-  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -102,7 +90,7 @@ export default function UpdateShopStatusPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shop"
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
@@ -137,26 +125,12 @@ export default function UpdateShopStatusPage() {
                     disabled
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="statusChangeDate" className="ml-2">
-                    {labels.statusChangeDate}
-                  </Label>
-                  <DatePicker
-                    calendar={persian}
-                    locale={persian_fa}
-                    calendarPosition="bottom-right"
-                    value={statusChangeDate}
-                    onChange={(date) => {
-                      if (date) {
-                        setStatusChangeDate(date.toDate());
-                      } else {
-                        setStatusChangeDate(null);
-                      }
-                    }}
-                    render={<CustomInput />}
-                    format="YYYY/MM/DD"
-                  />
-                </div>
+                <JalaliDayCalendar
+                  id="statusChangeDate"
+                  title={labels.statusChangeDate}
+                  date={statusChangeDate}
+                  setDate={setStatusChangeDate}
+                />
               </>
             )}
           </CardContent>

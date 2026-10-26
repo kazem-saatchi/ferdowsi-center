@@ -17,6 +17,7 @@ import { useFindShopById } from "@/tanstack/query/shopQuery";
 import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import EmptyState from "@/components/EmptyState";
 import { labels } from "@/utils/label";
 import NumericInput from "@/components/NumericInput";
 import { ShopType } from "@prisma/client";
@@ -75,7 +76,7 @@ export default function EditShopPageById() {
     }
   };
 
-  if (isLoading) return <LoadingComponent text="loading Data" />;
+  if (isLoading) return <LoadingComponent text={labels.loadingData} />;
 
   if (isError)
     return (
@@ -85,7 +86,7 @@ export default function EditShopPageById() {
         retry={refetch}
       />
     );
-  if (!data?.data?.shop) return <div>Shop not found</div>;
+  if (!data?.data?.shop) return <EmptyState message={labels.shopNotFound} />;
 
   return (
     <div className="max-w-2xl mx-auto">

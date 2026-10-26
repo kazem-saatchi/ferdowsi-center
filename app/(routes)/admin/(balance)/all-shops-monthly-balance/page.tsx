@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect } from "react";
 import { useStore } from "@/store/store";
@@ -75,7 +76,7 @@ export default function AllShopsMonthlyBalancePage() {
         {shopsData && shopsData.length > 0 ? (
           <ShopsBalanceTable shopsBlances={shopsData} />
         ) : (
-          <p>{labels.noDataFound}</p>
+          <EmptyState message={labels.noDataFound} />
         )}
       </CardContent>
     </div>

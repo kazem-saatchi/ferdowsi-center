@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDeletePaymentById } from "@/tanstack/mutation/paymentMutation";
 import { Payment } from "@prisma/client";
 import { Button } from "../ui/button";
 import { useState } from "react";
@@ -21,23 +20,8 @@ interface PaymentTableProps {
 }
 
 export function PaymentTable({ payments }: PaymentTableProps) {
-  const deletePaymentMutation = useDeletePaymentById();
-
-  const [deleting, setDeleting] = useState<boolean>(false);
-  const [deleteId, setDeleteId] = useState<string[]>([]);
   const [viewImage, setViewImage] = useState<boolean>(false);
   const [viewImageSrc, setViewImageSrc] = useState<string>("");
-
-  const handleDelete = async (paymentId: string) => {
-    setDeleting(true);
-    setDeleteId((prev) => [...prev, paymentId]);
-    deletePaymentMutation.mutate(paymentId, {
-      onSettled: () => {
-        setDeleting(false);
-        setDeleteId((prev) => prev.filter((id) => id !== paymentId));
-      },
-    });
-  };
 
   const paymentTypeMap = {
     CASH: "نقدی",
@@ -61,7 +45,6 @@ export function PaymentTable({ payments }: PaymentTableProps) {
               {labels.paymentCategory}
             </TableHead>
             <TableHead className="text-center">{labels.receiptImage}</TableHead>
-            {/* <TableHead className="text-center">{labels.delete}</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -103,19 +86,6 @@ export function PaymentTable({ payments }: PaymentTableProps) {
                   </Button>
                 )}
               </TableCell>
-              {/* <TableCell className="text-center">
-                <Button
-                  onClick={() => handleDelete(payment.id)}
-                  disabled={
-                    deleting && deleteId.some((id) => id === payment.id)
-                  }
-                  variant="destructive"
-                >
-                  {deleting && deleteId.some((id) => id === payment.id)
-                    ? labels.deleting
-                    : labels.delete}
-                </Button>
-              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>

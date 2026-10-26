@@ -23,6 +23,8 @@ interface CustomSelectProps {
   onChange: (value: string) => void;
   label: string;
   disabled?: boolean;
+  /** DOM id of the trigger button, so a <Label htmlFor> points at it. */
+  id?: string;
   /**
    * Radix Popover portals to document.body by default; inside a modal Dialog that breaks dismiss,
    * focus and pointer layering. Inline mode renders the panel in-flow (no Portal).
@@ -81,6 +83,7 @@ export function CustomSelect({
   label,
   disabled = false,
   inline = false,
+  id,
 }: CustomSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -140,6 +143,7 @@ export function CustomSelect({
     return (
       <div ref={rootRef} className="relative w-full space-y-0">
         <Button
+          id={id}
           type="button"
           variant="outline"
           className="w-full justify-between gap-2 font-normal"
@@ -178,6 +182,7 @@ export function CustomSelect({
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
+          id={id}
           variant="outline"
           className="w-full justify-between gap-2 font-normal"
           type="button"

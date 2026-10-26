@@ -1,5 +1,7 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import LoadingComponent from "@/components/LoadingComponent";
+import EmptyState from "@/components/EmptyState";
 import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
@@ -21,7 +23,7 @@ import { bankTransactionCategoryLabels, labels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import CostFromBankForm from "./CostFromBankForm";
 
 const getCategoryText = (category: TransactionCategory | null) => {
@@ -45,26 +47,18 @@ export function BankTransactionCostTable({
   const [editRowId, setEditRowId] = useState<string | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="rounded-md border p-4">
-        <p>بارگذاری اطلاعات</p>
-        {/* You could add Skeleton loaders here for a better UX */}
-      </div>
-    );
+    return <LoadingComponent inline />;
   }
 
+  // The page shows the error itself, with the server's message.
   if (isError) {
-    return (
-      <div className="rounded-md border p-4 text-red-600">
-        <p>خطا در گرفتن اطلاعات</p>
-      </div>
-    );
+    return null;
   }
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="rounded-md border p-4">
-        <p>هیچ تراکنشی پیدا نشد</p>
+      <div className="rounded-md border">
+        <EmptyState />
       </div>
     );
   }
@@ -80,17 +74,17 @@ export function BankTransactionCostTable({
             <TableHead className="w-[120px] text-center">
               {labels.date}
             </TableHead>
-            <TableHead className="text-right">{labels.description}</TableHead>
+            <TableHead className="text-start">{labels.description}</TableHead>
             <TableHead className="text-center w-[80px]">
               {labels.transactionCategory}
             </TableHead>
             <TableHead className="text-center">{labels.amount}</TableHead>
-            <TableHead className="text-left"></TableHead>
+            <TableHead className="text-end"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {transactions.map((tx) => (
-            <>
+            <Fragment key={tx.id}>
               <TableRow key={tx.id}>
                 <TableCell className="font-medium">
                   {formatJalaliDate(tx.date)}
@@ -120,7 +114,7 @@ export function BankTransactionCostTable({
                   {formatNumber(tx.amount)}
                   {tx.type === TransactionType.PAYMENT ? " - " : " + "}
                 </TableCell>
-                <TableCell className="text-left">
+                <TableCell className="text-end">
                   <Button
                     onClick={() => {
                       setEditRowId(tx.id);
@@ -144,7 +138,7 @@ export function BankTransactionCostTable({
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </Fragment>
           ))}
         </TableBody>
       </Table>

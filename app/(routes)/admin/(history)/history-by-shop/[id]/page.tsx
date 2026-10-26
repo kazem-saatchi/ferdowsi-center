@@ -9,6 +9,7 @@ import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import HistoryTable from "@/components/history/HistoryTable";
 import { labels } from "@/utils/label";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 function HistoryByShop() {
   const params = useParams();
@@ -43,7 +44,7 @@ function HistoryByShop() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{`${labels.shopHistory} ${histories[0].plaque}`}</CardTitle>
+        <CardTitle>{`${labels.shopHistory} ${toPersianDigits(histories[0].plaque)}`}</CardTitle>
       </CardHeader>
       <CardContent>
         <HistoryTable allHistories={histories} />

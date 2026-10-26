@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import {
   addChargeByAmountSchema,
@@ -142,7 +143,7 @@ export default function AddChargeByAmountPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shop"
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
@@ -179,7 +180,7 @@ export default function AddChargeByAmountPage() {
             )}
             <div className="space-y-2">
               <Label htmlFor="person">{labels.personName}</Label>
-              <CustomSelect
+              <CustomSelect id="person"
                 options={personOptions}
                 value={selectedPersonId}
                 onChange={setSelectedPersonId}
@@ -221,14 +222,14 @@ export default function AddChargeByAmountPage() {
             </div>
             <div className="flex flex-row gap-2 items-center">
               <Label htmlFor="proprietor">{labels.paymentCategory}</Label>
-              <Button
+              <Switch
                 id="proprietor"
-                variant={proprietor ? "destructive" : "outline"}
-                type="button"
-                onClick={() => setProprietor((prev) => !prev)}
-              >
+                checked={proprietor}
+                onCheckedChange={setProprietor}
+              />
+              <span className="text-sm">
                 {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
-              </Button>
+              </span>
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">{labels.description}</Label>

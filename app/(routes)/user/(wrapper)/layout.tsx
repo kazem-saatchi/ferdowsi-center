@@ -37,7 +37,7 @@ export default function UserClientLayout({
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || "Something Went Wrong"}
+        message={data?.message || labels.somethingWentWrong}
         retry={refetch}
       />
     );

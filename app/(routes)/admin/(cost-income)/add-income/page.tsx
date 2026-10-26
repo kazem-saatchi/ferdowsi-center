@@ -1,4 +1,6 @@
 "use client"
+import { ZodError } from "zod";
+import { toast } from "sonner";
 
 import { useState } from "react"
 import { useAddIncome } from "@/tanstack/mutation/incomeCostMutation"
@@ -30,7 +32,7 @@ export default function AddIncomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title || !amount || !incomeDate || !name) {
-      console.error(labels.selectRequiredFieldsIncome)
+      toast.error(labels.selectRequiredFieldsIncome)
       return
     }
     try {
@@ -59,6 +61,9 @@ export default function AddIncomePage() {
         setUploadPage(false)
       }
     } catch (error) {
+      // The mutation hook toasts server errors; a schema failure never
+      // reaches it, so say so here.
+      if (error instanceof ZodError) toast.error(labels.invalidFormData)
       console.error(labels.incomeAddedError, error)
     }
   }
@@ -97,7 +102,7 @@ export default function AddIncomePage() {
               <Label htmlFor="name">{labels.name}</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <Switch id="proprietor" checked={proprietor} onCheckedChange={setProprietor} />
               <Label htmlFor="proprietor">{labels.proprietorIncome}</Label>
             </div>

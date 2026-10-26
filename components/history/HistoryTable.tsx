@@ -15,9 +15,11 @@ import { ShopHistory } from "@prisma/client";
 import { useState } from "react";
 import { labels } from "@/utils/label";
 import { UpdateHistoryModal } from "./UpdateHistoryModal";
+import Pager from "@/components/Pager";
+import EmptyState from "@/components/EmptyState";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
+import { toPersianDigits } from "@/utils/formatNumber";
 
 type HistoryType =
   | "Ownership"
@@ -133,6 +135,13 @@ function HistoryTable({ allHistories }: TableProps) {
                 </TableCell>
               </TableRow>
             ))}
+            {paginatedHistories.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7}>
+                  <EmptyState />
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
@@ -141,29 +150,7 @@ function HistoryTable({ allHistories }: TableProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3 mt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-          >
-            {labels.previous}
-          </Button>
-          <span className="text-sm">
-            {labels.page} {formatNumber(page)} {labels.of} {formatNumber(totalPages)}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={page === totalPages}
-          >
-            {labels.next}
-          </Button>
-        </div>
-      )}
+      <Pager page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
 }

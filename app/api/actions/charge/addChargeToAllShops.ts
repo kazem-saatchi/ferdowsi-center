@@ -62,7 +62,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   });
 
   if (!shopsChargeRefList.length) {
-    throw new Error("No shop charge references found in the database.");
+    throw new Error("لیست مرجع شارژ پیدا نشد. ابتدا لیست مرجع را بسازید.");
   }
 
   // Each shop's total is split only among that shop's own spans, so the

@@ -10,7 +10,6 @@ import {
 import type { SafePerson } from "@/schema/personSchema";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import DeletePerson from "./DeletePerson";
 import { labels } from "@/utils/label";
 
 interface PersonListProps {
@@ -32,7 +31,6 @@ export function PersonList({ persons }: PersonListProps) {
           <TableHead className="text-center">{labels.histories}</TableHead>
           <TableHead className="text-center">{labels.charges}</TableHead>
           <TableHead className="text-center">{labels.balance}</TableHead>
-          {/* <TableHead className="text-center">{labels.delete}</TableHead> */}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -49,28 +47,25 @@ export function PersonList({ persons }: PersonListProps) {
               {person.isActive ? labels.active : labels.inactive}
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/update-person/${person.IdNumber}`}>
-                <Button variant="secondary">{labels.edit}</Button>
-              </Link>
+              <Button asChild variant="secondary" size="sm">
+                <Link href={`/admin/update-person/${person.IdNumber}`}>{labels.edit}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/history-by-person/${person.id}`}>
-                <Button variant="outline">{labels.view}</Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/history-by-person/${person.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/find-charge-by-person/${person.id}`}>
-                <Button variant="outline">{labels.view}</Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/find-charge-by-person/${person.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/person-balance/${person.id}`}>
-                <Button variant="outline">{labels.view}</Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/person-balance/${person.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
-            {/* <TableCell className="text-center">
-              <DeletePerson id={person.id} />
-            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

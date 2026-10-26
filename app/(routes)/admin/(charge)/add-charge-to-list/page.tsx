@@ -21,6 +21,7 @@ import { useAddChargeByAmountToShopList } from "@/tanstack/mutation/chargeMutati
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { AddChargeByAmountToShopListData } from "@/schema/chargeSchema";
 import { labels } from "@/utils/label";
+import { shopTypeLabel } from "@/utils/shopType";
 import { convertToEnglishNumber, formatNumber } from "@/utils/formatNumber";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -83,11 +84,8 @@ function AddChargeToListPage() {
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("e.target.value", e.target.value);
     const value = convertToEnglishNumber(e.target.value).replace(/[^\d]/g, "");
-    console.log("value", value);
     const numericValue = value ? parseInt(value) : 0;
-    console.log("numericValue", numericValue);
     handleInputChange("amount", numericValue);
   };
 
@@ -181,7 +179,7 @@ function AddChargeToListPage() {
                     value={formData.amount ? formatNumber(formData.amount) : ""}
                     onChange={handleAmountChange}
                     placeholder="مبلغ را وارد کنید"
-                    className="text-right"
+                    className="text-start"
                   />
                 </div>
 
@@ -194,7 +192,7 @@ function AddChargeToListPage() {
                     value={formData.title}
                     onChange={(e) => handleInputChange("title", e.target.value)}
                     placeholder="عنوان شارژ را وارد کنید"
-                    className="text-right"
+                    className="text-start"
                   />
                 </div>
 
@@ -208,16 +206,16 @@ function AddChargeToListPage() {
                       handleInputChange("description", e.target.value)
                     }
                     placeholder="توضیحات (اختیاری)"
-                    className="text-right min-h-[80px]"
+                    className="text-start min-h-[80px]"
                     maxLength={250}
                   />
-                  <p className="text-sm text-gray-500 text-left">
+                  <p className="text-sm text-muted-foreground text-end">
                     {formData.description.length}/250
                   </p>
                 </div>
 
                 {/* Proprietor Checkbox */}
-                <div className="flex items-center space-x-2 space-x-reverse">
+                <div className="flex items-center gap-2">
                   <Checkbox
                     id="proprietor"
                     checked={formData.proprietor}
@@ -242,7 +240,7 @@ function AddChargeToListPage() {
                     >
                       <DialogTrigger asChild>
                         <Button type="button" variant="outline" size="sm">
-                          <Plus className="w-4 h-4 ml-2" />
+                          <Plus className="w-4 h-4 me-2" />
                           افزودن واحد
                         </Button>
                       </DialogTrigger>
@@ -259,7 +257,7 @@ function AddChargeToListPage() {
                               onChange={(e) =>
                                 setShopSearchTerm(e.target.value)
                               }
-                              className="pr-10 text-right"
+                              className="pr-10 text-start"
                             />
                           </div>
                           <div className="max-h-[400px] overflow-y-auto space-y-2">
@@ -273,23 +271,23 @@ function AddChargeToListPage() {
                                   setShopSearchTerm("");
                                 }}
                               >
-                                <div className="text-right">
+                                <div className="text-start">
                                   <div className="font-medium">
                                     پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
                                   </div>
-                                  <div className="text-sm text-gray-600">
+                                  <div className="text-sm text-muted-foreground">
                                     مالک: {shop.ownerName}
                                     {shop.renterName &&
                                       ` | مستاجر: ${shop.renterName}`}
                                   </div>
-                                  <div className="text-xs text-gray-500">
-                                    نوع: {shop.type} | مساحت: {toPersianDigits(shop.area)} متر
+                                  <div className="text-xs text-muted-foreground">
+                                    نوع: {shopTypeLabel(shop.type)} | مساحت: {toPersianDigits(shop.area)} متر
                                   </div>
                                 </div>
                               </div>
                             ))}
                             {filteredShops.length === 0 && (
-                              <p className="text-center text-gray-500 py-8">
+                              <p className="text-center text-muted-foreground py-8">
                                 {shopSearchTerm
                                   ? "واحدی یافت نشد"
                                   : "همه واحدها انتخاب شده‌اند"}
@@ -304,7 +302,7 @@ function AddChargeToListPage() {
                   {/* Selected Shops List */}
                   <div className="space-y-2">
                     {selectedShops.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4 border-2 border-dashed rounded-md">
+                      <p className="text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">
                         هیچ واحدی انتخاب نشده است
                       </p>
                     ) : (
@@ -318,11 +316,11 @@ function AddChargeToListPage() {
                               key={shop.id}
                               className="flex items-center justify-between p-3 border rounded-md "
                             >
-                              <div className="text-right flex-1">
+                              <div className="text-start flex-1">
                                 <div className="font-medium">
                                   پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
                                 </div>
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-muted-foreground">
                                   مالک: {shop.ownerName}
                                   {shop.renterName &&
                                     ` | مستاجر: ${shop.renterName}`}
@@ -333,7 +331,9 @@ function AddChargeToListPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => removeShopFromSelection(shop.id)}
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                aria-label={`${labels.removeFromList} ${toPersianDigits(shop.plaque)}`}
+                                title={labels.removeFromList}
                               >
                                 <X className="w-4 h-4" />
                               </Button>

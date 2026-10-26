@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
@@ -84,7 +85,7 @@ export default function HistoryByPersonInfo() {
       <CardContent>
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
-          <CustomSelect
+          <CustomSelect id="person"
             options={personOptions}
             value={personId}
             onChange={setPersonId}
@@ -94,11 +95,11 @@ export default function HistoryByPersonInfo() {
         <Separator className="my-4" />
 
         {personId !== "" && isLoading && (
-          <LoadingComponent text={labels.loadingShopHistory} />
+          <LoadingComponent inline text={labels.loadingShopHistory} />
         )}
 
         {personId !== "" && isError && (
-          <ErrorComponent
+          <ErrorComponent inline
             error={error}
             message={
               error instanceof Error
@@ -126,7 +127,7 @@ export default function HistoryByPersonInfo() {
           !isLoading &&
           !isError &&
           personHistories &&
-          personHistories.length === 0 && <p>{labels.historiesNotFound}</p>}
+          personHistories.length === 0 && <EmptyState message={labels.historiesNotFound} />}
       </CardContent>
     </Card>
   );

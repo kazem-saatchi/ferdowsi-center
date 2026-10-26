@@ -119,7 +119,7 @@ export default function UpdateShopOwnerPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shop"
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
@@ -136,7 +136,7 @@ export default function UpdateShopOwnerPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="newOwner">{labels.newOwner}</Label>
-              <CustomSelect
+              <CustomSelect id="newOwner"
                 options={personOptions}
                 value={selectedOwnerId}
                 onChange={setSelectedOwnerId}

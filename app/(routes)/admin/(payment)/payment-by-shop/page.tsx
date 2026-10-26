@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect, useState } from "react";
 import { useFindPaymentsByShop } from "@/tanstack/query/paymentQuery";
@@ -81,7 +82,7 @@ export default function ShopPaymentsPage() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectUnit}</Label>
-          <CustomSelect
+          <CustomSelect id="shop"
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
@@ -89,10 +90,10 @@ export default function ShopPaymentsPage() {
           />
         </div>
         {selectedShopId !== "" && isLoading ? (
-          <LoadingComponent text={labels.loadingData} />
+          <LoadingComponent inline text={labels.loadingData} />
         ) : (
           isError && (
-            <ErrorComponent
+            <ErrorComponent inline
               error={error}
               message={labels.errorOccurred}
               retry={refetch}
@@ -104,7 +105,7 @@ export default function ShopPaymentsPage() {
           <PaymentTable payments={shopPayments} />
         )}
         {selectedShopId !== "" && shopPayments && shopPayments.length === 0 && (
-          <p>{labels.paymentsNotFound}</p>
+          <EmptyState message={labels.paymentsNotFound} />
         )}
       </CardContent>
     </Card>

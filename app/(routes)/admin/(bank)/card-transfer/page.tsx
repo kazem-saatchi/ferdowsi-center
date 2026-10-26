@@ -1,11 +1,10 @@
-// app/transactions/page.tsx
-"use client"; // Required because we are using hooks (useQuery)
+"use client";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
+import Pager from "@/components/Pager";
 
-import { formatNumber } from "@/utils/formatNumber";
 import React, { useState } from "react";
 
-import { Button } from "@/components/ui/button"; // For pagination
-import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { BankCardTransferTable } from "@/components/bank/BankCardTransferTable";
 import { useGetAllCardTransfer } from "@/tanstack/query/bankQuery";
 import { labels } from "@/utils/label";
@@ -29,16 +28,11 @@ export default function TransactionsPage() {
 
   return (
     <div className="w-full mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">تراکنش های بانکی</h1>
+      <h1 className="text-2xl font-bold mb-6">لیست کارت به کارت‌ها</h1>
 
       {/* Display loading skeleton or table */}
       {isLoading && !queryResult ? (
-        <div className="space-y-4 px-2">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
+        <LoadingComponent inline />
       ) : (
         <BankCardTransferTable
           transactions={transactions}
@@ -49,43 +43,18 @@ export default function TransactionsPage() {
 
       {/* Display error message */}
       {isError && (
-        <p className="text-red-500 mt-4">
-          Error fetching transactions:{" "}
-          {error instanceof Error ? error.message : "Unknown error"}
-        </p>
+        <ErrorComponent inline
+          error={error instanceof Error ? error : null}
+        />
       )}
-      {isFetching && <p className="text-center mt-2">{labels.gettingData}</p>}
 
       {/* Pagination Controls */}
-      {totalPages > 0 && (
-        <div className="flex items-center justify-center space-x-2 mt-6 gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((old) => Math.max(old - 1, 1))}
-            disabled={page === 1}
-          >
-            قبلی
-          </Button>
-          <span className="text-sm font-medium">
-            صفحه {formatNumber(queryResult?.currentPage ?? page)} از {formatNumber(totalPages)}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              // Only advance if not on the last page OR if we have more data potentially coming
-              if (!isPlaceholderData && page < totalPages) {
-                setPage((old) => old + 1);
-              }
-            }}
-            // Disable if on the last page and not fetching/keeping previous data
-            disabled={isPlaceholderData || page >= totalPages}
-          >
-            بعدی
-          </Button>
-        </div>
-      )}
+      <Pager
+        page={queryResult?.currentPage ?? page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        disableNext={isPlaceholderData}
+      />
     </div>
   );
 }

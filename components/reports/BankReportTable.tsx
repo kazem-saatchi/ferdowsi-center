@@ -1,4 +1,5 @@
 "use client";
+import { labels } from "@/utils/label";
 
 import { BankTransactionData } from "@/app/api/actions/reports/getBankTransactionsForReport";
 import { BankReportCategoryData } from "@/utils/bankReportCalculations";
@@ -64,7 +65,7 @@ export default function BankReportTable({
       {/* Summary Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-right">خلاصه گزارش بانکی</CardTitle>
+          <CardTitle className="text-start">خلاصه گزارش بانکی</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
@@ -98,18 +99,18 @@ export default function BankReportTable({
       {incomeCategories.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-right text-success">
+            <CardTitle className="text-start text-success">
               دسته‌بندی‌های درآمدی
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
-                <TableRow className="text-right">
-                  <TableHead className="text-right">دسته‌بندی</TableHead>
-                  <TableHead className="text-right">مبلغ کل</TableHead>
-                  <TableHead className="text-right">تعداد تراکنش</TableHead>
-                  <TableHead className="text-right">جزئیات</TableHead>
+                <TableRow className="text-start">
+                  <TableHead className="text-start">دسته‌بندی</TableHead>
+                  <TableHead className="text-start">مبلغ کل</TableHead>
+                  <TableHead className="text-start">تعداد تراکنش</TableHead>
+                  <TableHead className="text-start">جزئیات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,7 +123,7 @@ export default function BankReportTable({
                     <>
                       <TableRow
                         key={`${categoryData.type}-${categoryData.category}`}
-                        className="text-right"
+                        className="text-start"
                       >
                         <TableCell className="font-medium">
                           {transactionCategoryNames[categoryData.category]}
@@ -161,20 +162,20 @@ export default function BankReportTable({
                             <div className="bg-success/10 p-4 rounded-md m-2">
                               <Table>
                                 <TableHeader>
-                                  <TableRow className="text-right">
-                                    <TableHead className="text-right">
+                                  <TableRow className="text-start">
+                                    <TableHead className="text-start">
                                       تاریخ
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       مبلغ
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       توضیحات
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       شماره حساب
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       شماره سند
                                     </TableHead>
                                   </TableRow>
@@ -184,7 +185,7 @@ export default function BankReportTable({
                                     (transaction) => (
                                       <TableRow
                                         key={transaction.id}
-                                        className="text-right cursor-pointer hover:bg-success/5"
+                                        className="text-start cursor-pointer hover:bg-success/5"
                                         onClick={() =>
                                           setSelectedTransaction(transaction)
                                         }
@@ -226,18 +227,18 @@ export default function BankReportTable({
       {paymentCategories.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-right text-error">
+            <CardTitle className="text-start text-error">
               دسته‌بندی‌های پرداختی
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
-                <TableRow className="text-right">
-                  <TableHead className="text-right">دسته‌بندی</TableHead>
-                  <TableHead className="text-right">مبلغ کل</TableHead>
-                  <TableHead className="text-right">تعداد تراکنش</TableHead>
-                  <TableHead className="text-right">جزئیات</TableHead>
+                <TableRow className="text-start">
+                  <TableHead className="text-start">دسته‌بندی</TableHead>
+                  <TableHead className="text-start">مبلغ کل</TableHead>
+                  <TableHead className="text-start">تعداد تراکنش</TableHead>
+                  <TableHead className="text-start">جزئیات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -250,7 +251,7 @@ export default function BankReportTable({
                     <>
                       <TableRow
                         key={`${categoryData.type}-${categoryData.category}`}
-                        className="text-right"
+                        className="text-start"
                       >
                         <TableCell className="font-medium">
                           {transactionCategoryNames[categoryData.category]}
@@ -289,20 +290,20 @@ export default function BankReportTable({
                             <div className="bg-error/10 p-4 rounded-md m-2">
                               <Table>
                                 <TableHeader>
-                                  <TableRow className="text-right">
-                                    <TableHead className="text-right">
+                                  <TableRow className="text-start">
+                                    <TableHead className="text-start">
                                       تاریخ
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       مبلغ
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       توضیحات
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       شماره حساب
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-start">
                                       شماره سند
                                     </TableHead>
                                   </TableRow>
@@ -312,7 +313,7 @@ export default function BankReportTable({
                                     (transaction) => (
                                       <TableRow
                                         key={transaction.id}
-                                        className="text-right cursor-pointer hover:bg-error/5"
+                                        className="text-start cursor-pointer hover:bg-error/5"
                                         onClick={() =>
                                           setSelectedTransaction(transaction)
                                         }
@@ -361,11 +362,12 @@ export default function BankReportTable({
             onClick={(e) => e.stopPropagation()}
           >
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-right">جزئیات تراکنش</CardTitle>
+              <CardTitle className="text-start">جزئیات تراکنش</CardTitle>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSelectedTransaction(null)}
+                aria-label={labels.close}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -373,7 +375,7 @@ export default function BankReportTable({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Transaction Type */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">
                     نوع تراکنش
                   </p>
@@ -389,7 +391,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Category */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">
                     دسته‌بندی
                   </p>
@@ -401,7 +403,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Amount */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">مبلغ</p>
                   <p
                     className={`font-bold text-lg ${
@@ -415,7 +417,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Balance */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">موجودی</p>
                   <p className="font-mono">
                     {formatCurrency(selectedTransaction.balance)}
@@ -423,7 +425,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Date */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">تاریخ</p>
                   <p className="font-medium">
                     {formatDate(selectedTransaction.date)}
@@ -431,7 +433,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Bank Account Number */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">
                     شماره حساب
                   </p>
@@ -441,7 +443,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Account Type */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">نوع حساب</p>
                   <p className="font-medium">
                     {selectedTransaction.accountType}
@@ -449,7 +451,7 @@ export default function BankReportTable({
                 </div>
 
                 {/* Bank Reference ID */}
-                <div className="text-right">
+                <div className="text-start">
                   <p className="text-sm text-muted-foreground mb-1">
                     شماره مرجع بانک
                   </p>
@@ -460,7 +462,7 @@ export default function BankReportTable({
 
                 {/* Bank Receipt ID */}
                 {selectedTransaction.bankRecieptId && (
-                  <div className="text-right">
+                  <div className="text-start">
                     <p className="text-sm text-muted-foreground mb-1">
                       شماره رسید بانک
                     </p>
@@ -472,7 +474,7 @@ export default function BankReportTable({
 
                 {/* Cheque Number */}
                 {selectedTransaction.chequeNumber && (
-                  <div className="text-right">
+                  <div className="text-start">
                     <p className="text-sm text-muted-foreground mb-1">
                       شماره چک
                     </p>
@@ -484,7 +486,7 @@ export default function BankReportTable({
 
                 {/* Branch */}
                 {selectedTransaction.branch && (
-                  <div className="text-right">
+                  <div className="text-start">
                     <p className="text-sm text-muted-foreground mb-1">شعبه</p>
                     <p className="font-medium">{selectedTransaction.branch}</p>
                   </div>
@@ -492,7 +494,7 @@ export default function BankReportTable({
 
                 {/* Receiver Account */}
                 {selectedTransaction.recieverAccount && (
-                  <div className="text-right">
+                  <div className="text-start">
                     <p className="text-sm text-muted-foreground mb-1">
                       حساب گیرنده
                     </p>
@@ -504,7 +506,7 @@ export default function BankReportTable({
 
                 {/* Sender Account */}
                 {selectedTransaction.senderAccount && (
-                  <div className="text-right">
+                  <div className="text-start">
                     <p className="text-sm text-muted-foreground mb-1">
                       حساب فرستنده
                     </p>
@@ -516,7 +518,7 @@ export default function BankReportTable({
               </div>
 
               {/* Description - Full width */}
-              <div className="text-right border-t pt-4">
+              <div className="text-start border-t pt-4">
                 <p className="text-sm text-muted-foreground mb-1">توضیحات</p>
                 <p className="font-medium whitespace-pre-wrap">
                   {selectedTransaction.description || "توضیحات ندارد"}

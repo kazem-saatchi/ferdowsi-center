@@ -52,7 +52,7 @@ export default function ShopBalanceById() {
     return (
       <ErrorComponent
         error={error}
-        message={balanceData?.message || "Something Went Wrong"}
+        message={balanceData?.message || labels.somethingWentWrong}
         retry={refetch}
       />
     );

@@ -35,7 +35,7 @@ async function generateShopAnnualChargeReference(
   });
 
   if (shopsList.length === 0) {
-    throw new Error("No active shops found to generate charge references.");
+    throw new Error("هیچ واحد فعالی برای ساخت لیست مرجع پیدا نشد.");
   }
 
   // Prepare new charge reference data

@@ -1,4 +1,7 @@
 "use client";
+import { COST_CATEGORY_OPTIONS, DEFAULT_COST_CATEGORY } from "@/utils/costCategory";
+import { ZodError } from "zod";
+import { toast } from "sonner";
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { useAddCostFromBank } from "@/tanstack/mutation/incomeCostMutation";
@@ -13,6 +16,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import {
   AddCostFromBankData,
@@ -52,7 +56,7 @@ export default function CostFromBankForm({
 
   const [title, setTitle] = useState("");
   const [costDate, setCostDate] = useState<Date | null>(date);
-  const [category, setCategory] = useState<CategoryType>("OTHER");
+  const [category, setCategory] = useState<CategoryType>(DEFAULT_COST_CATEGORY);
   const [billImageUrl, setBillImageUrl] = useState("");
   const [proprietor, setProprietor] = useState<boolean>(false);
   const [uploadPage, setUploadPage] = useState<boolean>(false);
@@ -62,8 +66,7 @@ export default function CostFromBankForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !amount || !costDate || !category) {
-      // Note: We're not using toast here as per the user's request
-      console.error(labels.selectRequiredFieldsCost);
+      toast.error(labels.selectRequiredFieldsCost);
       return;
     }
     try {
@@ -84,12 +87,15 @@ export default function CostFromBankForm({
         // Reset form after successful submission
         setTitle("");
         setCostDate(null);
-        setCategory("OTHER");
+        setCategory(DEFAULT_COST_CATEGORY);
         setBillImageUrl("");
         setProprietor(false);
         setUploadPage(false);
       }
     } catch (error) {
+      // The mutation hook toasts server errors; a schema failure never
+      // reaches it, so say so here.
+      if (error instanceof ZodError) toast.error(labels.invalidFormData);
       console.error(labels.costAddedError, error);
     }
   };
@@ -137,36 +143,30 @@ export default function CostFromBankForm({
               <Select
                 onValueChange={(value) => setCategory(value as CategoryType)}
                 dir="rtl"
-                defaultValue="OTHER"
+                value={category}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder={labels.selectType} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ELECTRICITY">
-                    {labels.electricity}
-                  </SelectItem>
-                  <SelectItem value="WATER">{labels.water}</SelectItem>
-                  <SelectItem value="GAS">{labels.gas}</SelectItem>
-                  <SelectItem value="ELEVATOR">{labels.elevator}</SelectItem>
-                  <SelectItem value="ESCALATOR">{labels.escalator}</SelectItem>
-                  <SelectItem value="CHILLER">{labels.chiller}</SelectItem>
-                  <SelectItem value="CLEANING">{labels.cleaning}</SelectItem>
-                  <SelectItem value="SECURITY">{labels.security}</SelectItem>
-                  <SelectItem value="OTHER">{labels.other}</SelectItem>
+                  {COST_CATEGORY_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-row gap-2 items-center">
               <Label htmlFor="proprietor">{labels.costFrom}</Label>
-              <Button
+              <Switch
                 id="proprietor"
-                variant={proprietor ? "destructive" : "outline"}
-                type="button"
-                onClick={() => setProprietor((prev) => !prev)}
-              >
+                checked={proprietor}
+                onCheckedChange={setProprietor}
+              />
+              <span className="text-sm">
                 {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
-              </Button>
+              </span>
             </div>
             <Button
               variant="secondary"
@@ -187,7 +187,7 @@ export default function CostFromBankForm({
           <CardFooter className="flex flex-row items-center justify-start gap-2">
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               onClick={() => cancelFn(null)}
             >
               {labels.close}

@@ -56,7 +56,7 @@ export default function AdminMainPage() {
           <Card key={href}>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Icon className="ml-2" />
+                <Icon className="me-2" />
                 {title}
               </CardTitle>
               <CardDescription>{description}</CardDescription>

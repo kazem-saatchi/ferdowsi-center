@@ -47,7 +47,7 @@ export default function UploadNetBankDataPage() {
       toast.error("نوع حساب را انتخاب کنید");
       return {
         success: false,
-        message: "Account type and bank account number are required",
+        message: "نوع حساب و شماره حساب بانکی لازم است.",
       };
     }
     return mutationAddBankData.mutateAsync({
@@ -75,7 +75,6 @@ export default function UploadNetBankDataPage() {
       toast.error("لطفا ابتدا یک فایل معتبر انتخاب و بارگذاری کنید.");
       return;
     }
-    // console.log("bank transfer", parseBankData(parsedData));
     uploadData(parsedData);
   };
 
@@ -150,7 +149,7 @@ export default function UploadNetBankDataPage() {
               </span>
               <span>{progress}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 ">
+            <div className="w-full bg-muted rounded-full h-2.5 ">
               <div
                 className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}

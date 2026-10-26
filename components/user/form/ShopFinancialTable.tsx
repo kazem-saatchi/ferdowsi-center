@@ -112,12 +112,12 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                 <TableCell className="text-center">
                   {transaction.type === "payment" ? (
                     <div className="flex items-center justify-center text-green-600">
-                      <ArrowDown className="h-4 w-4 mr-1" />
+                      <ArrowDown className="h-4 w-4 me-1" />
                       پرداخت
                     </div>
                   ) : (
                     <div className="flex items-center justify-center text-red-600">
-                      <ArrowUp className="h-4 w-4 mr-1" />
+                      <ArrowUp className="h-4 w-4 me-1" />
                       هزینه
                     </div>
                   )}
@@ -134,7 +134,7 @@ export function ShopFinancialTable({ data }: ShopFinancialTableProps) {
                 <TableCell className="text-center">
                   {transaction.personName}
                   {transaction.proprietor && (
-                    <span className="text-xs text-muted-foreground mr-1">
+                    <span className="text-xs text-muted-foreground ms-1">
                       {" "}
                       (مالک)
                     </span>

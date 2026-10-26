@@ -13,8 +13,8 @@ import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch with us through our various contact channels.",
+  title: "تماس با ما",
+  description: "راه‌های تماس با مدیریت مجتمع تجاری فردوسی",
 };
 
 export default function ContactPage() {
@@ -52,7 +52,8 @@ export default function ContactPage() {
                   </p>
                   <p className="font-medium">
                     <a
-                      href="tel:+1234567890"
+                      href="tel:+982833333333"
+                      dir="ltr"
                       className="hover:text-primary transition-colors"
                     >
                       +98 (028) 33333333
@@ -102,7 +103,7 @@ export default function ContactPage() {
                   <Link
                     href="https://instagram.com/ferdowsi.center"
                     target="_blank"
-                    className="inline-flex items-center space-x-2 text-primary hover:text-primary/80 transition-colors"
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
                   >
                     <span>@ferdowsi.center</span>
                     <ExternalLink className="h-4 w-4" />
@@ -162,7 +163,7 @@ export default function ContactPage() {
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Office Location"
+                title="موقعیت مجتمع روی نقشه"
                 className="absolute inset-0"
               />
             </div>

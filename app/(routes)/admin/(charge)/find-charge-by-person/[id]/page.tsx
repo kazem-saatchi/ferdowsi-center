@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect } from "react";
 import { useFindChargesByPerson } from "@/tanstack/query/chargeQuery";
@@ -55,7 +56,7 @@ export default function FindChargesByPersonPage() {
         {shopCharges && shopCharges.length > 0 ? (
           <ChargeTable charges={shopCharges} />
         ) : (
-          <p>{labels.chargesNotFound}</p>
+          <EmptyState message={labels.chargesNotFound} />
         )}
       </CardContent>
     </Card>

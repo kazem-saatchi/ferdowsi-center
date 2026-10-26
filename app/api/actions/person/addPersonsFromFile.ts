@@ -81,7 +81,7 @@ async function createPersons(personsArray: AddPersonData[], person: SafePerson) 
     }
 
     return {
-      message: "Successfully added new persons.",
+      message: "اشخاص جدید ثبت شدند.",
       count: insertedCount,
       skippedIdNumbers,
     };

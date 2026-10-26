@@ -129,7 +129,7 @@ function UpdatePasswordPage() {
             />
             <div className="text-sm text-muted-foreground mt-1 p-2">
               <Label>رمز عبور باید:</Label>
-              <ul className="list-disc pr-5 mt-2 space-y-1">
+              <ul className="list-disc ps-5 mt-2 space-y-1">
                 <li>حداقل ۸ کاراکتر باشد</li>
                 <li>شامل حداقل یک عدد باشد</li>
                 <li>فقط شامل حروف لاتین باشد (بدون حروف فارسی/عربی)</li>

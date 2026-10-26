@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect } from "react";
 import { useFindChargesByShop } from "@/tanstack/query/chargeQuery";
@@ -40,7 +41,7 @@ export default function FindChargesByShopPageFromParams() {
     return (
       <ErrorComponent
         error={error}
-        message={data?.message || "Something Went Wrong"}
+        message={data?.message || labels.somethingWentWrong}
         retry={refetch}
       />
     );
@@ -55,7 +56,7 @@ export default function FindChargesByShopPageFromParams() {
         {shopCharges && shopCharges.length > 0 ? (
           <ChargeTable charges={shopCharges} />
         ) : (
-          <p>{labels.chargesNotFound}</p>
+          <EmptyState message={labels.chargesNotFound} />
         )}
       </CardContent>
     </Card>

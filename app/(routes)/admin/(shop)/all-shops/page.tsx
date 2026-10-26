@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -47,7 +48,7 @@ export default function AllShopsPage() {
   if (isError) {
     return (
       <ErrorComponent
-        message={error instanceof Error ? error.message : "Unknown error"}
+        message={error instanceof Error ? error.message : labels.somethingWentWrong}
         error={error}
         retry={refetch}
       />
@@ -80,7 +81,7 @@ export default function AllShopsPage() {
         {filteredShops && filteredShops.length > 0 ? (
           <ShopsTable shops={filteredShops} />
         ) : (
-          <p>{labels.noDataFound}</p>
+          <EmptyState message={labels.noDataFound} />
         )}
       </CardContent>
     </Card>

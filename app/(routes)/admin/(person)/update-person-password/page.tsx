@@ -1,4 +1,5 @@
 "use client";
+import { labels } from "@/utils/label";
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useState, useEffect } from "react";
@@ -32,6 +33,7 @@ import { Input } from "@/components/ui/input";
 export default function UpdatePersonRolePage() {
   const [selectedPersonId, setSelectedPersonId] = useState("");
   const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const { data: personsData, isLoading: isLoadingPersons } =
     useFindAllPersons();
@@ -60,7 +62,12 @@ export default function UpdatePersonRolePage() {
     }
 
     if (newPassword.length < 8) {
-      toast.error("رمز عبور حداقل 8 کاراکتر باید باشد");
+      toast.error("رمز عبور حداقل ۸ کاراکتر باید باشد");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error(labels.passwordsDoNotMatch);
       return;
     }
 
@@ -77,7 +84,10 @@ export default function UpdatePersonRolePage() {
         userId: selectedPersonId,
       });
       // The mutation hook toasts the server's own success or error message.
-      if (result.success) setNewPassword("");
+      if (result.success) {
+        setNewPassword("");
+        setConfirmPassword("");
+      }
     } catch (error) {
       console.error("Error updating person password:", error);
       toast.error("خطا در به‌روزرسانی رمز عبور ");
@@ -109,7 +119,7 @@ export default function UpdatePersonRolePage() {
               <label htmlFor="person" className="text-sm font-medium">
                 انتخاب شخص
               </label>
-              <CustomSelect
+              <CustomSelect id="person"
                 options={personOptions}
                 value={selectedPersonId}
                 onChange={setSelectedPersonId}
@@ -139,6 +149,26 @@ export default function UpdatePersonRolePage() {
                 }}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                {labels.confirmPassword}
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                aria-invalid={
+                  confirmPassword !== "" && confirmPassword !== newPassword
+                }
+              />
+              {confirmPassword !== "" && confirmPassword !== newPassword && (
+                <p className="text-sm text-destructive">
+                  {labels.passwordsDoNotMatch}
+                </p>
+              )}
+            </div>
           </CardContent>
           <CardFooter>
             <Button
@@ -148,7 +178,8 @@ export default function UpdatePersonRolePage() {
                 updatePasswordMutation.isPending ||
                 !selectedPersonId ||
                 !newPassword ||
-                newPassword.length < 8
+                newPassword.length < 8 ||
+                newPassword !== confirmPassword
               }
             >
               {updatePasswordMutation.isPending

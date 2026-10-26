@@ -66,7 +66,7 @@ export function PersonBalanceDisplay({
           onClick={handleExport}
           disabled={units.length === 0}
         >
-          <Download className="ml-2 h-4 w-4" />
+          <Download className="me-2 h-4 w-4" />
           {labels.downloadAsExcel}
         </Button>
       </div>

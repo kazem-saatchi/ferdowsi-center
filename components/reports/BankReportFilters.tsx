@@ -58,7 +58,7 @@ export default function BankReportFilters({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-right flex items-center gap-2">
+        <CardTitle className="text-start flex items-center gap-2">
           <Filter className="h-5 w-5" />
           فیلترهای گزارش بانکی
         </CardTitle>
@@ -71,7 +71,7 @@ export default function BankReportFilters({
               handleDateChange={handleMonthChange}
               value={selectedMonth}
             />
-            <p className="text-xs text-muted-foreground text-right mt-1">
+            <p className="text-xs text-muted-foreground text-start mt-1">
               انتخاب ماه مورد نظر
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function BankReportFilters({
         {/* Filter Status */}
         {selectedMonth && (
           <div className="mt-4 p-3 bg-info/10 rounded-md">
-            <p className="text-sm text-info-foreground text-right">
+            <p className="text-sm text-info-foreground text-start">
               نمایش تراکنش‌های ماه {selectedMonth.format("MMMM YYYY")}
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function BankReportFilters({
 
         {/* Note about month selection */}
         <div className="mt-4 p-3 bg-warning/10 rounded-md">
-          <p className="text-xs text-warning-foreground text-right">
+          <p className="text-xs text-warning-foreground text-start">
             💡 گزارش برای یک ماه کامل تهیه می‌شود. لطفاً ماه مورد نظر خود را
             انتخاب کنید.
           </p>

@@ -110,7 +110,7 @@ export default function UpdatePersonRolePage() {
               <label htmlFor="person" className="text-sm font-medium">
                 انتخاب شخص
               </label>
-              <CustomSelect
+              <CustomSelect id="person"
                 options={personOptions}
                 value={selectedPersonId}
                 onChange={setSelectedPersonId}

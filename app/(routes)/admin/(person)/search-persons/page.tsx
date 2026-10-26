@@ -1,4 +1,5 @@
 "use client";
+import { labels } from "@/utils/label";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +17,6 @@ export default function SearchPersonsPage() {
     setIsLoading(true);
     try {
       const result = await findPersonByFilter(filters);
-      console.log("find person", result);
       if (result.success && result.data?.persons) {
         setPersons(result.data.persons);
         toast.success(result.message);
@@ -27,7 +27,7 @@ export default function SearchPersonsPage() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "An error occurred during search"
+          : labels.somethingWentWrong
       );
       setPersons([]);
     } finally {

@@ -19,9 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import { labels } from "@/utils/label";
 
 import { shopOptionLabel } from "@/utils/shopType";
@@ -96,16 +94,6 @@ export default function RemoveShopRenterPage() {
       label: shopOptionLabel(shop),
     })) || [];
 
-  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
-    return (
-      <Input
-        onFocus={openCalendar}
-        value={value}
-        onChange={handleValueChange}
-        readOnly
-      />
-    );
-  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -117,7 +105,7 @@ export default function RemoveShopRenterPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shop"
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
@@ -132,26 +120,12 @@ export default function RemoveShopRenterPage() {
                 value={currentRenterName}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="endDate" className="ml-2">
-                {labels.endDate}
-              </Label>
-              <DatePicker
-                calendar={persian}
-                locale={persian_fa}
-                calendarPosition="bottom-right"
-                value={endDate}
-                onChange={(date) => {
-                  if (date) {
-                    setEndDate(date.toDate());
-                  } else {
-                    setEndDate(null);
-                  }
-                }}
-                render={<CustomInput />}
-                format="YYYY/MM/DD"
-              />
-            </div>
+            <JalaliDayCalendar
+              id="endDate"
+              title={labels.endDate}
+              date={endDate}
+              setDate={setEndDate}
+            />
           </CardContent>
           <CardFooter>
             <Button

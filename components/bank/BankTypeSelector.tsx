@@ -2,7 +2,6 @@ import { labels } from "@/utils/label";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { SetStateAction } from "react";
 
 function BankTypeSelector({
@@ -22,18 +21,18 @@ function BankTypeSelector({
   };
 
   return (
-    <div className="flex fle-row items-center justify-start gap-4 p-4">
+    <div className="flex flex-wrap items-center gap-2">
       <Label>{labels.type}</Label>
       <Button
         onClick={() => {
           handleTypeChange(undefined);
         }}
-        className={cn(type === undefined && "bg-primary")}
-        variant="outline"
+        variant={type === undefined ? "default" : "outline"}
+        aria-pressed={type === undefined}
         disabled={isFetching}
       >
         {isFetching && type === undefined ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.allType}
       </Button>
@@ -41,12 +40,12 @@ function BankTypeSelector({
         onClick={() => {
           handleTypeChange("INCOME");
         }}
-        className={cn(type === "INCOME" && "bg-primary")}
-        variant="outline"
+        variant={type === "INCOME" ? "default" : "outline"}
+        aria-pressed={type === "INCOME"}
         disabled={isFetching}
       >
         {isFetching && type === "INCOME" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.income}
       </Button>
@@ -54,12 +53,12 @@ function BankTypeSelector({
         onClick={() => {
           handleTypeChange("PAYMENT");
         }}
-        className={cn(type === "PAYMENT" && "bg-primary")}
-        variant="outline"
+        variant={type === "PAYMENT" ? "default" : "outline"}
+        aria-pressed={type === "PAYMENT"}
         disabled={isFetching}
       >
         {isFetching && type === "PAYMENT" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.cost}
       </Button>

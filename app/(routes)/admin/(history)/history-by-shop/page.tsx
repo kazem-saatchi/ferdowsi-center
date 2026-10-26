@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
@@ -84,7 +85,7 @@ export default function HistoryByShopInfo() {
       <CardContent>
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectShop}</Label>
-          <CustomSelect
+          <CustomSelect id="shop"
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
@@ -94,11 +95,11 @@ export default function HistoryByShopInfo() {
         <Separator className="my-4" />
 
         {selectedShopId !== "" && isLoading && (
-          <LoadingComponent text={labels.loadingShopHistory} />
+          <LoadingComponent inline text={labels.loadingShopHistory} />
         )}
 
         {selectedShopId !== "" && isError && (
-          <ErrorComponent
+          <ErrorComponent inline
             error={error}
             message={
               error instanceof Error
@@ -126,7 +127,7 @@ export default function HistoryByShopInfo() {
           !isLoading &&
           !isError &&
           shopHistories &&
-          shopHistories.length === 0 && <p>{labels.historiesNotFound}</p>}
+          shopHistories.length === 0 && <EmptyState message={labels.historiesNotFound} />}
       </CardContent>
     </Card>
   );

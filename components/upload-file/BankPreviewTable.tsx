@@ -46,7 +46,6 @@ export function BankPreviewTable({ data }: PreviewTableProps) {
 
   const headers = Object.keys(headerLabels) as Array<keyof BankTransactionData>;
 
-  // console.log(data)
 
   return (
     <div className="overflow-x-auto">

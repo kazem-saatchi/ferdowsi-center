@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
@@ -82,7 +83,7 @@ export default function PersonPaymentsPage() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
-          <CustomSelect
+          <CustomSelect id="person"
             options={personOptions}
             value={selectedPersonId}
             onChange={setSelectedPersonId}
@@ -90,10 +91,10 @@ export default function PersonPaymentsPage() {
           />
         </div>
         {selectedPersonId !== "" && isLoading ? (
-          <LoadingComponent text={labels.loadingData} />
+          <LoadingComponent inline text={labels.loadingData} />
         ) : (
           isError && (
-            <ErrorComponent
+            <ErrorComponent inline
               error={error}
               message={labels.errorOccurred}
               retry={refetch}
@@ -107,7 +108,7 @@ export default function PersonPaymentsPage() {
           )}
         {selectedPersonId !== "" &&
           personPayments &&
-          personPayments.length === 0 && <p>{labels.paymentsNotFound}</p>}
+          personPayments.length === 0 && <EmptyState message={labels.paymentsNotFound} />}
       </CardContent>
     </Card>
   );

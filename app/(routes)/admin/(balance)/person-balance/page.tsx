@@ -64,7 +64,7 @@ export default function PersonBalancePage() {
 
       <div className="max-w-md space-y-2">
         <Label htmlFor="person">{labels.selectPerson}</Label>
-        <CustomSelect
+        <CustomSelect id="person"
           options={personOptions}
           value={selectedPersonId}
           onChange={setSelectedPersonId}
@@ -73,10 +73,10 @@ export default function PersonBalancePage() {
       </div>
 
       {selectedPersonId !== "" && isLoading && (
-        <LoadingComponent text={labels.loadingFinancialData} />
+        <LoadingComponent inline text={labels.loadingFinancialData} />
       )}
       {selectedPersonId !== "" && isError && (
-        <ErrorComponent
+        <ErrorComponent inline
           error={error}
           message={labels.errorLoadingFinancial}
           retry={refetch}

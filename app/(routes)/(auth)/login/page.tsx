@@ -42,7 +42,7 @@ export default function LoginPage() {
           router.push("/user/dashboard");
         }
       } else {
-        toast.error(result.message || "Login failed");
+        toast.error(result.message || labels.loginFailed);
       }
     } catch (error) {
       toast.error(labels.loginFailed);

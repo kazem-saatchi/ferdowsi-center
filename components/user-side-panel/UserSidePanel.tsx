@@ -24,7 +24,7 @@ function UserSidePanel() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/user/dashboard">
-                <SquareChartGantt className="mr-2 h-4 w-4" />
+                <SquareChartGantt className="me-2 h-4 w-4" />
                 <span> دشبورد </span>
               </Link>
             </SidebarMenuButton>
@@ -32,7 +32,7 @@ function UserSidePanel() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/user/my-shops">
-                <House className="mr-2 h-4 w-4" />
+                <House className="me-2 h-4 w-4" />
                 <span> واحد‌های من </span>
               </Link>
             </SidebarMenuButton>
@@ -41,7 +41,7 @@ function UserSidePanel() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/user/user-info">
-                <User className="mr-2 h-4 w-4" />
+                <User className="me-2 h-4 w-4" />
                 <span> اطلاعات کاربر </span>
               </Link>
             </SidebarMenuButton>
@@ -49,7 +49,7 @@ function UserSidePanel() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/user/update-password">
-                <ShieldPlus className="mr-2 h-4 w-4" />
+                <ShieldPlus className="me-2 h-4 w-4" />
                 <span> تغییر رمز عبور </span>
               </Link>
             </SidebarMenuButton>

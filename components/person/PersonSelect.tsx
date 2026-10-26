@@ -59,7 +59,7 @@ export function PersonSelect({ label, property }: PersonSelectProps) {
       <Button
         variant="outline"
         onClick={() => setOpen(true)}
-        className="w-full justify-start text-left font-normal"
+        className="w-full justify-start text-start font-normal"
         type="button"
       >
         {selectedPerson

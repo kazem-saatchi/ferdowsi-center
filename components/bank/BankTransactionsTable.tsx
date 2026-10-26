@@ -1,5 +1,7 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import LoadingComponent from "@/components/LoadingComponent";
+import EmptyState from "@/components/EmptyState";
 import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
@@ -42,26 +44,18 @@ export function BankTransactionTable({
   onSort,
 }: BankTransactionTableProps) {
   if (isLoading) {
-    return (
-      <div className="rounded-md border p-4">
-        <p>بارگذاری اطلاعات</p>
-        {/* You could add Skeleton loaders here for a better UX */}
-      </div>
-    );
+    return <LoadingComponent inline />;
   }
 
+  // The page shows the error itself, with the server's message.
   if (isError) {
-    return (
-      <div className="rounded-md border p-4 text-red-600">
-        <p>خطا در گرفتن اطلاعات</p>
-      </div>
-    );
+    return null;
   }
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="rounded-md border p-4">
-        <p>هیچ تراکنشی پیدا نشد</p>
+      <div className="rounded-md border">
+        <EmptyState />
       </div>
     );
   }
@@ -117,7 +111,7 @@ export function BankTransactionTable({
             <SortableHead field="date" className="w-[120px] text-center">
               {labels.date}
             </SortableHead>
-            <TableHead className="text-right">{labels.description}</TableHead>
+            <TableHead className="text-start">{labels.description}</TableHead>
             <TableHead className="text-center w-[80px]">
               {labels.transactionCategory}
             </TableHead>
@@ -128,10 +122,10 @@ export function BankTransactionTable({
             <TableHead className="text-center">
               {labels.receiptNumberShort}
             </TableHead>
-            <SortableHead field="amount" className="text-left">
+            <SortableHead field="amount" className="text-end">
               {labels.amount}
             </SortableHead>
-            <TableHead className="text-left">{labels.balance}</TableHead>
+            <TableHead className="text-end">{labels.balance}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -202,7 +196,7 @@ export function BankTransactionTable({
                 {tx.bankRecieptId?.trim() || "—"}
               </TableCell>
               <TableCell
-                className={`text-left font-semibold ${
+                className={`text-end font-semibold ${
                   tx.type === TransactionType.INCOME
                     ? "text-green-600 dark:text-green-400"
                     : tx.type === TransactionType.PAYMENT
@@ -213,7 +207,7 @@ export function BankTransactionTable({
                 {formatNumber(tx.amount)}
                 {tx.type === TransactionType.PAYMENT ? " - " : " + "}
               </TableCell>
-              <TableCell className="text-left">
+              <TableCell className="text-end">
                 {formatNumber(tx.balance)}
               </TableCell>
             </TableRow>

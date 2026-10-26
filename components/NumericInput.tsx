@@ -38,7 +38,7 @@ function NumericInput({
   return (
     <div className="flex flex-col w-full gap-2">
       {label && (
-        <Label htmlFor={inputId} className="text-sm text-gray-500">
+        <Label htmlFor={inputId} className="text-sm text-muted-foreground">
           {label}
         </Label>
       )}

@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import { useEffect, useState } from "react";
@@ -79,7 +80,7 @@ export default function FindChargesByPerson() {
       <CardContent>
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
-          <CustomSelect
+          <CustomSelect id="person"
             options={personOptions}
             value={personId}
             onChange={setPersonId}
@@ -88,11 +89,11 @@ export default function FindChargesByPerson() {
         </div>
         <Separator className="my-4" />
         {personId !== "" && isLoading && (
-          <LoadingComponent text={labels.loadingData} />
+          <LoadingComponent inline text={labels.loadingData} />
         )}
 
         {personId !== "" && isError && (
-          <ErrorComponent
+          <ErrorComponent inline
             error={error}
             message={data?.message || labels.somethingWentWrong}
             retry={refetch}
@@ -109,7 +110,7 @@ export default function FindChargesByPerson() {
           !isLoading &&
           !isError &&
           shopCharges &&
-          shopCharges.length === 0 && <p>{labels.chargesNotFound}</p>}
+          shopCharges.length === 0 && <EmptyState message={labels.chargesNotFound} />}
       </CardContent>
     </Card>
   );

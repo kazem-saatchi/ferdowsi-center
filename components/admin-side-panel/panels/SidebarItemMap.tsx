@@ -9,7 +9,7 @@ function SidebarItemsMap({ menuData }: { menuData: MenuData }) {
   const [open, setOpen] = useState<boolean>(false);
   return (
     <>
-      <SidebarMenuItem className={cn(open && "text-gray-500")}>
+      <SidebarMenuItem className={cn(open && "text-muted-foreground")}>
         <SidebarMenuButton asChild>
           <Link
             href="#"
@@ -41,7 +41,7 @@ function SidebarItemsMap({ menuData }: { menuData: MenuData }) {
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
               <Link href={`${menuData.baseUrl}${item.href}`}>
-                <item.icon className="ml-2 h-4 w-4" />
+                <item.icon className="me-2 h-4 w-4" />
                 <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>

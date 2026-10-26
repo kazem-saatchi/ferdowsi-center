@@ -53,32 +53,24 @@ export function ShopsTable({ shops }: ShopsTableProps) {
               {shopTypeLabel(shop.type)}
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/history-by-shop/${shop.id}`} passHref>
-                <Button variant="secondary" size="sm">
-                  {labels.view}
-                </Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/history-by-shop/${shop.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/find-charge-by-shop/${shop.id}`} passHref>
-                <Button variant="secondary" size="sm">
-                   {labels.view}
-                </Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/find-charge-by-shop/${shop.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/shop-balance/${shop.id}`} passHref>
-                <Button variant="secondary" size="sm">
-                   {labels.view}
-                </Button>
-              </Link>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/shop-balance/${shop.id}`}>{labels.view}</Link>
+              </Button>
             </TableCell>
             <TableCell className="text-center">
-              <Link href={`/admin/edit-shop/${shop.id}`} passHref>
-                <Button variant="outline" size="sm">
-                {labels.edit}
-                </Button>
-              </Link>
+              <Button asChild variant="secondary" size="sm">
+                <Link href={`/admin/edit-shop/${shop.id}`}>{labels.edit}</Link>
+              </Button>
             </TableCell>
           </TableRow>
         ))}

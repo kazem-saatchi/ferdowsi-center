@@ -1,18 +1,14 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import ErrorComponent from "./ErrorComponent";
 
-function ErrorComponentSimple({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen ">
-      <Alert
-        variant="destructive"
-        className="max-w-md "
-      >
-        <AlertTitle className="text-lg">خطا</AlertTitle>
-        <AlertDescription>{message}</AlertDescription>
-      </Alert>
-      <div className="flex flex-row gap-4 items-center mt-6"></div>
-    </div>
-  );
+/** Error message without the home and retry buttons. */
+function ErrorComponentSimple({
+  message,
+  inline = false,
+}: {
+  message?: string;
+  inline?: boolean;
+}) {
+  return <ErrorComponent message={message} inline={inline} />;
 }
 
 export default ErrorComponentSimple;

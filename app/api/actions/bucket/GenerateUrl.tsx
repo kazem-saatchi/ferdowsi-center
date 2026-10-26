@@ -77,7 +77,7 @@ export default async function generateUploadUrl(
     // Construct the public URL
     const publicUrl = `${endpoint}/${bucket}/${folderName}/${fileName}t${dateTime}`;
 
-    return { success: true, uploadUrl, publicUrl, message: "URL generated" };
+    return { success: true, uploadUrl, publicUrl, message: "آدرس بارگذاری ساخته شد." };
   } catch (error) {
     return {
       success: false,

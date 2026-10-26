@@ -4,8 +4,8 @@ import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { Dispatch, SetStateAction } from "react";
+import CalendarInput from "./CalendarInput";
 
 interface CalendarProps {
   date: Date | null;
@@ -27,22 +27,9 @@ function JalaliDayCalendar({
   disabled = false,
   id = "DatePicker",
 }: CalendarProps) {
-  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
-    return (
-      <Input
-        id={id}
-        onFocus={openCalendar}
-        value={value}
-        onChange={handleValueChange}
-        readOnly
-      />
-    );
-  };
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="ml-2">
-        {title}
-      </Label>
+      <Label htmlFor={id}>{title}</Label>
       <DatePicker
         calendar={persian}
         locale={persian_fa}
@@ -55,7 +42,7 @@ function JalaliDayCalendar({
             setDate(null);
           }
         }}
-        render={<CustomInput />}
+        render={<CalendarInput id={id} disabled={disabled} />}
         format="YYYY/MM/DD"
         disabled={disabled}
       />

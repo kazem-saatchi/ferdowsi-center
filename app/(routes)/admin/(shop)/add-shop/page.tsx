@@ -19,6 +19,8 @@ import { useShallow } from "zustand/react/shallow";
 import { addShopSchema } from "@/schema/shopSchema";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labels } from "@/utils/label";
+import { SHOP_TYPE_LABELS } from "@/utils/shopType";
+import type { ShopType } from "@prisma/client";
 import LoadingComponent from "@/components/LoadingComponent";
 import BankCardOTP from "@/components/shop/BankCardOTP";
 import ShopFloorSelect from "@/components/shop/ShopFloorSelect";
@@ -169,41 +171,24 @@ export default function AddShopPage() {
               <BankCardOTP title="bankCardYearly" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shopType">{labels.type}</Label>
+              <Label id="shopType-label">{labels.type}</Label>
               <RadioGroup
-                property="shopType"
-                defaultValue="STORE"
+                aria-labelledby="shopType-label"
+                value={newShop.type}
+                onValueChange={(value) => setNewShop("type", value as ShopType)}
                 dir="rtl"
-                className="flex flex-row gap-2 items-center
-                "
+                className="flex flex-wrap gap-2"
               >
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex items-center space-x-2"
-                  onClick={() => setNewShop("type", "STORE")}
-                >
-                  <RadioGroupItem value="STORE" id="r1" />
-                  <Label htmlFor="r1">{labels.store}</Label>
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex items-center space-x-2"
-                  onClick={() => setNewShop("type", "OFFICE")}
-                >
-                  <RadioGroupItem value="OFFICE" id="r2" />
-                  <Label htmlFor="r2">{labels.office}</Label>
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex items-center space-x-2"
-                  onClick={() => setNewShop("type", "KIOSK")}
-                >
-                  <RadioGroupItem value="KIOSK" id="r3" />
-                  <Label htmlFor="r3">{labels.kiosk}</Label>
-                </Button>
+                {(Object.keys(SHOP_TYPE_LABELS) as ShopType[]).map((type) => (
+                  <Label
+                    key={type}
+                    htmlFor={`shopType-${type}`}
+                    className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 font-normal has-[[data-state=checked]]:border-primary"
+                  >
+                    <RadioGroupItem value={type} id={`shopType-${type}`} />
+                    {SHOP_TYPE_LABELS[type]}
+                  </Label>
+                ))}
               </RadioGroup>
             </div>
           </CardContent>

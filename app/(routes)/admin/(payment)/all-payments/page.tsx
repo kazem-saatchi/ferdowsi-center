@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect } from "react";
 import { useFindAllPayments } from "@/tanstack/query/paymentQuery";
@@ -49,7 +50,7 @@ export default function AllPaymentsPage() {
         {allPayments && allPayments.length > 0 ? (
           <PaymentTable payments={allPayments} />
         ) : (
-          <p>{labels.paymentsNotFound}</p>
+          <EmptyState message={labels.paymentsNotFound} />
         )}
       </CardContent>
     </Card>

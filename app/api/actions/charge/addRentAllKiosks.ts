@@ -66,7 +66,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
   });
 
   if (!shopsChargeList.length) {
-    throw new Error("No shop charge references found in the database.");
+    throw new Error("لیست مرجع شارژ پیدا نشد. ابتدا لیست مرجع را بسازید.");
   }
 
   const relevantHistories = allHistories.filter(isRentBillableHistory);

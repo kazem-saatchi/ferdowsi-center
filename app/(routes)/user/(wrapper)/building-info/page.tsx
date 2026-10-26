@@ -43,7 +43,7 @@ export default function BuildingInfoPage() {
               <div className="bg-primary/10 p-3 rounded-lg shrink-0">
                 <Banknote className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="text-right text-base sm:text-lg">
+              <CardTitle className="text-start text-base sm:text-lg">
                 گزارش بانکی
               </CardTitle>
             </div>
@@ -67,7 +67,7 @@ export default function BuildingInfoPage() {
               <div className="bg-muted p-3 rounded-lg shrink-0">
                 <ChevronRight className="w-6 h-6 text-muted-foreground" />
               </div>
-              <CardTitle className="text-right text-muted-foreground text-base sm:text-lg">
+              <CardTitle className="text-start text-muted-foreground text-base sm:text-lg">
                 گزارش‌های بیشتر
               </CardTitle>
             </div>

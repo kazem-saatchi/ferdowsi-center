@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { labels } from "@/utils/label";
 import { AccountType } from "@prisma/client";
 import { Loader2 } from "lucide-react";
@@ -22,18 +21,18 @@ function AccountTypeSelector({
     setPage(1); // Reset to first page when filter changes
   };
   return (
-    <div className="flex fle-row items-center justify-start gap-4 p-4">
+    <div className="flex flex-wrap items-center gap-2">
       <Label>{labels.accountType}</Label>
       <Button
         onClick={() => {
           handleAccountTypeChange(undefined);
         }}
-        className={cn(accountType === undefined && "bg-primary")}
-        variant="outline"
+        variant={accountType === undefined ? "default" : "outline"}
+        aria-pressed={accountType === undefined}
         disabled={isFetching}
       >
         {isFetching && accountType === undefined ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.allAccountType}
       </Button>
@@ -41,12 +40,12 @@ function AccountTypeSelector({
         onClick={() => {
           handleAccountTypeChange("BUSINESS");
         }}
-        className={cn(accountType === "BUSINESS" && "bg-primary")}
-        variant="outline"
+        variant={accountType === "BUSINESS" ? "default" : "outline"}
+        aria-pressed={accountType === "BUSINESS"}
         disabled={isFetching}
       >
         {isFetching && accountType === "BUSINESS" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.businessType}
       </Button>
@@ -54,12 +53,12 @@ function AccountTypeSelector({
         onClick={() => {
           handleAccountTypeChange("PROPRIETOR");
         }}
-        className={cn(accountType === "PROPRIETOR" && "bg-primary")}
-        variant="outline"
+        variant={accountType === "PROPRIETOR" ? "default" : "outline"}
+        aria-pressed={accountType === "PROPRIETOR"}
         disabled={isFetching}
       >
         {isFetching && accountType === "PROPRIETOR" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : null}
         {labels.proprietorType}
       </Button>

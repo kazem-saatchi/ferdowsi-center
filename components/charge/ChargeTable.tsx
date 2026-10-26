@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { labels } from "@/utils/label";
+import EmptyState from "@/components/EmptyState";
 import { Charge } from "@prisma/client";
 
 interface ChargeTableProps {
@@ -45,6 +46,13 @@ export function ChargeTable({ charges }: ChargeTableProps) {
             <TableCell className="text-center">{toPersianDigits(charge.daysCount)}</TableCell>
           </TableRow>
         ))}
+        {charges.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={7}>
+              <EmptyState />
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

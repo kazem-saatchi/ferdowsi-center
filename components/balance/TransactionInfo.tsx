@@ -52,7 +52,7 @@ function DetailRow({
       {Icon ? (
         <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
       ) : null}
-      <div className="min-w-0 flex-1 space-y-0.5 text-right">
+      <div className="min-w-0 flex-1 space-y-0.5 text-start">
         <p className="text-xs font-medium text-muted-foreground">{label}</p>
         <p
           className={cn(

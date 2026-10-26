@@ -40,7 +40,7 @@ export function DataFileUpload({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center gap-4">
         <Input
           type="file"
           accept=".xlsx, .xls, .csv"
@@ -59,7 +59,7 @@ export function DataFileUpload({
         >
           انتخاب فایل
         </label>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-muted-foreground">
           {fileName || "فایلی انتخاب نشده است"}
         </span>
       </div>
@@ -68,7 +68,7 @@ export function DataFileUpload({
         className="w-full"
         disabled={loading || !fileName}
       >
-        <Upload className="mr-2 h-4 w-4" />
+        <Upload className="me-2 h-4 w-4" />
         {loading ? "در حال بارگذاری" : "بارگذاری اطلاعات"}
       </Button>
     </div>

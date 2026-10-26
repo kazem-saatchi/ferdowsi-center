@@ -141,7 +141,7 @@ export function UpdateHistoryModal({
                 >
                   {labels.endDate}
                   {!canUpdateEndDate && (
-                    <span className="text-xs text-muted-foreground mr-2">
+                    <span className="text-xs text-muted-foreground ms-2">
                       ({labels.notAvailable})
                     </span>
                   )}
@@ -232,7 +232,7 @@ export function UpdateHistoryModal({
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-xs text-muted-foreground">
-                            <th className="text-right font-normal">
+                            <th className="text-start font-normal">
                               {labels.personName}
                             </th>
                             <th className="text-center font-normal">
@@ -252,14 +252,14 @@ export function UpdateHistoryModal({
                               <td className="py-1">{p.personName}</td>
                               <td className="text-center text-muted-foreground">
                                 {formatNumber(p.oldAmount)}
-                                <span className="text-xs mr-1">
-                                  ({p.oldDays} {labels.daysColumn})
+                                <span className="text-xs ms-1">
+                                  ({formatNumber(p.oldDays)} {labels.daysColumn})
                                 </span>
                               </td>
                               <td className="text-center font-medium">
                                 {formatNumber(p.newAmount)}
-                                <span className="text-xs mr-1">
-                                  ({p.newDays} {labels.daysColumn})
+                                <span className="text-xs ms-1">
+                                  ({formatNumber(p.newDays)} {labels.daysColumn})
                                 </span>
                               </td>
                               <td

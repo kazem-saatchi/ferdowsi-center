@@ -76,7 +76,7 @@ function UserInfoPage() {
                   <span className="text-sm text-muted-foreground shrink-0">
                     {row.label}
                   </span>
-                  <span className="text-sm font-medium text-left break-all">
+                  <span className="text-sm font-medium text-end break-all">
                     {row.value}
                   </span>
                 </div>

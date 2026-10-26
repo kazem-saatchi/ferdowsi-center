@@ -2,6 +2,7 @@ import { toPersianDigits } from "@/utils/formatNumber";
 import React, { useState } from "react";
 import { CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import { CustomSelect } from "../CustomSelect";
 import { Input } from "../ui/input";
 import JalaliDayCalendar from "../calendar/JalaliDayCalendar";
@@ -134,7 +135,7 @@ function AddPaymentForm() {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectUnit}</Label>
-          <CustomSelect
+          <CustomSelect id="shop"
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
@@ -170,7 +171,7 @@ function AddPaymentForm() {
         )}
         <div className="space-y-2">
           <Label htmlFor="person">{labels.payingPerson}</Label>
-          <CustomSelect
+          <CustomSelect id="person"
             options={personOptions}
             value={selectedPersonId}
             onChange={setSelectedPersonId}
@@ -202,14 +203,14 @@ function AddPaymentForm() {
         </div>
         <div className="flex flex-row gap-2 items-center">
           <Label htmlFor="proprietor">{labels.chargeType}</Label>
-          <Button
+          <Switch
             id="proprietor"
-            variant={proprietor ? "destructive" : "outline"}
-            type="button"
-            onClick={() => setProprietor((prev) => !prev)}
-          >
+            checked={proprietor}
+            onCheckedChange={setProprietor}
+          />
+          <span className="text-sm">
             {proprietor ? labels.proprietorCharge : labels.monthlyCharge}
-          </Button>
+          </span>
         </div>
         <div className="space-y-2">
           <Label htmlFor="description">{labels.description}</Label>

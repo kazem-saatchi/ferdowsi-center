@@ -10,7 +10,7 @@ export default function Home() {
           <LandingPageLinks />
         </div>
         <div className="hidden lg:block relative w-full h-screen">
-          <Image src="/images/banner.jpg" alt="Logo" fill className="object-cover" priority />
+          <Image src="/images/banner.jpg" alt="مجتمع تجاری فردوسی" fill className="object-cover" priority />
         </div>
       </div>
     </div>

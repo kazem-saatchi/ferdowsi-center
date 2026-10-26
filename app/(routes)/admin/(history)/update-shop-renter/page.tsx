@@ -21,9 +21,7 @@ import { Input } from "@/components/ui/input";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import { labels } from "@/utils/label";
 
 import { shopOptionLabel } from "@/utils/shopType";
@@ -111,16 +109,6 @@ export default function UpdateShopRenterPage() {
       label: `${person.firstName} ${person.lastName} (${toPersianDigits(person.IdNumber)})`,
     })) || [];
 
-  const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
-    return (
-      <Input
-        onFocus={openCalendar}
-        value={value}
-        onChange={handleValueChange}
-        readOnly
-      />
-    );
-  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -132,7 +120,7 @@ export default function UpdateShopRenterPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shop"
                 options={shopOptions}
                 value={selectedShopId}
                 onChange={setSelectedShopId}
@@ -149,33 +137,19 @@ export default function UpdateShopRenterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="newRenter">{labels.newRenter}</Label>
-              <CustomSelect
+              <CustomSelect id="newRenter"
                 options={personOptions}
                 value={selectedRenterId}
                 onChange={setSelectedRenterId}
                 label={labels.newRenter}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="renterChangeDate" className="ml-2">
-                {labels.renterChangeDate}
-              </Label>
-              <DatePicker
-                calendar={persian}
-                locale={persian_fa}
-                calendarPosition="bottom-right"
-                value={renterChangeDate}
-                onChange={(date) => {
-                  if (date) {
-                    setRenterChangeDate(date.toDate());
-                  } else {
-                    setRenterChangeDate(null);
-                  }
-                }}
-                render={<CustomInput />}
-                format="YYYY/MM/DD"
-              />
-            </div>
+            <JalaliDayCalendar
+              id="renterChangeDate"
+              title={labels.renterChangeDate}
+              date={renterChangeDate}
+              setDate={setRenterChangeDate}
+            />
           </CardContent>
           <CardFooter>
             <Button

@@ -108,10 +108,10 @@ export default function AddChargeToShopPage() {
     };
 
     try {
+      // The mutation hook toasts the server's own success or error message.
       const result = await addChargeMutation.mutateAsync(chargeData);
 
       if (result.success) {
-        toast.success(labels.chargeAddedSuccess);
         // Reset form after successful submission
         setFormData({
           month: null,
@@ -120,12 +120,9 @@ export default function AddChargeToShopPage() {
           shopId: "",
           title: "",
         });
-      } else {
-        toast.error(result.message || labels.failedToAddCharge);
       }
     } catch (error) {
       console.error("Error adding charge:", error);
-      toast.error(labels.errorAddingCharge);
     }
   };
 
@@ -146,7 +143,7 @@ export default function AddChargeToShopPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shopId">{labels.unit}</Label>
-              <CustomSelect
+              <CustomSelect id="shopId"
                 options={shopOptions}
                 value={formData.shopId}
                 onChange={(value) =>

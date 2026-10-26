@@ -127,7 +127,7 @@ export default function ShopBalancePage() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="shop">{labels.selectShop}</Label>
-            <CustomSelect
+            <CustomSelect id="shop"
               options={shopOptions}
               value={selectedShopId}
               onChange={setSelectedShopId}
@@ -135,9 +135,9 @@ export default function ShopBalancePage() {
             />
           </div>
           {isLoading && selectedShopId !== "" ? (
-            <LoadingComponent text={labels.loadingData} />
+            <LoadingComponent inline text={labels.loadingData} />
           ) : isError ? (
-            <ErrorComponentSimple message={labels.errorOccurred} />
+            <ErrorComponentSimple inline message={labels.errorOccurred} />
           ) : shopBalance ? (
             <ShopBalanceTable shopBalance={shopBalance} />
           ) : (

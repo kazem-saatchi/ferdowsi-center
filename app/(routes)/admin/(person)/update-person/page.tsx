@@ -101,7 +101,7 @@ export default function UpdatePersonPage() {
           }}
         />
       ) : (
-        <p className="text-center text-gray-500">
+        <p className="text-center text-muted-foreground">
           {labels.pleaseSelectAPerson}
         </p>
       )}

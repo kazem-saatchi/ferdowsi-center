@@ -47,7 +47,7 @@ async function fetchBankCardTransfer(
   } = options;
 
   // Add validation
-  if (isNaN(page) || page < 1) throw new Error("Invalid page number");
+  if (isNaN(page) || page < 1) throw new Error("شماره صفحه نامعتبر است.");
 
   const skip = (page - 1) * limit;
 
@@ -114,7 +114,7 @@ async function fetchBankCardTransfer(
   } catch (error) {
     console.error("Failed to fetch bank transactions:", error);
     // It's often better to throw the error and let TanStack Query handle it
-    throw new Error("Failed to fetch bank transactions.");
+    throw new Error("دریافت تراکنش‌های بانکی انجام نشد.");
     // Or return a structured error:
     // return { data: [], totalCount: 0, totalPages: 0, currentPage: 1, error: 'Failed to fetch data' };
   }

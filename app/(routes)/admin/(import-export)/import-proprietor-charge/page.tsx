@@ -70,7 +70,7 @@ export default function UploadProprietorCharge() {
         <CardTitle>آپلود شارژ مالکانه با فایل</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           فایل اکسل باید دارای دو ستون <span className="font-medium">plaque</span>{" "}
           (پلاک) و <span className="font-medium">amount</span> (مبلغ) باشد. عنوان،
           تاریخ و توضیحات یک بار در این صفحه وارد شده و برای همه ردیف‌ها اعمال
@@ -88,7 +88,7 @@ export default function UploadProprietorCharge() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="عنوان شارژ را وارد کنید"
-              className="text-right"
+              className="text-start"
             />
           </div>
 
@@ -99,10 +99,10 @@ export default function UploadProprietorCharge() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="توضیحات (اختیاری)"
-              className="text-right min-h-[80px]"
+              className="text-start min-h-[80px]"
               maxLength={250}
             />
-            <p className="text-sm text-gray-500 text-left">
+            <p className="text-sm text-muted-foreground text-end">
               {description.length}/250
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function UploadProprietorCharge() {
               </span>
               <span>{progress}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 ">
+            <div className="w-full bg-muted rounded-full h-2.5 ">
               <div
                 className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}

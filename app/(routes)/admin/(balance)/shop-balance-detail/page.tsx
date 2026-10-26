@@ -112,7 +112,7 @@ export default function ShopBalanceDetailPage() {
     return (
       <ErrorComponent
         error={errorAllShops}
-        message={shopsData?.message || "Something Went Wrong"}
+        message={shopsData?.message || labels.somethingWentWrong}
         retry={refetchAllShops}
       />
     );
@@ -127,7 +127,7 @@ export default function ShopBalanceDetailPage() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="shop">{labels.selectShop}</Label>
-            <CustomSelect
+            <CustomSelect id="shop"
               options={shopOptions}
               value={selectedShopId}
               onChange={setSelectedShopId}
@@ -136,9 +136,9 @@ export default function ShopBalanceDetailPage() {
           </div>
 
           {isLoading && selectedShopId !== "" ? (
-            <LoadingComponent text={labels.loadingData} />
+            <LoadingComponent inline text={labels.loadingData} />
           ) : isError ? (
-            <ErrorComponentSimple message={labels.errorOccurred} />
+            <ErrorComponentSimple inline message={labels.errorOccurred} />
           ) : shopBalance &&
             balanceData?.data?.charges &&
             balanceData?.data?.payments  ? (

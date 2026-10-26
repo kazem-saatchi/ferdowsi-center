@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/components/EmptyState";
 
 import { useEffect } from "react";
 import { useFindAllCharges } from "@/tanstack/query/chargeQuery";
@@ -47,7 +48,7 @@ export default function AllChargesPage() {
         {allCharges && allCharges.length > 0 ? (
           <ChargeTable charges={allCharges} />
         ) : (
-          <p>{labels.chargesNotFound}</p>
+          <EmptyState message={labels.chargesNotFound} />
         )}
       </CardContent>
     </Card>

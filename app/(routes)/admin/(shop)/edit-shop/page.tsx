@@ -127,7 +127,8 @@ export default function EditShopPage() {
       return;
     }
     try {
-      const result = await updateShopMutation.mutateAsync({
+      // The mutation hook toasts the server's own success or error message.
+      await updateShopMutation.mutateAsync({
         id: selectedShopId,
         plaque: Number.parseInt(formData.plaque),
         area: Number.parseFloat(formData.area),
@@ -139,14 +140,8 @@ export default function EditShopPage() {
         chargeAmount: formData.chargeAmount ?? undefined,
         rentDate: rentDate?.toISOString() || undefined,
       });
-      if (result.success) {
-        toast.success(labels.shopUpdateSuccess);
-      } else {
-        toast.error(result.message || labels.shopUpdateError);
-      }
     } catch (error) {
       console.error("Error updating shop:", error);
-      toast.error(labels.shopUpdateError);
     }
   };
 
@@ -317,7 +312,7 @@ export default function EditShopPage() {
                   </div>
                 </div>
                 {formData.type === "STORE" || formData.type === "OFFICE" ? (
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     مبلغ اجاره و شارژ ماهانه برای فروشگاه و دفتر نیست
                   </span>
                 ) : null}
@@ -346,7 +341,7 @@ export default function EditShopPage() {
           </form>
         </Card>
       ) : (
-        <p className="text-center text-gray-500">
+        <p className="text-center text-muted-foreground">
           {labels.pleaseSelectShopForEdit}
         </p>
       )}

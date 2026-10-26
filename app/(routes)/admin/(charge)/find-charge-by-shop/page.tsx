@@ -79,7 +79,7 @@ export default function FindChargesByShopPage() {
       <CardContent>
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectShop}</Label>
-          <CustomSelect
+          <CustomSelect id="shop"
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
@@ -88,7 +88,7 @@ export default function FindChargesByShopPage() {
         </div>
         <Separator className="my-4" />
         {loadingShopData && selectedShopId !== "" && (
-          <LoadingComponent text={labels.loadingShopData} />
+          <LoadingComponent inline text={labels.loadingShopData} />
         )}
         {!loadingShopData && shopCharges && shopCharges.length > 0 && (
           <ChargeTable charges={shopCharges} />

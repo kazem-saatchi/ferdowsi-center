@@ -1,5 +1,7 @@
 // components/transactions/BankTransactionTable.tsx
 "use client"; // This component uses hooks (useQuery) indirectly via its parent
+import LoadingComponent from "@/components/LoadingComponent";
+import EmptyState from "@/components/EmptyState";
 import { formatJalaliDate } from "@/utils/localeDate";
 
 import {
@@ -16,7 +18,7 @@ import { labels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
 import AddPaymentButton from "../payment/AddPaymentButton";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Button } from "../ui/button";
 import PaymentFromBankForm from "./PaymentFromBankForm";
 
@@ -36,26 +38,18 @@ export function BankOtherIncomeTable({
   const [editRowId, setEditRowId] = useState<string | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="rounded-md border p-4">
-        <p>بارگذاری اطلاعات</p>
-        {/* You could add Skeleton loaders here for a better UX */}
-      </div>
-    );
+    return <LoadingComponent inline />;
   }
 
+  // The page shows the error itself, with the server's message.
   if (isError) {
-    return (
-      <div className="rounded-md border p-4 text-red-600">
-        <p>خطا در گرفتن اطلاعات</p>
-      </div>
-    );
+    return null;
   }
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="rounded-md border p-4">
-        <p>هیچ تراکنشی پیدا نشد</p>
+      <div className="rounded-md border">
+        <EmptyState />
       </div>
     );
   }
@@ -79,13 +73,13 @@ export function BankOtherIncomeTable({
             <TableHead className="text-center"></TableHead>
 
             {/* Add other relevant columns if needed:
-            <TableHead>Bank Ref ID</TableHead>
+            <TableHead>{labels.bankRefId}</TableHead>
             */}
           </TableRow>
         </TableHeader>
         <TableBody>
           {transactions.map((tx) => (
-            <>
+            <Fragment key={tx.id}>
               <TableRow key={tx.id}>
                 <TableCell className="font-medium">
                   {formatJalaliDate(tx.date)}
@@ -122,7 +116,7 @@ export function BankOtherIncomeTable({
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </Fragment>
           ))}
         </TableBody>
       </Table>

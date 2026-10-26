@@ -1,4 +1,5 @@
 "use client";
+import { labels } from "@/utils/label";
 
 import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
 import { useFindPersonById } from "@/tanstack/query/personQuery";
@@ -39,7 +40,7 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
       <ErrorComponent
         error={error as Error}
         retry={refetch}
-        message="An error occurred while loading your data."
+        message={labels.somethingWentWrong}
       />
     );
   }
@@ -47,9 +48,9 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
   if (!data?.data || !data.data.person || !personById) {
     return (
       <ErrorComponent
-        error={new Error("No data found")}
+        error={new Error(labels.noDataFound)}
         retry={refetch}
-        message="An error occurred while loading your data."
+        message={labels.somethingWentWrong}
       />
     );
   }

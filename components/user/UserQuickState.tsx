@@ -23,12 +23,13 @@ function UserQuickState() {
   } = useGetUserQuickState();
 
   if (isLoading) {
-    return <LoadingComponent text={labels.loadingData} />;
+    return <LoadingComponent inline text={labels.loadingData} />;
   }
 
   if (isError) {
     return (
       <ErrorComponent
+        inline
         error={error}
         message={labels.somethingWentWrong}
         retry={refetch}

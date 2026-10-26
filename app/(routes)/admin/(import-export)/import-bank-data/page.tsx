@@ -11,7 +11,7 @@ import { BankTransactionData } from "@/components/upload-file/readFile";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { labels } from "@/utils/label";
-import { cn } from "@/lib/utils";
+import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { AccountType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 
@@ -48,7 +48,6 @@ export default function UploadBankData() {
       toast.error("لطفا ابتدا یک فایل معتبر انتخاب و بارگذاری کنید.");
       return;
     }
-    // console.log("bank transfer", parseBankData(parsedData));
     uploadData(parsedData);
   };
 
@@ -58,55 +57,50 @@ export default function UploadBankData() {
         <CardTitle>آپلود اطلاعات بانک</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div
-          className={cn(
-            "w-full p-4",
-            "flex flex-row items-center justify-start gap-4"
-          )}
-        >
-          <Label className="w-36">{labels.bankAccountNumber}</Label>
+        <div className="space-y-2">
+          <Label htmlFor="bankAccountNumber">{labels.bankAccountNumber}</Label>
           <Input
+            id="bankAccountNumber"
+            dir="ltr"
+            className="text-left"
             value={bankAccountNumber}
             onChange={(event) => {
               setBankAccountNumber(event.target.value);
             }}
           />
         </div>
-        <div
-          className={cn(
-            "w-full p-4",
-            "flex flex-row items-center justify-start gap-4"
-          )}
-        >
-          <Label className="w-28">{labels.accountType}</Label>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setAccountType("BUSINESS");
-            }}
-            className={cn(accountType === "BUSINESS" && "bg-primary")}
+        <div className="space-y-2">
+          <Label id="accountType-label">{labels.accountType}</Label>
+          <div
+            role="group"
+            aria-labelledby="accountType-label"
+            className="flex flex-wrap gap-2"
           >
-            {labels.businessType}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setAccountType("PROPRIETOR");
-            }}
-            className={cn(accountType === "PROPRIETOR" && "bg-primary")}
-          >
-            {labels.proprietorType}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setAccountType("GENERAL");
-            }}
-            className={cn(accountType === "GENERAL" && "bg-primary")}
-
-          >
-            {labels.generalType}
-          </Button>
+            <Button
+              type="button"
+              variant={accountType === "BUSINESS" ? "default" : "outline"}
+              aria-pressed={accountType === "BUSINESS"}
+              onClick={() => setAccountType("BUSINESS")}
+            >
+              {labels.businessType}
+            </Button>
+            <Button
+              type="button"
+              variant={accountType === "PROPRIETOR" ? "default" : "outline"}
+              aria-pressed={accountType === "PROPRIETOR"}
+              onClick={() => setAccountType("PROPRIETOR")}
+            >
+              {labels.proprietorType}
+            </Button>
+            <Button
+              type="button"
+              variant={accountType === "GENERAL" ? "default" : "outline"}
+              aria-pressed={accountType === "GENERAL"}
+              onClick={() => setAccountType("GENERAL")}
+            >
+              {labels.generalType}
+            </Button>
+          </div>
         </div>
         <BankDataUpload
           onFileChange={handleFileChange}
@@ -118,12 +112,12 @@ export default function UploadBankData() {
           <div className="space-y-2">
             <div className="flex justify-between text-sm font-medium ">
               <span>
-                درحال پردازش: {uploadStats.totalProcessed}/{parsedData.length}
-                رکورد
+                درحال پردازش: {formatNumber(uploadStats.totalProcessed)}/
+                {formatNumber(parsedData.length)} رکورد
               </span>
-              <span>{progress}%</span>
+              <span>{toPersianDigits(progress)}٪</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 ">
+            <div className="w-full bg-muted rounded-full h-2.5 ">
               <div
                 className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}

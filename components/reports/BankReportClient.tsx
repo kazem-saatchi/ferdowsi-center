@@ -75,10 +75,10 @@ export default function BankReportClient() {
           {/* Report Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-right">اطلاعات گزارش</CardTitle>
+              <CardTitle className="text-start">اطلاعات گزارش</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-right">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-start">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     آخرین بروزرسانی
@@ -144,7 +144,7 @@ export default function BankReportClient() {
               {/* Note about caching */}
               <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
                 <CardContent className="pt-6">
-                  <p className="text-sm text-blue-800 dark:text-blue-200 text-right">
+                  <p className="text-sm text-blue-800 dark:text-blue-200 text-start">
                     💡 این گزارش با استفاده از کش مرورگر بهینه‌سازی شده است.
                     اطلاعات هر ماه پس از اولین بار بارگذاری، در کش ذخیره می‌شود
                     تا دسترسی سریع‌تر به اطلاعات امکان‌پذیر باشد.

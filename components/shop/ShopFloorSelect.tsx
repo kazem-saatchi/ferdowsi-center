@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 
 const floorsNumber: number[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
 
@@ -28,8 +27,8 @@ function ShopFloorSelect({ floorValue, setFloorValue }: SelectShopFloorProps) {
             onClick={() => {
               setFloorValue("floor", floor);
             }}
-            variant="outline"
-            className={cn(floorValue === floor && "bg-primary")}
+            variant={floorValue === floor ? "default" : "outline"}
+            aria-pressed={floorValue === floor}
           >
             {parkingFloorsLabel(floor)}
           </Button>

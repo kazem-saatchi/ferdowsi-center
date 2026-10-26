@@ -70,21 +70,21 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
       <Table className="border rounded-lg max-w-2xl">
         <TableHeader className="">
           <TableRow>
-            <TableHead className="text-right">عنوان</TableHead>
-            <TableHead className="text-right">تاریخ</TableHead>
-            <TableHead className="text-right w-[100px]">عملیات</TableHead>
+            <TableHead className="text-start">عنوان</TableHead>
+            <TableHead className="text-start">تاریخ</TableHead>
+            <TableHead className="text-start w-[100px]">عملیات</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className="font-medium text-right">
+              <TableCell className="font-medium text-start">
                 {item.title}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-start">
                 {formatJalaliDateTime(item.createdAt)}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-start">
                 {item.deleted ? (
                   <span className="text-sm text-muted-foreground">
                     {labels.operationDeleted}

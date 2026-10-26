@@ -21,7 +21,7 @@ async function addFailedPaymentFromCard(
 ): Promise<PaymentResponse> {
   // Input validation
   if (!id || typeof id !== "string") {
-    return { success: false, message: "Invalid transaction ID" };
+    return { success: false, message: "شناسه تراکنش نامعتبر است." };
   }
 
   // Authorization

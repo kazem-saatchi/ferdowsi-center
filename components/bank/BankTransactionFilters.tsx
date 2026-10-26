@@ -125,7 +125,7 @@ export default function BankTransactionFiltersCard({
   return (
     <Card dir="rtl">
       <CardHeader>
-        <CardTitle className="text-right flex items-center gap-2">
+        <CardTitle className="text-start flex items-center gap-2">
           <Filter className="h-5 w-5" />
           {labels.bankTransactionFilters}
         </CardTitle>

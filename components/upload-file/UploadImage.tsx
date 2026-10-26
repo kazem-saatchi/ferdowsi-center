@@ -40,7 +40,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
 
   const handleUpload = async () => {
     if (!file) {
-      setError("Please select a file");
+      setError("ابتدا یک عکس انتخاب کنید.");
       return;
     }
 
@@ -51,14 +51,14 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
       // Check size limit
       if (file.size > 2 * 1024 * 1024) {
         // 2 MB limit
-        throw new Error("Max upload size reached (2 MB).");
+        throw new Error("حجم عکس بیشتر از ۲ مگابایت است.");
       }
 
       // Check types
       const acceptedTypes = ["image/jpeg", "image/jpg", "image/png"];
       if (!acceptedTypes.includes(file.type)) {
         throw new Error(
-          "Invalid file type. Only JPEG, JPG, and PNG are allowed."
+          "فقط عکس با پسوند JPG یا PNG پذیرفته می‌شود."
         );
       }
 
@@ -80,7 +80,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
       });
 
       if (!uploadResponse.ok) {
-        throw new Error("Failed to upload the file to S3");
+        throw new Error("بارگذاری عکس انجام نشد.");
       }
 
       setImageUrl(publicUrl);
@@ -89,7 +89,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
       setPublicUrl(publicUrl);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "An unknown error occurred"
+        err instanceof Error ? err.message : "خطای ناشناخته‌ای رخ داد."
       );
     } finally {
       setUploading(false);
@@ -98,7 +98,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
 
   return (
     <>
-      <CardHeader>حداکثر حجم عکس 2 مگابایت می‌باشد</CardHeader>
+      <CardHeader>حداکثر حجم عکس ۲ مگابایت است</CardHeader>
       <CardContent>
         <div className="flex items-center gap-2 mb-2">
           <Button asChild variant="secondary">
@@ -122,7 +122,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
           </Button>
         </div>
         {publicUrl && (
-          <Image src={publicUrl} alt="Project Image" width={400} height={400} />
+          <Image src={publicUrl} alt="عکس بارگذاری‌شده" width={400} height={400} />
         )}
 
         {error && <p className="text-red-500">{error}</p>}

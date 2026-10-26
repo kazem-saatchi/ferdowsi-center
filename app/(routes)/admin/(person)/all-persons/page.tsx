@@ -1,4 +1,5 @@
 "use client";
+import { labels } from "@/utils/label";
 
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +35,7 @@ export default function AllPersonsPage() {
       <ErrorComponent
         error={error as Error}
         retry={refetch}
-        message="An error occurred while loading your data."
+        message={labels.somethingWentWrong}
       />
     );
   }
@@ -42,9 +43,9 @@ export default function AllPersonsPage() {
   if (!data?.data || !data.data.persons) {
     return (
       <ErrorComponent
-        error={new Error("No data found")}
+        error={new Error(labels.noDataFound)}
         retry={refetch}
-        message="An error occurred while loading your data."
+        message={labels.somethingWentWrong}
       />
     );
   }

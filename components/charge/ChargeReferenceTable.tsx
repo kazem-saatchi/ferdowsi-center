@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { labels } from "@/utils/label";
 import { formatNumber, toPersianDigits } from "@/utils/formatNumber";
 import { ShopChargeReference } from "@prisma/client";
@@ -20,24 +19,12 @@ function ChargeReferenceTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.plaque}</Button>
-          </TableHead>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.areaM2}</Button>
-          </TableHead>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.constAmount}</Button>
-          </TableHead>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.metricAmount}</Button>
-          </TableHead>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.totalCharge}</Button>
-          </TableHead>
-          <TableHead className="text-center">
-            <Button variant="ghost">{labels.date}</Button>
-          </TableHead>
+          <TableHead className="text-center">{labels.plaque}</TableHead>
+          <TableHead className="text-center">{labels.areaM2}</TableHead>
+          <TableHead className="text-center">{labels.constAmount}</TableHead>
+          <TableHead className="text-center">{labels.metricAmount}</TableHead>
+          <TableHead className="text-center">{labels.totalCharge}</TableHead>
+          <TableHead className="text-center">{labels.date}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
