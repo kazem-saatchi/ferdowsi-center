@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAddNetBankDataFromFile } from "@/tanstack/mutation/importMutation";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
@@ -79,11 +79,11 @@ export default function UploadNetBankDataPage() {
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>آپلود اطلاعات بانک</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
         <div
           className={cn(
             "w-full p-4",
@@ -189,6 +189,6 @@ export default function UploadNetBankDataPage() {
           <NetBankPreviewTable data={parsedData} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

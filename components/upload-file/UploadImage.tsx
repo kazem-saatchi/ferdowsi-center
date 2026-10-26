@@ -98,8 +98,10 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
 
   return (
     <>
-      <CardHeader>حداکثر حجم عکس ۲ مگابایت است</CardHeader>
-      <CardContent>
+      <CardHeader className="p-0 pb-2 text-sm text-muted-foreground">
+        حداکثر حجم عکس ۲ مگابایت است
+      </CardHeader>
+      <CardContent className="p-0">
         <div className="flex items-center gap-2 mb-2">
           <Button asChild variant="secondary">
             <label htmlFor="file">انتخاب عکس</label>
@@ -127,7 +129,7 @@ function UploadImage({ fileName, setImageUrl, setUploadPage,folderName }: Upload
 
         {error && <p className="text-red-500">{error}</p>}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="p-0 pt-4">
         <Button
           type="button"
           variant="default"

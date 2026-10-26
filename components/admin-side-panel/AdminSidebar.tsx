@@ -5,13 +5,14 @@ import { Separator } from "../ui/separator";
 import SidebarItemsMap from "./panels/SidebarItemMap";
 import { adminMenuData } from "./panels/menuData";
 import AdminDashboardPanel from "./panels/AdminDashboardPanel";
-import AdminPanelHeader from "./panels/AdminPanelHeader";
-import AdminPanelFooter from "./panels/AdminPanelFooter";
+import SidebarBrand from "@/components/layout/SidebarBrand";
+import AccountMenu from "@/components/layout/AccountMenu";
+import { labels } from "@/utils/label";
 
 function AdminSidebar() {
   return (
     <Sidebar side="right" variant="floating">
-      <AdminPanelHeader />
+      <SidebarBrand areaTitle={labels.adminPanel} />
       <SidebarContent className="no-scrollbar overflow-y-auto">
         <Separator />
         <SidebarMenu>
@@ -39,7 +40,7 @@ function AdminSidebar() {
           <Separator />
         </SidebarMenu>
       </SidebarContent>
-      <AdminPanelFooter />
+      <AccountMenu area="admin" />
     </Sidebar>
   );
 }

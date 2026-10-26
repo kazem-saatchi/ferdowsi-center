@@ -6,7 +6,7 @@ import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
-import { CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { CustomSelect } from "@/components/CustomSelect";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -57,38 +57,39 @@ export default function PersonBalancePage() {
     );
 
   return (
-    <div className="space-y-6">
-      <CardHeader className="px-0 pb-0">
-        <CardTitle className="text-2xl">{labels.personBalanceInfo}</CardTitle>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.personBalanceInfo}</CardTitle>
       </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="person">{labels.selectPerson}</Label>
+          <CustomSelect id="person"
+            options={personOptions}
+            value={selectedPersonId}
+            onChange={setSelectedPersonId}
+            label={labels.person}
+          />
+        </div>
 
-      <div className="max-w-md space-y-2">
-        <Label htmlFor="person">{labels.selectPerson}</Label>
-        <CustomSelect id="person"
-          options={personOptions}
-          value={selectedPersonId}
-          onChange={setSelectedPersonId}
-          label={labels.person}
-        />
-      </div>
-
-      {selectedPersonId !== "" && isLoading && (
-        <LoadingComponent inline text={labels.loadingFinancialData} />
-      )}
-      {selectedPersonId !== "" && isError && (
-        <ErrorComponent inline
-          error={error}
-          message={labels.errorLoadingFinancial}
-          retry={refetch}
-        />
-      )}
-      {selectedPersonId !== "" && !isLoading && !isError && data?.data && (
-        <PersonBalanceDisplay
-          person={data.data.person}
-          summary={data.data.summary}
-          units={data.data.units}
-        />
-      )}
+        {selectedPersonId !== "" && isLoading && (
+          <LoadingComponent inline text={labels.loadingFinancialData} />
+        )}
+        {selectedPersonId !== "" && isError && (
+          <ErrorComponent inline
+            error={error}
+            message={labels.errorLoadingFinancial}
+            retry={refetch}
+          />
+        )}
+        {selectedPersonId !== "" && !isLoading && !isError && data?.data && (
+          <PersonBalanceDisplay
+            person={data.data.person}
+            summary={data.data.summary}
+            units={data.data.units}
+          />
+        )}
+      </CardContent>
     </div>
   );
 }

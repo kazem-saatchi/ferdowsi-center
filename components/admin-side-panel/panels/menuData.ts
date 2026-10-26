@@ -431,3 +431,14 @@ export const adminMenuData: AdminMenuCollection = {
     ],
   },
 };
+
+/** Header titles for every admin page, in the words the sidebar uses. */
+export const adminPageTitles: { href: string; name: string }[] = [
+  { href: "/admin/dashboard", name: "داشبورد" },
+  ...Object.values(adminMenuData).flatMap((group) =>
+    group.items.map((item) => ({
+      href: `${group.baseUrl}${item.href}`,
+      name: item.name,
+    }))
+  ),
+];

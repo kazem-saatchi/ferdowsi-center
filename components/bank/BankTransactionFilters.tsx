@@ -6,7 +6,7 @@ import { Filter, RotateCcw, Search } from "lucide-react";
 import { TransactionCategory } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,14 +123,14 @@ export default function BankTransactionFiltersCard({
   };
 
   return (
-    <Card dir="rtl">
-      <CardHeader>
+    <div dir="rtl">
+      <CardHeader className="px-0 pt-0">
         <CardTitle className="text-start flex items-center gap-2">
           <Filter className="h-5 w-5" />
           {labels.bankTransactionFilters}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-0 space-y-4">
         {/* Free text — matches the description and the bank's own identifiers */}
         <div className="space-y-2">
           <Label htmlFor="tx-search">{labels.searchTransactions}</Label>
@@ -263,6 +263,6 @@ export default function BankTransactionFiltersCard({
           </Button>
         </div>
       </CardContent>
-    </Card>
+    </div>
   );
 }

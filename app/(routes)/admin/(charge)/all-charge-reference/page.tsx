@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useFindAllChargesReference } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
-import { CardContent, CardHeader } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShopChargeReference, ShopType } from "@prisma/client";
 import { useShallow } from "zustand/react/shallow";
@@ -144,107 +144,110 @@ export default function ChargeReferenceListPage() {
 
   return (
     <div>
-      <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-4 px-2">
-        <div className="flex flex-col items-start justify-start gap-2 mb-4 px-2">
-          <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
-            <Button
-              variant={tableType === "CHARGE" ? "default" : "outline"}
-              aria-pressed={tableType === "CHARGE"}
-              onClick={() => showTable("CHARGE")}
-            >
-              {labels.monthlyCharge}
-            </Button>
-            <Button
-              variant={tableType === "ANNUAL" ? "default" : "outline"}
-              aria-pressed={tableType === "ANNUAL"}
-              onClick={() => showTable("ANNUAL")}
-            >
-              {labels.proprietorCharge}
-            </Button>
-            <Button
-              variant={tableType === "RENT" ? "default" : "outline"}
-              aria-pressed={tableType === "RENT"}
-              onClick={() => showTable("RENT")}
-            >
-              {labels.rentCharge}
-            </Button>
-          </div>
-          <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
-            <Button
-              variant={shopTypeFilter === undefined ? "default" : "outline"}
-              aria-pressed={shopTypeFilter === undefined}
-              onClick={() => showShopType(undefined)}
-            >
-              {labels.all}
-            </Button>
-            <Button
-              variant={
-                shopTypeFilter === ShopType.STORE ? "default" : "outline"
-              }
-              aria-pressed={shopTypeFilter === ShopType.STORE}
-              onClick={() => showShopType(ShopType.STORE)}
-            >
-              {labels.shop}
-            </Button>
-            <Button
-              variant={
-                shopTypeFilter === ShopType.OFFICE ? "default" : "outline"
-              }
-              aria-pressed={shopTypeFilter === ShopType.OFFICE}
-              onClick={() => showShopType(ShopType.OFFICE)}
-            >
-              {labels.office}
-            </Button>
-            <Button
-              variant={
-                shopTypeFilter === ShopType.KIOSK ? "default" : "outline"
-              }
-              aria-pressed={shopTypeFilter === ShopType.KIOSK}
-              onClick={() => showShopType(ShopType.KIOSK)}
-            >
-              {labels.kiosk}
-            </Button>
-            <Button
-              variant={
-                shopTypeFilter === ShopType.BOARD ? "default" : "outline"
-              }
-              aria-pressed={shopTypeFilter === ShopType.BOARD}
-              onClick={() => showShopType(ShopType.BOARD)}
-            >
-              {labels.board}
-            </Button>
-            <Button
-              variant={
-                shopTypeFilter === ShopType.PARKING ? "default" : "outline"
-              }
-              aria-pressed={shopTypeFilter === ShopType.PARKING}
-              onClick={() => showShopType(ShopType.PARKING)}
-            >
-              {labels.parking}
-            </Button>
-          </div>
-        </div>
-        <div className="flex flex-row flex-wrap sm:flex-col sm:items-end gap-2 mb-4 px-2">
-          <Button
-            onClick={handleExportPDF}
-            className="w-44"
-            variant="outline"
-            disabled={tableData.length === 0}
-          >
-            <FileText className="me-2 h-4 w-4" />
-            {labels.downloadAsPDF}
-          </Button>
-          <Button
-            onClick={handleExportExcel}
-            className="w-44"
-            disabled={tableData.length === 0}
-          >
-            <Download className="me-2 h-4 w-4" />
-            {labels.downloadAsExcel}
-          </Button>
-        </div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.chargeReferenceList}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+          <div className="flex flex-col items-start justify-start gap-2">
+            <div className="flex flex-wrap items-center justify-start gap-2">
+              <Button
+                variant={tableType === "CHARGE" ? "default" : "outline"}
+                aria-pressed={tableType === "CHARGE"}
+                onClick={() => showTable("CHARGE")}
+              >
+                {labels.monthlyCharge}
+              </Button>
+              <Button
+                variant={tableType === "ANNUAL" ? "default" : "outline"}
+                aria-pressed={tableType === "ANNUAL"}
+                onClick={() => showTable("ANNUAL")}
+              >
+                {labels.proprietorCharge}
+              </Button>
+              <Button
+                variant={tableType === "RENT" ? "default" : "outline"}
+                aria-pressed={tableType === "RENT"}
+                onClick={() => showTable("RENT")}
+              >
+                {labels.rentCharge}
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center justify-start gap-2">
+              <Button
+                variant={shopTypeFilter === undefined ? "default" : "outline"}
+                aria-pressed={shopTypeFilter === undefined}
+                onClick={() => showShopType(undefined)}
+              >
+                {labels.all}
+              </Button>
+              <Button
+                variant={
+                  shopTypeFilter === ShopType.STORE ? "default" : "outline"
+                }
+                aria-pressed={shopTypeFilter === ShopType.STORE}
+                onClick={() => showShopType(ShopType.STORE)}
+              >
+                {labels.shop}
+              </Button>
+              <Button
+                variant={
+                  shopTypeFilter === ShopType.OFFICE ? "default" : "outline"
+                }
+                aria-pressed={shopTypeFilter === ShopType.OFFICE}
+                onClick={() => showShopType(ShopType.OFFICE)}
+              >
+                {labels.office}
+              </Button>
+              <Button
+                variant={
+                  shopTypeFilter === ShopType.KIOSK ? "default" : "outline"
+                }
+                aria-pressed={shopTypeFilter === ShopType.KIOSK}
+                onClick={() => showShopType(ShopType.KIOSK)}
+              >
+                {labels.kiosk}
+              </Button>
+              <Button
+                variant={
+                  shopTypeFilter === ShopType.BOARD ? "default" : "outline"
+                }
+                aria-pressed={shopTypeFilter === ShopType.BOARD}
+                onClick={() => showShopType(ShopType.BOARD)}
+              >
+                {labels.board}
+              </Button>
+              <Button
+                variant={
+                  shopTypeFilter === ShopType.PARKING ? "default" : "outline"
+                }
+                aria-pressed={shopTypeFilter === ShopType.PARKING}
+                onClick={() => showShopType(ShopType.PARKING)}
+              >
+                {labels.parking}
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-row flex-wrap sm:flex-col sm:items-end gap-2">
+            <Button
+              onClick={handleExportPDF}
+              className="w-44"
+              variant="outline"
+              disabled={tableData.length === 0}
+            >
+              <FileText className="me-2 h-4 w-4" />
+              {labels.downloadAsPDF}
+            </Button>
+            <Button
+              onClick={handleExportExcel}
+              className="w-44"
+              disabled={tableData.length === 0}
+            >
+              <Download className="me-2 h-4 w-4" />
+              {labels.downloadAsExcel}
+            </Button>
+          </div>
+        </div>
         <ListToolbar
           query={list.query}
           onQueryChange={list.setQuery}

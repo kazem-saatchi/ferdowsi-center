@@ -16,13 +16,13 @@ import {
   SquareChartGantt,
 } from "lucide-react";
 import { labels } from "@/utils/label";
-import UserPanelFooter from "./UserPanelFooter";
-import UserPanelHeader from "./UserPanelHeader";
+import SidebarBrand from "@/components/layout/SidebarBrand";
+import AccountMenu from "@/components/layout/AccountMenu";
 
 function UserSidePanel() {
   return (
     <Sidebar side="right" variant="floating">
-      <UserPanelHeader />
+      <SidebarBrand areaTitle={labels.personalAccount} />
       <SidebarContent>
         <Separator />
         <SidebarMenu>
@@ -70,7 +70,7 @@ function UserSidePanel() {
           <Separator />
         </SidebarMenu>
       </SidebarContent>
-      <UserPanelFooter />
+      <AccountMenu area="user" />
     </Sidebar>
   );
 }

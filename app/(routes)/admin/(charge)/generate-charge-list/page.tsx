@@ -5,7 +5,6 @@ import { useCreateChargeReference } from "@/tanstack/mutation/chargeMutation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -78,9 +77,9 @@ export default function GenerateShopChargeReferencePage() {
 
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card>
-        <CardHeader>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.generateShopChargeReference}</CardTitle>
           <CardDescription className="pt-2 flex flex-row items-center justify-start gap-2">
             <AlertCircle className="h-4 w-4 text-yellow-300" />{" "}
@@ -88,7 +87,7 @@ export default function GenerateShopChargeReferencePage() {
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="storeConst">{labels.shopConstantValue}</Label>
               <NumericInput
@@ -147,7 +146,7 @@ export default function GenerateShopChargeReferencePage() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button
               type="submit"
               className="w-full"
@@ -159,7 +158,7 @@ export default function GenerateShopChargeReferencePage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
       {dialog}
     </div>
   );

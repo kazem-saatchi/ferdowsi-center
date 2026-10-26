@@ -7,7 +7,7 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PaymentTable } from "@/components/payment/PaymentTable";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
@@ -75,8 +75,8 @@ export default function ShopPaymentsPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.searchPaymentsByShop}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
@@ -108,6 +108,6 @@ export default function ShopPaymentsPage() {
           <EmptyState message={labels.paymentsNotFound} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

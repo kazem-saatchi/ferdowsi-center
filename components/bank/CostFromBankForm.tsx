@@ -7,7 +7,6 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useAddCostFromBank } from "@/tanstack/mutation/incomeCostMutation";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -103,7 +102,7 @@ export default function CostFromBankForm({
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">{labels.addCost}</h1>
-      <Card>
+      <div>
         <CardHeader>
           <CardTitle>{labels.costDetails}</CardTitle>
         </CardHeader>
@@ -203,7 +202,7 @@ export default function CostFromBankForm({
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

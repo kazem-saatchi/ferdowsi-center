@@ -4,6 +4,7 @@ import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import { Label } from "@/components/ui/label";
 import { labels } from "@/utils/label";
 import React from "react";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function AllOperationPage() {
   const allOperations = await getAllOperations();
@@ -12,9 +13,13 @@ async function AllOperationPage() {
     return <ErrorComponentSimple message={allOperations.message} />;
   }
   return (
-    <div className="flex flex-col items-start justify-start gap-4">
-      <Label className="text-xl font-semibold">{labels.operationsTitle}</Label>
-      <AllOperationsTable data={allOperations.data.operations} />
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.operationsTitle}</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <AllOperationsTable data={allOperations.data.operations} />
+      </CardContent>
     </div>
   );
 }

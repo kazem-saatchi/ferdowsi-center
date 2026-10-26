@@ -5,7 +5,12 @@ import { useCreateAnnualChargeReference } from "@/tanstack/mutation/chargeMutati
 import { Button } from "@/components/ui/button"
 import NumericInput from "@/components/NumericInput"
 import { Label } from "@/components/ui/label"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import {
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
 import { toast } from "sonner"
 import { useConfirm } from "@/components/ConfirmDialog"
 import { ShopAnnualChargeReferenceSchema } from "@/schema/chargeSchema"
@@ -58,14 +63,13 @@ export default function GenerateShopAnnualChargeReferencePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.generateShopsAnnualChargeReference}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{labels.chargeReferenceDetails}</CardTitle>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>{labels.generateShopsAnnualChargeReference}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="storeMetric">{labels.shopMetricValue}</Label>
               <NumericInput
@@ -89,13 +93,13 @@ export default function GenerateShopAnnualChargeReferencePage() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button type="submit" className="w-full" disabled={createChargeReferenceMutation.isPending}>
               {createChargeReferenceMutation.isPending ? labels.generating : labels.generateChargeReference}
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
       {dialog}
     </div>
   )

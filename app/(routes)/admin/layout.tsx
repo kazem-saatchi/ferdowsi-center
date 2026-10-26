@@ -1,9 +1,11 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { verifyToken } from "@/utils/auth";
 import { redirect } from "next/navigation";
 
 import AdminSidebar from "@/components/admin-side-panel/AdminSidebar";
-import { cn } from "@/lib/utils";
+import AppHeader from "@/components/layout/AppHeader";
+import { adminPageTitles } from "@/components/admin-side-panel/panels/menuData";
+import { labels } from "@/utils/label";
 
 export default async function AdminLayout({
   children,
@@ -22,18 +24,10 @@ export default async function AdminLayout({
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <AdminSidebar />
-        <div
-          className={cn(
-            "flex flex-col lg:flex-row flex-1 items-start justify-start",
-            "overflow-y-auto no-scrollbar",
-            " m-2 rounded-md border-2 relative"
-          )}
-        >
-          <SidebarTrigger className="mt-2 ms-2 w-8 h-8" variant="outline" />
-          <div className="px-1 py-10 md:px-2 w-full items-center">
-            {children}
-          </div>
-        </div>
+        <main className="relative m-2 min-w-0 flex-1 overflow-y-auto rounded-md border-2 no-scrollbar">
+          <AppHeader areaTitle={labels.adminPanel} titles={adminPageTitles} />
+          <div className="w-full px-1 py-4 md:px-2">{children}</div>
+        </main>
       </div>
     </SidebarProvider>
   );

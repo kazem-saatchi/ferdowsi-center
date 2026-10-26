@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -95,14 +94,13 @@ export default function AddChargesToAllShopsPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addChargesToAllShops}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{labels.chargeDetailsTitle}</CardTitle>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>{labels.addChargesToAllShops}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <JalaliMonthCalendar handleDateChange={handleDateChange} />
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
@@ -115,7 +113,7 @@ export default function AddChargesToAllShopsPage() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button
               type="submit"
               className="w-full"
@@ -127,7 +125,7 @@ export default function AddChargesToAllShopsPage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
       {dialog}
     </div>
   );

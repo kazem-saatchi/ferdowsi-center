@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataFileUpload } from "@/components/upload-file/UploadImportFile";
 import { PreviewTable } from "@/components/upload-file/PreviewTable";
 import { useAddPersonsShops } from "@/tanstack/mutation/importMutation";
@@ -37,8 +37,8 @@ export default function UploadPersons() {
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>آپلود اطلاعات فروشگاه و اشخاص</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
@@ -74,6 +74,6 @@ export default function UploadPersons() {
           <PreviewTable data={previewData} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

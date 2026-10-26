@@ -9,7 +9,6 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CustomSelect } from "@/components/CustomSelect";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -105,90 +104,86 @@ export default function UpdatePersonRolePage() {
   );
 
   return (
-    <div className="container mx-auto py-10">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>تغییر رمز عبور شخص</CardTitle>
-        </CardHeader>
+    <div className="max-w-2xl">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>تغییر رمز عبور شخص</CardTitle>
+      </CardHeader>
 
-        <Separator className="mt-2 mb-4" />
+      <form onSubmit={handleSubmit}>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="person" className="text-sm font-medium">
+              انتخاب شخص
+            </label>
+            <CustomSelect id="person"
+              options={personOptions}
+              value={selectedPersonId}
+              onChange={setSelectedPersonId}
+              label="شخص"
+            />
+          </div>
 
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="person" className="text-sm font-medium">
-                انتخاب شخص
-              </label>
-              <CustomSelect id="person"
-                options={personOptions}
-                value={selectedPersonId}
-                onChange={setSelectedPersonId}
-                label="شخص"
-              />
+          <Separator />
+          {selectedPersonId !== "" && (
+            <div className="flex flex-row items-center justify-start gap-3">
+              <Label className="semi-bold text-lg">نام کاربر:</Label>
+              <span>{`${selectedPerson?.firstName} ${selectedPerson?.lastName}`}</span>
             </div>
+          )}
 
-            <Separator />
-            {selectedPersonId !== "" && (
-              <div className="flex flex-row items-center justify-start gap-3">
-                <Label className="semi-bold text-lg">نام کاربر:</Label>
-                <span>{`${selectedPerson?.firstName} ${selectedPerson?.lastName}`}</span>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
-                رمز عبور جدید
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(event) => {
-                  setNewPassword(event.target.value);
-                }}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                {labels.confirmPassword}
-              </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                aria-invalid={
-                  confirmPassword !== "" && confirmPassword !== newPassword
-                }
-              />
-              {confirmPassword !== "" && confirmPassword !== newPassword && (
-                <p className="text-sm text-destructive">
-                  {labels.passwordsDoNotMatch}
-                </p>
-              )}
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={
-                updatePasswordMutation.isPending ||
-                !selectedPersonId ||
-                !newPassword ||
-                newPassword.length < 8 ||
-                newPassword !== confirmPassword
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-sm font-medium">
+              رمز عبور جدید
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(event) => {
+                setNewPassword(event.target.value);
+              }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword" className="text-sm font-medium">
+              {labels.confirmPassword}
+            </Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              aria-invalid={
+                confirmPassword !== "" && confirmPassword !== newPassword
               }
-            >
-              {updatePasswordMutation.isPending
-                ? " در حال ثبت "
-                : "به‌روزرسانی رمز عبور"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+            />
+            {confirmPassword !== "" && confirmPassword !== newPassword && (
+              <p className="text-sm text-destructive">
+                {labels.passwordsDoNotMatch}
+              </p>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              updatePasswordMutation.isPending ||
+              !selectedPersonId ||
+              !newPassword ||
+              newPassword.length < 8 ||
+              newPassword !== confirmPassword
+            }
+          >
+            {updatePasswordMutation.isPending
+              ? " در حال ثبت "
+              : "به‌روزرسانی رمز عبور"}
+          </Button>
+        </CardFooter>
+      </form>
       {dialog}
     </div>
   );

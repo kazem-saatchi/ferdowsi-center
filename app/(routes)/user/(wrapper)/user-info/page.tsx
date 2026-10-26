@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { labels } from "@/utils/label";
+import { roleLabel } from "@/utils/roleLabel";
 
 function UserInfoPage() {
   const { userInfo } = useStore(
@@ -24,14 +25,6 @@ function UserInfoPage() {
     return phone || labels.noValue;
   };
 
-  const roleLabel =
-    userInfo?.role === "ADMIN"
-      ? labels.admin
-      : userInfo?.role === "MANAGER"
-        ? labels.manager
-        : userInfo?.role === "STAFF"
-          ? labels.staff
-          : labels.user;
 
   const infoRows = userInfo
     ? [
@@ -54,16 +47,16 @@ function UserInfoPage() {
             </Badge>
           ),
         },
-        { label: labels.role, value: roleLabel },
+        { label: labels.role, value: roleLabel(userInfo.role) },
       ]
     : [];
 
   return (
-    <div className="w-full max-w-xl mx-auto space-y-4">
-      <CardHeader className="p-0">
-        <CardTitle className="text-xl sm:text-2xl">{labels.userInfo}</CardTitle>
+    <div className="max-w-2xl">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.userInfo}</CardTitle>
       </CardHeader>
-      <CardContent className="border rounded-lg p-0 overflow-hidden">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {userInfo && (
           <>
             {/* Mobile stacked layout */}
@@ -71,7 +64,7 @@ function UserInfoPage() {
               {infoRows.map((row) => (
                 <div
                   key={row.label}
-                  className="flex items-center justify-between gap-3 px-4 py-3"
+                  className="flex items-center justify-between gap-3 py-3"
                 >
                   <span className="text-sm text-muted-foreground shrink-0">
                     {row.label}

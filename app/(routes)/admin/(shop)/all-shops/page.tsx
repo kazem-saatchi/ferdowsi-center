@@ -6,7 +6,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import Pager from "@/components/Pager";
 import ListToolbar from "@/components/table/ListToolbar";
 import { ShopsTable } from "@/components/shop/ShopTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useClientList } from "@/hooks/useClientList";
 import { useState } from "react";
@@ -49,8 +49,8 @@ export default function AllShopsPage() {
   }
 
   return (
-    <Card>
-      <CardHeader className="space-y-4">
+    <div>
+      <CardHeader className="p-3 sm:p-6 space-y-4">
         <CardTitle>{labels.allShops}</CardTitle>
         <ListToolbar
           query={list.query}
@@ -96,6 +96,6 @@ export default function AllShopsPage() {
           <EmptyState message={labels.noDataFound} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

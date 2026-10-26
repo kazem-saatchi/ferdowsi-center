@@ -20,6 +20,7 @@ import {
 } from "@/utils/bankTransactionFilters";
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -87,71 +88,75 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">تراکنش‌های بانکی</h1>
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
-        <LimitSelector limit={limit} setLimit={setLimit} />
-        <AccountTypeSelector
-          accountType={accountType}
-          setAccountType={setAccountType}
-          isFetching={isFetching}
-          setPage={setPage}
-        />
-        <BankTypeSelector
-          type={type}
-          setType={setType}
-          isFetching={isFetching}
-          setPage={setPage}
-        />
-      </div>
-
-      <div className="mb-6">
-        <BankTransactionFiltersCard
-          onApply={handleApplyFilters}
-          onClear={handleClearFilters}
-          isFetching={isFetching}
-        />
-      </div>
-
-      {/* Result count — the action has always returned it, nothing showed it */}
-      {!isLoading && (
-        <p className="text-sm text-muted-foreground mb-2 text-start">
-          {formatNumber(totalCount)} {labels.transactionsFoundSuffix}
-        </p>
-      )}
-
-      {/* Display loading skeleton or table */}
-      {isLoading && !queryResult ? (
-        <LoadingComponent inline />
-      ) : !isFetching && totalCount === 0 && hasActiveFilters ? (
-        <div className="rounded-md border p-4 text-start">
-          <p>{labels.noTransactionMatchesFilters}</p>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>تراکنش‌های بانکی</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <LimitSelector limit={limit} setLimit={setLimit} />
+          <AccountTypeSelector
+            accountType={accountType}
+            setAccountType={setAccountType}
+            isFetching={isFetching}
+            setPage={setPage}
+          />
+          <BankTypeSelector
+            type={type}
+            setType={setType}
+            isFetching={isFetching}
+            setPage={setPage}
+          />
         </div>
-      ) : (
-        <BankTransactionTable
-          transactions={transactions}
-          isLoading={isFetching} // Show loading indicator during background fetches too
-          isError={isError}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSort={handleSort}
-        />
-      )}
 
-      {/* Display error message */}
-      {isError && (
-        <ErrorComponent inline
-          error={error instanceof Error ? error : null}
-        />
-      )}
+        <div className="mb-6">
+          <BankTransactionFiltersCard
+            onApply={handleApplyFilters}
+            onClear={handleClearFilters}
+            isFetching={isFetching}
+          />
+        </div>
 
-      {/* Pagination Controls */}
-      <Pager
-        page={queryResult?.currentPage ?? page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        disableNext={isPlaceholderData}
-      />
+        {/* Result count — the action has always returned it, nothing showed it */}
+        {!isLoading && (
+          <p className="text-sm text-muted-foreground mb-2 text-start">
+            {formatNumber(totalCount)} {labels.transactionsFoundSuffix}
+          </p>
+        )}
+
+        {/* Display loading skeleton or table */}
+        {isLoading && !queryResult ? (
+          <LoadingComponent inline />
+        ) : !isFetching && totalCount === 0 && hasActiveFilters ? (
+          <div className="rounded-md border p-4 text-start">
+            <p>{labels.noTransactionMatchesFilters}</p>
+          </div>
+        ) : (
+          <BankTransactionTable
+            transactions={transactions}
+            isLoading={isFetching} // Show loading indicator during background fetches too
+            isError={isError}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSort={handleSort}
+          />
+        )}
+
+        {/* Display error message */}
+        {isError && (
+          <ErrorComponent inline
+            error={error instanceof Error ? error : null}
+          />
+        )}
+
+        {/* Pagination Controls */}
+        <Pager
+          page={queryResult?.currentPage ?? page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          disableNext={isPlaceholderData}
+        />
+      </CardContent>
     </div>
   );
 }

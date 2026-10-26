@@ -121,7 +121,7 @@ export default function ShopBalanceDetailPage() {
   return (
     <div>
       <>
-        <CardHeader>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.shopBalanceTitle}</CardTitle>
         </CardHeader>
         <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">

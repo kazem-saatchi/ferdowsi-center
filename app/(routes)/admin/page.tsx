@@ -47,28 +47,31 @@ const QUICK_LINKS: Array<{
 
 export default function AdminMainPage() {
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-4">{labels.adminWelcomeTitle}</h1>
-      <p className="mb-8 text-lg">{labels.adminWelcomeText}</p>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {QUICK_LINKS.map(({ title, description, href, icon: Icon }) => (
-          <Card key={href}>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Icon className="me-2" />
-                {title}
-              </CardTitle>
-              <CardDescription>{description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild className="w-full">
-                <Link href={href}>{labels.goToPage}</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.adminWelcomeTitle}</CardTitle>
+        <CardDescription>{labels.adminWelcomeText}</CardDescription>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {QUICK_LINKS.map(({ title, description, href, icon: Icon }) => (
+            <Card key={href}>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Icon className="me-2" />
+                  {title}
+                </CardTitle>
+                <CardDescription>{description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link href={href}>{labels.goToPage}</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </CardContent>
     </div>
   );
 }

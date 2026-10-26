@@ -5,7 +5,7 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -120,8 +120,8 @@ export default function ShopBalancePage() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.shopBalanceTitle}</CardTitle>
         </CardHeader>
         <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
@@ -144,11 +144,11 @@ export default function ShopBalancePage() {
             <p>{labels.noInformationFound}</p>
           )}
         </CardContent>
-      </Card>
+      </div>
 
       {shopOwnerBalanceData && (
-        <Card>
-          <CardHeader>
+        <div>
+          <CardHeader className="p-3 sm:p-6">
             <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
           </CardHeader>
           <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
@@ -159,18 +159,18 @@ export default function ShopBalancePage() {
               }
             />
           </CardContent>
-        </Card>
+        </div>
       )}
 
       {/* {personsBalance && personsBalance.length > 0 && (
-        <Card>
-          <CardHeader>
+        <div>
+          <CardHeader className="p-3 sm:p-6">
             <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
           </CardHeader>
           <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
             <PersonsBalanceTable personsBalance={personsBalance} />
           </CardContent>
-        </Card>
+        </div>
       )} */}
     </div>
   );

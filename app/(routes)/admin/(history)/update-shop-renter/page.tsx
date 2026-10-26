@@ -8,7 +8,6 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -111,13 +110,13 @@ export default function UpdateShopRenterPage() {
 
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card>
-        <CardHeader>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.updateShopRenter}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
               <CustomSelect id="shop"
@@ -151,7 +150,7 @@ export default function UpdateShopRenterPage() {
               setDate={setRenterChangeDate}
             />
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button
               type="submit"
               className="w-full"
@@ -168,7 +167,7 @@ export default function UpdateShopRenterPage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
       {dialog}
     </div>
   );

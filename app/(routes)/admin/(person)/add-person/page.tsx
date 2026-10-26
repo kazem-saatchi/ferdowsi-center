@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAddPerson } from "@/tanstack/mutation/personMutation";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AddPersonPage() {
   //Tanstack Mutation
@@ -48,12 +48,12 @@ export default function AddPersonPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <h2 className="text-2xl font-bold mb-6 text-center">ثبت شخص جدید</h2>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>ثبت شخص جدید</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="IdNumber">کد ملی</Label>
@@ -125,7 +125,7 @@ export default function AddPersonPage() {
             </Button>
           </form>
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }

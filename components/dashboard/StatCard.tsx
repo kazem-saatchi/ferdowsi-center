@@ -34,11 +34,11 @@ export function StatCard({
       )}
     >
       <CardContent className="flex items-start justify-between gap-3 p-4">
-        <div className="space-y-1">
+        <div className="min-w-0 space-y-1">
           <p className="text-sm text-muted-foreground">{title}</p>
           <p
             className={cn(
-              "text-2xl font-bold",
+              "text-2xl font-bold [overflow-wrap:anywhere]",
               emphasis === "warning" && "text-amber-600 dark:text-amber-400"
             )}
           >

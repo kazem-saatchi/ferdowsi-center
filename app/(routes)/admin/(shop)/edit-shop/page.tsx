@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -163,12 +162,12 @@ export default function EditShopPage() {
     })) || [];
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card className="mb-4">
-        <CardHeader>
+    <div className="max-w-2xl">
+      <div className="mb-4">
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.editShopInfo}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           <CustomSelect
             options={shopOptions}
             value={selectedShopId || ""}
@@ -176,15 +175,15 @@ export default function EditShopPage() {
             label={labels.selectShop}
           />
         </CardContent>
-      </Card>
+      </div>
       <Separator className="mb-4" />
       {selectedShop ? (
-        <Card>
-          <CardHeader>
+        <div>
+          <CardHeader className="p-3 sm:p-6">
             <CardTitle>{labels.shopDetails}</CardTitle>
           </CardHeader>
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
                 <NumericInput
@@ -327,7 +326,7 @@ export default function EditShopPage() {
                 <Input value={selectedShop.renterName || "ندارد"} disabled />
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
               <Button
                 type="submit"
                 className="w-full"
@@ -339,7 +338,7 @@ export default function EditShopPage() {
               </Button>
             </CardFooter>
           </form>
-        </Card>
+        </div>
       ) : (
         <p className="text-center text-muted-foreground">
           {labels.pleaseSelectShopForEdit}

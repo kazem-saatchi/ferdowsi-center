@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataFileUpload } from "@/components/upload-file/UploadImportFile";
 import { PreviewTable } from "@/components/upload-file/PreviewTable";
 import { useAddKiosks } from "@/tanstack/mutation/importMutation";
@@ -38,8 +38,8 @@ export default function UploadKioskData() {
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>آپلود اطلاعات غرفه ها، تابلوها و پارکینگ</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
@@ -75,6 +75,6 @@ export default function UploadKioskData() {
           <PreviewTable data={previewData} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

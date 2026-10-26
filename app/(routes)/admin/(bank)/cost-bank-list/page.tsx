@@ -8,6 +8,7 @@ import { LimitSelector } from "@/components/bank/LimitSelector";
 import { useGetAllBankTransactions } from "@/tanstack/query/bankQuery";
 import { AccountType } from "@prisma/client";
 import React, { useState } from "react";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function BankCostListPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -37,46 +38,50 @@ function BankCostListPage() {
   const totalPages = queryResult?.totalPages ?? 0;
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">لیست هزینه‌های بانکی</h1>
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
-        <LimitSelector limit={limit} setLimit={setLimit} />
-        <AccountTypeSelector
-          accountType={accountType}
-          setAccountType={setAccountType}
-          isFetching={isFetching}
-          setPage={setPage}
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>لیست هزینه‌های بانکی</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <LimitSelector limit={limit} setLimit={setLimit} />
+          <AccountTypeSelector
+            accountType={accountType}
+            setAccountType={setAccountType}
+            isFetching={isFetching}
+            setPage={setPage}
+          />
+        </div>
+
+        {/* Display loading skeleton or table */}
+        {isLoading && !queryResult ? (
+          <LoadingComponent inline />
+        ) : (
+          <BankTransactionCostTable
+            transactions={transactions}
+            isLoading={isFetching} // Show loading indicator during background fetches too
+            isError={isError}
+          />
+        )}
+
+        {/* Display error message */}
+        {isError && (
+          <ErrorComponent inline
+            error={error instanceof Error ? error : null}
+          />
+        )}
+
+        {/* Pagination Controls */}
+        <Pager
+          page={queryResult?.currentPage ?? page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          disableNext={isPlaceholderData}
         />
-      </div>
 
-      {/* Display loading skeleton or table */}
-      {isLoading && !queryResult ? (
-        <LoadingComponent inline />
-      ) : (
-        <BankTransactionCostTable
-          transactions={transactions}
-          isLoading={isFetching} // Show loading indicator during background fetches too
-          isError={isError}
-        />
-      )}
-
-      {/* Display error message */}
-      {isError && (
-        <ErrorComponent inline
-          error={error instanceof Error ? error : null}
-        />
-      )}
-
-      {/* Pagination Controls */}
-      <Pager
-        page={queryResult?.currentPage ?? page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        disableNext={isPlaceholderData}
-      />
-
-      {/* Optional: Show loading indicator during background refetches */}
-      {/* {isFetching && <p className="text-center mt-2">Updating...</p>} */}
+        {/* Optional: Show loading indicator during background refetches */}
+        {/* {isFetching && <p className="text-center mt-2">Updating...</p>} */}
+      </CardContent>
     </div>
   );
 }

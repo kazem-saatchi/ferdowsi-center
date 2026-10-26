@@ -5,7 +5,7 @@ import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/store/store";
 import { useGetAllRentsBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
@@ -67,8 +67,8 @@ export default function AllRentsBalancePage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.allRentsBalance}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
@@ -110,6 +110,6 @@ export default function AllRentsBalancePage() {
           <EmptyState message={labels.noDataFound} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

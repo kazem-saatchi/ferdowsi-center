@@ -8,7 +8,7 @@ import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PaymentTable } from "@/components/payment/PaymentTable";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import { labels } from "@/utils/label";
@@ -76,8 +76,8 @@ export default function PersonPaymentsPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.searchPaymentsByPerson}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
@@ -110,6 +110,6 @@ export default function PersonPaymentsPage() {
           personPayments &&
           personPayments.length === 0 && <EmptyState message={labels.paymentsNotFound} />}
       </CardContent>
-    </Card>
+    </div>
   );
 }

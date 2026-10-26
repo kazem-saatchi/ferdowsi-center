@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -85,13 +84,13 @@ export default function AddShopPage() {
   if (isLoading) return <LoadingComponent text={labels.loadingData} />;
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card>
-        <CardHeader>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.addNewShop}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
               <NumericInput
@@ -192,7 +191,7 @@ export default function AddShopPage() {
               </RadioGroup>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button
               type="submit"
               className="w-full"
@@ -202,7 +201,7 @@ export default function AddShopPage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

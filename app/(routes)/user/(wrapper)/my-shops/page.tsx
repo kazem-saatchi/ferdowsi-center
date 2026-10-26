@@ -205,11 +205,11 @@ export default function MyShopsPage() {
   }
 
   return (
-    <div className="w-full space-y-4">
-      <CardHeader className="p-0">
-        <CardTitle className="text-xl sm:text-2xl">{labels.myShops}</CardTitle>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.myShops}</CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         {personShopsBalance &&
         personShopsBalance.shopsOwned.length +
           personShopsBalance.shopsRented.length >

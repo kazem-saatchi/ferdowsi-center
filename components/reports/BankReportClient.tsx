@@ -69,7 +69,7 @@ export default function BankReportClient() {
 
       {/* Show initial message when no month is selected */}
       {!startDate || !endDate ? (
-        <Card>
+        <div>
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
@@ -80,15 +80,15 @@ export default function BankReportClient() {
               انتخاب کنید
             </p>
           </CardContent>
-        </Card>
+        </div>
       ) : (
         <>
           {/* Report Info */}
-          <Card>
-            <CardHeader>
+          <div>
+            <CardHeader className="p-3 sm:p-6">
               <CardTitle className="text-start">اطلاعات گزارش</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-start">
                 <div>
                   <p className="text-sm text-muted-foreground">
@@ -114,23 +114,23 @@ export default function BankReportClient() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </div>
 
           {/* Loading State */}
           {isLoading && (
-            <Card>
+            <div>
               <CardContent className="py-12 text-center">
                 <Loader2 className="h-8 w-8 animate-spin text-info mx-auto mb-4" />
                 <p className="text-muted-foreground">
                   در حال دریافت اطلاعات...
                 </p>
               </CardContent>
-            </Card>
+            </div>
           )}
 
           {/* Error State */}
           {isError && (
-            <Card className="border-error">
+            <div className="border-error">
               <CardContent className="py-12 text-center">
                 <p className="text-error font-semibold mb-2">
                   خطا در دریافت اطلاعات
@@ -139,7 +139,7 @@ export default function BankReportClient() {
                   {error instanceof Error ? error.message : "خطای ناشناخته"}
                 </p>
               </CardContent>
-            </Card>
+            </div>
           )}
 
           {/* Bank Report Table */}
@@ -170,13 +170,13 @@ export default function BankReportClient() {
             !isError &&
             transactions &&
             transactions.length === 0 && (
-              <Card>
+              <div>
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">
                     هیچ تراکنشی در این بازه زمانی یافت نشد
                   </p>
                 </CardContent>
-              </Card>
+              </div>
             )}
         </>
       )}

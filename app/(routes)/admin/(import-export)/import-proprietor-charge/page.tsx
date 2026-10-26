@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,8 +65,8 @@ export default function UploadProprietorCharge() {
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>آپلود شارژ مالکانه با فایل</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
@@ -140,6 +140,6 @@ export default function UploadProprietorCharge() {
           <PreviewTable data={previewData} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -7,8 +7,10 @@ import { useGetUserInfo } from "@/tanstack/query/personQuery";
 import { labels } from "@/utils/label";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import UserSidePanel from "@/components/user-side-panel/UserSidePanel";
+import AppHeader from "@/components/layout/AppHeader";
+import { userPageTitles } from "@/components/user-side-panel/userPages";
 
 
 export default function UserClientLayout({
@@ -47,13 +49,8 @@ export default function UserClientLayout({
       <div className="flex h-screen w-full overflow-hidden">
         <UserSidePanel />
         <main className="flex-1 min-w-0 overflow-y-auto no-scrollbar m-1 sm:m-2 rounded-md border-2 relative">
-          <SidebarTrigger
-            className="absolute top-2 right-2 z-10 w-9 h-9 touch-manipulation"
-            variant="outline"
-          />
-          <div className="p-4 pt-14 sm:p-6 sm:pt-14 md:p-8 md:pt-12">
-            {children}
-          </div>
+          <AppHeader areaTitle={labels.personalAccount} titles={userPageTitles} />
+          <div className="w-full px-1 py-4 md:px-2">{children}</div>
         </main>
       </div>
     </SidebarProvider>

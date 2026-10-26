@@ -9,7 +9,7 @@ import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { CustomSelect } from "@/components/CustomSelect";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { SafePerson } from "@/schema/personSchema";
 import { labels } from "@/utils/label";
 
@@ -73,12 +73,12 @@ export default function UpdatePersonPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Card className="mb-8">
-        <CardHeader>
+    <div className="max-w-2xl">
+      <div className="mb-8">
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle>{labels.selectPerson}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           <CustomSelect
             options={personOptions}
             value={selectedPersonId || ""}
@@ -86,7 +86,7 @@ export default function UpdatePersonPage() {
             label={labels.searchByPerson}
           />
         </CardContent>
-      </Card>
+      </div>
       {selectedPerson ? (
         <UpdatePersonForm
           key={selectedPerson.id}

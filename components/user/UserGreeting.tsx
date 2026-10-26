@@ -1,5 +1,6 @@
 import React from 'react'
 import { useFindPersonFromSession } from '@/tanstack/query/personQuery';
+import { CardDescription, CardTitle } from '@/components/ui/card';
 
 function UserGreeting() {
     const { data: session } = useFindPersonFromSession();
@@ -16,16 +17,15 @@ function UserGreeting() {
       greeting = "عصر بخیر";
     }
   return (
-    <div>
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold break-words">
+    // Styled like every other page title.
+    <div className="space-y-1.5">
+      <CardTitle className="break-words">
         {greeting}
         {session?.person?.lastName
           ? `، ${session.person.firstName} ${session.person.lastName}`
           : ""}
-      </h1>
-      <p className="text-sm sm:text-base text-muted-foreground mt-1">
-        به اپلیکیشن مجتمع فردوسی خوش آمدید
-      </p>
+      </CardTitle>
+      <CardDescription>به اپلیکیشن مجتمع فردوسی خوش آمدید</CardDescription>
     </div>
   );
 }

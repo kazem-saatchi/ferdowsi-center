@@ -699,6 +699,14 @@ export const labels = {
   newsHint: "اخبار و اطلاعیه‌های مجتمع",
   buildingInfoTitle: "اطلاعات مجتمع",
   buildingInfoHint: "گزارش ماهانه درآمدها و هزینه‌های بانکی مجتمع",
+  adminPanel: "پنل مدیریت",
+  personalAccount: "حساب شخصی",
+  buildingName: "مجتمع تجاری فردوسی",
+  accountMenu: "منوی حساب کاربری",
+  theme: "پوسته",
+  themeLight: "روشن",
+  themeDark: "تیره",
+  themeSystem: "هماهنگ با سیستم",
 };
 
 /** Bank API transaction type → Persian label */

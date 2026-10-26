@@ -76,7 +76,7 @@ export default function AllShopsYearlyBalancePage() {
 
   return (
     <div>
-      <CardHeader>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.allShopsYearlyBalance}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">

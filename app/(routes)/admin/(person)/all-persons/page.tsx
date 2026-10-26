@@ -2,7 +2,7 @@
 import { labels } from "@/utils/label";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { PersonList } from "@/components/person/PersonList";
@@ -56,8 +56,8 @@ export default function AllPersonsPage() {
   }
 
   return (
-    <Card>
-      <CardHeader className="space-y-4">
+    <div>
+      <CardHeader className="p-3 sm:p-6 space-y-4">
         <CardTitle>{labels.allPersonsList}</CardTitle>
         <ListToolbar
           query={list.query}
@@ -103,6 +103,6 @@ export default function AllPersonsPage() {
           <EmptyState message={labels.personsNotFound} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -17,7 +17,6 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -85,12 +84,10 @@ export default function AdminDashboardPage() {
     .join(" · ");
 
   return (
-    <div className="space-y-6 px-2">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold">{labels.dashboardTitle}</h1>
-        <p className="text-sm text-muted-foreground">
-          {labels.dashboardSubtitle}
-        </p>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.dashboardTitle}</CardTitle>
+        <CardDescription>{labels.dashboardSubtitle}</CardDescription>
         <p className="text-xs text-muted-foreground">
           {labels.dashboardDataAsOf}
           {": "}
@@ -98,103 +95,106 @@ export default function AdminDashboardPage() {
             ? formatJalaliDate(new Date(bank.lastTransactionDate))
             : labels.noBankDataYet}
         </p>
-      </div>
+      </CardHeader>
 
-      {/* ── What the complex is owed ── */}
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <StatCard
-          title={labels.monthlyChargeDebt}
-          value={formatNumber(balances.monthly.debtTotal)}
-          hint={debtHint(balances.monthly)}
-          icon={TrendingDown}
-          href="/admin/all-shops-monthly-balance"
-        />
-        <StatCard
-          title={labels.proprietorChargeDebt}
-          value={formatNumber(balances.proprietor.debtTotal)}
-          hint={debtHint(balances.proprietor)}
-          icon={TrendingDown}
-          href="/admin/all-shops-yearly-balance"
-        />
-        <StatCard
-          title={labels.rentDebtTitle}
-          value={formatNumber(balances.rent.debtTotal)}
-          hint={debtHint(balances.rent)}
-          icon={TrendingDown}
-          href="/admin/all-rents-balance"
-        />
-      </section>
+      {/* Columns follow the space left beside the sidebar, not the screen width. */}
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
+        {/* ── What the complex is owed ── */}
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4">
+          <StatCard
+            title={labels.monthlyChargeDebt}
+            value={formatNumber(balances.monthly.debtTotal)}
+            hint={debtHint(balances.monthly)}
+            icon={TrendingDown}
+            href="/admin/all-shops-monthly-balance"
+          />
+          <StatCard
+            title={labels.proprietorChargeDebt}
+            value={formatNumber(balances.proprietor.debtTotal)}
+            hint={debtHint(balances.proprietor)}
+            icon={TrendingDown}
+            href="/admin/all-shops-yearly-balance"
+          />
+          <StatCard
+            title={labels.rentDebtTitle}
+            value={formatNumber(balances.rent.debtTotal)}
+            hint={debtHint(balances.rent)}
+            icon={TrendingDown}
+            href="/admin/all-rents-balance"
+          />
+        </section>
 
-      {/* ── Bank and inventory ── */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title={labels.unregisteredPayments}
-          value={formatNumber(bank.pendingCardTransfers)}
-          hint={labels.unregisteredPaymentsHint}
-          icon={CreditCard}
-          href="/admin/card-transfer"
-          emphasis={bank.pendingCardTransfers > 0 ? "warning" : "default"}
-        />
-        <StatCard
-          title={labels.bankBalanceTitle}
-          value={
-            bank.lastBalance != null
-              ? formatNumber(bank.lastBalance)
-              : labels.noBankDataYet
-          }
-          hint={
-            bank.lastTransactionDate
-              ? `${labels.lastBankTransactionTitle}: ${formatJalaliDate(
-                  new Date(bank.lastTransactionDate)
-                )}`
-              : undefined
-          }
-          icon={Banknote}
-          href="/admin/import-net-bank"
-        />
-        <StatCard
-          title={labels.unitsCountTitle}
-          value={formatNumber(shops.total)}
-          hint={`${labels.activeUnitsCount} ${formatNumber(
-            shops.active
-          )} · ${labels.rentedUnitsCount} ${formatNumber(shops.rented)}`}
-          icon={Building2}
-          href="/admin/all-shops"
-        />
-        <StatCard
-          title={labels.personsCountTitle}
-          value={formatNumber(personCount)}
-          hint={shopTypeSummary}
-          icon={Users}
-          href="/admin/all-persons"
-        />
-      </section>
+        {/* ── Bank and inventory ── */}
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4">
+          <StatCard
+            title={labels.unregisteredPayments}
+            value={formatNumber(bank.pendingCardTransfers)}
+            hint={labels.unregisteredPaymentsHint}
+            icon={CreditCard}
+            href="/admin/card-transfer"
+            emphasis={bank.pendingCardTransfers > 0 ? "warning" : "default"}
+          />
+          <StatCard
+            title={labels.bankBalanceTitle}
+            value={
+              bank.lastBalance != null
+                ? formatNumber(bank.lastBalance)
+                : labels.noBankDataYet
+            }
+            hint={
+              bank.lastTransactionDate
+                ? `${labels.lastBankTransactionTitle}: ${formatJalaliDate(
+                    new Date(bank.lastTransactionDate)
+                  )}`
+                : undefined
+            }
+            icon={Banknote}
+            href="/admin/import-net-bank"
+          />
+          <StatCard
+            title={labels.unitsCountTitle}
+            value={formatNumber(shops.total)}
+            hint={`${labels.activeUnitsCount} ${formatNumber(
+              shops.active
+            )} · ${labels.rentedUnitsCount} ${formatNumber(shops.rented)}`}
+            icon={Building2}
+            href="/admin/all-shops"
+          />
+          <StatCard
+            title={labels.personsCountTitle}
+            value={formatNumber(personCount)}
+            hint={shopTypeSummary}
+            icon={Users}
+            href="/admin/all-persons"
+          />
+        </section>
 
-      {/* ── Recent activity ── */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <StatCard
-          title={labels.paymentsRegistered}
-          value={formatNumber(recent.paymentTotal)}
-          hint={`${formatNumber(recent.paymentCount)} ${labels.paymentsRegistered} ${
-            labels.lastDaysPrefix
-          } ${formatNumber(recent.days)} ${labels.lastDaysSuffix}`}
-          icon={ReceiptText}
-          href="/admin/all-payments"
-        />
-        <StatCard
-          title={labels.chargesIssued}
-          value={formatNumber(recent.chargeTotal)}
-          hint={`${formatNumber(recent.chargeCount)} ${labels.chargesIssued} ${
-            labels.lastDaysPrefix
-          } ${formatNumber(recent.days)} ${labels.lastDaysSuffix}`}
-          icon={CalendarClock}
-          href="/admin/all-charges-list"
-        />
-      </section>
+        {/* ── Recent activity ── */}
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4">
+          <StatCard
+            title={labels.paymentsRegistered}
+            value={formatNumber(recent.paymentTotal)}
+            hint={`${formatNumber(recent.paymentCount)} ${labels.paymentsRegistered} ${
+              labels.lastDaysPrefix
+            } ${formatNumber(recent.days)} ${labels.lastDaysSuffix}`}
+            icon={ReceiptText}
+            href="/admin/all-payments"
+          />
+          <StatCard
+            title={labels.chargesIssued}
+            value={formatNumber(recent.chargeTotal)}
+            hint={`${formatNumber(recent.chargeCount)} ${labels.chargesIssued} ${
+              labels.lastDaysPrefix
+            } ${formatNumber(recent.days)} ${labels.lastDaysSuffix}`}
+            icon={CalendarClock}
+            href="/admin/all-charges-list"
+          />
+        </section>
+      </CardContent>
 
       {/* ── Worst debtors ── */}
-      <Card>
-        <CardHeader>
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle className="flex items-center gap-2 text-lg">
             <BarChart2 className="h-5 w-5" />
             {labels.topDebtorsTitle}
@@ -251,17 +251,17 @@ export default function AdminDashboardPage() {
             </Table>
           )}
         </CardContent>
-      </Card>
+      </div>
 
       {/* ── Quick access ── */}
-      <Card>
-        <CardHeader>
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Home className="h-5 w-5" />
             {labels.quickAccessTitle}
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3">
           <Button asChild variant="outline">
             <Link href="/admin/import-net-bank">
               {labels.importBankDataCard}
@@ -283,7 +283,7 @@ export default function AdminDashboardPage() {
             </Link>
           </Button>
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }

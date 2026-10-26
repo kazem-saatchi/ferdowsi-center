@@ -5,7 +5,12 @@ import { toast } from "sonner";
 import { useState } from "react"
 import { useAddIncome } from "@/tanstack/mutation/incomeCostMutation"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import {
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar"
@@ -77,14 +82,13 @@ export default function AddIncomePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addIncome}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{labels.incomeDetails}</CardTitle>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>{labels.addIncome}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
               <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
@@ -118,13 +122,13 @@ export default function AddIncomePage() {
               />
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button type="submit" className="w-full" disabled={addIncomeMutation.isPending}>
               {addIncomeMutation.isPending ? labels.addingIncome : labels.addIncomeButton}
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
     </div>
   )
 }

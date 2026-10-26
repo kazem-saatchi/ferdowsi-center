@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
@@ -55,14 +51,13 @@ export default function AddPaymentPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addPayment}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{labels.paymentDetails}</CardTitle>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>{labels.addPayment}</CardTitle>
         </CardHeader>
         <AddPaymentForm />
-      </Card>
+      </div>
     </div>
   );
 }

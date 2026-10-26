@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useAddCost } from "@/tanstack/mutation/incomeCostMutation";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -96,14 +95,13 @@ export default function AddCostPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">{labels.addCost}</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{labels.costDetails}</CardTitle>
+    <div className="max-w-2xl">
+      <div>
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle>{labels.addCost}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
               <Input
@@ -182,7 +180,7 @@ export default function AddCostPage() {
               />
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Button
               type="submit"
               className="w-full"
@@ -194,7 +192,7 @@ export default function AddCostPage() {
             </Button>
           </CardFooter>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

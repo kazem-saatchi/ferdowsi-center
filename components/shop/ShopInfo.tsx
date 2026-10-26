@@ -11,7 +11,7 @@ import { shopTypeLabel } from "@/utils/shopType";
 function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
   return (
     <>
-      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 px-0 sm:px-6">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2 px-0">
         <CardTitle className="text-xl sm:text-2xl font-bold">
           {isLoading ? (
             <Skeleton className="h-8 w-40 sm:w-48" />
@@ -25,7 +25,7 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
           </Badge>
         )}
       </CardHeader>
-      <CardContent className="px-0 sm:px-6">
+      <CardContent className="p-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <ShopProperty

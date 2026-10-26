@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStore } from "@/store/store";
@@ -97,10 +97,11 @@ function UpdatePasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto space-y-4">
-      <h1 className="text-xl sm:text-2xl font-bold">{labels.updatePassword}</h1>
-
-      <CardContent className="border rounded-lg px-4 py-5 sm:px-6 sm:py-6">
+    <div className="max-w-2xl">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>{labels.updatePassword}</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
         <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="currentPassword">{labels.currentPassword}</Label>
@@ -161,15 +162,14 @@ function UpdatePasswordPage() {
             </Button>
           </div>
         </form>
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>خطا</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </CardContent>
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>خطا</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }

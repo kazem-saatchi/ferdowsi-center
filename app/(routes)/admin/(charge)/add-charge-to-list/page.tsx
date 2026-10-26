@@ -2,7 +2,7 @@
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -150,173 +150,125 @@ function AddChargeToListPage() {
   }
 
   return (
-    <div className="border-2 rounded-md mx-auto p-3 sm:p-6 max-w-5xl lg:max-w-7xl">
-      <>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            افزودن شارژ به لیست واحدها
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Date Selection */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div>
-                  <JalaliDayCalendar
-                    date={formData.date}
-                    setDate={(date) => handleInputChange("date", date)}
-                    title={labels.date}
-                  />
-                </div>
-
-                {/* Amount Input */}
-                <div className="space-y-2">
-                  <Label htmlFor="amount">{labels.amount}</Label>
-                  <Input
-                    id="amount"
-                    type="text"
-                    value={formData.amount ? formatNumber(formData.amount) : ""}
-                    onChange={handleAmountChange}
-                    placeholder="مبلغ را وارد کنید"
-                    className="text-start"
-                  />
-                </div>
-
-                {/* Title Input */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">{labels.title}</Label>
-                  <Input
-                    id="title"
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange("title", e.target.value)}
-                    placeholder="عنوان شارژ را وارد کنید"
-                    className="text-start"
-                  />
-                </div>
-
-                {/* Description Input */}
-                <div className="space-y-2">
-                  <Label htmlFor="description">{labels.description}</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
-                    placeholder="توضیحات (اختیاری)"
-                    className="text-start min-h-[80px]"
-                    maxLength={250}
-                  />
-                  <p className="text-sm text-muted-foreground text-end">
-                    {formData.description.length}/250
-                  </p>
-                </div>
-
-                {/* Proprietor Checkbox */}
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="proprietor"
-                    checked={formData.proprietor}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("proprietor", checked)
-                    }
-                  />
-                  <Label htmlFor="proprietor" className="cursor-pointer">
-                    {labels.proprietorType}
-                  </Label>
-                </div>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>افزودن شارژ به لیست واحدها</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Date Selection */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <div>
+                <JalaliDayCalendar
+                  date={formData.date}
+                  setDate={(date) => handleInputChange("date", date)}
+                  title={labels.date}
+                />
               </div>
 
-              <div className="space-y-4">
-                {/* Shop Selection */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label>انتخاب واحدها</Label>
-                    <Dialog
-                      open={isShopDialogOpen}
-                      onOpenChange={setIsShopDialogOpen}
-                    >
-                      <DialogTrigger asChild>
-                        <Button type="button" variant="outline" size="sm">
-                          <Plus className="w-4 h-4 me-2" />
-                          افزودن واحد
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>انتخاب واحد</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="relative">
-                            <Search className="absolute right-3 top-3 h-4 w-4" />
-                            <Input
-                              placeholder="جستجو بر اساس پلاک، نام مالک یا مستاجر..."
-                              value={shopSearchTerm}
-                              onChange={(e) =>
-                                setShopSearchTerm(e.target.value)
-                              }
-                              className="pr-10 text-start"
-                            />
-                          </div>
-                          <div className="max-h-[400px] overflow-y-auto space-y-2">
-                            {filteredShops.map((shop: Shop) => (
-                              <div
-                                key={shop.id}
-                                className="p-3 border rounded-md cursor-pointer flex justify-between items-center"
-                                onClick={() => {
-                                  addShopToSelection(shop);
-                                  setIsShopDialogOpen(false);
-                                  setShopSearchTerm("");
-                                }}
-                              >
-                                <div className="text-start">
-                                  <div className="font-medium">
-                                    پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    مالک: {shop.ownerName}
-                                    {shop.renterName &&
-                                      ` | مستاجر: ${shop.renterName}`}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    نوع: {shopTypeLabel(shop.type)} | مساحت: {toPersianDigits(shop.area)} متر
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                            {filteredShops.length === 0 && (
-                              <p className="text-center text-muted-foreground py-8">
-                                {shopSearchTerm
-                                  ? "واحدی یافت نشد"
-                                  : "همه واحدها انتخاب شده‌اند"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="amount">{labels.amount}</Label>
+                <Input
+                  id="amount"
+                  type="text"
+                  value={formData.amount ? formatNumber(formData.amount) : ""}
+                  onChange={handleAmountChange}
+                  placeholder="مبلغ را وارد کنید"
+                  className="text-start"
+                />
+              </div>
 
-                  {/* Selected Shops List */}
-                  <div className="space-y-2">
-                    {selectedShops.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">
-                        هیچ واحدی انتخاب نشده است
-                      </p>
-                    ) : (
-                      <div className="grid gap-2">
-                        <p className="text-sm font-medium">
-                          واحدهای انتخاب شده ({selectedShops.length} واحد):
-                        </p>
-                        <div className="grid gap-2 max-h-[600px] overflow-y-auto border-2 rounded-md p-2">
-                          {selectedShops.map((shop) => (
+              {/* Title Input */}
+              <div className="space-y-2">
+                <Label htmlFor="title">{labels.title}</Label>
+                <Input
+                  id="title"
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange("title", e.target.value)}
+                  placeholder="عنوان شارژ را وارد کنید"
+                  className="text-start"
+                />
+              </div>
+
+              {/* Description Input */}
+              <div className="space-y-2">
+                <Label htmlFor="description">{labels.description}</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) =>
+                    handleInputChange("description", e.target.value)
+                  }
+                  placeholder="توضیحات (اختیاری)"
+                  className="text-start min-h-[80px]"
+                  maxLength={250}
+                />
+                <p className="text-sm text-muted-foreground text-end">
+                  {formData.description.length}/250
+                </p>
+              </div>
+
+              {/* Proprietor Checkbox */}
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="proprietor"
+                  checked={formData.proprietor}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("proprietor", checked)
+                  }
+                />
+                <Label htmlFor="proprietor" className="cursor-pointer">
+                  {labels.proprietorType}
+                </Label>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Shop Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>انتخاب واحدها</Label>
+                  <Dialog
+                    open={isShopDialogOpen}
+                    onOpenChange={setIsShopDialogOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button type="button" variant="outline" size="sm">
+                        <Plus className="w-4 h-4 me-2" />
+                        افزودن واحد
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>انتخاب واحد</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <Search className="absolute right-3 top-3 h-4 w-4" />
+                          <Input
+                            placeholder="جستجو بر اساس پلاک، نام مالک یا مستاجر..."
+                            value={shopSearchTerm}
+                            onChange={(e) =>
+                              setShopSearchTerm(e.target.value)
+                            }
+                            className="pr-10 text-start"
+                          />
+                        </div>
+                        <div className="max-h-[400px] overflow-y-auto space-y-2">
+                          {filteredShops.map((shop: Shop) => (
                             <div
                               key={shop.id}
-                              className="flex items-center justify-between p-3 border rounded-md "
+                              className="p-3 border rounded-md cursor-pointer flex justify-between items-center"
+                              onClick={() => {
+                                addShopToSelection(shop);
+                                setIsShopDialogOpen(false);
+                                setShopSearchTerm("");
+                              }}
                             >
-                              <div className="text-start flex-1">
+                              <div className="text-start">
                                 <div className="font-medium">
                                   پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
                                 </div>
@@ -325,71 +277,115 @@ function AddChargeToListPage() {
                                   {shop.renterName &&
                                     ` | مستاجر: ${shop.renterName}`}
                                 </div>
+                                <div className="text-xs text-muted-foreground">
+                                  نوع: {shopTypeLabel(shop.type)} | مساحت: {toPersianDigits(shop.area)} متر
+                                </div>
                               </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeShopFromSelection(shop.id)}
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                aria-label={`${labels.removeFromList} ${toPersianDigits(shop.plaque)}`}
-                                title={labels.removeFromList}
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
                             </div>
                           ))}
+                          {filteredShops.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8">
+                              {shopSearchTerm
+                                ? "واحدی یافت نشد"
+                                : "همه واحدها انتخاب شده‌اند"}
+                            </p>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {/* Selected Shops List */}
+                <div className="space-y-2">
+                  {selectedShops.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">
+                      هیچ واحدی انتخاب نشده است
+                    </p>
+                  ) : (
+                    <div className="grid gap-2">
+                      <p className="text-sm font-medium">
+                        واحدهای انتخاب شده ({selectedShops.length} واحد):
+                      </p>
+                      <div className="grid gap-2 max-h-[600px] overflow-y-auto border-2 rounded-md p-2">
+                        {selectedShops.map((shop) => (
+                          <div
+                            key={shop.id}
+                            className="flex items-center justify-between p-3 border rounded-md "
+                          >
+                            <div className="text-start flex-1">
+                              <div className="font-medium">
+                                پلاک {toPersianDigits(shop.plaque)} - طبقه {toPersianDigits(shop.floor)}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                مالک: {shop.ownerName}
+                                {shop.renterName &&
+                                  ` | مستاجر: ${shop.renterName}`}
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeShopFromSelection(shop.id)}
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              aria-label={`${labels.removeFromList} ${toPersianDigits(shop.plaque)}`}
+                              title={labels.removeFromList}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Summary */}
-            {selectedShops.length > 0 && formData.amount > 0 && (
-              <div className=" border-2 rounded-md">
-                <h3 className="font-medium p-2 pb-0">خلاصه:</h3>
-                <p className="text-sm p-2">
-                  مبلغ {formatNumber(formData.amount)} ریال به{" "}
-                  {selectedShops.length} واحد اضافه خواهد شد.
-                </p>
-                <p className="text-sm border-t-2 p-2 mt-2">
-                  مجموع کل:{" "}
-                  {formatNumber(formData.amount * selectedShops.length)} ریال
-                </p>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <div className="flex gap-4">
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={
-                  selectedShops.length === 0 ||
-                  !formData.title.trim() ||
-                  formData.amount <= 0 ||
-                  addChargeToShopListMutation.isPending
-                }
-              >
-                {addChargeToShopListMutation.isPending
-                  ? "در حال ثبت..."
-                  : "ثبت شارژ"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                disabled={addChargeToShopListMutation.isPending}
-              >
-                بازگشت
-              </Button>
+          {/* Summary */}
+          {selectedShops.length > 0 && formData.amount > 0 && (
+            <div className=" border-2 rounded-md">
+              <h3 className="font-medium p-2 pb-0">خلاصه:</h3>
+              <p className="text-sm p-2">
+                مبلغ {formatNumber(formData.amount)} ریال به{" "}
+                {selectedShops.length} واحد اضافه خواهد شد.
+              </p>
+              <p className="text-sm border-t-2 p-2 mt-2">
+                مجموع کل:{" "}
+                {formatNumber(formData.amount * selectedShops.length)} ریال
+              </p>
             </div>
-          </form>
-        </CardContent>
-      </>
+          )}
+
+          {/* Submit Button */}
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={
+                selectedShops.length === 0 ||
+                !formData.title.trim() ||
+                formData.amount <= 0 ||
+                addChargeToShopListMutation.isPending
+              }
+            >
+              {addChargeToShopListMutation.isPending
+                ? "در حال ثبت..."
+                : "ثبت شارژ"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              disabled={addChargeToShopListMutation.isPending}
+            >
+              بازگشت
+            </Button>
+          </div>
+        </form>
+      </CardContent>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useShopHistoryAll } from "@/tanstack/query/historyQuery";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useStore } from "@/store/store";
@@ -47,13 +47,13 @@ export default function AllShopHistoryPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.allShopHistory}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
         <HistoryTable allHistories={allHistories} searchable />
       </CardContent>
-    </Card>
+    </div>
   );
 }

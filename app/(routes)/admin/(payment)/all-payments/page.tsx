@@ -5,7 +5,7 @@ import { useState } from "react";
 import DateObject from "react-date-object";
 import { PaymentType } from "@prisma/client";
 import { usePaymentsPage } from "@/tanstack/query/paymentQuery";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -57,8 +57,8 @@ export default function AllPaymentsPage() {
     };
 
   return (
-    <Card>
-      <CardHeader className="space-y-4">
+    <div>
+      <CardHeader className="p-3 sm:p-6 space-y-4">
         <CardTitle>{labels.allPaymentsList}</CardTitle>
         <ListToolbar
           query={query}
@@ -132,6 +132,6 @@ export default function AllPaymentsPage() {
           <EmptyState message={labels.paymentsNotFound} />
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }

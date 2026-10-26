@@ -66,7 +66,7 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
   };
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="max-w-2xl">
       <UpdatePersonForm initialData={initialData} />
     </div>
   );

@@ -67,20 +67,18 @@ export default function ShopBalancePage() {
   }
 
   return (
-    <div className="w-full space-y-6">
-      <div className="space-y-4">
-        <CardHeader className="p-0">
-          <CardTitle className="text-xl sm:text-2xl">اطلاعات واحد</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 space-y-4">
-          {shopBalance ? (
-            <ShopBalanceTable shopBalance={shopBalance} />
-          ) : (
-            <p className="text-muted-foreground">
-              هیچ اطلاعاتی برای این واحد پیدا نشد
-            </p>
-          )}
-        </CardContent>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>اطلاعات واحد</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        {shopBalance ? (
+          <ShopBalanceTable shopBalance={shopBalance} />
+        ) : (
+          <p className="text-muted-foreground">
+            هیچ اطلاعاتی برای این واحد پیدا نشد
+          </p>
+        )}
 
         {personsBalance && personsBalance.length > 0 && (
           <>
@@ -107,7 +105,7 @@ export default function ShopBalancePage() {
             <ShopInfo isLoading={shopIsLoading} shop={shopInfo.data?.shop} />
           </>
         )}
-      </div>
+      </CardContent>
     </div>
   );
 }

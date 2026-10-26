@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
@@ -63,11 +63,11 @@ export default function BankReportTable({
   return (
     <div className="space-y-4">
       {/* Summary Card */}
-      <Card>
-        <CardHeader>
+      <div>
+        <CardHeader className="p-3 sm:p-6">
           <CardTitle className="text-start">خلاصه گزارش بانکی</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
             <div className="min-w-0">
               <p className="text-lg sm:text-xl md:text-2xl font-bold text-success break-all">
@@ -93,17 +93,17 @@ export default function BankReportTable({
             </div>
           </div>
         </CardContent>
-      </Card>
+      </div>
 
       {/* Income Categories Table */}
       {incomeCategories.length > 0 && (
-        <Card>
-          <CardHeader>
+        <div>
+          <CardHeader className="p-3 sm:p-6">
             <CardTitle className="text-start text-success">
               دسته‌بندی‌های درآمدی
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Table>
               <TableHeader>
                 <TableRow className="text-start">
@@ -221,18 +221,18 @@ export default function BankReportTable({
               </TableBody>
             </Table>
           </CardContent>
-        </Card>
+        </div>
       )}
 
       {/* Payment Categories Table */}
       {paymentCategories.length > 0 && (
-        <Card>
-          <CardHeader>
+        <div>
+          <CardHeader className="p-3 sm:p-6">
             <CardTitle className="text-start text-error">
               دسته‌بندی‌های پرداختی
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
             <Table>
               <TableHeader>
                 <TableRow className="text-start">
@@ -350,7 +350,7 @@ export default function BankReportTable({
               </TableBody>
             </Table>
           </CardContent>
-        </Card>
+        </div>
       )}
 
       {/* Transaction Details Modal */}
@@ -359,11 +359,11 @@ export default function BankReportTable({
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedTransaction(null)}
         >
-          <Card
+          <div
             className="max-w-2xl w-full max-h-[90vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="p-3 sm:p-6 flex flex-row items-center justify-between">
               <CardTitle className="text-start">جزئیات تراکنش</CardTitle>
               <Button
                 variant="ghost"
@@ -374,7 +374,7 @@ export default function BankReportTable({
                 <X className="h-4 w-4" />
               </Button>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Transaction Type */}
                 <div className="text-start">
@@ -527,7 +527,7 @@ export default function BankReportTable({
                 </p>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </div>
       )}
     </div>

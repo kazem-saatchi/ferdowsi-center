@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -53,12 +52,12 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <CardHeader className="p-3 sm:p-6">
         <CardTitle>{labels.updatePerson}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="IdNumber">{labels.nationalId}</Label>
             <Input
@@ -122,12 +121,12 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             <Label htmlFor="isActive">{labels.active}</Label>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
           <Button type="submit" className="w-full" disabled={updating}>
             {updating ? labels.updatingInfo : labels.updateInfo}
           </Button>
         </CardFooter>
       </form>
-    </Card>
+    </div>
   );
 }

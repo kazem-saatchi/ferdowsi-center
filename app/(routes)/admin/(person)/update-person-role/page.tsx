@@ -8,7 +8,6 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CustomSelect } from "@/components/CustomSelect";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardContent,
@@ -96,79 +95,75 @@ export default function UpdatePersonRolePage() {
   ];
 
   return (
-    <div className="container mx-auto py-10">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>به‌روزرسانی نقش شخص</CardTitle>
-        </CardHeader>
+    <div className="max-w-2xl">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle>به‌روزرسانی نقش شخص</CardTitle>
+      </CardHeader>
 
-        <Separator className="mt-2 mb-4" />
-
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="person" className="text-sm font-medium">
-                انتخاب شخص
-              </label>
-              <CustomSelect id="person"
-                options={personOptions}
-                value={selectedPersonId}
-                onChange={setSelectedPersonId}
-                label="شخص"
-              />
+      <form onSubmit={handleSubmit}>
+        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="person" className="text-sm font-medium">
+              انتخاب شخص
+            </label>
+            <CustomSelect id="person"
+              options={personOptions}
+              value={selectedPersonId}
+              onChange={setSelectedPersonId}
+              label="شخص"
+            />
+          </div>
+          {selectedPerson && (
+            <div className="flex flex-row items-center justify-start gap-3 h-10">
+              <Label className="">نقش فعلی</Label>
+              <span className="font-bold border rounded-md p-2">
+                {roleOptions.find(
+                  (role) => role.value === selectedPerson.role
+                )?.label || selectedPerson.role}
+              </span>
             </div>
-            {selectedPerson && (
-              <div className="flex flex-row items-center justify-start gap-3 h-10">
-                <Label className="">نقش فعلی</Label>
-                <span className="font-bold border rounded-md p-2">
-                  {roleOptions.find(
-                    (role) => role.value === selectedPerson.role
-                  )?.label || selectedPerson.role}
-                </span>
-              </div>
-            )}
+          )}
 
-            <Separator />
+          <Separator />
 
-            <div className="space-y-2">
-              <label htmlFor="role" className="text-sm font-medium">
-                نقش جدید
-              </label>
-              <Select
-                value={selectedRole}
-                onValueChange={setSelectedRole}
-                dir="rtl"
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="انتخاب نقش جدید" />
-                </SelectTrigger>
-                <SelectContent>
-                  {roleOptions.map((role) => (
-                    <SelectItem key={role.value} value={role.value}>
-                      {role.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={
-                updatePersonRoleMutation.isPending ||
-                !selectedPersonId ||
-                !selectedRole
-              }
+          <div className="space-y-2">
+            <label htmlFor="role" className="text-sm font-medium">
+              نقش جدید
+            </label>
+            <Select
+              value={selectedRole}
+              onValueChange={setSelectedRole}
+              dir="rtl"
             >
-              {updatePersonRoleMutation.isPending
-                ? "در حال به‌روزرسانی..."
-                : "به‌روزرسانی نقش"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+              <SelectTrigger>
+                <SelectValue placeholder="انتخاب نقش جدید" />
+              </SelectTrigger>
+              <SelectContent>
+                {roleOptions.map((role) => (
+                  <SelectItem key={role.value} value={role.value}>
+                    {role.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+        <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              updatePersonRoleMutation.isPending ||
+              !selectedPersonId ||
+              !selectedRole
+            }
+          >
+            {updatePersonRoleMutation.isPending
+              ? "در حال به‌روزرسانی..."
+              : "به‌روزرسانی نقش"}
+          </Button>
+        </CardFooter>
+      </form>
       {dialog}
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -97,14 +97,14 @@ export function PersonBalanceDisplay({
         />
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
+      <div>
+        <CardHeader className="px-0 pb-3">
           <CardTitle>{labels.personUnitsTitle}</CardTitle>
           <p className="text-xs text-muted-foreground">
             {labels.personUnitsHint}
           </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {units.length === 0 ? (
             <p className="py-6 text-center text-muted-foreground">
               {labels.personNoUnits}
@@ -198,7 +198,7 @@ export function PersonBalanceDisplay({
             </Table>
           )}
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }
