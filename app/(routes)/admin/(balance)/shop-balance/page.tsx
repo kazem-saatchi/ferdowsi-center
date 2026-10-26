@@ -14,6 +14,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 import ShopBalanceTable from "@/components/balance/ShopBalanceTable";
 import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 import { labels } from "@/utils/label";
+import { shopOptionLabel } from "@/utils/shopType";
 import OwnerRenterBalanceTable from "@/components/balance/OwnerRenterBalanceTable";
 
 export default function ShopBalancePage() {
@@ -100,7 +101,7 @@ export default function ShopBalancePage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   if (isLoadingAllShops) {
@@ -130,7 +131,7 @@ export default function ShopBalancePage() {
               options={shopOptions}
               value={selectedShopId}
               onChange={setSelectedShopId}
-              label="Shop"
+              label={labels.unit}
             />
           </div>
           {isLoading && selectedShopId !== "" ? (

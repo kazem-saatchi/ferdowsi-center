@@ -42,7 +42,7 @@ export function ShopsTable({ shops }: ShopsTableProps) {
             <TableCell className="text-center">{shop.floor}</TableCell>
             <TableCell className="text-center">{shop.ownerName}</TableCell>
             <TableCell className="text-center">
-              {shop.renterName || "N/A"}
+              {shop.renterName || labels.noValue}
             </TableCell>
             <TableCell className="text-center">
               {shop.isActive ? labels.active : labels.inactive}

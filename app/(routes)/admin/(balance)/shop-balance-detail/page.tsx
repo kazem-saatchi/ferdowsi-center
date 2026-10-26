@@ -11,6 +11,7 @@ import { useStore } from "@/store/store";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
+import { shopOptionLabel } from "@/utils/shopType";
 import React, { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -100,7 +101,7 @@ export default function ShopBalanceDetailPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   if (isLoadingAllShops) {
@@ -130,7 +131,7 @@ export default function ShopBalanceDetailPage() {
               options={shopOptions}
               value={selectedShopId}
               onChange={setSelectedShopId}
-              label="Shop"
+              label={labels.unit}
             />
           </div>
 

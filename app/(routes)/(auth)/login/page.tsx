@@ -15,6 +15,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { loginUser } from "../../../api/actions/auth/loginUser";
+import { labels } from "@/utils/label";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,14 +45,14 @@ export default function LoginPage() {
         toast.error(result.message || "Login failed");
       }
     } catch (error) {
-      toast.error("An error occurred during login");
+      toast.error(labels.loginFailed);
     } finally {
       setIsLogin(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>فرم ورود به حساب کاربری</CardTitle>

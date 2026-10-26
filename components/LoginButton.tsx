@@ -8,7 +8,7 @@ function LoginButton() {
   const [login, setLogin] = useState<boolean>(false);
   return (
     <Button
-      className="w-96"
+      className="w-full"
       variant="outline"
       size="lg"
       onClick={() => {

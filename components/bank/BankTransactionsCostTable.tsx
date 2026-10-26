@@ -17,7 +17,7 @@ import {
   TransactionCategory,
 } from "@prisma/client";
 import { format } from "date-fns-jalali"; // For date formatting
-import { labels } from "@/utils/label";
+import { bankTransactionCategoryLabels, labels } from "@/utils/label";
 import type { SerializedBankTransaction } from "@/utils/bankAmount";
 import { formatNumber } from "@/utils/formatNumber";
 import { Button } from "../ui/button";
@@ -35,11 +35,9 @@ const formatCurrency = (amount: number) => {
   }).format(amount / 100); // Divide by 100 if amount is in cents/rials
 };
 
-// Helper to get display text for enums (optional, but good for readability)
 const getCategoryText = (category: TransactionCategory | null) => {
-  if (!category) return "N/A";
-  // Simple mapping, you might want a more robust solution
-  return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  if (!category) return labels.noValue;
+  return bankTransactionCategoryLabels[category] ?? category;
 };
 
 interface BankTransactionTableProps {

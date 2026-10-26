@@ -22,10 +22,16 @@ import { labels } from "@/utils/label";
 import { errorMSG } from "@/utils/messages";
 import { Loader } from "lucide-react";
 import { Shop } from "@prisma/client";
+import { formatNumber } from "@/utils/formatNumber";
+import { shopTypeLabel } from "@/utils/shopType";
+
+const formatRial = (amount: number) =>
+  `${formatNumber(amount)} ${labels.rial}`;
 
 export default function MyShopsPage() {
   const { data, isLoading, isError } = useGetAllShopsByPerson();
-  const [isLinking, setIsLinking] = useState<boolean>(false);
+  // The unit whose detail page is loading, so only its button spins.
+  const [linkingShopId, setLinkingShopId] = useState<string | null>(null);
 
   const { personShopsBalance, setPersonShopsBalance } = useStore(
     useShallow((state) => ({
@@ -80,7 +86,9 @@ export default function MyShopsPage() {
             return (
               <TableRow key={shop.id}>
                 <TableCell className="text-center">{shop.plaque}</TableCell>
-                <TableCell className="text-center">{shop.type}</TableCell>
+                <TableCell className="text-center">
+                  {shopTypeLabel(shop.type)}
+                </TableCell>
                 <TableCell className="text-center">
                   <Badge>{shop.ownerName}</Badge>
                 </TableCell>
@@ -89,23 +97,23 @@ export default function MyShopsPage() {
                 </TableCell>
                 <TableCell className="text-center">
                   {shopBalance
-                    ? `${shopBalance.shopBalance.balance.toLocaleString()} Rials`
-                    : "N/A"}
+                    ? formatRial(shopBalance.shopBalance.balance)
+                    : labels.noValue}
                 </TableCell>
                 <TableCell className="text-center">
                   {personBalance
-                    ? `${personBalance.balance.toLocaleString()} Rials`
-                    : "N/A"}
+                    ? formatRial(personBalance.balance)
+                    : labels.noValue}
                 </TableCell>
                 <TableCell className="text-center">
                   <Link href={`/user/shop-detail/${shop.id}`}>
                     <Button
-                      disabled={isLinking}
+                      disabled={linkingShopId !== null}
                       onClick={() => {
-                        setIsLinking(true);
+                        setLinkingShopId(shop.id);
                       }}
                     >
-                      {isLinking ? (
+                      {linkingShopId === shop.id ? (
                         <Loader className="animate-spin" />
                       ) : (
                         labels.view
@@ -136,7 +144,7 @@ export default function MyShopsPage() {
                   </p>
                   <p className="text-lg font-bold">{shop.plaque}</p>
                 </div>
-                <Badge variant="outline">{shop.type}</Badge>
+                <Badge variant="outline">{shopTypeLabel(shop.type)}</Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -156,8 +164,8 @@ export default function MyShopsPage() {
                   </p>
                   <p className="font-medium break-all">
                     {shopBalance
-                      ? `${shopBalance.shopBalance.balance.toLocaleString()} Rials`
-                      : "N/A"}
+                      ? formatRial(shopBalance.shopBalance.balance)
+                      : labels.noValue}
                   </p>
                 </div>
                 <div>
@@ -166,18 +174,18 @@ export default function MyShopsPage() {
                   </p>
                   <p className="font-medium break-all">
                     {personBalance
-                      ? `${personBalance.balance.toLocaleString()} Rials`
-                      : "N/A"}
+                      ? formatRial(personBalance.balance)
+                      : labels.noValue}
                   </p>
                 </div>
               </div>
 
-              <Button asChild className="w-full" disabled={isLinking}>
+              <Button asChild className="w-full" disabled={linkingShopId !== null}>
                 <Link
                   href={`/user/shop-detail/${shop.id}`}
-                  onClick={() => setIsLinking(true)}
+                  onClick={() => setLinkingShopId(shop.id)}
                 >
-                  {isLinking ? (
+                  {linkingShopId === shop.id ? (
                     <Loader className="animate-spin" />
                   ) : (
                     labels.view

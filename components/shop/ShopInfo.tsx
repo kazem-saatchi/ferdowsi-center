@@ -5,6 +5,7 @@ import { Skeleton } from "../ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { labels } from "@/utils/label";
+import { shopTypeLabel } from "@/utils/shopType";
 
 function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
   return (
@@ -19,7 +20,7 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
         </CardTitle>
         {!isLoading && (
           <Badge variant={shop?.isActive ? "default" : "secondary"}>
-            {shop?.isActive ? "Active" : "Inactive"}
+            {shop?.isActive ? labels.active : labels.inactive}
           </Badge>
         )}
       </CardHeader>
@@ -28,7 +29,7 @@ function ShopInfo({ isLoading, shop }: { isLoading: boolean; shop: Shop }) {
           <div className="space-y-4">
             <ShopProperty
               label={labels.type}
-              value={shop?.type}
+              value={shop?.type ? shopTypeLabel(shop.type) : null}
               isLoading={isLoading}
             />
             <ShopProperty
@@ -119,7 +120,7 @@ function BankCard({
   };
 
   const formatBankCard = (cardNumber: string) => {
-    if (!cardNumber) return "N/A";
+    if (!cardNumber) return labels.noValue;
     return cardNumber.replace(/(\d{4})(?=\d)/g, "$1-");
   };
   return (

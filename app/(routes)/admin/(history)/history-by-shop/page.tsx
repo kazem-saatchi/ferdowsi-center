@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Separator } from "@/components/ui/separator";
 import { labels } from "@/utils/label";
+import { shopOptionLabel } from "@/utils/shopType";
 import HistoryTable from "@/components/history/HistoryTable";
 
 export default function HistoryByShopInfo() {
@@ -71,7 +72,7 @@ export default function HistoryByShopInfo() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   return (

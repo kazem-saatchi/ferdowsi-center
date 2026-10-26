@@ -24,7 +24,7 @@ function UserGreeting() {
           : ""}
       </h1>
       <p className="text-sm sm:text-base text-muted-foreground mt-1">
-        به اپلیکیشن مجتع فردوسی خوش آمدید
+        به اپلیکیشن مجتمع فردوسی خوش آمدید
       </p>
     </div>
   );

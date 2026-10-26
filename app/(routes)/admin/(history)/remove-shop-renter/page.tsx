@@ -22,6 +22,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function RemoveShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [currentRenterName, setCurrentRenterName] = useState("");
@@ -55,16 +56,17 @@ export default function RemoveShopRenterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !currentRenterId || !endDate) {
-      toast.error("Please select a shop with a renter and provide an end date");
+      toast.error(labels.selectShopWithRenterAndEndDate);
       return;
     }
+    // useEndShopRenter toasts the server's own success or error message.
     try {
-      await endShopRenterMutation.mutateAsync({
+      const result = await endShopRenterMutation.mutateAsync({
         shopId: selectedShopId,
         renterId: currentRenterId,
         endDate: endDate.toISOString(),
       });
-      toast.success("Shop renter removed successfully");
+      if (!result.success) return;
       // Reset form after successful submission
       setSelectedShopId("");
       setCurrentRenterName("");
@@ -72,14 +74,13 @@ export default function RemoveShopRenterPage() {
       setEndDate(null);
     } catch (error) {
       console.error("Error removing shop renter:", error);
-      toast.error("Failed to remove shop renter");
     }
   };
 
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {

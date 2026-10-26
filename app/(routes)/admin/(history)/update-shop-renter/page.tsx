@@ -23,6 +23,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function UpdateShopRenterPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedRenterId, setSelectedRenterId] = useState("");
@@ -85,7 +86,7 @@ export default function UpdateShopRenterPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const personOptions =
@@ -136,7 +137,7 @@ export default function UpdateShopRenterPage() {
                 options={personOptions}
                 value={selectedRenterId}
                 onChange={setSelectedRenterId}
-                label={labels.newOwner}
+                label={labels.newRenter}
               />
             </div>
             <div className="space-y-2">

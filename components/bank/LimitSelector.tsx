@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { labels } from "@/utils/label";
 
 export function LimitSelector({
   limit,
@@ -22,7 +23,7 @@ export function LimitSelector({
         onValueChange={(value) => setLimit(Number(value))}
       >
         <SelectTrigger id="limit-select" className="w-[180px]">
-          <SelectValue placeholder="Select limit" />
+          <SelectValue placeholder={labels.rowsPerPage} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="10">10</SelectItem>

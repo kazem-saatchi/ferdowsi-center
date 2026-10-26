@@ -13,3 +13,10 @@ export const SHOP_TYPE_LABELS: Record<ShopType, string> = {
 
 export const shopTypeLabel = (type: ShopType): string =>
   SHOP_TYPE_LABELS[type] ?? type;
+
+/** How a unit reads in a unit picker. Digits stay Latin so typing "101" in
+ *  the picker's search still finds it. */
+export const shopOptionLabel = (shop: {
+  plaque: number | string;
+  floor: number | string | null;
+}): string => `${labels.unit} ${shop.plaque} (${labels.floorNumber} ${shop.floor ?? "-"})`;

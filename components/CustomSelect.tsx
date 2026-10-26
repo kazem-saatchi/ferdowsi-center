@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { labels } from "@/utils/label";
+import { ChevronsUpDown } from "lucide-react";
 
 interface SelectOption {
   id: string;
@@ -26,6 +27,23 @@ interface CustomSelectProps {
    * focus and pointer layering. Inline mode renders the panel in-flow (no Portal).
    */
   inline?: boolean;
+}
+
+function TriggerText(props: {
+  selected: SelectOption | undefined;
+  placeholder: string;
+}) {
+  const { selected, placeholder } = props;
+  return (
+    <>
+      <span
+        className={selected ? "truncate" : "truncate text-muted-foreground"}
+      >
+        {selected ? selected.label : placeholder}
+      </span>
+      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+    </>
+  );
 }
 
 function OptionsList(props: {
@@ -123,7 +141,7 @@ export function CustomSelect({
         <Button
           type="button"
           variant="outline"
-          className="w-full justify-start text-left font-normal"
+          className="w-full justify-between gap-2 font-normal"
           disabled={disabled}
           aria-expanded={open}
           aria-haspopup="listbox"
@@ -132,7 +150,7 @@ export function CustomSelect({
             handleOpenChange(!open);
           }}
         >
-          {selectedOption ? selectedOption.label : `${label}`}
+          <TriggerText selected={selectedOption} placeholder={label} />
         </Button>
         {open && (
           <div
@@ -160,11 +178,11 @@ export function CustomSelect({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-start text-left font-normal"
+          className="w-full justify-between gap-2 font-normal"
           type="button"
           disabled={disabled}
         >
-          {selectedOption ? selectedOption.label : `${label}`}
+          <TriggerText selected={selectedOption} placeholder={label} />
         </Button>
       </PopoverTrigger>
       <PopoverContent

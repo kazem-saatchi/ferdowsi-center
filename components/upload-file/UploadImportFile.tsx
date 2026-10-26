@@ -7,6 +7,7 @@ import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { parseImportFile } from "./readFile";
+import { labels } from "@/utils/label";
 
 interface FileUploadProps {
   onFileChange: (file: File, data: any[]) => void;
@@ -32,7 +33,7 @@ export function DataFileUpload({
         const data = await parseImportFile(file);
         onFileChange(file, data);
       } catch (error) {
-        toast.error("Error parsing file. Please try again.");
+        toast.error(labels.fileParseFailed);
       }
     }
   };

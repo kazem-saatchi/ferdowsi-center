@@ -12,6 +12,15 @@ import { labels } from "@/utils/label";
 import { ShopType } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 
+const SHOP_FILTERS: { type: ShopType | undefined; label: string }[] = [
+  { type: undefined, label: labels.all },
+  { type: ShopType.STORE, label: labels.shop },
+  { type: ShopType.OFFICE, label: labels.office },
+  { type: ShopType.KIOSK, label: labels.kiosk },
+  { type: ShopType.PARKING, label: labels.parking },
+  { type: ShopType.BOARD, label: labels.board },
+];
+
 export default function AllShopsPage() {
   const { data, isLoading, isError, error, refetch } = useFindAllShops();
 
@@ -54,40 +63,17 @@ export default function AllShopsPage() {
     <Card>
       <CardHeader>
         <CardTitle>{labels.allShops}</CardTitle>
-        <div className="flex flex-row items-center justify-start gap-2">
-          <Button variant="outline" onClick={() => setShopFilter(undefined)}>
-            {labels.all}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShopFilter(ShopType.STORE)}
-          >
-            {labels.shop}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShopFilter(ShopType.OFFICE)}
-          >
-            {labels.office}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShopFilter(ShopType.KIOSK)}
-          >
-            {labels.kiosk}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShopFilter(ShopType.PARKING)}
-          >
-            {labels.parking}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShopFilter(ShopType.BOARD)}
-          >
-            {labels.board}
-          </Button>
+        <div className="flex flex-wrap items-center justify-start gap-2">
+          {SHOP_FILTERS.map(({ type, label }) => (
+            <Button
+              key={label}
+              variant={shopFilter === type ? "default" : "outline"}
+              aria-pressed={shopFilter === type}
+              onClick={() => setShopFilter(type)}
+            >
+              {label}
+            </Button>
+          ))}
         </div>
       </CardHeader>
       <CardContent>

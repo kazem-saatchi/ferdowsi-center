@@ -14,6 +14,7 @@ import { CustomSelect } from "@/components/CustomSelect";
 import { Separator } from "@/components/ui/separator";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function FindChargesByShopPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const {
@@ -53,7 +54,7 @@ export default function FindChargesByShopPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   if (isLoading) {

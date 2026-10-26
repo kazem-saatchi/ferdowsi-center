@@ -27,6 +27,7 @@ import { formatNumberFromString } from "@/utils/formatNumber";
 import { Textarea } from "@/components/ui/textarea";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function AddChargeByAmountPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
@@ -111,7 +112,7 @@ export default function AddChargeByAmountPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const personOptions =

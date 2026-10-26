@@ -21,7 +21,7 @@ function UserInfoPage() {
   );
 
   const formatPhoneNumber = (phone: string | null) => {
-    return phone || "N/A";
+    return phone || labels.noValue;
   };
 
   const roleLabel =

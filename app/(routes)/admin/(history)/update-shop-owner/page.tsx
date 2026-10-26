@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function UpdateShopOwnerPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedOwnerId, setSelectedOwnerId] = useState("");
@@ -83,7 +84,7 @@ export default function UpdateShopOwnerPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const personOptions =

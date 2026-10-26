@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { labels } from "@/utils/label";
+import { shopOptionLabel } from "@/utils/shopType";
 import UploadImage from "../upload-file/UploadImage";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
@@ -49,7 +50,7 @@ function AddPaymentForm() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const personOptions =
@@ -136,7 +137,7 @@ function AddPaymentForm() {
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
-            label="Shop"
+            label={labels.unit}
           />
         </div>
         {selectedShopId !== "" && shopsAll && (
@@ -172,7 +173,7 @@ function AddPaymentForm() {
             options={personOptions}
             value={selectedPersonId}
             onChange={setSelectedPersonId}
-            label="Person"
+            label={labels.person}
           />
         </div>
         {selectedShopId !== "" &&
@@ -224,7 +225,7 @@ function AddPaymentForm() {
             onValueChange={(value) => setType(value as PaymentType)}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder={labels.paymentMethod} />
             </SelectTrigger>
             <SelectContent dir="rtl">
               <SelectItem value="CASH">{labels.cash}</SelectItem>

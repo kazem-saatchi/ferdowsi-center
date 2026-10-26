@@ -11,6 +11,7 @@ import LoadingComponent from "../LoadingComponent";
 import { labels } from "@/utils/label";
 import ErrorComponent from "../ErrorComponent";
 import { formatNumber } from "@/utils/formatNumber";
+import { cn } from "@/lib/utils";
 
 function UserQuickState() {
   const {
@@ -35,6 +36,8 @@ function UserQuickState() {
     );
   }
 
+  const balance = QuickData?.quickState.data?.totalBalance ?? 0;
+
   return (
     <div>
       <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
@@ -55,14 +58,27 @@ function UserQuickState() {
         <Card>
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-base sm:text-lg">
-              پرداخت های معوق
+              {labels.totalBalance}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-            <p className="text-xl sm:text-2xl font-bold break-all">
-              {formatNumber(QuickData?.quickState.data?.totalBalance ?? 0)}
+            <p
+              className={cn(
+                "text-xl sm:text-2xl font-bold break-all",
+                balance < 0 && "text-red-500",
+                balance > 0 && "text-green-500"
+              )}
+            >
+              {formatNumber(Math.abs(balance))} {labels.rial}
             </p>
-            <CardDescription>مانده حساب کلی</CardDescription>
+            {/* balance is payments minus charges: below zero means owing */}
+            <CardDescription>
+              {balance < 0
+                ? labels.debtor
+                : balance > 0
+                  ? labels.creditor
+                  : labels.statusSettled}
+            </CardDescription>
           </CardContent>
         </Card>
       </div>

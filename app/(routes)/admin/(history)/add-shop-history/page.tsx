@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { CustomSelect } from "@/components/CustomSelect";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function AddShopHistoryPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
@@ -52,7 +53,7 @@ export default function AddShopHistoryPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedShopId || !selectedPersonId) {
-      toast.error("Please select a shop and a person");
+      toast.error(labels.selectShopAndPerson);
       return;
     }
     try {
@@ -86,7 +87,7 @@ export default function AddShopHistoryPage() {
     (shopsData?.data &&
       shopsData?.data.shops.map((shop) => ({
         id: shop.id,
-        label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+        label: shopOptionLabel(shop),
       }))) ||
     [];
 

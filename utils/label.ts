@@ -633,6 +633,19 @@ export const labels = {
   adminWelcomeTitle: "خوش آمدید",
   adminWelcomeText:
     "به پنل مدیریت خوش آمدید. در اینجا لینک‌های سریع به بخش‌های پرکاربرد را مشاهده می‌کنید:",
+  rial: "ریال",
+  noValue: "—",
+  comingSoon: "به‌زودی",
+  rowsPerPage: "تعداد ردیف",
+  loginFailed: "خطا در ورود؛ دوباره تلاش کنید",
+  fileParseFailed: "خواندن فایل ممکن نشد؛ دوباره تلاش کنید",
+  selectShopAndPerson: "واحد و شخص را انتخاب کنید",
+  selectShopWithRenterAndEndDate:
+    "واحدی که مستاجر دارد و تاریخ پایان را انتخاب کنید",
+  activeByOwner: "فعال توسط مالک",
+  activeByRenter: "فعال توسط مستاجر",
+  debtor: "بدهکار",
+  creditor: "بستانکار",
 };
 
 /** Bank API transaction type → Persian label */

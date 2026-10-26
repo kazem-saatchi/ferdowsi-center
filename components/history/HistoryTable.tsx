@@ -31,6 +31,13 @@ const historyTypeColors: Record<HistoryType, string> = {
   InActive: "bg-red-500",
 };
 
+const historyTypeLabels: Record<HistoryType, string> = {
+  Ownership: labels.ownership,
+  ActiveByOwner: labels.activeByOwner,
+  ActiveByRenter: labels.activeByRenter,
+  InActive: labels.inactive,
+};
+
 interface TableProps {
   allHistories: ShopHistory[];
 }
@@ -96,7 +103,7 @@ function HistoryTable({ allHistories }: TableProps) {
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge className={historyTypeColors[history.type]}>
-                    {history.type}
+                    {historyTypeLabels[history.type]}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">
@@ -105,7 +112,7 @@ function HistoryTable({ allHistories }: TableProps) {
                 <TableCell className="text-center">
                   {history.endDate
                     ? format(new Date(history.endDate), "PPP")
-                    : "N/A"}
+                    : labels.noValue}
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge variant={history.isActive ? "default" : "secondary"}>

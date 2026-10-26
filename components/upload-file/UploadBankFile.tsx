@@ -7,6 +7,7 @@ import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { parseBankFile } from "./readFile";
+import { labels } from "@/utils/label";
 
 interface BankDataProps {
   onFileChange: (file: File, data: any[]) => void;
@@ -32,7 +33,7 @@ export function BankDataUpload({
         const data = await parseBankFile(file);
         onFileChange(file, data);
       } catch (error) {
-        toast.error("Error parsing file. Please try again.");
+        toast.error(labels.fileParseFailed);
       }
     }
   };

@@ -9,8 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const fontFamily = Vazirmatn({ subsets: ["arabic"] });
 
 export const metadata: Metadata = {
-  title: "Ferdowsi App",
-  description: "Ferdowsi Department Store",
+  title: "مجتمع تجاری فردوسی",
+  description: "مجتمع تجاری فردوسی",
 };
 
 export default function RootLayout({

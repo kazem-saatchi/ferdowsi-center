@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import { labels } from "@/utils/label";
+import { shopOptionLabel } from "@/utils/shopType";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 
@@ -55,7 +56,7 @@ export default function ShopPaymentsPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   if (shopsIsLoading) {
@@ -82,7 +83,7 @@ export default function ShopPaymentsPage() {
             options={shopOptions}
             value={selectedShopId}
             onChange={setSelectedShopId}
-            label="Shop"
+            label={labels.unit}
           />
         </div>
         {selectedShopId !== "" && isLoading ? (

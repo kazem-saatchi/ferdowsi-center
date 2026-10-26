@@ -24,6 +24,7 @@ import { AddChargeByShopData } from "@/schema/chargeSchema";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function AddChargeToShopPage() {
   // Single source of truth for everything that is submitted. Previously the
   // payload lived in a second `dataState` that only copied `shopId` when the
@@ -130,7 +131,7 @@ export default function AddChargeToShopPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   return (

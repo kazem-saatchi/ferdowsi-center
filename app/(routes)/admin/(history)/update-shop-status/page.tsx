@@ -22,6 +22,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { labels } from "@/utils/label";
 
+import { shopOptionLabel } from "@/utils/shopType";
 export default function UpdateShopStatusPage() {
   const [selectedShopId, setSelectedShopId] = useState("");
   const [statusChangeDate, setStatusChangeDate] = useState<Date | null>(null);
@@ -66,7 +67,7 @@ export default function UpdateShopStatusPage() {
   const shopOptions =
     shopsAll?.map((shop) => ({
       id: shop.id,
-      label: `Shop ${shop.plaque} (Floor ${shop.floor})`,
+      label: shopOptionLabel(shop),
     })) || [];
 
   const CustomInput = ({ openCalendar, value, handleValueChange }: any) => {
