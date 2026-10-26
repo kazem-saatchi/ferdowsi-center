@@ -52,7 +52,7 @@ export default function AllShopHistoryPage() {
         <CardTitle>{labels.allShopHistory}</CardTitle>
       </CardHeader>
       <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-        <HistoryTable allHistories={allHistories} />
+        <HistoryTable allHistories={allHistories} searchable />
       </CardContent>
     </Card>
   );

@@ -84,7 +84,18 @@ export const createBalanceSlice: StateCreator<
   shopRenterBalanceData: null,
 
   // Set utils
-  setAllBalances: (balances) => set({ allBalances: balances }),
+  // Keep the debt-filtered copy in step, so a threshold picked on one
+  // all-shops page still means the same rows after the other page loads.
+  setAllBalances: (balances) => {
+    const minDebt = get().allBalanceMinDebt;
+    set({
+      allBalances: balances,
+      allBalanceFiltered:
+        minDebt === null
+          ? balances
+          : balances.filter((balance) => balance.balance < -minDebt),
+    });
+  },
   setAllBalanceDetails: (details) => set({ allBalanceDetails: details }),
   setAllBalanceFiltered: (value) => {
     if (value === null) {

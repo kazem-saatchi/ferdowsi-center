@@ -40,6 +40,8 @@ export function useClientList<T>(
     resetPage: () => setPage(1),
     totalPages: current.totalPages,
     pageItems: current.items,
+    /** Every row that passes the search and filter, for exports. */
+    matching,
     matchCount: matching.length,
   };
 }

@@ -44,12 +44,14 @@ export function ShopsBalanceToolbar({
   lastBankTransactionDate,
 }: ShopsBalanceToolbarProps) {
   const {
+    minDebt,
     setAllBalanceFiltered,
     exportAllBalanceToPDF,
     exportAllBalanceToPDFFiltered,
     exportShopsBalanceToExcel,
   } = useStore(
     useShallow((state) => ({
+      minDebt: state.allBalanceMinDebt,
       setAllBalanceFiltered: state.setAllBalanceFiltered,
       exportAllBalanceToPDF: state.exportAllBalanceToPDF,
       exportAllBalanceToPDFFiltered: state.exportAllBalanceToPDFFiltered,
@@ -86,8 +88,14 @@ export function ShopsBalanceToolbar({
         />
       </div>
       <div className="flex flex-row items-center justify-start gap-2 mb-4">
-        <Select onValueChange={handleFilter} defaultValue="all">
-          <SelectTrigger className="w-full sm:w-[180px]">
+        <Select
+          onValueChange={handleFilter}
+          value={minDebt === null ? "all" : String(minDebt)}
+        >
+          <SelectTrigger
+            className="w-full sm:w-[180px]"
+            aria-label={labels.filterByDebt}
+          >
             <SelectValue placeholder={labels.filterByDebt} />
           </SelectTrigger>
           <SelectContent>

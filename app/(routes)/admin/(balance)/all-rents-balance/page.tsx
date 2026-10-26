@@ -11,6 +11,9 @@ import { useGetAllRentsBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
+import Pager from "@/components/Pager";
+import ListToolbar from "@/components/table/ListToolbar";
+import { useClientList } from "@/hooks/useClientList";
 
 export default function AllRentsBalancePage() {
   const {
@@ -36,6 +39,12 @@ export default function AllRentsBalancePage() {
   );
 
   const lastBankTransactionDate = rentData?.data?.lastBankTransactionDate;
+
+  const list = useClientList(allBalances, (shop) => [
+    shop.plaque,
+    shop.ownerName,
+    shop.renterName,
+  ]);
 
   useEffect(() => {
     if (rentData?.data?.shopsBalance) {
@@ -78,8 +87,25 @@ export default function AllRentsBalancePage() {
             {labels.downloadAsExcel}
           </Button>
         </div>
-        {allBalances && allBalances.length > 0 ? (
-          <ShopsBalanceTable shopsBlances={allBalances} />
+        <div className="mb-4">
+          <ListToolbar
+            query={list.query}
+            onQueryChange={list.setQuery}
+            placeholder={labels.searchShopsPlaceholder}
+            pageSize={list.pageSize}
+            onPageSizeChange={list.setPageSize}
+            matchCount={list.matchCount}
+          />
+        </div>
+        {list.pageItems.length > 0 ? (
+          <>
+            <ShopsBalanceTable shopsBlances={list.pageItems} />
+            <Pager
+              page={list.page}
+              totalPages={list.totalPages}
+              onPageChange={list.setPage}
+            />
+          </>
         ) : (
           <EmptyState message={labels.noDataFound} />
         )}

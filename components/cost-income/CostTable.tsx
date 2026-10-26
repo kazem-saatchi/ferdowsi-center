@@ -31,6 +31,9 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import EmptyState from "../EmptyState";
+import Pager from "../Pager";
+import ListToolbar from "../table/ListToolbar";
+import { useClientList } from "@/hooks/useClientList";
 
 type SortKey = "title" | "amount" | "date" | "category" | "proprietor";
 type CategoryType = AddCostData["category"];
@@ -72,26 +75,48 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
     });
   }, [costs, filter, sortConfig]);
 
+  const list = useClientList(visibleCosts, (cost) => [
+    cost.title,
+    cost.description,
+    costCategoryLabel(cost.category),
+    cost.amount,
+  ]);
+
   return (
     <>
-      <div className="mt-6 mb-4 max-w-[220px]">
-        <Select
-          onValueChange={(value) => setFilter(value as CategoryType | "ALL")}
-          dir="rtl"
-          value={filter}
+      <div className="mt-6 mb-4">
+        <ListToolbar
+          query={list.query}
+          onQueryChange={list.setQuery}
+          placeholder={labels.searchCostsPlaceholder}
+          pageSize={list.pageSize}
+          onPageSizeChange={list.setPageSize}
+          matchCount={list.matchCount}
         >
-          <SelectTrigger aria-label={labels.costCategory}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">{labels.all}</SelectItem>
-            {COST_CATEGORY_OPTIONS.map((o) => (
-              <SelectItem key={o.value} value={o.value}>
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select
+            onValueChange={(value) => {
+              setFilter(value as CategoryType | "ALL");
+              list.resetPage();
+            }}
+            dir="rtl"
+            value={filter}
+          >
+            <SelectTrigger
+              aria-label={labels.costCategory}
+              className="w-full sm:w-[220px]"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">{labels.all}</SelectItem>
+              {COST_CATEGORY_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </ListToolbar>
       </div>
       <Table>
         <TableHeader>
@@ -126,7 +151,7 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {visibleCosts.map((cost) => (
+          {list.pageItems.map((cost) => (
             <TableRow key={cost.id}>
               <TableCell className="text-center">{cost.title}</TableCell>
               <TableCell className="text-center">
@@ -166,7 +191,7 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
               </TableCell>
             </TableRow>
           ))}
-          {visibleCosts.length === 0 && (
+          {list.pageItems.length === 0 && (
             <TableRow>
               <TableCell colSpan={7}>
                 <EmptyState />
@@ -175,6 +200,11 @@ export function CostsTable({ costs }: { costs: Cost[] }) {
           )}
         </TableBody>
       </Table>
+      <Pager
+        page={list.page}
+        totalPages={list.totalPages}
+        onPageChange={list.setPage}
+      />
       <Dialog
         open={description !== ""}
         onOpenChange={(open) => !open && setDescription("")}

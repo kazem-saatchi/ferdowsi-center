@@ -17,6 +17,9 @@ import {
 } from "@/utils/chargeReferenceExcel";
 import { exportToPDF } from "@/utils/tableExport";
 import { Download, FileText } from "lucide-react";
+import Pager from "@/components/Pager";
+import ListToolbar from "@/components/table/ListToolbar";
+import { useClientList } from "@/hooks/useClientList";
 
 /** The page's three tabs, in the vocabulary the report builder uses. */
 const VARIANTS: Record<"CHARGE" | "ANNUAL" | "RENT", ChargeReferenceVariant> = {
@@ -44,8 +47,6 @@ export default function ChargeReferenceListPage() {
   const [shopTypeFilter, setShopTypeFilter] = useState<ShopType | undefined>(
     undefined
   );
-
-  const [tableData, setTableData] = useState<ShopChargeReference[]>([]);
 
   const {
     allChargesReference,
@@ -82,30 +83,30 @@ export default function ChargeReferenceListPage() {
     setAllRentReference,
   ]);
 
-  useEffect(() => {
-    let baseData: ShopChargeReference[] = [];
+  const baseData: ShopChargeReference[] | null =
+    tableType === "CHARGE"
+      ? allChargesReference
+      : tableType === "ANNUAL"
+        ? allAnnualChargeReference
+        : allRentReference;
 
-    if (tableType === "CHARGE") {
-      baseData = allChargesReference || [];
-    } else if (tableType === "ANNUAL") {
-      baseData = allAnnualChargeReference || [];
-    } else {
-      baseData = allRentReference || [];
-    }
+  const list = useClientList(
+    baseData,
+    (reference) => [reference.plaque],
+    (reference) => !shopTypeFilter || reference.shopType === shopTypeFilter
+  );
+  // The downloads follow what is on screen: tab, unit type and search, across
+  // every page rather than just the one showing.
+  const tableData = list.matching;
 
-    // Apply shop type filter if it exists
-    if (shopTypeFilter) {
-      baseData = baseData.filter((item) => item.shopType === shopTypeFilter);
-    }
-
-    setTableData(baseData);
-  }, [
-    tableType,
-    shopTypeFilter,
-    allChargesReference,
-    allAnnualChargeReference,
-    allRentReference,
-  ]);
+  const showTable = (type: typeof tableType) => {
+    setTableType(type);
+    list.resetPage();
+  };
+  const showShopType = (type: ShopType | undefined) => {
+    setShopTypeFilter(type);
+    list.resetPage();
+  };
 
   const reportTitle = `${labels.chargeReferenceSheetName} - ${
     tableType === "ANNUAL"
@@ -148,19 +149,22 @@ export default function ChargeReferenceListPage() {
           <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
             <Button
               variant={tableType === "CHARGE" ? "default" : "outline"}
-              onClick={() => setTableType("CHARGE")}
+              aria-pressed={tableType === "CHARGE"}
+              onClick={() => showTable("CHARGE")}
             >
               {labels.monthlyCharge}
             </Button>
             <Button
               variant={tableType === "ANNUAL" ? "default" : "outline"}
-              onClick={() => setTableType("ANNUAL")}
+              aria-pressed={tableType === "ANNUAL"}
+              onClick={() => showTable("ANNUAL")}
             >
               {labels.proprietorCharge}
             </Button>
             <Button
               variant={tableType === "RENT" ? "default" : "outline"}
-              onClick={() => setTableType("RENT")}
+              aria-pressed={tableType === "RENT"}
+              onClick={() => showTable("RENT")}
             >
               {labels.rentCharge}
             </Button>
@@ -168,7 +172,8 @@ export default function ChargeReferenceListPage() {
           <div className="flex flex-wrap items-center justify-start gap-2 mb-4 px-2">
             <Button
               variant={shopTypeFilter === undefined ? "default" : "outline"}
-              onClick={() => setShopTypeFilter(undefined)}
+              aria-pressed={shopTypeFilter === undefined}
+              onClick={() => showShopType(undefined)}
             >
               {labels.all}
             </Button>
@@ -176,7 +181,8 @@ export default function ChargeReferenceListPage() {
               variant={
                 shopTypeFilter === ShopType.STORE ? "default" : "outline"
               }
-              onClick={() => setShopTypeFilter(ShopType.STORE)}
+              aria-pressed={shopTypeFilter === ShopType.STORE}
+              onClick={() => showShopType(ShopType.STORE)}
             >
               {labels.shop}
             </Button>
@@ -184,7 +190,8 @@ export default function ChargeReferenceListPage() {
               variant={
                 shopTypeFilter === ShopType.OFFICE ? "default" : "outline"
               }
-              onClick={() => setShopTypeFilter(ShopType.OFFICE)}
+              aria-pressed={shopTypeFilter === ShopType.OFFICE}
+              onClick={() => showShopType(ShopType.OFFICE)}
             >
               {labels.office}
             </Button>
@@ -192,7 +199,8 @@ export default function ChargeReferenceListPage() {
               variant={
                 shopTypeFilter === ShopType.KIOSK ? "default" : "outline"
               }
-              onClick={() => setShopTypeFilter(ShopType.KIOSK)}
+              aria-pressed={shopTypeFilter === ShopType.KIOSK}
+              onClick={() => showShopType(ShopType.KIOSK)}
             >
               {labels.kiosk}
             </Button>
@@ -200,7 +208,8 @@ export default function ChargeReferenceListPage() {
               variant={
                 shopTypeFilter === ShopType.BOARD ? "default" : "outline"
               }
-              onClick={() => setShopTypeFilter(ShopType.BOARD)}
+              aria-pressed={shopTypeFilter === ShopType.BOARD}
+              onClick={() => showShopType(ShopType.BOARD)}
             >
               {labels.board}
             </Button>
@@ -208,7 +217,8 @@ export default function ChargeReferenceListPage() {
               variant={
                 shopTypeFilter === ShopType.PARKING ? "default" : "outline"
               }
-              onClick={() => setShopTypeFilter(ShopType.PARKING)}
+              aria-pressed={shopTypeFilter === ShopType.PARKING}
+              onClick={() => showShopType(ShopType.PARKING)}
             >
               {labels.parking}
             </Button>
@@ -234,8 +244,21 @@ export default function ChargeReferenceListPage() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-        <ChargeReferenceTable chargeReferences={tableData} />
+      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <ListToolbar
+          query={list.query}
+          onQueryChange={list.setQuery}
+          placeholder={labels.searchPlaquePlaceholder}
+          pageSize={list.pageSize}
+          onPageSizeChange={list.setPageSize}
+          matchCount={list.matchCount}
+        />
+        <ChargeReferenceTable chargeReferences={list.pageItems} />
+        <Pager
+          page={list.page}
+          totalPages={list.totalPages}
+          onPageChange={list.setPage}
+        />
       </CardContent>
     </div>
   );

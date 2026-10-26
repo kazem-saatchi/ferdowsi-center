@@ -16,6 +16,8 @@ import { useState } from "react";
 import { labels } from "@/utils/label";
 import { UpdateHistoryModal } from "./UpdateHistoryModal";
 import Pager from "@/components/Pager";
+import ListToolbar from "@/components/table/ListToolbar";
+import { useClientList } from "@/hooks/useClientList";
 import EmptyState from "@/components/EmptyState";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,22 +45,25 @@ const historyTypeLabels: Record<HistoryType, string> = {
 
 interface TableProps {
   allHistories: ShopHistory[];
+  /** Show the search box and page-size picker. The full history list wants
+   *  them; one unit's or one person's history is short enough without. */
+  searchable?: boolean;
 }
 
-function HistoryTable({ allHistories }: TableProps) {
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 40;
-  const totalPages = Math.ceil(allHistories.length / itemsPerPage);
+function HistoryTable({ allHistories, searchable = false }: TableProps) {
+  const list = useClientList(allHistories, (history) => [
+    history.plaque,
+    history.personName,
+    historyTypeLabels[history.type],
+    history.isActive ? labels.active : labels.inactive,
+  ]);
 
   const [selectedHistory, setSelectedHistory] = useState<ShopHistory | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const paginatedHistories = allHistories?.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  const paginatedHistories = list.pageItems;
 
   const handleEditClick = (history: ShopHistory) => {
     setSelectedHistory(history);
@@ -72,6 +77,18 @@ function HistoryTable({ allHistories }: TableProps) {
 
   return (
     <>
+      {searchable && (
+        <div className="mb-4">
+          <ListToolbar
+            query={list.query}
+            onQueryChange={list.setQuery}
+            placeholder={labels.searchHistoryPlaceholder}
+            pageSize={list.pageSize}
+            onPageSizeChange={list.setPageSize}
+            matchCount={list.matchCount}
+          />
+        </div>
+      )}
       {/* A unit can carry dozens of changes. Capping the table height keeps the
        *  edit buttons and the pager reachable instead of pushing them past the
        *  bottom of a page whose scrollbar is hidden. The inner wrapper Table
@@ -155,7 +172,11 @@ function HistoryTable({ allHistories }: TableProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
-      <Pager page={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pager
+        page={list.page}
+        totalPages={list.totalPages}
+        onPageChange={list.setPage}
+      />
     </>
   );
 }

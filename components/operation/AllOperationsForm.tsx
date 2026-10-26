@@ -11,6 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useConfirm } from "@/components/ConfirmDialog";
+import EmptyState from "@/components/EmptyState";
+import Pager from "@/components/Pager";
+import ListToolbar from "@/components/table/ListToolbar";
+import { useClientList } from "@/hooks/useClientList";
 import { labels } from "@/utils/label";
 import { formatJalaliDateTime } from "@/utils/localeDate";
 import { useQueryClient } from "@tanstack/react-query";
@@ -32,6 +36,7 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
   const { confirm, dialog } = useConfirm();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const list = useClientList(data, (item) => [item.title]);
 
   const handleDelete = async (item: DataItem) => {
     // One operation is a whole run (e.g. a month's charge for every unit).
@@ -66,8 +71,16 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
   }
 
   return (
-    <>
-      <Table className="border rounded-lg max-w-2xl">
+    <div className="w-full max-w-2xl space-y-4">
+      <ListToolbar
+        query={list.query}
+        onQueryChange={list.setQuery}
+        placeholder={labels.searchOperationsPlaceholder}
+        pageSize={list.pageSize}
+        onPageSizeChange={list.setPageSize}
+        matchCount={list.matchCount}
+      />
+      <Table className="border rounded-lg">
         <TableHeader className="">
           <TableRow>
             <TableHead className="text-start">عنوان</TableHead>
@@ -76,7 +89,7 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item) => (
+          {list.pageItems.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="font-medium text-start">
                 {item.title}
@@ -109,9 +122,21 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
               </TableCell>
             </TableRow>
           ))}
+          {list.pageItems.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={3}>
+                <EmptyState />
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
+      <Pager
+        page={list.page}
+        totalPages={list.totalPages}
+        onPageChange={list.setPage}
+      />
       {dialog}
-    </>
+    </div>
   );
 }
