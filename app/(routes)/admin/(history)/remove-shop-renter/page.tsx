@@ -6,11 +6,12 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useEndShopRenter } from "@/tanstack/mutation/shopMutation";
 import { Button } from "@/components/ui/button";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { CustomSelect } from "@/components/CustomSelect";
@@ -95,13 +96,13 @@ export default function RemoveShopRenterPage() {
 
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.endRentalAgreement}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.endRentalAgreement}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
               <CustomSelect id="shop"
@@ -125,8 +126,8 @@ export default function RemoveShopRenterPage() {
               date={endDate}
               setDate={setEndDate}
             />
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button
               type="submit"
               className="w-full"
@@ -141,10 +142,10 @@ export default function RemoveShopRenterPage() {
                 ? labels.removingRenter
                 : labels.removeRenter}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
       {dialog}
-    </div>
+    </Page>
   );
 }

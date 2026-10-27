@@ -9,11 +9,12 @@ import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CustomSelect } from "@/components/CustomSelect";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import {
   Select,
   SelectContent,
@@ -104,13 +105,13 @@ export default function UpdatePersonRolePage() {
   );
 
   return (
-    <div className="max-w-2xl">
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>تغییر رمز عبور شخص</CardTitle>
-      </CardHeader>
+    <Page width="form">
+      <PageHeader>
+        <PageTitle>تغییر رمز عبور شخص</PageTitle>
+      </PageHeader>
 
       <form onSubmit={handleSubmit}>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <PageBody className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="person" className="text-sm font-medium">
               انتخاب شخص
@@ -165,8 +166,8 @@ export default function UpdatePersonRolePage() {
               </p>
             )}
           </div>
-        </CardContent>
-        <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+        </PageBody>
+        <PageFooter>
           <Button
             type="submit"
             className="w-full"
@@ -182,9 +183,9 @@ export default function UpdatePersonRolePage() {
               ? " در حال ثبت "
               : "به‌روزرسانی رمز عبور"}
           </Button>
-        </CardFooter>
+        </PageFooter>
       </form>
       {dialog}
-    </div>
+    </Page>
   );
 }

@@ -2,7 +2,12 @@
 import { labels } from "@/utils/label";
 
 import { useState } from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Button } from "@/components/ui/button";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { PersonList } from "@/components/person/PersonList";
@@ -56,9 +61,9 @@ export default function AllPersonsPage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6 space-y-4">
-        <CardTitle>{labels.allPersonsList}</CardTitle>
+    <Page>
+      <PageHeader className="space-y-4">
+        <PageTitle>{labels.allPersonsList}</PageTitle>
         <ListToolbar
           query={list.query}
           onQueryChange={list.setQuery}
@@ -88,8 +93,8 @@ export default function AllPersonsPage() {
             ))}
           </div>
         </ListToolbar>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+      </PageHeader>
+      <PageBody>
         {list.pageItems.length > 0 ? (
           <>
             <PersonList persons={list.pageItems} />
@@ -102,7 +107,7 @@ export default function AllPersonsPage() {
         ) : (
           <EmptyState message={labels.personsNotFound} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

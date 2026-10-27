@@ -2,6 +2,7 @@
 import { labels } from "@/utils/label";
 
 import { UpdatePersonForm } from "@/components/person/UpdatePersonForm";
+import { Page } from "@/components/layout/Page";
 import { useFindPersonById } from "@/tanstack/query/personQuery";
 import { useEffect } from "react";
 import { useStore } from "@/store/store";
@@ -66,8 +67,8 @@ export default function UpdatePersonPage({ params }: UpdatePersonPageProps) {
   };
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <UpdatePersonForm initialData={initialData} />
-    </div>
+    </Page>
   );
 }

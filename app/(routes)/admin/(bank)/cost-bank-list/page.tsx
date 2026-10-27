@@ -8,7 +8,12 @@ import { LimitSelector } from "@/components/bank/LimitSelector";
 import { useGetAllBankTransactions } from "@/tanstack/query/bankQuery";
 import { AccountType } from "@prisma/client";
 import React, { useState } from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 
 function BankCostListPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -38,11 +43,11 @@ function BankCostListPage() {
   const totalPages = queryResult?.totalPages ?? 0;
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>لیست هزینه‌های بانکی</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>لیست هزینه‌های بانکی</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <LimitSelector limit={limit} setLimit={setLimit} />
           <AccountTypeSelector
@@ -81,8 +86,8 @@ function BankCostListPage() {
 
         {/* Optional: Show loading indicator during background refetches */}
         {/* {isFetching && <p className="text-center mt-2">Updating...</p>} */}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }
 

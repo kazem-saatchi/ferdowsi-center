@@ -20,7 +20,12 @@ import {
 } from "@/utils/bankTransactionFilters";
 import { labels } from "@/utils/label";
 import { formatNumber } from "@/utils/formatNumber";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -88,11 +93,11 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>تراکنش‌های بانکی</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>تراکنش‌های بانکی</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <LimitSelector limit={limit} setLimit={setLimit} />
           <AccountTypeSelector
@@ -156,7 +161,7 @@ export default function TransactionsPage() {
           onPageChange={setPage}
           disableNext={isPlaceholderData}
         />
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

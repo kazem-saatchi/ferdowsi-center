@@ -6,6 +6,13 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageDescription,
+  PageBody,
+} from "@/components/layout/Page";
 import { Button } from "@/components/ui/button";
 import { BarChart2, CreditCard, Import, ReceiptText } from "lucide-react";
 import { labels } from "@/utils/label";
@@ -47,12 +54,12 @@ const QUICK_LINKS: Array<{
 
 export default function AdminMainPage() {
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.adminWelcomeTitle}</CardTitle>
-        <CardDescription>{labels.adminWelcomeText}</CardDescription>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.adminWelcomeTitle}</PageTitle>
+        <PageDescription>{labels.adminWelcomeText}</PageDescription>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {QUICK_LINKS.map(({ title, description, href, icon: Icon }) => (
             <Card key={href}>
@@ -71,7 +78,7 @@ export default function AdminMainPage() {
             </Card>
           ))}
         </div>
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

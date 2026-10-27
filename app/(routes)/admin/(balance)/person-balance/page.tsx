@@ -6,7 +6,12 @@ import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Label } from "@/components/ui/label";
 import { CustomSelect } from "@/components/CustomSelect";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -57,11 +62,11 @@ export default function PersonBalancePage() {
     );
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.personBalanceInfo}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.personBalanceInfo}</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect id="person"
@@ -89,7 +94,7 @@ export default function PersonBalancePage() {
             units={data.data.units}
           />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

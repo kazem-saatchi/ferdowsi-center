@@ -1,7 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShopFinancialTable } from "@/components/user/form/ShopFinancialTable";
 import { useGetShopFinancialDetail } from "@/hooks/useGetShopFinancialDetail";
@@ -20,11 +26,11 @@ export default function ShopFinancialDetailPage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>جزئیات مالی واحد</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>جزئیات مالی واحد</PageTitle>
+      </PageHeader>
+      <PageBody>
         {loading ? (
           <div className="space-y-3 sm:space-y-4">
             <Skeleton className="h-20 md:h-10 w-full" />
@@ -35,7 +41,7 @@ export default function ShopFinancialDetailPage() {
         ) : (
           <ShopFinancialTable data={data} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

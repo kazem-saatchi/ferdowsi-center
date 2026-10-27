@@ -17,6 +17,7 @@ import { formatJalaliDate } from "@/utils/localeDate";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/store";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 import { Download } from "lucide-react";
 import { useState } from "react";
@@ -265,14 +266,28 @@ export function BalanceDetailTable({
 
         <TableBody>
           {balanceData.map((item) => (
-            <TableRow
-              key={`${item.rowKind}-${item.id}`}
-              className={cn(
-                item.rowKind === "charge" ? "bg-red-700/30" : "bg-green-700/30"
-              )}
-            >
-              <TableCell className="text-center capitalize">
-                {item.rowKind === "charge" ? labels.charge : labels.payment}
+            <TableRow key={`${item.rowKind}-${item.id}`}>
+              {/* A thin bar on the row's leading edge plus a soft label mark
+                  the kind, so the rows themselves stay neutral. */}
+              <TableCell
+                className={cn(
+                  "text-center border-s-4",
+                  item.rowKind === "charge"
+                    ? "border-s-red-500"
+                    : "border-s-emerald-500"
+                )}
+              >
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "whitespace-nowrap font-medium",
+                    item.rowKind === "charge"
+                      ? "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400"
+                      : "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  )}
+                >
+                  {item.rowKind === "charge" ? labels.charge : labels.payment}
+                </Badge>
               </TableCell>
               <TableCell className="text-center">{item.title}</TableCell>
               <TableCell className="text-center">{item.personName}</TableCell>

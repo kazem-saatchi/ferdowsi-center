@@ -2,7 +2,12 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStore } from "@/store/store";
@@ -97,11 +102,11 @@ function UpdatePasswordPage() {
   };
 
   return (
-    <div className="max-w-2xl">
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.updatePassword}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page width="form">
+      <PageHeader>
+        <PageTitle>{labels.updatePassword}</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="currentPassword">{labels.currentPassword}</Label>
@@ -169,8 +174,8 @@ function UpdatePasswordPage() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }
 

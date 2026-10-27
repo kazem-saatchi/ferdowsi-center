@@ -6,7 +6,8 @@ import BankReportFilters, {
   bankReportRange,
   lastFullMonth,
 } from "@/components/reports/BankReportFilters";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader, PageTitle, PageBody } from "@/components/layout/Page";
 import { Loader2, Calendar } from "lucide-react";
 import { useGetBankReportTransactions } from "@/tanstack/query/bankReportQuery";
 import { processTransactionsForReport } from "@/utils/bankReportCalculations";
@@ -85,10 +86,10 @@ export default function BankReportClient() {
         <>
           {/* Report Info */}
           <div>
-            <CardHeader className="p-3 sm:p-6">
-              <CardTitle className="text-start">اطلاعات گزارش</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+            <PageHeader>
+              <PageTitle className="text-start">اطلاعات گزارش</PageTitle>
+            </PageHeader>
+            <PageBody>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-start">
                 <div>
                   <p className="text-sm text-muted-foreground">
@@ -113,7 +114,7 @@ export default function BankReportClient() {
                   </p>
                 </div>
               </div>
-            </CardContent>
+            </PageBody>
           </div>
 
           {/* Loading State */}

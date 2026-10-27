@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useShopHistoryByShop } from "@/tanstack/query/historyQuery";
 import { useStore } from "@/store/store";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
@@ -78,11 +83,11 @@ export default function HistoryByShopInfo() {
     })) || [];
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.shopHistory}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.shopHistory}</PageTitle>
+      </PageHeader>
+      <PageBody>
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectShop}</Label>
           <CustomSelect id="shop"
@@ -128,7 +133,7 @@ export default function HistoryByShopInfo() {
           !isError &&
           shopHistories &&
           shopHistories.length === 0 && <EmptyState message={labels.historiesNotFound} />}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

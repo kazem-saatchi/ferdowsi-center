@@ -6,7 +6,12 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useShopHistoryByPerson } from "@/tanstack/query/historyQuery";
 import { useParams } from "next/navigation";
 import React from "react";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import HistoryTable from "@/components/history/HistoryTable";
 import { labels } from "@/utils/label";
 
@@ -41,14 +46,14 @@ function HistoryByPerson() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{`${labels.personHistory} - ${histories[0].personName}`}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{`${labels.personHistory} - ${histories[0].personName}`}</PageTitle>
+      </PageHeader>
+      <PageBody>
         <HistoryTable allHistories={histories} />
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }
 

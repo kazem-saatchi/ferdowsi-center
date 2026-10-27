@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader, PageTitle, PageBody } from "@/components/layout/Page";
 import JalaliMonthCalendar from "@/components/calendar/JalaliMonthCalendar";
 import { Filter, RotateCcw } from "lucide-react";
 import DateObject from "react-date-object";
@@ -78,13 +78,13 @@ export default function BankReportFilters({
 
   return (
     <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle className="text-start flex items-center gap-2">
+      <PageHeader>
+        <PageTitle className="text-start flex items-center gap-2">
           <Filter className="h-5 w-5" />
           فیلترهای گزارش بانکی
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+        </PageTitle>
+      </PageHeader>
+      <PageBody>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Month Selector */}
           <div>
@@ -135,7 +135,7 @@ export default function BankReportFilters({
             انتخاب کنید.
           </p>
         </div>
-      </CardContent>
+      </PageBody>
     </div>
   );
 }

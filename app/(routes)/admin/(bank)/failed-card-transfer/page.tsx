@@ -13,7 +13,12 @@ import AccountTypeSelector from "@/components/bank/AccountTypeSelector";
 import { useGetAllFailedCardTransfer } from "@/tanstack/query/bankQuery";
 import BankTypeSelector from "@/components/bank/BankTypeSelector";
 import { BankFailedCardTransferTable } from "@/components/bank/BankFailedCardTransferTable";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 
 export default function TransactionsPage() {
   const [accountType, setAccountType] = useState<AccountType | undefined>(
@@ -40,11 +45,11 @@ export default function TransactionsPage() {
   const totalPages = queryResult?.totalPages ?? 0;
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>لیست تراکنش‌های ناموفق</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>لیست تراکنش‌های ناموفق</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <LimitSelector limit={limit} setLimit={setLimit} />
           <AccountTypeSelector
@@ -89,7 +94,7 @@ export default function TransactionsPage() {
 
         {/* Optional: Show loading indicator during background refetches */}
         {/* {isFetching && <p className="text-center mt-2">Updating...</p>} */}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

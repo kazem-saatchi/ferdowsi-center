@@ -2,20 +2,25 @@
 
 import React from "react";
 import BankReportClient from "@/components/reports/BankReportClient";
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageDescription,
+} from "@/components/layout/Page";
 
 export default function BankReportPage() {
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>گزارش بانکی</CardTitle>
-        <CardDescription>
+    <Page>
+      <PageHeader>
+        <PageTitle>گزارش بانکی</PageTitle>
+        <PageDescription>
           گزارش جامع تراکنش‌های بانکی درآمدها و هزینه‌ها
-        </CardDescription>
-      </CardHeader>
+        </PageDescription>
+      </PageHeader>
 
       {/* Client Component with Interactive Features */}
       <BankReportClient />
-    </div>
+    </Page>
   );
 }

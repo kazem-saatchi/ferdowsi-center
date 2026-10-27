@@ -6,6 +6,12 @@ import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
@@ -67,11 +73,11 @@ export default function ShopBalancePage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>اطلاعات واحد</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>اطلاعات واحد</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         {shopBalance ? (
           <ShopBalanceTable shopBalance={shopBalance} />
         ) : (
@@ -105,7 +111,7 @@ export default function ShopBalancePage() {
             <ShopInfo isLoading={shopIsLoading} shop={shopInfo.data?.shop} />
           </>
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

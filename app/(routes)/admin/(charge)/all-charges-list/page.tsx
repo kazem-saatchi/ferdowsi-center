@@ -5,7 +5,7 @@ import { useState } from "react";
 import DateObject from "react-date-object";
 import { useChargesPage } from "@/tanstack/query/chargeQuery";
 import { ChargeTable } from "@/components/charge/ChargeTable";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Page, PageHeader, PageTitle, PageBody } from "@/components/layout/Page";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import Pager from "@/components/Pager";
@@ -38,9 +38,9 @@ export default function AllChargesPage() {
     };
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6 space-y-4">
-        <CardTitle>{labels.allChargesTitle}</CardTitle>
+    <Page>
+      <PageHeader className="space-y-4">
+        <PageTitle>{labels.allChargesTitle}</PageTitle>
         <ListToolbar
           query={query}
           onQueryChange={resetting(setQuery)}
@@ -59,10 +59,10 @@ export default function AllChargesPage() {
             </span>
           </p>
         )}
-      </CardHeader>
-      <CardContent
+      </PageHeader>
+      <PageBody
         className={cn(
-          "p-3 pt-0 sm:p-6 sm:pt-0 transition-opacity",
+          "transition-opacity",
           isFetching && isPlaceholderData && "opacity-60"
         )}
         aria-busy={isFetching}
@@ -89,7 +89,7 @@ export default function AllChargesPage() {
         ) : (
           <EmptyState message={labels.chargesNotFound} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

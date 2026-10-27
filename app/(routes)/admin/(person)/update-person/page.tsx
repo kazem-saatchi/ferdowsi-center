@@ -9,7 +9,14 @@ import { useShallow } from "zustand/react/shallow";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { CustomSelect } from "@/components/CustomSelect";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageSection,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
+import { Label } from "@/components/ui/label";
 import type { SafePerson } from "@/schema/personSchema";
 import { labels } from "@/utils/label";
 
@@ -73,38 +80,46 @@ export default function UpdatePersonPage() {
   }));
 
   return (
-    <div className="max-w-2xl">
-      <div className="mb-8">
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.selectPerson}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      {/* Same shape as the other lookup pages: page title, then a labelled
+          full-width picker; the form below keeps form width. */}
+      <PageHeader>
+        <PageTitle>{labels.updatePerson}</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect
+            id="person"
             options={personOptions}
             value={selectedPersonId || ""}
             onChange={(value) => setSelectedPersonId(value)}
             label={labels.searchByPerson}
           />
-        </CardContent>
-      </div>
-      {selectedPerson ? (
-        <UpdatePersonForm
-          key={selectedPerson.id}
-          initialData={{
-            id: selectedPerson.id,
-            IdNumber: selectedPerson.IdNumber,
-            firstName: selectedPerson.firstName,
-            lastName: selectedPerson.lastName,
-            phoneOne: selectedPerson.phoneOne,
-            phoneTwo: selectedPerson.phoneTwo || null,
-            isActive: selectedPerson.isActive,
-          }}
-        />
-      ) : (
-        <p className="text-center text-muted-foreground">
-          {labels.pleaseSelectAPerson}
-        </p>
+        </div>
+        {!selectedPerson && (
+          <p className="text-sm text-muted-foreground">
+            {labels.pleaseSelectAPerson}
+          </p>
+        )}
+      </PageBody>
+      {selectedPerson && (
+        <PageSection width="form">
+          <UpdatePersonForm
+            key={selectedPerson.id}
+            title={`${selectedPerson.firstName} ${selectedPerson.lastName}`}
+            initialData={{
+              id: selectedPerson.id,
+              IdNumber: selectedPerson.IdNumber,
+              firstName: selectedPerson.firstName,
+              lastName: selectedPerson.lastName,
+              phoneOne: selectedPerson.phoneOne,
+              phoneTwo: selectedPerson.phoneTwo || null,
+              isActive: selectedPerson.isActive,
+            }}
+          />
+        </PageSection>
       )}
-    </div>
+    </Page>
   );
 }

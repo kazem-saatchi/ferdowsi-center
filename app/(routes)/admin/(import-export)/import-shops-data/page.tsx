@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { DataFileUpload } from "@/components/upload-file/UploadImportFile";
 import { PreviewTable } from "@/components/upload-file/PreviewTable";
 import { useAddPersonsShops } from "@/tanstack/mutation/importMutation";
@@ -37,11 +42,11 @@ export default function UploadPersons() {
   };
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>آپلود اطلاعات فروشگاه و اشخاص</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
+    <Page>
+      <PageHeader>
+        <PageTitle>آپلود اطلاعات فروشگاه و اشخاص</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-6">
         <DataFileUpload
           onFileChange={handleFileChange}
           onUpload={handleUpload}
@@ -73,7 +78,7 @@ export default function UploadPersons() {
         {previewData.length > 0 && !isUploading && (
           <PreviewTable data={previewData} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

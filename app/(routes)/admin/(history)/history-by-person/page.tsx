@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 import { useFindAllPersons } from "@/tanstack/query/personQuery";
 import { useShopHistoryByPerson } from "@/tanstack/query/historyQuery";
 import { useStore } from "@/store/store";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
@@ -78,11 +83,11 @@ export default function HistoryByPersonInfo() {
     })) || [];
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.personHistory}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.personHistory}</PageTitle>
+      </PageHeader>
+      <PageBody>
         <div className="space-y-2">
           <Label htmlFor="person">{labels.selectPerson}</Label>
           <CustomSelect id="person"
@@ -128,7 +133,7 @@ export default function HistoryByPersonInfo() {
           !isError &&
           personHistories &&
           personHistories.length === 0 && <EmptyState message={labels.historiesNotFound} />}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

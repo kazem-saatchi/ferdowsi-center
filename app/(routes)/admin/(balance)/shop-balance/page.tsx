@@ -5,7 +5,12 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useGetShopBalance } from "@/tanstack/query/balanceQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { CustomSelect } from "@/components/CustomSelect";
 import { Label } from "@/components/ui/label";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -16,6 +21,7 @@ import PersonsBalanceTable from "@/components/balance/PersonsBalanceTable";
 import { labels } from "@/utils/label";
 import { shopOptionLabel } from "@/utils/shopType";
 import OwnerRenterBalanceTable from "@/components/balance/OwnerRenterBalanceTable";
+import ShopBankCards from "@/components/shop/ShopBankCards";
 
 export default function ShopBalancePage() {
   const [selectedShopId, setSelectedShopId] = useState("");
@@ -104,6 +110,8 @@ export default function ShopBalancePage() {
       label: shopOptionLabel(shop),
     })) || [];
 
+  const selectedShop = shopsAll?.find((shop) => shop.id === selectedShopId);
+
   if (isLoadingAllShops) {
     return <LoadingComponent text={labels.loadingShopsData} />;
   }
@@ -119,12 +127,12 @@ export default function ShopBalancePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <Page className="space-y-6">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.shopBalanceTitle}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <PageHeader>
+          <PageTitle>{labels.shopBalanceTitle}</PageTitle>
+        </PageHeader>
+        <PageBody className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="shop">{labels.selectShop}</Label>
             <CustomSelect id="shop"
@@ -143,35 +151,49 @@ export default function ShopBalancePage() {
           ) : (
             <p>{labels.noInformationFound}</p>
           )}
-        </CardContent>
+        </PageBody>
       </div>
 
       {shopOwnerBalanceData && (
         <div>
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+          <PageHeader>
+            <PageTitle>{labels.relatedPersonsBalance}</PageTitle>
+          </PageHeader>
+          <PageBody>
             <OwnerRenterBalanceTable
               ownerData={shopOwnerBalanceData}
               renterData={
                 shopRenterBalanceData ? shopRenterBalanceData : undefined
               }
             />
-          </CardContent>
+          </PageBody>
+        </div>
+      )}
+
+      {selectedShop && !isLoading && !isError && (
+        <div>
+          <PageHeader>
+            <PageTitle>{labels.shopBankCards}</PageTitle>
+          </PageHeader>
+          <PageBody>
+            <ShopBankCards
+              monthly={selectedShop.bankCardMonthly}
+              yearly={selectedShop.bankCardYearly}
+            />
+          </PageBody>
         </div>
       )}
 
       {/* {personsBalance && personsBalance.length > 0 && (
         <div>
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle>{labels.relatedPersonsBalance}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+          <PageHeader>
+            <PageTitle>{labels.relatedPersonsBalance}</PageTitle>
+          </PageHeader>
+          <PageBody>
             <PersonsBalanceTable personsBalance={personsBalance} />
-          </CardContent>
+          </PageBody>
         </div>
       )} */}
-    </div>
+    </Page>
   );
 }

@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { useFindShopById } from "@/tanstack/query/shopQuery";
 import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -88,13 +89,13 @@ export default function EditShopPageById() {
   if (!data?.data?.shop) return <EmptyState message={labels.shopNotFound} />;
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.editShopInfo}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.editShopInfo}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
               <NumericInput
@@ -146,14 +147,14 @@ export default function EditShopPageById() {
                 disabled
               />
             </div>
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button type="submit" className="w-full" disabled={isUpdating}>
               {isUpdating ? labels.updatingShopInfo : labels.updateShopInfo}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
-    </div>
+    </Page>
   );
 }

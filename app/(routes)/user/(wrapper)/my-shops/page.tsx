@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { useGetAllShopsByPerson } from "@/tanstack/query/personQuery";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import {
   Table,
   TableBody,
@@ -205,11 +211,11 @@ export default function MyShopsPage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.myShops}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.myShops}</PageTitle>
+      </PageHeader>
+      <PageBody>
         {personShopsBalance &&
         personShopsBalance.shopsOwned.length +
           personShopsBalance.shopsRented.length >
@@ -221,7 +227,7 @@ export default function MyShopsPage() {
         ) : (
           <p className="text-muted-foreground">{labels.youDontHaveAnyShop}</p>
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

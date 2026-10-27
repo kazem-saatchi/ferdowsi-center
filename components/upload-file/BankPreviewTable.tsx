@@ -72,14 +72,20 @@ export function BankPreviewTable({ data }: PreviewTableProps) {
         </TableHeader>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow
-              key={index}
-              className={cn(
-                row.inputAmount === 0 ? "bg-red-600/20" : "bg-green-600/20"
-              )}
-            >
-              {headers.map((header) => (
-                <TableCell key={header} className={cn("text-center text-xs")}>
+            <TableRow key={index}>
+              {headers.map((header, col) => (
+                <TableCell
+                  key={header}
+                  className={cn(
+                    "text-center text-xs",
+                    // Leading-edge bar: green for money in, red for money out.
+                    col === 0 && "border-s-4",
+                    col === 0 &&
+                      (row.inputAmount === 0
+                        ? "border-s-red-500"
+                        : "border-s-emerald-500")
+                  )}
+                >
                   {header === "date" &&
                     formatJalaliDate(row[header])}
                   {header === "description" && row[header]}

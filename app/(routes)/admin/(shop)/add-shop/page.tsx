@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 
 import { useAddShop } from "@/tanstack/mutation/shopMutation";
 import { PersonSelect } from "@/components/person/PersonSelect";
@@ -84,13 +85,13 @@ export default function AddShopPage() {
   if (isLoading) return <LoadingComponent text={labels.loadingData} />;
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.addNewShop}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.addNewShop}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
               <NumericInput
@@ -190,8 +191,8 @@ export default function AddShopPage() {
                 ))}
               </RadioGroup>
             </div>
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button
               type="submit"
               className="w-full"
@@ -199,9 +200,9 @@ export default function AddShopPage() {
             >
               {saving ? labels.addingShop : labels.addNewShop}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
-    </div>
+    </Page>
   );
 }

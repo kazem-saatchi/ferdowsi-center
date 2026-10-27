@@ -17,11 +17,12 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Button } from "@/components/ui/button";
 import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageDescription,
+  PageBody,
+} from "@/components/layout/Page";
 import {
   Table,
   TableBody,
@@ -84,10 +85,10 @@ export default function AdminDashboardPage() {
     .join(" · ");
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.dashboardTitle}</CardTitle>
-        <CardDescription>{labels.dashboardSubtitle}</CardDescription>
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.dashboardTitle}</PageTitle>
+        <PageDescription>{labels.dashboardSubtitle}</PageDescription>
         <p className="text-xs text-muted-foreground">
           {labels.dashboardDataAsOf}
           {": "}
@@ -95,10 +96,10 @@ export default function AdminDashboardPage() {
             ? formatJalaliDate(new Date(bank.lastTransactionDate))
             : labels.noBankDataYet}
         </p>
-      </CardHeader>
+      </PageHeader>
 
       {/* Columns follow the space left beside the sidebar, not the screen width. */}
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
+      <PageBody className="space-y-6">
         {/* ── What the complex is owed ── */}
         <section className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4">
           <StatCard
@@ -190,18 +191,18 @@ export default function AdminDashboardPage() {
             href="/admin/all-charges-list"
           />
         </section>
-      </CardContent>
+      </PageBody>
 
       {/* ── Worst debtors ── */}
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle className="flex items-center gap-2 text-lg">
+        <PageHeader>
+          <PageTitle className="flex items-center gap-2 text-lg">
             <BarChart2 className="h-5 w-5" />
             {labels.topDebtorsTitle}
-          </CardTitle>
-          <CardDescription>{labels.topDebtorsHint}</CardDescription>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageTitle>
+          <PageDescription>{labels.topDebtorsHint}</PageDescription>
+        </PageHeader>
+        <PageBody>
           {topDebtors.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               {labels.noDebtorsFound}
@@ -250,18 +251,18 @@ export default function AdminDashboardPage() {
               </TableBody>
             </Table>
           )}
-        </CardContent>
+        </PageBody>
       </div>
 
       {/* ── Quick access ── */}
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle className="flex items-center gap-2 text-lg">
+        <PageHeader>
+          <PageTitle className="flex items-center gap-2 text-lg">
             <Home className="h-5 w-5" />
             {labels.quickAccessTitle}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3">
+          </PageTitle>
+        </PageHeader>
+        <PageBody className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3">
           <Button asChild variant="outline">
             <Link href="/admin/import-net-bank">
               {labels.importBankDataCard}
@@ -282,8 +283,8 @@ export default function AdminDashboardPage() {
               {labels.monthlyBalanceListCard}
             </Link>
           </Button>
-        </CardContent>
+        </PageBody>
       </div>
-    </div>
+    </Page>
   );
 }

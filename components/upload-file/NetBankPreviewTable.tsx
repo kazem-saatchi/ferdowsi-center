@@ -68,14 +68,20 @@ export function NetBankPreviewTable({ data }: PreviewTableProps) {
         </TableHeader>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow
-              key={index}
-              className={cn(
-                row.inputAmount === 0 ? "bg-red-600/20" : "bg-green-600/20"
-              )}
-            >
-              {filteredHeaders.map((header) => (
-                <TableCell key={header} className={cn("text-center text-xs max-w-96")}>
+            <TableRow key={index}>
+              {filteredHeaders.map((header, col) => (
+                <TableCell
+                  key={header}
+                  className={cn(
+                    "text-center text-xs max-w-96",
+                    // Leading-edge bar: green for money in, red for money out.
+                    col === 0 && "border-s-4",
+                    col === 0 &&
+                      (row.inputAmount === 0
+                        ? "border-s-red-500"
+                        : "border-s-emerald-500")
+                  )}
+                >
                   {header === "date" &&
                     formatJalaliDate(row[header])}
                   {header === "branch" && row[header]}

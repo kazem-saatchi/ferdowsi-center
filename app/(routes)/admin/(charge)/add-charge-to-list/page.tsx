@@ -2,7 +2,12 @@
 import { toPersianDigits } from "@/utils/formatNumber";
 
 import React, { useState, useEffect } from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -150,11 +155,11 @@ function AddChargeToListPage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>افزودن شارژ به لیست واحدها</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>افزودن شارژ به لیست واحدها</PageTitle>
+      </PageHeader>
+      <PageBody>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Date Selection */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -385,8 +390,8 @@ function AddChargeToListPage() {
             </Button>
           </div>
         </form>
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }
 

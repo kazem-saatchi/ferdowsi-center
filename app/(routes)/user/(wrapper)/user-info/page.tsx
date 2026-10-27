@@ -2,7 +2,12 @@
 
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import {
   Table,
   TableBody,
@@ -52,11 +57,11 @@ function UserInfoPage() {
     : [];
 
   return (
-    <div className="max-w-2xl">
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.userInfo}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page width="form">
+      <PageHeader>
+        <PageTitle>{labels.userInfo}</PageTitle>
+      </PageHeader>
+      <PageBody>
         {userInfo && (
           <>
             {/* Mobile stacked layout */}
@@ -93,8 +98,8 @@ function UserInfoPage() {
             </div>
           </>
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }
 

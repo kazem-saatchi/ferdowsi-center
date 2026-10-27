@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageSection,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useUpateShopInfo } from "@/tanstack/mutation/shopMutation";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -29,7 +31,6 @@ import {
 import { toast } from "sonner";
 import { labels } from "@/utils/label";
 import BankCardOTPForm from "@/components/shop/BankCardOTPForm";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import JalaliDayCalendar from "@/components/calendar/JalaliDayCalendar";
 import NumericInput from "@/components/NumericInput";
@@ -162,28 +163,36 @@ export default function EditShopPage() {
     })) || [];
 
   return (
-    <div className="max-w-2xl">
-      <div className="mb-4">
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.editShopInfo}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      {/* Lookup first, full width like the other lookup pages; the form
+          below keeps form width. */}
+      <PageHeader>
+        <PageTitle>{labels.editShopInfo}</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="shop">{labels.selectShop}</Label>
           <CustomSelect
+            id="shop"
             options={shopOptions}
             value={selectedShopId || ""}
             onChange={(value) => setSelectedShopId(value)}
             label={labels.selectShop}
           />
-        </CardContent>
-      </div>
-      <Separator className="mb-4" />
-      {selectedShop ? (
-        <div>
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle>{labels.shopDetails}</CardTitle>
-          </CardHeader>
+        </div>
+        {!selectedShop && (
+          <p className="text-sm text-muted-foreground">
+            {labels.pleaseSelectShopForEdit}
+          </p>
+        )}
+      </PageBody>
+      {selectedShop && (
+        <PageSection width="form">
+          <PageHeader>
+            <PageTitle>{labels.shopDetails}</PageTitle>
+          </PageHeader>
           <form onSubmit={handleSubmit}>
-            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+            <PageBody className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="plaque">{labels.plaqueNumber}</Label>
                 <NumericInput
@@ -325,8 +334,8 @@ export default function EditShopPage() {
                 <Label>مستأجر</Label>
                 <Input value={selectedShop.renterName || "ندارد"} disabled />
               </div>
-            </CardContent>
-            <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+            </PageBody>
+            <PageFooter>
               <Button
                 type="submit"
                 className="w-full"
@@ -336,14 +345,10 @@ export default function EditShopPage() {
                   ? labels.updatingShopInfo
                   : labels.updateShopInfo}
               </Button>
-            </CardFooter>
+            </PageFooter>
           </form>
-        </div>
-      ) : (
-        <p className="text-center text-muted-foreground">
-          {labels.pleaseSelectShopForEdit}
-        </p>
+        </PageSection>
       )}
-    </div>
+    </Page>
   );
 }

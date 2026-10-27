@@ -5,7 +5,12 @@ import { useFindAllShops } from "@/tanstack/query/shopQuery";
 import { useFindChargesByShop } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
 import { ChargeTable } from "@/components/charge/ChargeTable";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useShallow } from "zustand/react/shallow";
@@ -72,11 +77,11 @@ export default function FindChargesByShopPage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.findChargesByShop}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.findChargesByShop}</PageTitle>
+      </PageHeader>
+      <PageBody>
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectShop}</Label>
           <CustomSelect id="shop"
@@ -93,7 +98,7 @@ export default function FindChargesByShopPage() {
         {!loadingShopData && shopCharges && shopCharges.length > 0 && (
           <ChargeTable charges={shopCharges} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

@@ -5,7 +5,12 @@ import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { useStore } from "@/store/store";
 import { useGetAllRentsBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
@@ -67,11 +72,11 @@ export default function AllRentsBalancePage() {
   }
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.allRentsBalance}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.allRentsBalance}</PageTitle>
+      </PageHeader>
+      <PageBody>
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
           <Button onClick={exportAllBalanceToPdf}>
             {labels.downloadAsPDF}
@@ -109,7 +114,7 @@ export default function AllRentsBalancePage() {
         ) : (
           <EmptyState message={labels.noDataFound} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

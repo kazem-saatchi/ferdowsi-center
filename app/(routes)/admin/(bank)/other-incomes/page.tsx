@@ -10,7 +10,12 @@ import {
 } from "@/tanstack/query/bankQuery";
 import { labels } from "@/utils/label";
 import { BankOtherIncomeTable } from "@/components/bank/BankOtherIncomeTable";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 
 export default function TransactionsPage() {
   const [page, setPage] = useState(1);
@@ -30,11 +35,11 @@ export default function TransactionsPage() {
   const totalPages = queryResult?.totalPages ?? 0;
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>لیست دریافتی‌های دیگر</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>لیست دریافتی‌های دیگر</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         {/* Display loading skeleton or table */}
         {isLoading && !queryResult ? (
           <LoadingComponent inline />
@@ -60,7 +65,7 @@ export default function TransactionsPage() {
           onPageChange={setPage}
           disableNext={isPlaceholderData}
         />
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

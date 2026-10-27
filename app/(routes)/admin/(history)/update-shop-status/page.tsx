@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { CustomSelect } from "@/components/CustomSelect";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
@@ -80,13 +81,13 @@ export default function UpdateShopStatusPage() {
 
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.changeShopActiveStatus}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.changeShopActiveStatus}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="shop">{labels.unit}</Label>
               <CustomSelect id="shop"
@@ -132,8 +133,8 @@ export default function UpdateShopStatusPage() {
                 />
               </>
             )}
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button
               type="submit"
               className="w-full"
@@ -149,10 +150,10 @@ export default function UpdateShopStatusPage() {
                 ? labels.deactivateShop
                 : labels.activateShop}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
       {dialog}
-    </div>
+    </Page>
   );
 }

@@ -5,7 +5,12 @@ import { CustomSelect } from "@/components/CustomSelect";
 import ErrorComponent from "@/components/ErrorComponent";
 import ErrorComponentSimple from "@/components/ErrorComponentSimple";
 import LoadingComponent from "@/components/LoadingComponent";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Label } from "@/components/ui/label";
 import { useStore } from "@/store/store";
 import { useFindAllShops } from "@/tanstack/query/shopQuery";
@@ -119,12 +124,12 @@ export default function ShopBalanceDetailPage() {
   }
 
   return (
-    <div>
+    <Page>
       <>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.shopBalanceTitle}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <PageHeader>
+          <PageTitle>{labels.shopBalanceTitle}</PageTitle>
+        </PageHeader>
+        <PageBody className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="shop">{labels.selectShop}</Label>
             <CustomSelect id="shop"
@@ -160,8 +165,8 @@ export default function ShopBalanceDetailPage() {
           ) : (
             <p>{labels.noInformationFound}</p>
           )}
-        </CardContent>
+        </PageBody>
       </>
-    </div>
+    </Page>
   );
 }

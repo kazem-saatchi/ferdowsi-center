@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
 import persian from "react-date-object/calendars/persian";
@@ -94,13 +95,13 @@ export default function AddChargesToAllShopsPage() {
   };
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.addChargesToAllShops}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.addChargesToAllShops}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <JalaliMonthCalendar handleDateChange={handleDateChange} />
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
@@ -112,8 +113,8 @@ export default function AddChargesToAllShopsPage() {
                 required
               />
             </div>
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button
               type="submit"
               className="w-full"
@@ -123,10 +124,10 @@ export default function AddChargesToAllShopsPage() {
                 ? labels.addingChargesToAllShops
                 : labels.addChargesToAllShops}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
       {dialog}
-    </div>
+    </Page>
   );
 }

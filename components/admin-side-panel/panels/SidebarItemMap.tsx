@@ -1,12 +1,21 @@
 import Link from "next/link";
 import { SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar";
 import { MenuData } from "./menuData";
-import { useId, useState } from "react";
+import { useId } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function SidebarItemsMap({ menuData }: { menuData: MenuData }) {
-  const [open, setOpen] = useState<boolean>(false);
+/** One collapsible group. The sidebar owns `open` so only one group is
+ *  expanded at a time. */
+function SidebarItemsMap({
+  menuData,
+  open,
+  onToggle,
+}: {
+  menuData: MenuData;
+  open: boolean;
+  onToggle: () => void;
+}) {
   const groupId = useId();
   return (
     <>
@@ -17,7 +26,7 @@ function SidebarItemsMap({ menuData }: { menuData: MenuData }) {
           type="button"
           aria-expanded={open}
           aria-controls={open ? groupId : undefined}
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={onToggle}
         >
           <div className="flex flex-row items-center justify-between w-full">
             <div className="flex flex-row items-center justify-start gap-2">

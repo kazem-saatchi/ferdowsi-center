@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment, useState } from "react";
 import { Sidebar, SidebarContent, SidebarMenu } from "@/components/ui/sidebar";
 import { Separator } from "../ui/separator";
 import SidebarItemsMap from "./panels/SidebarItemMap";
@@ -9,7 +10,24 @@ import SidebarBrand from "@/components/layout/SidebarBrand";
 import AccountMenu from "@/components/layout/AccountMenu";
 import { labels } from "@/utils/label";
 
+const groupOrder = [
+  "person",
+  "shop",
+  "charge",
+  "payment",
+  "balance",
+  "history",
+  "cost",
+  "import",
+  "bank",
+  "operation",
+] as const;
+
 function AdminSidebar() {
+  // Opening a group closes the one that was open.
+  const [openGroup, setOpenGroup] = useState<
+    (typeof groupOrder)[number] | null
+  >(null);
   return (
     <Sidebar side="right" variant="floating">
       <SidebarBrand areaTitle={labels.adminPanel} />
@@ -18,26 +36,18 @@ function AdminSidebar() {
         <SidebarMenu>
           <AdminDashboardPanel />
           <Separator />
-          <SidebarItemsMap menuData={adminMenuData.person} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.shop} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.charge} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.payment} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.balance} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.history} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.cost} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.import} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.bank} />
-          <Separator />
-          <SidebarItemsMap menuData={adminMenuData.operation} />
-          <Separator />
+          {groupOrder.map((key) => (
+            <Fragment key={key}>
+              <SidebarItemsMap
+                menuData={adminMenuData[key]}
+                open={openGroup === key}
+                onToggle={() =>
+                  setOpenGroup((current) => (current === key ? null : key))
+                }
+              />
+              <Separator />
+            </Fragment>
+          ))}
         </SidebarMenu>
       </SidebarContent>
       <AccountMenu area="admin" />

@@ -7,11 +7,12 @@ import { useState } from "react";
 import { useAddCost } from "@/tanstack/mutation/incomeCostMutation";
 import { Button } from "@/components/ui/button";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,13 +96,13 @@ export default function AddCostPage() {
   };
 
   return (
-    <div className="max-w-2xl">
+    <Page width="form">
       <div>
-        <CardHeader className="p-3 sm:p-6">
-          <CardTitle>{labels.addCost}</CardTitle>
-        </CardHeader>
+        <PageHeader>
+          <PageTitle>{labels.addCost}</PageTitle>
+        </PageHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+          <PageBody className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">{labels.title}</Label>
               <Input
@@ -179,8 +180,8 @@ export default function AddCostPage() {
                 folderName="cost-image"
               />
             )}
-          </CardContent>
-          <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+          </PageBody>
+          <PageFooter>
             <Button
               type="submit"
               className="w-full"
@@ -190,9 +191,9 @@ export default function AddCostPage() {
                 ? labels.addingCost
                 : labels.addCostButton}
             </Button>
-          </CardFooter>
+          </PageFooter>
         </form>
       </div>
-    </div>
+    </Page>
   );
 }

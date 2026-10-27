@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { useFindAllChargesReference } from "@/tanstack/query/chargeQuery";
 import { useStore } from "@/store/store";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Button } from "@/components/ui/button";
 import { ShopChargeReference, ShopType } from "@prisma/client";
 import { useShallow } from "zustand/react/shallow";
@@ -143,11 +148,11 @@ export default function ChargeReferenceListPage() {
     return <ErrorComponentSimple message={labels.errorOccurred} />;
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.chargeReferenceList}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.chargeReferenceList}</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
           <div className="flex flex-col items-start justify-start gap-2">
             <div className="flex flex-wrap items-center justify-start gap-2">
@@ -262,7 +267,7 @@ export default function ChargeReferenceListPage() {
           totalPages={list.totalPages}
           onPageChange={list.setPage}
         />
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

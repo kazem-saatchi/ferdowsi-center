@@ -4,7 +4,12 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { useGetPersonBalance } from "@/tanstack/query/balanceQuery";
 import { PersonBalanceDisplay } from "@/components/balance/PersonBalanceDisplay";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { labels } from "@/utils/label";
@@ -28,11 +33,11 @@ export default function PersonBalanceByIdPage() {
     );
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.personFinancialInfo}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+    <Page>
+      <PageHeader>
+        <PageTitle>{labels.personFinancialInfo}</PageTitle>
+      </PageHeader>
+      <PageBody>
         {data?.data && (
           <PersonBalanceDisplay
             person={data.data.person}
@@ -40,7 +45,7 @@ export default function PersonBalanceByIdPage() {
             units={data.data.units}
           />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,11 +70,11 @@ export default function UploadProprietorCharge() {
   };
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>آپلود شارژ مالکانه با فایل</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
+    <Page>
+      <PageHeader>
+        <PageTitle>آپلود شارژ مالکانه با فایل</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-6">
         <p className="text-sm text-muted-foreground">
           فایل اکسل باید دارای دو ستون <span className="font-medium">plaque</span>{" "}
           (پلاک) و <span className="font-medium">amount</span> (مبلغ) باشد. عنوان،
@@ -139,7 +144,7 @@ export default function UploadProprietorCharge() {
         {previewData.length > 0 && !isUploading && (
           <PreviewTable data={previewData} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

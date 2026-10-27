@@ -1,6 +1,6 @@
 import { toPersianDigits } from "@/utils/formatNumber";
 import React, { useState } from "react";
-import { CardContent, CardFooter } from "../ui/card";
+import { PageBody, PageFooter } from "@/components/layout/Page";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { CustomSelect } from "../CustomSelect";
@@ -132,7 +132,7 @@ function AddPaymentForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+      <PageBody className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="shop">{labels.selectUnit}</Label>
           <CustomSelect id="shop"
@@ -257,8 +257,8 @@ function AddPaymentForm() {
             folderName="payment-image"
           />
         )}
-      </CardContent>
-      <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+      </PageBody>
+      <PageFooter>
         <Button
           type="submit"
           className="w-full"
@@ -272,7 +272,7 @@ function AddPaymentForm() {
         >
           {isPending ? labels.submitting : labels.submit}
         </Button>
-      </CardFooter>
+      </PageFooter>
     </form>
   );
 }

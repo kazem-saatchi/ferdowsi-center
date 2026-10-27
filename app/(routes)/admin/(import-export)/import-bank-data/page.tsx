@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Page,
+  PageHeader,
+  PageTitle,
+  PageBody,
+} from "@/components/layout/Page";
 import { useAddBankDataFromFile } from "@/tanstack/mutation/importMutation";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { toast } from "sonner";
@@ -52,11 +57,11 @@ export default function UploadBankData() {
   };
 
   return (
-    <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>آپلود اطلاعات بانک</CardTitle>
-      </CardHeader>
-      <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-6">
+    <Page>
+      <PageHeader>
+        <PageTitle>آپلود اطلاعات بانک</PageTitle>
+      </PageHeader>
+      <PageBody className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="bankAccountNumber">{labels.bankAccountNumber}</Label>
           <Input
@@ -133,7 +138,7 @@ export default function UploadBankData() {
         {parsedData.length > 0 && !isUploading && (
           <BankPreviewTable data={parsedData} />
         )}
-      </CardContent>
-    </div>
+      </PageBody>
+    </Page>
   );
 }

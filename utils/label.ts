@@ -384,6 +384,7 @@ export const labels = {
   shopBalanceTitle: "حساب یک واحد",
   selectShop: "انتخاب واحد",
   relatedPersonsBalance: "حساب اشخاص مرتبط",
+  shopBankCards: "شماره کارت‌های واحد",
   noInformationFound: "هیچ اطلاعاتی یافت نشد",
   loadingShopsData: "در حال بارگذاری اطلاعات واحدها",
   unitAccountBalance: "مانده حساب واحد",

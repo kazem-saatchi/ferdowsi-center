@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  PageHeader,
+  PageTitle,
+  PageBody,
+  PageFooter,
+} from "@/components/layout/Page";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { labels } from "@/utils/label";
@@ -25,9 +25,14 @@ interface UpdatePersonFormProps {
     phoneTwo: string | null;
     isActive: boolean;
   };
+  /** Section heading; defaults to the generic edit title. */
+  title?: string;
 }
 
-export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
+export function UpdatePersonForm({
+  initialData,
+  title = labels.updatePerson,
+}: UpdatePersonFormProps) {
   const updatePersonMutation = useUpatePerson();
   const [formData, setFormData] = useState(initialData);
   const [updating, setUpdating] = useState<boolean>(false);
@@ -53,11 +58,11 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
 
   return (
     <div>
-      <CardHeader className="p-3 sm:p-6">
-        <CardTitle>{labels.updatePerson}</CardTitle>
-      </CardHeader>
+      <PageHeader>
+        <PageTitle>{title}</PageTitle>
+      </PageHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0 space-y-4">
+        <PageBody className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="IdNumber">{labels.nationalId}</Label>
             <Input
@@ -120,12 +125,12 @@ export function UpdatePersonForm({ initialData }: UpdatePersonFormProps) {
             />
             <Label htmlFor="isActive">{labels.active}</Label>
           </div>
-        </CardContent>
-        <CardFooter className="p-3 pt-0 sm:p-6 sm:pt-0">
+        </PageBody>
+        <PageFooter>
           <Button type="submit" className="w-full" disabled={updating}>
             {updating ? labels.updatingInfo : labels.updateInfo}
           </Button>
-        </CardFooter>
+        </PageFooter>
       </form>
     </div>
   );
