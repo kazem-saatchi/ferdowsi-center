@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 import {
   recomputeShopMonthlyCharges,
@@ -11,7 +11,7 @@ import {
 import {
   applyHistoryDateChange,
   UpdateHistoryData,
-} from "@/app/api/actions/history/updateHistory";
+} from "@/app/api/actions/history/applyHistoryDateChange";
 
 export interface PreviewHistoryDateChangeResponse {
   success: boolean;
@@ -35,11 +35,6 @@ async function previewHistoryDateChange(
   data: UpdateHistoryData,
   user: Person
 ): Promise<PreviewHistoryDateChangeResponse> {
-  // Check authentication
-  if (!user || user.role !== "ADMIN") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   let diffs: OperationChargeDiff[] = [];
 
   try {
@@ -67,7 +62,7 @@ async function previewHistoryDateChange(
 export default async function previewHistoryDateChangeAction(
   data: UpdateHistoryData
 ) {
-  return handleServerAction<PreviewHistoryDateChangeResponse>((user) =>
+  return adminWriteAction<PreviewHistoryDateChangeResponse>((user) =>
     previewHistoryDateChange(data, user)
   );
 }

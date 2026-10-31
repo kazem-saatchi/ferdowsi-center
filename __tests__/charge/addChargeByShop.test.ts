@@ -12,19 +12,14 @@ jest.mock("@/lib/db", () => ({
   },
 }));
 
-// The action itself only cares that it was handed an ADMIN; auth is covered
-// elsewhere, so run the inner action directly.
-jest.mock("@/utils/handleServerAction", () => ({
-  handleServerAction: async (action: (user: unknown) => Promise<unknown>) => {
-    try {
-      return { success: true, message: "ok", data: await action({ role: "ADMIN" }) };
-    } catch (error) {
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : "unknown",
-      };
-    }
-  },
+// Signed in as an ADMIN. The real adminWriteAction wrapper runs, so the role
+// check is exercised too; __tests__/auth covers the other roles.
+jest.mock("@/utils/auth", () => ({
+  verifyToken: async () => ({
+    success: true,
+    message: "ok",
+    person: { id: "admin", role: "ADMIN" },
+  }),
 }));
 
 const SHOP_ID = "shop-804";

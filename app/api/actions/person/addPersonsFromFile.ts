@@ -1,8 +1,8 @@
 "use server";
 
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { successMSG } from "@/utils/messages";
 import { PrismaClient } from "@prisma/client";
 import {
   AddPersonData,
@@ -19,11 +19,6 @@ interface AddPersonResponse {
 }
 
 async function createPersons(personsArray: AddPersonData[], person: SafePerson) {
-  // Only admins or authorized roles can add new people
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const prisma = new PrismaClient();
 
   // Validate and prepare data
@@ -89,7 +84,7 @@ async function createPersons(personsArray: AddPersonData[], person: SafePerson) 
 }
 
 export default async function addPersonsFromFile(data: AddPersonData[]) {
-  return handleServerAction<AddPersonResponse>((user) =>
+  return adminWriteAction<AddPersonResponse>((user) =>
     createPersons(data, user)
   );
 }

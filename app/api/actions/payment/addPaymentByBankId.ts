@@ -6,18 +6,13 @@ import {
   addPaymentByBankIdSchema,
 } from "@/schema/paymentSchema";
 
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { PaymentType, Person, Prisma } from "@prisma/client";
 import { toInt4Amount } from "@/utils/bankAmount";
 import { claimBankTransaction } from "@/utils/bankRegistration";
 
 async function createPayment(data: addPaymentByBankIdData, person: Person) {
-  // Authorization check
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Schema validation
   const validation = addPaymentByBankIdSchema.safeParse(data);
   if (!validation.success) {
@@ -130,5 +125,5 @@ async function createPayment(data: addPaymentByBankIdData, person: Person) {
 }
 
 export default async function addPaymentByBankId(data: addPaymentByBankIdData) {
-  return handleServerAction(async (person) => createPayment(data, person));
+  return adminWriteAction(async (person) => createPayment(data, person));
 }

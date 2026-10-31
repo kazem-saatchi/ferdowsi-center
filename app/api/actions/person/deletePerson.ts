@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -10,11 +10,6 @@ interface deletePersonResponse {
 }
 
 async function deletePerson(id: string, user: Person) {
-  // Only admins or authorized roles can delete people
-  if (user.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const person = await db.person.findUnique({ where: { id } });
 
   if (!person) {
@@ -28,7 +23,7 @@ async function deletePerson(id: string, user: Person) {
 }
 
 export default async function deletePersonById(id: string) {
-  return handleServerAction<deletePersonResponse>((user) =>
+  return adminWriteAction<deletePersonResponse>((user) =>
     deletePerson(id, user)
   );
 }

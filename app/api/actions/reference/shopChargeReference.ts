@@ -5,20 +5,15 @@ import {
   ShopChargeReferenceData,
   ShopChargeReferenceSchema,
 } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { currentJalaliYear } from "@/utils/localeDate";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 
 async function generateShopChargeReference(
   data: ShopChargeReferenceData,
   person: Person
 ) {
-  // Only admins or authorized roles
-  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Validate input
   const validation = ShopChargeReferenceSchema.safeParse(data);
   if (!validation.success) {
@@ -184,7 +179,7 @@ async function generateShopChargeReference(
 export default async function generateShopChargeReferenceList(
   data: ShopChargeReferenceData
 ) {
-  return handleServerAction(async (person) =>
+  return adminWriteAction(async (person) =>
     generateShopChargeReference(data, person)
   );
 }

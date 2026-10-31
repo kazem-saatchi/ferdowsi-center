@@ -1,5 +1,6 @@
 import { verifyToken } from "@/utils/auth";
 import { redirect } from "next/navigation";
+import { canViewAdminPanel } from "@/utils/permissions";
 
 export default async function AuthLayout({
   children,
@@ -7,10 +8,8 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }) {
   const { success, person } = await verifyToken();
-  if (person?.role !== "ADMIN" && success) {
-    redirect("/user/dashboard");
-  } else if (person?.role === "ADMIN" && success) {
-    redirect("/admin/");
+  if (success) {
+    redirect(canViewAdminPanel(person?.role) ? "/admin/" : "/user/dashboard");
   }
   return <>{children}</>;
 }

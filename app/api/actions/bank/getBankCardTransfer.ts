@@ -2,8 +2,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import {
   serializeBankTransaction,
   SerializedBankTransaction,
@@ -35,10 +34,6 @@ async function fetchBankCardTransfer(
   options: GetTransactionsOptions,
   user: Person
 ): Promise<GetTransactionsResult> {
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   const {
     page = 1,
     limit = 100, // Default limit
@@ -123,7 +118,7 @@ async function fetchBankCardTransfer(
 export async function getBankCardTransfer(
   options: GetTransactionsOptions = {}
 ) {
-  return handleServerAction<GetTransactionsResult>((user) =>
+  return adminReadAction<GetTransactionsResult>((user) =>
     fetchBankCardTransfer(options, user)
   );
 }

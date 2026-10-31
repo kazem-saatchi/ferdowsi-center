@@ -2,9 +2,9 @@
 
 import { db } from "@/lib/db";
 import { AddKioskData } from "@/schema/importSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { successMSG } from "@/utils/messages";
 import { Prisma, ShopType } from "@prisma/client";
 
 export interface AddKioskResponse {
@@ -18,10 +18,6 @@ async function addKioskInternal(
   data: AddKioskData[],
   admin: { role: string }
 ): Promise<Omit<AddKioskResponse, "message">> {
-  if (admin.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   let addedShops = 0;
   let failedShops = 0;
   const processedCount = data.length; // Track the size of the input chunk
@@ -263,7 +259,7 @@ async function addKioskInternal(
 
 export default async function addKioskAction(data: AddKioskData[]) {
   // Wrap with handleServerAction, which adds success/data structure
-  return handleServerAction(async (user) => {
+  return adminWriteAction(async (user) => {
     const result = await addKioskInternal(data, user); // Call the internal logic
     // Construct the final message based on chunk results
     const message = `Chunk processed: ${result.addedShops} added, ${result.failedShops} failed out of ${result.processed}.`;

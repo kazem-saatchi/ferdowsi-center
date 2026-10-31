@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { SafePerson } from "@/schema/personSchema";
 
@@ -58,7 +58,7 @@ async function findPerson(shopId: string, user: SafePerson) {
 }
 
 export default async function findPersonByShop(shopId: string) {
-  return handleServerAction<findPersonByShopResponse>((user) =>
+  return adminReadAction<findPersonByShopResponse>((user) =>
     findPerson(shopId, user)
   );
 }

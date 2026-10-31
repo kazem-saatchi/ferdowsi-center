@@ -1,15 +1,10 @@
 'use server'
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { Person } from "@prisma/client";
 
 async function fetchTransactionData(bankTransactionId: string, user: Person) {
-    if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-        throw new Error(errorMSG.unauthorized);
-    }
-
     const transaction = await db.bankTransaction.findUnique({
         where: { id: bankTransactionId },
     });
@@ -17,7 +12,7 @@ async function fetchTransactionData(bankTransactionId: string, user: Person) {
 }
 
 export async function getTransactionData(bankTransactionId: string) {
-    return handleServerAction((user) =>
+    return adminReadAction((user) =>
         fetchTransactionData(bankTransactionId, user)
     );
 }

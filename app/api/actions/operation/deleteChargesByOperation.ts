@@ -2,8 +2,7 @@
 
 import { db } from "@/lib/db";
 
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { Person } from "@prisma/client";
 
 interface DeleteOperationResponse {
@@ -15,10 +14,6 @@ async function deleteOperationsInternal(
   operationId: string,
   person: Person
 ): Promise<DeleteOperationResponse> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // No try/catch inside the transaction: catching there made Prisma commit
   // the charge deletes even when marking the operation failed, and still
   // report success. A throw here rolls both back and reaches the caller.
@@ -35,7 +30,7 @@ async function deleteOperationsInternal(
 }
 
 export default async function deleteChargesByOperation(operationId: string) {
-  return handleServerAction<DeleteOperationResponse>(async (person) =>
+  return adminWriteAction<DeleteOperationResponse>(async (person) =>
     deleteOperationsInternal(operationId, person)
   );
 }

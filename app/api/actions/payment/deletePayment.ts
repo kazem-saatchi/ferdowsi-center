@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -17,11 +17,6 @@ async function deletePayment(
   paymentId: string,
   person: Person
 ): Promise<DeletePaymentResponse> {
-  // Authorization check
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Find Payment
   const payment = await db.payment.findUnique({ where: { id: paymentId } });
 
@@ -64,7 +59,7 @@ async function deletePayment(
 }
 
 export default async function deletePaymentById(paymentId: string) {
-  return handleServerAction<DeletePaymentResponse>(async (person) =>
+  return adminWriteAction<DeletePaymentResponse>(async (person) =>
     deletePayment(paymentId, person)
   );
 }

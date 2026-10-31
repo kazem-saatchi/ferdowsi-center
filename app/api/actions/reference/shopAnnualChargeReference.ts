@@ -5,19 +5,14 @@ import {
   ShopAnnualChargeReferenceData,
   ShopAnnualChargeReferenceSchema,
 } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 
 async function generateShopAnnualChargeReference(
   data: ShopAnnualChargeReferenceData,
   person: Person
 ) {
-  // Only admins or authorized roles
-  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Validate input
   const validation = ShopAnnualChargeReferenceSchema.safeParse(data);
   if (!validation.success) {
@@ -82,7 +77,7 @@ async function generateShopAnnualChargeReference(
 export default async function generateAnnualShopChargeReferenceList(
   data: ShopAnnualChargeReferenceData
 ) {
-  return handleServerAction(async (person) =>
+  return adminWriteAction(async (person) =>
     generateShopAnnualChargeReference(data, person)
   );
 }

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { loginUser } from "../../../api/actions/auth/loginUser";
 import { labels } from "@/utils/label";
+import { canViewAdminPanel } from "@/utils/permissions";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function LoginPage() {
       const result = await loginUser(formData);
       if (result.success) {
         toast.success(result.message);
-        if (result.role === "ADMIN") {
+        if (canViewAdminPanel(result.role)) {
           router.push("/admin/"); // Redirect to dashboard or home page
         } else {
           router.push("/user/dashboard");

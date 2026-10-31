@@ -22,6 +22,7 @@ import EmptyState from "@/components/EmptyState";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toPersianDigits } from "@/utils/formatNumber";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 type HistoryType =
   | "Ownership"
@@ -145,15 +146,17 @@ function HistoryTable({ allHistories, searchable = false }: TableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEditClick(history)}
-                    aria-label={labels.edit}
-                    title={labels.edit}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                  <WriteOnly>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditClick(history)}
+                      aria-label={labels.edit}
+                      title={labels.edit}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </WriteOnly>
                 </TableCell>
               </TableRow>
             ))}

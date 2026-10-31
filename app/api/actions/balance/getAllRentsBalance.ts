@@ -2,7 +2,7 @@
 
 import { ShopsBalanceData } from "@/schema/balanceSchema";
 import { calculateAllRentsBalance } from "@/utils/calculateBalance";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -21,10 +21,6 @@ async function getAllRentsBalance(user: Person): Promise<FindBalanceResponse> {
     throw new Error(errorMSG.unauthorized);
   }
 
-  if (user?.role !== "ADMIN" && user?.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   const shopsBalance: ShopsBalanceData[] = await calculateAllRentsBalance();
 
   const lastBankTransaction = await db.bankTransaction.aggregate({
@@ -40,7 +36,7 @@ async function getAllRentsBalance(user: Person): Promise<FindBalanceResponse> {
 }
 
 export default async function findRentBalanceAllShops() {
-  return handleServerAction<FindBalanceResponse>((user) =>
+  return adminReadAction<FindBalanceResponse>((user) =>
     getAllRentsBalance(user)
   );
 }

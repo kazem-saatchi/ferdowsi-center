@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Cost, CostCategory, Person, Prisma } from "@prisma/client";
 
 type CostFilters = {
@@ -29,10 +29,6 @@ async function allCostsData(
   filters?: CostFilters,
   sort?: SortOptions
 ): Promise<AddCostResponse> {
-  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Build where clause
   const where: Prisma.CostWhereInput = {};
 
@@ -75,5 +71,5 @@ async function allCostsData(
 }
 
 export default async function getAllCosts() {
-  return handleServerAction<AddCostResponse>((user) => allCostsData(user));
+  return adminReadAction<AddCostResponse>((user) => allCostsData(user));
 }

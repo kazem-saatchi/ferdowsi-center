@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG } from "@/utils/messages";
 import { BALANCE_BUCKETS } from "@/utils/dashboardStats";
 import { Person } from "@prisma/client";
@@ -28,10 +28,6 @@ async function getPaymentBucketPreview(
   paymentId: string,
   person: Person
 ): Promise<PaymentBucketPreview> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const payment = await db.payment.findUnique({
     where: { id: paymentId },
     select: { date: true, shopId: true },
@@ -77,7 +73,7 @@ async function getPaymentBucketPreview(
 }
 
 export default async function getPaymentBucketPreviewAction(paymentId: string) {
-  return handleServerAction<PaymentBucketPreview>((person) =>
+  return adminWriteAction<PaymentBucketPreview>((person) =>
     getPaymentBucketPreview(paymentId, person)
   );
 }

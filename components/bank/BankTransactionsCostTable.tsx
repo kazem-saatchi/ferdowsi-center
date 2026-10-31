@@ -25,6 +25,7 @@ import { formatNumber } from "@/utils/formatNumber";
 import { Button } from "../ui/button";
 import { Fragment, useState } from "react";
 import CostFromBankForm from "./CostFromBankForm";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 const getCategoryText = (category: TransactionCategory | null) => {
   if (!category) return labels.noValue;
@@ -115,14 +116,16 @@ export function BankTransactionCostTable({
                   {tx.type === TransactionType.PAYMENT ? " - " : " + "}
                 </TableCell>
                 <TableCell className="text-end">
-                  <Button
-                    onClick={() => {
-                      setEditRowId(tx.id);
-                    }}
-                    variant="outline"
-                  >
-                    {labels.applyCost}
-                  </Button>
+                  <WriteOnly>
+                    <Button
+                      onClick={() => {
+                        setEditRowId(tx.id);
+                      }}
+                      variant="outline"
+                    >
+                      {labels.applyCost}
+                    </Button>
+                  </WriteOnly>
                 </TableCell>
               </TableRow>
               {editRowId !== null && editRowId === tx.id && (

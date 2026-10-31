@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { updateShopRenter, UpdateShopRenterData } from "@/schema/shopSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -26,10 +26,6 @@ interface UpdateShopResponse {
 }
 
 async function updateShop(data: UpdateShopRenterData, user: Person) {
-  if (user.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = updateShopRenter.safeParse(data);
   if (!validation.success) {
     throw new Error(
@@ -165,7 +161,7 @@ async function updateShop(data: UpdateShopRenterData, user: Person) {
 }
 
 export default async function updateShopRenterId(data: UpdateShopRenterData) {
-  return handleServerAction<UpdateShopResponse>((user) =>
+  return adminWriteAction<UpdateShopResponse>((user) =>
     updateShop(data, user)
   );
 }

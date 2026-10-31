@@ -21,6 +21,7 @@ import AddPaymentButton from "../payment/AddPaymentButton";
 import { Fragment, useState } from "react";
 import { Button } from "../ui/button";
 import PaymentFromBankForm from "./PaymentFromBankForm";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 interface BankOtherIncomeTableProps {
   // Serialized: amount/balance arrive as numbers, since bigint cannot cross
@@ -93,14 +94,16 @@ export function BankOtherIncomeTable({
                 </TableCell>
 
                 <TableCell className="text-center">
-                  <Button
-                    onClick={() => {
-                      setEditRowId(tx.id);
-                    }}
-                    variant="outline"
-                  >
-                    ثبت دستی
-                  </Button>
+                  <WriteOnly>
+                    <Button
+                      onClick={() => {
+                        setEditRowId(tx.id);
+                      }}
+                      variant="outline"
+                    >
+                      ثبت دستی
+                    </Button>
+                  </WriteOnly>
                 </TableCell>
               </TableRow>
               {editRowId !== null && editRowId === tx.id && (

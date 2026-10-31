@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Person, ShopChargeReference, ShopType } from "@prisma/client";
 
 interface FindchargeResponse {
@@ -16,11 +16,6 @@ interface FindchargeResponse {
 async function getAllChargesReference(
   user: Person
 ): Promise<FindchargeResponse> {
-  // Check authentication
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   // Get ShopCharges
   const chargeList = await db.shopChargeReference.findMany({
     where: {
@@ -58,7 +53,7 @@ async function getAllChargesReference(
 }
 
 export default async function findAllChargesReference() {
-  return handleServerAction<FindchargeResponse>((user) =>
+  return adminReadAction<FindchargeResponse>((user) =>
     getAllChargesReference(user)
   );
 }

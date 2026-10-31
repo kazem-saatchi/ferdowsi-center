@@ -2,8 +2,7 @@
 
 import { db } from "@/lib/db";
 
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { Operation, Person } from "@prisma/client";
 
 interface AllOperationResponse {
@@ -14,10 +13,6 @@ interface AllOperationResponse {
 async function getAllOperationsInternal(
   person: Person
 ): Promise<AllOperationResponse> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const allOperations = await db.operation.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -26,7 +21,7 @@ async function getAllOperationsInternal(
 }
 
 export default async function getAllOperations() {
-  return handleServerAction<AllOperationResponse>(async (person) =>
+  return adminReadAction<AllOperationResponse>(async (person) =>
     getAllOperationsInternal(person)
   );
 }

@@ -6,16 +6,11 @@ import {
   addPaymentByInfoSchema,
 } from "@/schema/paymentSchema";
 
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { PaymentType, Person, Prisma } from "@prisma/client";
 
 async function createPayment(data: AddPaymentByInfoData, person: Person) {
-  // Authorization check
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Schema validation
   const validation = addPaymentByInfoSchema.safeParse(data);
   if (!validation.success) {
@@ -86,5 +81,5 @@ async function createPayment(data: AddPaymentByInfoData, person: Person) {
 }
 
 export default async function addPaymentByInfo(data: AddPaymentByInfoData) {
-  return handleServerAction(async (person) => createPayment(data, person));
+  return adminWriteAction(async (person) => createPayment(data, person));
 }

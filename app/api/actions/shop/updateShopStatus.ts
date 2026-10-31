@@ -6,7 +6,7 @@ import {
   updateShopStatusSchema,
 } from "@/schema/shopSchema";
 
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -15,11 +15,6 @@ interface UpdateShopResponse {
 }
 
 async function updateShop(data: UpdateShopStatusData, user: Person) {
-  // Only admins can update shop status
-  if (user.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Validate input
   const validation = updateShopStatusSchema.safeParse(data);
   if (!validation.success) {
@@ -116,7 +111,7 @@ async function updateShop(data: UpdateShopStatusData, user: Person) {
 }
 
 export default async function updateShopStatus(data: UpdateShopStatusData) {
-  return handleServerAction<UpdateShopResponse>((user) =>
+  return adminWriteAction<UpdateShopResponse>((user) =>
     updateShop(data, user)
   );
 }

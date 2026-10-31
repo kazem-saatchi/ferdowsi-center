@@ -2,8 +2,8 @@
 
 import { BankTransactionData } from "@/components/upload-file/readFile";
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { AccountType, Person, TransactionType } from "@prisma/client";
 
 export interface AddBankDataResponse {
@@ -28,10 +28,6 @@ async function addBankDataInternal(
   data: BankTransactionData[],
   person: Person
 ): Promise<Omit<AddBankDataResponse, "message">> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   if (bankAccountNumber === "") {
     throw new Error("شماره حساب بانک الزامی هست");
   }
@@ -119,7 +115,7 @@ export default async function addBankDataFromFile(
   data: BankTransactionData[]
 ) {
   // Wrap with handleServerAction, which adds success/data structure
-  return handleServerAction(async (user) => {
+  return adminWriteAction(async (user) => {
     const result = await addBankDataInternal(
       accountType,
       bankAccountNumber,

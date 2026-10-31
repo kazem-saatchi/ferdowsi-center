@@ -9,6 +9,7 @@ import AdminDashboardPanel from "./panels/AdminDashboardPanel";
 import SidebarBrand from "@/components/layout/SidebarBrand";
 import AccountMenu from "@/components/layout/AccountMenu";
 import { labels } from "@/utils/label";
+import { useCanWrite } from "@/components/auth/WriteAccess";
 
 const groupOrder = [
   "person",
@@ -28,6 +29,18 @@ function AdminSidebar() {
   const [openGroup, setOpenGroup] = useState<
     (typeof groupOrder)[number] | null
   >(null);
+  // A read-only role does not see the pages that change data, nor a group
+  // left with nothing in it (the import group).
+  const canWrite = useCanWrite();
+  const groups = groupOrder
+    .map((key) => {
+      const group = adminMenuData[key];
+      const items = canWrite
+        ? group.items
+        : group.items.filter((item) => !item.write);
+      return { key, menuData: { ...group, items } };
+    })
+    .filter(({ menuData }) => menuData.items.length > 0);
   return (
     <Sidebar side="right" variant="floating">
       <SidebarBrand areaTitle={labels.adminPanel} />
@@ -36,10 +49,10 @@ function AdminSidebar() {
         <SidebarMenu>
           <AdminDashboardPanel />
           <Separator />
-          {groupOrder.map((key) => (
+          {groups.map(({ key, menuData }) => (
             <Fragment key={key}>
               <SidebarItemsMap
-                menuData={adminMenuData[key]}
+                menuData={menuData}
                 open={openGroup === key}
                 onToggle={() =>
                   setOpenGroup((current) => (current === key ? null : key))

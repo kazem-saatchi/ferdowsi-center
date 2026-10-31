@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { BALANCE_BUCKETS } from "@/utils/dashboardStats";
 import { Person } from "@prisma/client";
@@ -43,10 +43,6 @@ async function updatePaymentProprietor(
   data: UpdatePaymentProprietorProps,
   person: Person
 ) {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const { paymentId, shopId, proprietor, reassignPerson } = data;
 
   return db.$transaction(async (tx) => {
@@ -121,7 +117,7 @@ async function updatePaymentProprietor(
 export default async function updatePaymentProprietorAction(
   data: UpdatePaymentProprietorProps
 ) {
-  return handleServerAction(async (person) =>
+  return adminWriteAction(async (person) =>
     updatePaymentProprietor(data, person)
   );
 }

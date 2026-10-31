@@ -5,7 +5,7 @@ import {
   AddChargeAllShopsData,
   addChargeAllShopsSchema,
 } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma, ShopHistory } from "@prisma/client";
 import {
@@ -19,11 +19,6 @@ interface AddChargeResponse {
 }
 
 async function createCharge(data: AddChargeAllShopsData, person: Person) {
-  // Only admins or authorized roles can add new people
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = addChargeAllShopsSchema.safeParse(data);
 
   if (!validation.success) {
@@ -136,7 +131,7 @@ async function createCharge(data: AddChargeAllShopsData, person: Person) {
 }
 
 export default async function addRentToAllKiosks(data: AddChargeAllShopsData) {
-  return handleServerAction<AddChargeResponse>(async (person) =>
+  return adminWriteAction<AddChargeResponse>(async (person) =>
     createCharge(data, person)
   );
 }

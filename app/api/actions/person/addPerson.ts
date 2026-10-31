@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { AddPersonData, addPersonSchema } from "@/schema/personSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { hashPassword } from "@/utils/hashPassword";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -13,11 +13,6 @@ interface AddPersonResponse {
 }
 
 async function createPerson(data: AddPersonData, person: Person) {
-  // Only admins or authorized roles can add new people
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Validate input
   const validation = addPersonSchema.safeParse(data);
   if (!validation.success) {
@@ -52,7 +47,7 @@ async function createPerson(data: AddPersonData, person: Person) {
 }
 
 export default async function addPerson(data: AddPersonData) {
-  return handleServerAction<AddPersonResponse>((user) =>
+  return adminWriteAction<AddPersonResponse>((user) =>
     createPerson(data, user)
   );
 }

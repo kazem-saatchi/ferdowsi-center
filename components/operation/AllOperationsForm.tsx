@@ -22,6 +22,7 @@ import { Loader, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 interface DataItem {
   id: string;
@@ -103,21 +104,23 @@ export function AllOperationsTable({ data }: { data: DataItem[] }) {
                     {labels.operationDeleted}
                   </span>
                 ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(item)}
-                    disabled={deletingId !== null}
-                    aria-label={labels.undoOperationAria}
-                    title={labels.undoOperationAria}
-                  >
-                    {deletingId === item.id ? (
-                      <Loader className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
+                  <WriteOnly>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => handleDelete(item)}
+                      disabled={deletingId !== null}
+                      aria-label={labels.undoOperationAria}
+                      title={labels.undoOperationAria}
+                    >
+                      {deletingId === item.id ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </WriteOnly>
                 )}
               </TableCell>
             </TableRow>

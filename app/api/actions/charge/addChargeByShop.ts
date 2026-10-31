@@ -5,17 +5,12 @@ import {
   AddChargeByShopData,
   addChargeByShopSchema,
 } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma } from "@prisma/client";
 import { getRelatedHistories, prorateWindow } from "./utils";
 
 async function createCharge(data: AddChargeByShopData, person: Person) {
-  // Authorization check
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Schema validation
   const validation = addChargeByShopSchema.safeParse(data);
   if (!validation.success) {
@@ -94,5 +89,5 @@ async function createCharge(data: AddChargeByShopData, person: Person) {
 }
 
 export default async function addChargeByShop(data: AddChargeByShopData) {
-  return handleServerAction(async (person) => createCharge(data, person));
+  return adminWriteAction(async (person) => createCharge(data, person));
 }

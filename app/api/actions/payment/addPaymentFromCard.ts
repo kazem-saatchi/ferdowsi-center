@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { Person } from "@prisma/client";
 import { resolveShopPersonAtDate } from "./resolveOccupant";
 import { toInt4Amount } from "@/utils/bankAmount";
@@ -22,11 +21,6 @@ async function addPaymentFromCardTransfer(
   // Input validation
   if (!id || typeof id !== "string") {
     return { success: false, message: "شناسه تراکنش نامعتبر است." };
-  }
-
-  // Authorization
-  if (person.role !== "ADMIN") {
-    return { success: false, message: errorMSG.noPermission };
   }
 
   const bankTransaction = await db.bankTransaction.findUnique({
@@ -157,7 +151,7 @@ async function addPaymentFromCardTransfer(
 }
 
 export default async function addPaymentFromCard(id: string) {
-  return handleServerAction(async (person) =>
+  return adminWriteAction(async (person) =>
     addPaymentFromCardTransfer(id, person)
   );
 }

@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { UpdatePersonData, updatePersonSchema } from "@/schema/personSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -16,11 +16,6 @@ interface updatePersonResponse {
 }
 
 async function updatePerson(data: UpdatePersonData, person: Person) {
-  // Only admins or authorized roles can update new people
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Validate input
   const validation = updatePersonSchema.safeParse(data);
   if (!validation.success) {
@@ -102,7 +97,7 @@ async function updatePerson(data: UpdatePersonData, person: Person) {
 }
 
 export default async function updatePersonInfo(data: UpdatePersonData) {
-  return handleServerAction<updatePersonResponse>((user) =>
+  return adminWriteAction<updatePersonResponse>((user) =>
     updatePerson(data, user)
   );
 }

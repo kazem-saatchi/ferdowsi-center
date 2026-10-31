@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { AddShopData, addShopSchema } from "@/schema/shopSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma, ShopType } from "@prisma/client";
 
@@ -13,10 +13,6 @@ interface AddShopResponse {
 }
 
 async function createShop(data: AddShopData, person: Person) {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = addShopSchema.safeParse(data);
   if (!validation.success) {
     throw new Error(
@@ -106,5 +102,5 @@ async function createShop(data: AddShopData, person: Person) {
 }
 
 export default async function addShop(data: AddShopData) {
-  return handleServerAction<AddShopResponse>((user) => createShop(data, user));
+  return adminWriteAction<AddShopResponse>((user) => createShop(data, user));
 }

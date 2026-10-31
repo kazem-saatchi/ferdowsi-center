@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { SafePerson } from "@/schema/personSchema";
 
 interface findPersonsAllResponse {
@@ -11,11 +11,6 @@ interface findPersonsAllResponse {
 }
 
 async function findPersons(user: SafePerson) {
-  // check authentication
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   // find Persons
   const persons = await db.person.findMany({
     where: { visable: true },
@@ -26,7 +21,7 @@ async function findPersons(user: SafePerson) {
 }
 
 export default async function findPersonAll() {
-  return handleServerAction<findPersonsAllResponse>((user) =>
+  return adminReadAction<findPersonsAllResponse>((user) =>
     findPersons(user)
   );
 }

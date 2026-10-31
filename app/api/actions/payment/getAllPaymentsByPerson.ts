@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Payment, Person } from "@prisma/client";
 
 interface FindPaymentResponse {
@@ -16,11 +16,6 @@ async function findPayments(
   personId: string,
   person: Person
 ): Promise<FindPaymentResponse> {
-  // Authorization check
-  if (person.role !== "ADMIN" && person.role !== "MANAGER") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   // Create payment
   const payments = await db.payment.findMany({
     where: { personId },
@@ -35,7 +30,7 @@ async function findPayments(
 }
 
 export default async function findPaymentsByPerson(personId: string) {
-  return handleServerAction<FindPaymentResponse>(async (person) =>
+  return adminReadAction<FindPaymentResponse>(async (person) =>
     findPayments(personId, person)
   );
 }

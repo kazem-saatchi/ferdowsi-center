@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { errorMSG } from "@/utils/messages";
 import {
   summariseDashboard,
@@ -62,10 +62,6 @@ const PENDING_CARD_TRANSFER_WHERE = {
 
 async function getAdminDashboard(user: Person): Promise<AdminDashboardData> {
   if (!user) {
-    throw new Error(errorMSG.unauthorized);
-  }
-
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
 
@@ -171,7 +167,7 @@ async function getAdminDashboard(user: Person): Promise<AdminDashboardData> {
 }
 
 export default async function findAdminDashboard() {
-  return handleServerAction<AdminDashboardData>((user) =>
+  return adminReadAction<AdminDashboardData>((user) =>
     getAdminDashboard(user)
   );
 }

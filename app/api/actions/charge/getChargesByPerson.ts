@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 import { GetChargeByPersonData } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { Person, Charge } from "@prisma/client";
 
 interface FindchargeResponse {
@@ -16,11 +16,6 @@ async function getAllCharges(
   data: GetChargeByPersonData,
   user: Person
 ): Promise<FindchargeResponse> {
-  // Check authentication
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   // Get Person Charges
   const chargeList = await db.charge.findMany({
     where: { personId: data.personId },
@@ -35,7 +30,7 @@ async function getAllCharges(
 }
 
 export default async function findChargesByPerson(data: GetChargeByPersonData) {
-  return handleServerAction<FindchargeResponse>((user) =>
+  return adminReadAction<FindchargeResponse>((user) =>
     getAllCharges(data, user)
   );
 }

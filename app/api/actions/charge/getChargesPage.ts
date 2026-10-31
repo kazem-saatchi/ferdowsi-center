@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import {
   LedgerListOptions,
   LedgerPage,
@@ -18,10 +17,6 @@ async function fetchChargesPage(
   options: LedgerListOptions,
   user: Person
 ): Promise<LedgerPage<Charge>> {
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   const { page, limit, skip } = sanitizePaging(options.page, options.limit);
 
   const where: Prisma.ChargeWhereInput = {
@@ -50,7 +45,7 @@ async function fetchChargesPage(
 }
 
 export default async function getChargesPage(options: LedgerListOptions) {
-  return handleServerAction<LedgerPage<Charge>>((user) =>
+  return adminReadAction<LedgerPage<Charge>>((user) =>
     fetchChargesPage(options, user)
   );
 }

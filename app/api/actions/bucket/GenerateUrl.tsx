@@ -3,6 +3,7 @@
 import { S3 } from "aws-sdk";
 import { verifyToken } from "@/utils/auth";
 import { errorMSG } from "@/utils/messages";
+import { canWrite } from "@/utils/permissions";
 
 const accessKeyId = process.env.LIARA_ACCESS_KEY!;
 const secretAccessKey = process.env.LIARA_SECRET_KEY!;
@@ -41,6 +42,11 @@ export default async function generateUploadUrl(
 
   if (!auth.success || !auth.person) {
     return { success: false, message: errorMSG.unauthorized };
+  }
+
+  // Only the admin write forms (payments, costs, incomes) upload receipts.
+  if (!canWrite(auth.person.role)) {
+    return { success: false, message: errorMSG.noPermission };
   }
 
   if (!ACCEPTED_FILE_TYPES.includes(fileType)) {

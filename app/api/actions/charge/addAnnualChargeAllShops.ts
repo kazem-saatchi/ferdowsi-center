@@ -5,7 +5,7 @@ import {
   AddAnnualChargeAllShopsData,
   addAnnualChargeAllShopsSchema,
 } from "@/schema/chargeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { toPersianDigits } from "@/utils/formatNumber";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, Prisma, ShopChargeReference } from "@prisma/client";
@@ -15,11 +15,6 @@ interface AddChargeResponse {
 }
 
 async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
-  // Only admins or authorized roles can add new people
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = addAnnualChargeAllShopsSchema.safeParse(data);
 
   if (!validation.success) {
@@ -96,7 +91,7 @@ async function createCharge(data: AddAnnualChargeAllShopsData, person: Person) {
 export default async function addAnnualChargeToAllShops(
   data: AddAnnualChargeAllShopsData
 ) {
-  return handleServerAction<AddChargeResponse>(async (person) =>
+  return adminWriteAction<AddChargeResponse>(async (person) =>
     createCharge(data, person)
   );
 }

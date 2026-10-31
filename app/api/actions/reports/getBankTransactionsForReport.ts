@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { bankAmountToNumber } from "@/utils/bankAmount";
 import { Person, TransactionType, TransactionCategory } from "@prisma/client";
 
@@ -29,10 +28,6 @@ async function fetchBankTransactionsForReport(
   endDate: Date,
   user: Person
 ): Promise<BankTransactionData[]> {
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   const transactions = await db.bankTransaction.findMany({
     where: {
       date: {
@@ -80,7 +75,7 @@ export async function getBankTransactionsForReport(
   startDate: Date,
   endDate: Date
 ) {
-  return handleServerAction<BankTransactionData[]>((user) =>
+  return adminReadAction<BankTransactionData[]>((user) =>
     fetchBankTransactionsForReport(startDate, endDate, user)
   );
 }

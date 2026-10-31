@@ -6,7 +6,10 @@ import { handleServerAction } from "@/utils/handleServerAction";
 import { errorMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
-export async function getUserQuickState(userId: string, user: Person) {
+// Not exported: in a "use server" file every export is a browser-callable
+// endpoint, and this one takes `user` as an argument — a caller could pass any
+// id and role they like.
+async function getUserQuickState(userId: string, user: Person) {
   if (!user) {
     throw new Error(errorMSG.unauthorized);
   }

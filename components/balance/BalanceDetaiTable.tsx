@@ -25,6 +25,7 @@ import TransactionInfoDialog from "./TransactionInfoDialog";
 import ChangeUserDialog from "./ChangeUserDialog";
 import type { BalanceTransactionRow } from "./ChangeUser";
 import { calculateMonthlyShare } from "@/utils/monthlyChargeShare";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 interface BalanceTableProps {
   charges: Charge[];
@@ -321,16 +322,18 @@ export function BalanceDetailTable({
               </TableCell>
               <TableCell className="text-center">{item.description}</TableCell>
               <TableCell className="text-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedTransactionId(null);
-                    setSelectedTransaction(item as BalanceTransactionRow);
-                  }}
-                >
-                  {labels.edit}
-                </Button>
+                <WriteOnly>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTransactionId(null);
+                      setSelectedTransaction(item as BalanceTransactionRow);
+                    }}
+                  >
+                    {labels.edit}
+                  </Button>
+                </WriteOnly>
               </TableCell>
             </TableRow>
           ))}

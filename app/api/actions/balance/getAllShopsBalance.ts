@@ -1,7 +1,7 @@
 "use server";
 
 import { ShopBalanceDetails } from "@/schema/balanceSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminReadAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person, ShopType } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -26,10 +26,6 @@ async function getAllShopsBalance(
   proprietor: boolean
 ): Promise<FindAllShopsBalanceResponse> {
   if (!user) {
-    throw new Error(errorMSG.unauthorized);
-  }
-
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
     throw new Error(errorMSG.unauthorized);
   }
 
@@ -124,7 +120,7 @@ async function getAllShopsBalance(
 }
 
 export default async function findBalanceAllShops(proprietor: boolean) {
-  return handleServerAction<FindAllShopsBalanceResponse>((user) =>
+  return adminReadAction<FindAllShopsBalanceResponse>((user) =>
     getAllShopsBalance(user, proprietor)
   );
 }

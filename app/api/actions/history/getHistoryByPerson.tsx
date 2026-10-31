@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { ShopHistory, Person } from "@prisma/client";
 
 interface FindHistoryResponse {
@@ -15,11 +15,6 @@ async function getAllHistories(
   personId: string,
   user: Person
 ): Promise<FindHistoryResponse> {
-  // Check authentication
-  if (!user || user.role !== "ADMIN") {
-    throw new Error(errorMSG.unauthorized);
-  }
-  
   // Get ShopHistories
   const shopHistoryList = await db.shopHistory.findMany({
     where: { personId },
@@ -34,7 +29,7 @@ async function getAllHistories(
 }
 
 export default async function findHistoryByPerson(personId: string) {
-  return handleServerAction<FindHistoryResponse>((user) =>
+  return adminReadAction<FindHistoryResponse>((user) =>
     getAllHistories(personId, user)
   );
 }

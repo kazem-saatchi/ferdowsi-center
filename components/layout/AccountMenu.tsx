@@ -32,6 +32,7 @@ import { logoutUser } from "@/app/api/actions/auth/logoutUser";
 import { useGetUserInfo } from "@/tanstack/query/personQuery";
 import { labels } from "@/utils/label";
 import { roleLabel } from "@/utils/roleLabel";
+import { canViewAdminPanel } from "@/utils/permissions";
 
 const THEMES = [
   { value: "light", label: labels.themeLight, icon: Sun },
@@ -52,7 +53,7 @@ export default function AccountMenu({ area }: { area: "admin" | "user" }) {
   const initials = person
     ? `${person.firstName.charAt(0)}${person.lastName.charAt(0)}`
     : "";
-  const canUseAdmin = person?.role === "ADMIN" || person?.role === "MANAGER";
+  const canUseAdmin = canViewAdminPanel(person?.role);
   const switchTo =
     area === "admin"
       ? { href: "/user", label: labels.personalAccount, icon: UserRound }

@@ -22,6 +22,7 @@ import { Fragment, useState } from "react";
 import { Button } from "../ui/button";
 import PaymentFromBankForm from "./PaymentFromBankForm";
 import AddFailedPaymentButton from "../charge/AddFailedPaymentButton";
+import { WriteOnly } from "@/components/auth/WriteAccess";
 
 interface BankFailedTransactionTableProps {
   // Serialized: amount/balance arrive as numbers, since bigint cannot cross
@@ -106,17 +107,21 @@ export function BankFailedCardTransferTable({
                   {formatNumber(tx.amount)}
                 </TableCell>
                 <TableCell className="text-center">
-                  <AddFailedPaymentButton id={tx.id} />
+                  <WriteOnly>
+                    <AddFailedPaymentButton id={tx.id} />
+                  </WriteOnly>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button
-                    onClick={() => {
-                      setEditRowId(tx.id);
-                    }}
-                    variant="outline"
-                  >
-                    ثبت دستی
-                  </Button>
+                  <WriteOnly>
+                    <Button
+                      onClick={() => {
+                        setEditRowId(tx.id);
+                      }}
+                      variant="outline"
+                    >
+                      ثبت دستی
+                    </Button>
+                  </WriteOnly>
                 </TableCell>
               </TableRow>
               {editRowId !== null && editRowId === tx.id && (

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { labels } from "@/utils/label";
+import { useCanWrite } from "@/components/auth/WriteAccess";
 
 export type RowAction = { label: string; href: string };
 
@@ -28,6 +29,7 @@ export default function RowActionsMenu({
   /** Names the row for screen readers, e.g. "واحد ۱۰۳". */
   rowLabel: string;
 }) {
+  const canWrite = useCanWrite();
   return (
     <DropdownMenu dir="rtl">
       <DropdownMenuTrigger asChild>
@@ -46,7 +48,7 @@ export default function RowActionsMenu({
             <Link href={action.href}>{action.label}</Link>
           </DropdownMenuItem>
         ))}
-        {edit && (
+        {edit && canWrite && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

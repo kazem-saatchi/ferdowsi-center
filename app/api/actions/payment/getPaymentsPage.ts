@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminReadAction } from "@/utils/handleServerAction";
 import {
   LedgerPage,
   PaymentListOptions,
@@ -19,10 +18,6 @@ async function fetchPaymentsPage(
   options: PaymentListOptions,
   user: Person
 ): Promise<LedgerPage<Payment>> {
-  if (user.role !== "ADMIN" && user.role !== "MANAGER") {
-    throw new Error(errorMSG.unauthorized);
-  }
-
   const { page, limit, skip } = sanitizePaging(options.page, options.limit);
   const type =
     options.type && Object.values(PaymentType).includes(options.type)
@@ -56,7 +51,7 @@ async function fetchPaymentsPage(
 }
 
 export default async function getPaymentsPage(options: PaymentListOptions) {
-  return handleServerAction<LedgerPage<Payment>>((user) =>
+  return adminReadAction<LedgerPage<Payment>>((user) =>
     fetchPaymentsPage(options, user)
   );
 }

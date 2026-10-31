@@ -52,11 +52,13 @@ export type MenuData = {
   items: MenuItems[];
 };
 
-type MenuItems = {
+export type MenuItems = {
   id: number;
   name: string;
   href: string;
   icon: LucideIcon;
+  /** Changes data, so only roles in WRITE_ROLES see it. */
+  write?: boolean;
 };
 
 export const adminMenuData: AdminMenuCollection = {
@@ -131,30 +133,35 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت شارژ ماهانه به واحدها",
         href: "/add-charges-all-shops",
         icon: Zap,
+        write: true,
       },
       {
         id: 5,
         name: "ثبت اجاره ماهانه به غرفه‌ها",
         href: "/add-rent-all-kiosks",
         icon: DollarSign,
+        write: true,
       },
       {
         id: 6,
         name: "ثبت شارژ ماهانه یک واحد",
         href: "/add-charge-to-shop",
         icon: PlusCircle,
+        write: true,
       },
       {
         id: 7,
         name: "ثبت شارژ یک واحد با مبلغ",
         href: "/add-charge-by-amount",
         icon: DollarSign,
+        write: true,
       },
       {
         id: 8,
         name: "ثبت شارژ چند واحد با مبلغ",
         href: "/add-charge-to-list",
         icon: DollarSign,
+        write: true,
       },
       {
         id: 9,
@@ -167,12 +174,14 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ساخت لیست مرجع شارژ ماهانه",
         href: "/generate-charge-list",
         icon: FileText,
+        write: true,
       },
       {
         id: 11,
         name: "ساخت لیست مرجع شارژ مالکانه",
         href: "/generate-annual-charge-list",
         icon: House,
+        write: true,
       },
     ],
   },
@@ -186,6 +195,7 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت هزینه",
         href: "/add-cost",
         icon: PlusCircle,
+        write: true,
       },
       {
         id: 2,
@@ -198,6 +208,7 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت درآمد",
         href: "/add-income",
         icon: CircleDollarSign,
+        write: true,
       },
     ],
   },
@@ -254,6 +265,7 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت پرداختی",
         href: "/add-payment",
         icon: PlusCircle,
+        write: true,
       },
     ],
   },
@@ -273,24 +285,28 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت شخص جدید",
         href: "/add-person",
         icon: UserPlus,
+        write: true,
       },
       {
         id: 4,
         name: "ویرایش اطلاعات شخص",
         href: "/update-person",
         icon: UserCog,
+        write: true,
       },
       {
         id: 5,
         name: "تغییر نقش شخص",
         href: "/update-person-role",
         icon: UserCheck,
+        write: true,
       },
       {
         id: 6,
         name: "تغییر رمز کاربری شخص",
         href: "/update-person-password",
         icon: KeyRound,
+        write: true,
       },
     ],
   },
@@ -310,36 +326,42 @@ export const adminMenuData: AdminMenuCollection = {
         name: "افزودن واحد جدید",
         href: "/add-shop",
         icon: PlusSquare,
+        write: true,
       },
       {
         id: 3,
         name: "ویرایش اطلاعات واحد",
         href: "/edit-shop",
         icon: Edit,
+        write: true,
       },
       {
         id: 4,
         name: "ثبت مالک جدید برای یک واحد",
         href: "/update-shop-owner",
         icon: UserCheck,
+        write: true,
       },
       {
         id: 5,
         name: "ثبت مستاجر جدید برای یک واحد",
         href: "/update-shop-renter",
         icon: ShoppingBag,
+        write: true,
       },
       {
         id: 6,
         name: "حذف مستاجر یک واحد",
         href: "/remove-shop-renter",
         icon: UserX,
+        write: true,
       },
       {
         id: 7,
         name: "فعال / غیر فعال کردن یک واحد",
         href: "/update-shop-status",
         icon: ToggleLeft,
+        write: true,
       },
     ],
   },
@@ -353,30 +375,35 @@ export const adminMenuData: AdminMenuCollection = {
         name: "ثبت اشخاص و واحدها با فایل",
         href: "/import-shops-data",
         icon: FileChartColumn,
+        write: true,
       },
       {
         id: 2,
         name: "ثبت اطلاعات بانک",
         href: "/import-net-bank",
         icon: Banknote,
+        write: true,
       },
       {
         id: 3,
         name: "ثبت اطلاعات غرفه‌ها",
         href: "/import-kiosks-data",
         icon: Car,
+        write: true,
       },
       {
         id: 4,
         name: "ثبت شارژ مالکانه با فایل",
         href: "/import-proprietor-charge",
         icon: CircleDollarSign,
+        write: true,
       },
       {
         id: 5,
         name: "ثبت اطلاعات بانک با فایل اکسل",
         href: "/import-bank-data",
         icon: FileText,
+        write: true,
       },
     ],
   },
@@ -442,3 +469,12 @@ export const adminPageTitles: { href: string; name: string }[] = [
     }))
   ),
 ];
+
+/** Every page that changes data, including the per-row edit pages under
+ *  them (e.g. /admin/edit-shop/[id]). A read-only role is shown a notice there. */
+export const adminWritePaths: string[] = Object.values(adminMenuData).flatMap(
+  (group) =>
+    group.items
+      .filter((item) => item.write)
+      .map((item) => `${group.baseUrl}${item.href}`)
+);

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
 
@@ -13,11 +13,6 @@ export interface UpdateChargeUserProps {
 
 async function updateChargeUser(data: UpdateChargeUserProps, person: Person) {
   const { userId, chargeId } = data;
-
-  // Authorization check
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
 
   const user = await db.person.findUnique({
     where: { id: userId },
@@ -56,5 +51,5 @@ async function updateChargeUser(data: UpdateChargeUserProps, person: Person) {
 export default async function updateChargeUserAction(
   data: UpdateChargeUserProps,
 ) {
-  return handleServerAction(async (person) => updateChargeUser(data, person));
+  return adminWriteAction(async (person) => updateChargeUser(data, person));
 }

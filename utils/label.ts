@@ -708,6 +708,7 @@ export const labels = {
   themeLight: "روشن",
   themeDark: "تیره",
   themeSystem: "هماهنگ با سیستم",
+  readOnlyAccess: "دسترسی شما فقط مشاهده است و نمی‌توانید اطلاعات را تغییر دهید.",
 };
 
 /** Bank API transaction type → Persian label */

@@ -2,8 +2,8 @@
 
 import { db } from "@/lib/db";
 import { AddCostData, addCostSchema } from "@/schema/cost-IncomeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG, successMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
+import { successMSG } from "@/utils/messages";
 import { CostCategory, Person } from "@prisma/client";
 
 interface AddCostResponse {
@@ -15,10 +15,6 @@ async function addCostData(
   data: AddCostData,
   person: Person
 ): Promise<AddCostResponse> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = addCostSchema.safeParse(data);
   if (!validation.success) {
     throw new Error(
@@ -45,5 +41,5 @@ async function addCostData(
 }
 
 export default async function addCost(data: AddCostData) {
-  return handleServerAction<AddCostResponse>((user) => addCostData(data, user));
+  return adminWriteAction<AddCostResponse>((user) => addCostData(data, user));
 }

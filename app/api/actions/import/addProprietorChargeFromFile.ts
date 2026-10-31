@@ -5,8 +5,7 @@ import {
   AddProprietorChargeData,
   addProprietorChargeSchema,
 } from "@/schema/importSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
-import { errorMSG } from "@/utils/messages";
+import { adminWriteAction } from "@/utils/handleServerAction";
 
 export interface AddProprietorChargeResponse {
   message: string;
@@ -19,10 +18,6 @@ async function addProprietorChargeInternal(
   data: AddProprietorChargeData[],
   admin: { role: string }
 ): Promise<Omit<AddProprietorChargeResponse, "message">> {
-  if (admin.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   let added = 0;
   let failed = 0;
   const processedCount = data.length;
@@ -120,7 +115,7 @@ async function addProprietorChargeInternal(
 export default async function addProprietorChargeFromFile(
   data: AddProprietorChargeData[]
 ) {
-  return handleServerAction(async (user) => {
+  return adminWriteAction(async (user) => {
     const result = await addProprietorChargeInternal(data, user);
     const message = `Chunk processed: ${result.addedShops} added, ${result.failedShops} failed out of ${result.processed}.`;
     return { ...result, message };

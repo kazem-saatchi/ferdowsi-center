@@ -5,7 +5,7 @@ import {
   AddCostFromBankData,
   addCostFromBankSchema,
 } from "@/schema/cost-IncomeSchema";
-import { handleServerAction } from "@/utils/handleServerAction";
+import { adminWriteAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { CostCategory, Person } from "@prisma/client";
 import { claimBankTransaction } from "@/utils/bankRegistration";
@@ -19,10 +19,6 @@ async function addCostData(
   data: AddCostFromBankData,
   person: Person
 ): Promise<AddCostResponse> {
-  if (person.role !== "ADMIN") {
-    throw new Error(errorMSG.noPermission);
-  }
-
   const validation = addCostFromBankSchema.safeParse(data);
   if (!validation.success) {
     throw new Error(
@@ -75,5 +71,5 @@ async function addCostData(
 }
 
 export default async function addCostFromBank(data: AddCostFromBankData) {
-  return handleServerAction<AddCostResponse>((user) => addCostData(data, user));
+  return adminWriteAction<AddCostResponse>((user) => addCostData(data, user));
 }
