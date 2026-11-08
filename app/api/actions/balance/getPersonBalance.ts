@@ -14,6 +14,17 @@ export interface LedgerTotals {
   balance: number;
 }
 
+/** A unit's monthly ledger split between its current renter and its owner, by
+ *  the rule in utils/monthlyChargeShare.ts: the renter's share is what was
+ *  charged to and paid by the current renter; everything else — the owner's
+ *  own rows and whatever previous renters left behind — is the owner's. */
+export interface MonthlyRenterShare {
+  renterName: string;
+  ownerName: string;
+  renter: LedgerTotals;
+  owner: LedgerTotals;
+}
+
 /** One unit this person holds, with the unit's own totals — not the slice that
  *  happens to carry this person's id.
  *
@@ -42,6 +53,9 @@ export interface PersonUnitBalance {
    *  balance. */
   monthly: LedgerTotals;
   proprietor: LedgerTotals;
+  /** Set only when the unit has a renter who is not also its owner; the two
+   *  shares add up to `monthly`. */
+  monthlyShare: MonthlyRenterShare | null;
 }
 
 export interface PersonBalanceSummary {
@@ -96,10 +110,19 @@ async function getPersonBalance(
   const shops = await db.shop.findMany({
     where: { OR: [{ ownerId: person.id }, { renterId: person.id }] },
     orderBy: { plaque: "asc" },
-    select: { id: true, plaque: true, type: true, ownerId: true, renterId: true },
+    select: {
+      id: true,
+      plaque: true,
+      type: true,
+      ownerId: true,
+      renterId: true,
+      ownerName: true,
+      renterName: true,
+    },
   });
 
   const shopIds = shops.map((shop) => shop.id);
+  const renterOf = new Map(shops.map((shop) => [shop.id, shop.renterId]));
 
   // Two grouped queries cover every unit. Grouping by personId and proprietor
   // as well gets the unit total, this person's share and the monthly/مالکانه
@@ -132,6 +155,8 @@ async function getPersonBalance(
     const total = new Map<string, number>();
     const own = new Map<string, number>();
     const proprietor = new Map<string, number>();
+    /** Monthly rows booked to the unit's current renter. */
+    const renterMonthly = new Map<string, number>();
     const add = (map: Map<string, number>, key: string, amount: number) =>
       map.set(key, (map.get(key) ?? 0) + amount);
     rows.forEach((row) => {
@@ -139,8 +164,11 @@ async function getPersonBalance(
       add(total, row.shopId, amount);
       if (row.personId === person.id) add(own, row.shopId, amount);
       if (row.proprietor) add(proprietor, row.shopId, amount);
+      else if (row.personId === renterOf.get(row.shopId)) {
+        add(renterMonthly, row.shopId, amount);
+      }
     });
-    return { total, own, proprietor };
+    return { total, own, proprietor, renterMonthly };
   };
 
   const charged = tally(chargeRows);
@@ -151,6 +179,29 @@ async function getPersonBalance(
     const totalPayment = paid.total.get(shop.id) ?? 0;
     const proprietorCharge = charged.proprietor.get(shop.id) ?? 0;
     const proprietorPayment = paid.proprietor.get(shop.id) ?? 0;
+    const monthly = ledgerTotals(
+      totalCharge - proprietorCharge,
+      totalPayment - proprietorPayment
+    );
+
+    // An owner renting their own unit has nobody to split with.
+    let monthlyShare: MonthlyRenterShare | null = null;
+    if (shop.renterId && shop.renterId !== shop.ownerId) {
+      const renter = ledgerTotals(
+        charged.renterMonthly.get(shop.id) ?? 0,
+        paid.renterMonthly.get(shop.id) ?? 0
+      );
+      monthlyShare = {
+        renterName: shop.renterName ?? "",
+        ownerName: shop.ownerName,
+        renter,
+        owner: ledgerTotals(
+          monthly.charge - renter.charge,
+          monthly.payment - renter.payment
+        ),
+      };
+    }
+
     return {
       shopId: shop.id,
       plaque: shop.plaque,
@@ -162,11 +213,9 @@ async function getPersonBalance(
       balance: totalCharge - totalPayment,
       ownCharge: charged.own.get(shop.id) ?? 0,
       ownPayment: paid.own.get(shop.id) ?? 0,
-      monthly: ledgerTotals(
-        totalCharge - proprietorCharge,
-        totalPayment - proprietorPayment
-      ),
+      monthly,
       proprietor: ledgerTotals(proprietorCharge, proprietorPayment),
+      monthlyShare,
     };
   });
 

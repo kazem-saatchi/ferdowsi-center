@@ -72,6 +72,22 @@ export function sectionUnits(
   return units.filter((unit) => unit[key].charge !== 0 || unit[key].payment !== 0);
 }
 
+/** The renter and owner shares printed under a rented unit's monthly row —
+ *  empty when the unit has no renter (or the owner rents it). Labelled as on
+ *  the unit balance-detail page. */
+export function monthlyShareRows(
+  unit: PersonUnitBalance
+): Array<{ label: string; totals: LedgerTotals }> {
+  const share = unit.monthlyShare;
+  if (!share) return [];
+  const withName = (label: string, name: string) =>
+    name ? `${label} — ${name}` : label;
+  return [
+    { label: withName(labels.renterShareOfMonthly, share.renterName), totals: share.renter },
+    { label: withName(labels.ownerShareOfMonthly, share.ownerName), totals: share.owner },
+  ];
+}
+
 /** Balances here are charge − payment: a positive figure is money still owed,
  *  which is the opposite of the all-shops lists and matches this page. */
 function statusOf(balance: number): string {
@@ -237,20 +253,57 @@ function addSection(
 ) {
   addBanner(sheet, section.title, { height: 22, size: 10, fillColor: GREY.soft });
 
+  const splitRenter = section.key === "monthly";
   const rows = sectionUnits(units, section.key);
   if (rows.length === 0) {
     addNote(sheet, labels.noTransactionsInSection);
   } else {
-    addUnitRows(sheet, rows, (unit) => unit[section.key]);
+    addUnitRows(sheet, rows, (unit) => unit[section.key], splitRenter);
   }
 
   addTotalRow(sheet, section.totalLabel, total, { size: 9, fillColor: GREY.soft });
+
+  if (splitRenter && rows.some((unit) => unit.monthlyShare)) {
+    addBanner(sheet, labels.exRenterShareNote, {
+      height: 20,
+      size: 8,
+      bold: false,
+      italic: true,
+      fillColor: GREY.soft,
+      wrap: true,
+    });
+  }
+}
+
+/** A renter or owner share under a unit row: number column left blank, the
+ *  label across plaque/type/role, smaller italic type. */
+function addShareRow(sheet: Worksheet, label: string, totals: LedgerTotals) {
+  const row = sheet.addRow([
+    "",
+    label,
+    ...Array(LABEL_SPAN - 2).fill(""),
+    totals.charge,
+    totals.payment,
+    totals.balance,
+    statusOf(totals.balance),
+  ]);
+  row.height = 18;
+  sheet.mergeCells(row.number, 2, row.number, LABEL_SPAN);
+
+  for (let col = 1; col <= LAST_COL; col++) {
+    const cell = row.getCell(col);
+    cell.font = { name: FONT, size: 8, italic: true };
+    cell.alignment = centre();
+    if (COLUMNS[col - 1].currency) cell.numFmt = CURRENCY_FORMAT;
+  }
+  border(row);
 }
 
 function addUnitRows(
   sheet: Worksheet,
   units: PersonUnitBalance[],
-  pick: (unit: PersonUnitBalance) => LedgerTotals
+  pick: (unit: PersonUnitBalance) => LedgerTotals,
+  splitRenter: boolean
 ) {
   units.forEach((unit, index) => {
     const figures = pick(unit);
@@ -269,6 +322,12 @@ function addUnitRows(
 
     fill(row, index % 2 === 1 ? GREY.faint : undefined);
     border(row);
+
+    if (splitRenter) {
+      monthlyShareRows(unit).forEach(({ label, totals }) =>
+        addShareRow(sheet, label, totals)
+      );
+    }
   });
 }
 

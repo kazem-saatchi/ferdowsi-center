@@ -27,6 +27,7 @@ import { shopTypeLabel } from "@/utils/shopType";
 import {
   exportPersonBalanceToExcel,
   LEDGER_SECTIONS,
+  monthlyShareRows,
   roleOf,
   sectionUnits,
 } from "@/utils/personBalanceExcel";
@@ -148,6 +149,7 @@ export function PersonBalanceDisplay({
                   units={sectionUnits(units, section.key)}
                   pick={(unit) => unit[section.key]}
                   total={summary[section.key]}
+                  splitRenter={section.key === "monthly"}
                 />
               ))}
               <TableFooter>
@@ -169,20 +171,25 @@ export function PersonBalanceDisplay({
 }
 
 /** One block of the units table: a title row, one row per unit with activity in
- *  this ledger, and the ledger's subtotal. Row numbers restart in each block. */
+ *  this ledger, and the ledger's subtotal. Row numbers restart in each block.
+ *  With `splitRenter`, a rented unit's row is followed by its renter and owner
+ *  shares. */
 function LedgerSection({
   title,
   totalLabel,
   units,
   pick,
   total,
+  splitRenter = false,
 }: {
   title: string;
   totalLabel: string;
   units: PersonUnitBalance[];
   pick: (unit: PersonUnitBalance) => LedgerTotals;
   total: LedgerTotals;
+  splitRenter?: boolean;
 }) {
+  const anySplit = splitRenter && units.some((unit) => unit.monthlyShare);
   return (
     <TableBody>
       <TableRow className="bg-muted/60 hover:bg-muted/60">
@@ -203,7 +210,8 @@ function LedgerSection({
         units.map((unit, index) => {
           const figures = pick(unit);
           return (
-            <TableRow key={unit.shopId}>
+            <React.Fragment key={unit.shopId}>
+            <TableRow>
               <TableCell className="text-center">
                 {formatNumber(index + 1)}
               </TableCell>
@@ -239,11 +247,52 @@ function LedgerSection({
                 </Button>
               </TableCell>
             </TableRow>
+            {splitRenter &&
+              monthlyShareRows(unit).map((share) => (
+                <ShareRow key={share.label} {...share} />
+              ))}
+            </React.Fragment>
           );
         })
       )}
       <TotalRow label={totalLabel} totals={total} subtle />
+      {anySplit && (
+        <TableRow className="hover:bg-transparent">
+          <TableCell
+            colSpan={COLUMN_COUNT}
+            className="text-center text-xs text-muted-foreground"
+          >
+            {labels.exRenterShareNote}
+          </TableCell>
+        </TableRow>
+      )}
     </TableBody>
+  );
+}
+
+/** A renter or owner share under a unit row: smaller and muted so it reads as
+ *  a breakdown of the row above, not another unit. */
+function ShareRow({ label, totals }: { label: string; totals: LedgerTotals }) {
+  return (
+    <TableRow className="text-xs text-muted-foreground hover:bg-transparent">
+      <TableCell />
+      <TableCell colSpan={3} className="text-center">
+        {label}
+      </TableCell>
+      <TableCell className="text-center">
+        {formatNumber(totals.charge)}
+      </TableCell>
+      <TableCell className="text-center">
+        {formatNumber(totals.payment)}
+      </TableCell>
+      <TableCell className={cn("text-center", toneOf(totals.balance))}>
+        {formatNumber(Math.abs(totals.balance))}
+      </TableCell>
+      <TableCell className="text-center">
+        <StatusBadge balance={totals.balance} />
+      </TableCell>
+      <TableCell />
+    </TableRow>
   );
 }
 

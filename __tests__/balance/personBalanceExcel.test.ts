@@ -5,6 +5,7 @@ import type {
 } from "@/app/api/actions/balance/getPersonBalance";
 import {
   buildPersonBalanceWorkbook,
+  monthlyShareRows,
   sectionUnits,
 } from "@/utils/personBalanceExcel";
 import { labels } from "@/utils/label";
@@ -18,7 +19,8 @@ const totals = (charge: number, payment: number): LedgerTotals => ({
 function unit(
   plaque: number,
   monthly: LedgerTotals,
-  proprietor: LedgerTotals
+  proprietor: LedgerTotals,
+  monthlyShare: PersonUnitBalance["monthlyShare"] = null
 ): PersonUnitBalance {
   return {
     shopId: `shop-${plaque}`,
@@ -33,12 +35,18 @@ function unit(
     ownPayment: 0,
     monthly,
     proprietor,
+    monthlyShare,
   };
 }
 
-// 101 has both ledgers, 102 only a monthly one.
+// 101 has both ledgers and a renter; 102 only a monthly ledger and no renter.
 const units = [
-  unit(101, totals(1000, 400), totals(5000, 5000)),
+  unit(101, totals(1000, 400), totals(5000, 5000), {
+    renterName: "رضا",
+    ownerName: "علی احمدی",
+    renter: totals(700, 400),
+    owner: totals(300, 0),
+  }),
   unit(102, totals(300, 0), totals(0, 0)),
 ];
 
@@ -58,6 +66,18 @@ const person = {
   IdNumber: "0012345678",
   phoneOne: "09121234567",
 };
+
+describe("monthlyShareRows", () => {
+  it("is empty for a unit without a renter", () => {
+    expect(monthlyShareRows(units[1])).toEqual([]);
+  });
+
+  it("gives renter then owner, each adding up to the monthly ledger", () => {
+    const [renter, owner] = monthlyShareRows(units[0]);
+    expect(renter.totals.balance + owner.totals.balance).toBe(units[0].monthly.balance);
+    expect(renter.totals.charge + owner.totals.charge).toBe(units[0].monthly.charge);
+  });
+});
 
 describe("sectionUnits", () => {
   it("keeps only units with activity in that ledger", () => {
@@ -89,12 +109,18 @@ describe("buildPersonBalanceWorkbook", () => {
     expect(proprietorTitle).toBeLessThan(proprietorTotal);
     expect(proprietorTotal).toBeLessThan(grandTotal);
 
-    // Two monthly rows, one proprietor row, figures from the right ledger.
+    // Two monthly rows, the rented one followed by its renter and owner shares;
+    // one proprietor row with no shares. Figures come from the right ledger.
     const monthlyRows = rows.slice(monthlyTitle + 1, monthlyTotal);
     expect(monthlyRows.map((row) => [row[1], row[4], row[5], row[6]])).toEqual([
       [101, 1000, 400, 600],
+      [`${labels.renterShareOfMonthly} — رضا`, 700, 400, 300],
+      [`${labels.ownerShareOfMonthly} — علی احمدی`, 300, 0, 300],
       [102, 300, 0, 300],
     ]);
+    // The ex-renter footnote follows the monthly subtotal, and only that one.
+    expect(rows[monthlyTotal + 1][0]).toBe(labels.exRenterShareNote);
+    expect(rows.filter((row) => row[0] === labels.exRenterShareNote)).toHaveLength(1);
     const proprietorRows = rows.slice(proprietorTitle + 1, proprietorTotal);
     expect(proprietorRows.map((row) => [row[1], row[4], row[5], row[6]])).toEqual([
       [101, 5000, 5000, 0],
