@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Building2, Download, Receipt, Scale, Wallet } from "lucide-react";
 import type {
+  LedgerTotals,
   PersonBalanceSummary,
   PersonUnitBalance,
 } from "@/app/api/actions/balance/getPersonBalance";
@@ -25,10 +26,15 @@ import { labels } from "@/utils/label";
 import { shopTypeLabel } from "@/utils/shopType";
 import {
   exportPersonBalanceToExcel,
+  LEDGER_SECTIONS,
   roleOf,
+  sectionUnits,
 } from "@/utils/personBalanceExcel";
 import { cn } from "@/lib/utils";
 import type { SafePerson } from "@/schema/personSchema";
+
+/** Columns in the units table, for the full-width section rows. */
+const COLUMN_COUNT = 9;
 
 interface PersonBalanceDisplayProps {
   person: SafePerson;
@@ -134,72 +140,143 @@ export function PersonBalanceDisplay({
                   <TableHead className="text-center" />
                 </TableRow>
               </TableHeader>
-              <TableBody>
-                {units.map((unit, index) => (
-                  <TableRow key={unit.shopId}>
-                    <TableCell className="text-center">
-                      {formatNumber(index + 1)}
-                    </TableCell>
-                    <TableCell className="text-center font-medium">
-                      {formatNumber(unit.plaque)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {shopTypeLabel(unit.type)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {roleOf(unit)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {formatNumber(unit.totalCharge)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {formatNumber(unit.totalPayment)}
-                    </TableCell>
-                    <TableCell
-                      className={cn("text-center font-semibold", toneOf(unit.balance))}
-                    >
-                      {formatNumber(Math.abs(unit.balance))}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <StatusBadge balance={unit.balance} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/shop-balance-detail/${unit.shopId}`}>
-                          {labels.viewShopLedger}
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              {LEDGER_SECTIONS.map((section) => (
+                <LedgerSection
+                  key={section.key}
+                  title={section.title}
+                  totalLabel={section.totalLabel}
+                  units={sectionUnits(units, section.key)}
+                  pick={(unit) => unit[section.key]}
+                  total={summary[section.key]}
+                />
+              ))}
               <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center font-bold">
-                    {labels.grandTotal}
-                  </TableCell>
-                  <TableCell className="text-center font-bold">
-                    {formatNumber(summary.totalCharge)}
-                  </TableCell>
-                  <TableCell className="text-center font-bold">
-                    {formatNumber(summary.totalPayment)}
-                  </TableCell>
-                  <TableCell
-                    className={cn("text-center font-bold", toneOf(summary.balance))}
-                  >
-                    {formatNumber(Math.abs(summary.balance))}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <StatusBadge balance={summary.balance} />
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
+                <TotalRow
+                  label={labels.totalBalance}
+                  totals={{
+                    charge: summary.totalCharge,
+                    payment: summary.totalPayment,
+                    balance: summary.balance,
+                  }}
+                />
               </TableFooter>
             </Table>
           )}
         </CardContent>
       </div>
     </div>
+  );
+}
+
+/** One block of the units table: a title row, one row per unit with activity in
+ *  this ledger, and the ledger's subtotal. Row numbers restart in each block. */
+function LedgerSection({
+  title,
+  totalLabel,
+  units,
+  pick,
+  total,
+}: {
+  title: string;
+  totalLabel: string;
+  units: PersonUnitBalance[];
+  pick: (unit: PersonUnitBalance) => LedgerTotals;
+  total: LedgerTotals;
+}) {
+  return (
+    <TableBody>
+      <TableRow className="bg-muted/60 hover:bg-muted/60">
+        <TableCell colSpan={COLUMN_COUNT} className="text-center font-bold">
+          {title}
+        </TableCell>
+      </TableRow>
+      {units.length === 0 ? (
+        <TableRow>
+          <TableCell
+            colSpan={COLUMN_COUNT}
+            className="text-center text-muted-foreground"
+          >
+            {labels.noTransactionsInSection}
+          </TableCell>
+        </TableRow>
+      ) : (
+        units.map((unit, index) => {
+          const figures = pick(unit);
+          return (
+            <TableRow key={unit.shopId}>
+              <TableCell className="text-center">
+                {formatNumber(index + 1)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatNumber(unit.plaque)}
+              </TableCell>
+              <TableCell className="text-center">
+                {shopTypeLabel(unit.type)}
+              </TableCell>
+              <TableCell className="text-center">{roleOf(unit)}</TableCell>
+              <TableCell className="text-center">
+                {formatNumber(figures.charge)}
+              </TableCell>
+              <TableCell className="text-center">
+                {formatNumber(figures.payment)}
+              </TableCell>
+              <TableCell
+                className={cn(
+                  "text-center font-semibold",
+                  toneOf(figures.balance)
+                )}
+              >
+                {formatNumber(Math.abs(figures.balance))}
+              </TableCell>
+              <TableCell className="text-center">
+                <StatusBadge balance={figures.balance} />
+              </TableCell>
+              <TableCell className="text-center">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href={`/admin/shop-balance-detail/${unit.shopId}`}>
+                    {labels.viewShopLedger}
+                  </Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          );
+        })
+      )}
+      <TotalRow label={totalLabel} totals={total} subtle />
+    </TableBody>
+  );
+}
+
+function TotalRow({
+  label,
+  totals,
+  subtle = false,
+}: {
+  label: string;
+  totals: LedgerTotals;
+  subtle?: boolean;
+}) {
+  return (
+    <TableRow className={cn(subtle && "bg-muted/30 hover:bg-muted/30")}>
+      <TableCell colSpan={4} className="text-center font-bold">
+        {label}
+      </TableCell>
+      <TableCell className="text-center font-bold">
+        {formatNumber(totals.charge)}
+      </TableCell>
+      <TableCell className="text-center font-bold">
+        {formatNumber(totals.payment)}
+      </TableCell>
+      <TableCell
+        className={cn("text-center font-bold", toneOf(totals.balance))}
+      >
+        {formatNumber(Math.abs(totals.balance))}
+      </TableCell>
+      <TableCell className="text-center">
+        <StatusBadge balance={totals.balance} />
+      </TableCell>
+      <TableCell />
+    </TableRow>
   );
 }
 

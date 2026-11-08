@@ -6,6 +6,14 @@ import { errorMSG, successMSG } from "@/utils/messages";
 import { SafePerson } from "@/schema/personSchema";
 import { ShopType } from "@prisma/client";
 
+/** Charge, payment and charge − payment for one slice of a unit's ledger. */
+export interface LedgerTotals {
+  charge: number;
+  payment: number;
+  /** charge − payment: positive means money is still owed. */
+  balance: number;
+}
+
 /** One unit this person holds, with the unit's own totals — not the slice that
  *  happens to carry this person's id.
  *
@@ -29,6 +37,11 @@ export interface PersonUnitBalance {
   /** The part of the ledger raised against this person. */
   ownCharge: number;
   ownPayment: number;
+  /** The unit totals split by the `proprietor` flag: monthly (ماهانه) and
+   *  proprietor (مالکانه). Together they add up to totalCharge / totalPayment /
+   *  balance. */
+  monthly: LedgerTotals;
+  proprietor: LedgerTotals;
 }
 
 export interface PersonBalanceSummary {
@@ -38,6 +51,8 @@ export interface PersonBalanceSummary {
   totalCharge: number;
   totalPayment: number;
   balance: number;
+  monthly: LedgerTotals;
+  proprietor: LedgerTotals;
 }
 
 interface FindBalanceResponse {
@@ -46,6 +61,10 @@ interface FindBalanceResponse {
   person: SafePerson;
   summary: PersonBalanceSummary;
   units: PersonUnitBalance[];
+}
+
+function ledgerTotals(charge: number, payment: number): LedgerTotals {
+  return { charge, payment, balance: charge - payment };
 }
 
 async function getPersonBalance(
@@ -82,37 +101,46 @@ async function getPersonBalance(
 
   const shopIds = shops.map((shop) => shop.id);
 
-  // Two grouped queries cover every unit. Grouping by personId as well gets the
-  // unit total and this person's share out of the same scan, instead of four
-  // aggregates per unit.
+  // Two grouped queries cover every unit. Grouping by personId and proprietor
+  // as well gets the unit total, this person's share and the monthly/مالکانه
+  // split out of the same scan, instead of several aggregates per unit.
   const [chargeRows, paymentRows] = shopIds.length
     ? await Promise.all([
         db.charge.groupBy({
-          by: ["shopId", "personId"],
+          by: ["shopId", "personId", "proprietor"],
           where: { shopId: { in: shopIds } },
           _sum: { amount: true },
         }),
         db.payment.groupBy({
-          by: ["shopId", "personId"],
+          by: ["shopId", "personId", "proprietor"],
           where: { shopId: { in: shopIds } },
           _sum: { amount: true },
         }),
       ])
     : [[], []];
 
-  const tally = <T extends { shopId: string; personId: string; _sum: { amount: number | null } }>(
+  const tally = <
+    T extends {
+      shopId: string;
+      personId: string;
+      proprietor: boolean;
+      _sum: { amount: number | null };
+    },
+  >(
     rows: T[]
   ) => {
     const total = new Map<string, number>();
     const own = new Map<string, number>();
+    const proprietor = new Map<string, number>();
+    const add = (map: Map<string, number>, key: string, amount: number) =>
+      map.set(key, (map.get(key) ?? 0) + amount);
     rows.forEach((row) => {
       const amount = row._sum.amount ?? 0;
-      total.set(row.shopId, (total.get(row.shopId) ?? 0) + amount);
-      if (row.personId === person.id) {
-        own.set(row.shopId, (own.get(row.shopId) ?? 0) + amount);
-      }
+      add(total, row.shopId, amount);
+      if (row.personId === person.id) add(own, row.shopId, amount);
+      if (row.proprietor) add(proprietor, row.shopId, amount);
     });
-    return { total, own };
+    return { total, own, proprietor };
   };
 
   const charged = tally(chargeRows);
@@ -121,6 +149,8 @@ async function getPersonBalance(
   const units: PersonUnitBalance[] = shops.map((shop) => {
     const totalCharge = charged.total.get(shop.id) ?? 0;
     const totalPayment = paid.total.get(shop.id) ?? 0;
+    const proprietorCharge = charged.proprietor.get(shop.id) ?? 0;
+    const proprietorPayment = paid.proprietor.get(shop.id) ?? 0;
     return {
       shopId: shop.id,
       plaque: shop.plaque,
@@ -132,8 +162,19 @@ async function getPersonBalance(
       balance: totalCharge - totalPayment,
       ownCharge: charged.own.get(shop.id) ?? 0,
       ownPayment: paid.own.get(shop.id) ?? 0,
+      monthly: ledgerTotals(
+        totalCharge - proprietorCharge,
+        totalPayment - proprietorPayment
+      ),
+      proprietor: ledgerTotals(proprietorCharge, proprietorPayment),
     };
   });
+
+  const sumOf = (pick: (unit: PersonUnitBalance) => LedgerTotals) =>
+    ledgerTotals(
+      units.reduce((sum, unit) => sum + pick(unit).charge, 0),
+      units.reduce((sum, unit) => sum + pick(unit).payment, 0)
+    );
 
   const summary: PersonBalanceSummary = {
     unitCount: units.length,
@@ -141,6 +182,8 @@ async function getPersonBalance(
     totalCharge: units.reduce((sum, unit) => sum + unit.totalCharge, 0),
     totalPayment: units.reduce((sum, unit) => sum + unit.totalPayment, 0),
     balance: units.reduce((sum, unit) => sum + unit.balance, 0),
+    monthly: sumOf((unit) => unit.monthly),
+    proprietor: sumOf((unit) => unit.proprietor),
   };
 
   return {
