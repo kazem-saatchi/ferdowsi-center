@@ -27,13 +27,10 @@ const OWNER = { id: "owner-1", name: "محمد صفری" };
 const RENTER = { id: "renter-1", name: "رامین قدردان" };
 
 /**
- * Local midnight, matching what `startOfDay` produces. Using UTC here would
- * make every assertion timezone-dependent.
+ * A billing day: UTC midnight of the date, which is what `toBillingDay`
+ * returns for that Tehran calendar day. Independent of the machine's zone.
  */
-const d = (iso: string) => {
-  const [year, month, day] = iso.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
+const d = (iso: string) => new Date(`${iso}T00:00:00Z`);
 
 let seq = 0;
 

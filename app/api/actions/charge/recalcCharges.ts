@@ -1,9 +1,10 @@
 import { Prisma, HistoryType } from "@prisma/client";
-import { startOfDay, addDays } from "date-fns";
 import {
   BillingWindow,
+  addBillingDays,
   allocateByDays,
   segmentWindowBySpans,
+  toBillingDay,
 } from "./utils";
 
 /**
@@ -140,7 +141,7 @@ export async function recomputeShopMonthlyCharges(
 
     if (totalOldDays <= 0) continue;
 
-    const windowStart = startOfDay(
+    const windowStart = toBillingDay(
       opCharges.reduce(
         (min, c) => (c.date < min ? c.date : min),
         opCharges[0].date
@@ -148,11 +149,11 @@ export async function recomputeShopMonthlyCharges(
     );
     // Window of exactly totalOldDays days, independent of any +1/-1 convention
     // differences between the original generators.
-    const windowEndExclusive = addDays(windowStart, totalOldDays);
+    const windowEndExclusive = addBillingDays(windowStart, totalOldDays);
     const window: BillingWindow = {
       startDate: windowStart,
       // BillingWindow.endDate is the last billed day, i.e. inclusive.
-      endDate: addDays(windowStart, totalOldDays - 1),
+      endDate: addBillingDays(windowStart, totalOldDays - 1),
     };
 
     // New segments derived from the (updated) history spans, aggregated per
@@ -217,7 +218,7 @@ export async function recomputeShopMonthlyCharges(
     // Money already recorded inside this window, per person.
     const paidByPerson = new Map<string, number>();
     for (const p of payments) {
-      const day = startOfDay(p.date);
+      const day = toBillingDay(p.date);
       if (day < windowStart || day >= windowEndExclusive) continue;
       paidByPerson.set(p.personId, (paidByPerson.get(p.personId) ?? 0) + p.amount);
     }
@@ -259,7 +260,7 @@ export async function recomputeShopMonthlyCharges(
       operationId,
       operationName: opCharges[0].operationName,
       windowStart: windowStart.toISOString(),
-      windowEnd: addDays(windowEndExclusive, -1).toISOString(),
+      windowEnd: addBillingDays(windowEndExclusive, -1).toISOString(),
       perPerson,
       hasPaymentConflict,
       noOccupantInWindow,

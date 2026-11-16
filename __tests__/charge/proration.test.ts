@@ -4,6 +4,7 @@ import {
   countBillableDays,
   prorateWindow,
   segmentWindowBySpans,
+  toBillingDay,
 } from "@/app/api/actions/charge/utils";
 import { addDays } from "date-fns";
 
@@ -16,13 +17,10 @@ jest.mock("@/lib/db", () => ({
 }));
 
 /**
- * Local midnight, matching what `startOfDay` produces. Using UTC here would
- * make every assertion timezone-dependent.
+ * A billing day: UTC midnight of the date, which is what `toBillingDay`
+ * returns for that Tehran calendar day. Independent of the machine's zone.
  */
-const d = (iso: string) => {
-  const [year, month, day] = iso.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
+const d = (iso: string) => new Date(`${iso}T00:00:00Z`);
 
 /** The 31-day window every other charge test uses (مرداد 1404). */
 const WINDOW = { startDate: d("2025-07-22"), endDate: d("2025-08-21") };
@@ -78,8 +76,8 @@ describe("countBillableDays", () => {
 
   it("ignores the time of day on either side", () => {
     const noisy = {
-      startDate: new Date(2025, 7, 16, 23, 45),
-      endDate: new Date(2025, 7, 20, 0, 30),
+      startDate: new Date("2025-08-16T20:15:00Z"), // 16 Aug 23:45 Tehran
+      endDate: new Date("2025-08-19T21:00:00Z"), // 20 Aug 00:30 Tehran
     };
     expect(countBillableDays(noisy, WINDOW)).toBe(4);
   });
@@ -144,6 +142,82 @@ describe("the handover day", () => {
 
     expect(days).toEqual([10, 15, 6]);
     expect(days.reduce((a, b) => a + b, 0)).toBe(31);
+  });
+});
+
+describe("days are Tehran calendar days, whatever the server's time zone", () => {
+  /**
+   * Real values from اردیبهشت 1404 (31 days, 1 Ordibehesht = 21 Apr 2025).
+   *
+   * The month picker hands over Tehran MIDNIGHT, which is 20:30 UTC on the
+   * PREVIOUS Gregorian day. The day picker keeps the time of day it was picked
+   * at, here 20:20 Tehran. A server running in UTC used to truncate both to the
+   * UTC day, so the window started on 20 Apr while the handover stayed on
+   * 21 Apr — and the outgoing occupant was billed one day they never held.
+   *
+   * Run this file with TZ=UTC as well as TZ=Asia/Tehran: it must pass in both.
+   */
+  const ORDIBEHESHT_1404 = {
+    startDate: new Date("2025-04-20T20:30:00Z"), // 1404/02/01 00:00 Tehran
+    endDate: new Date("2025-05-20T20:30:00Z"), // 1404/02/31 00:00 Tehran
+  };
+  const utcDay = (iso: string) => new Date(`${iso}T00:00:00Z`);
+
+  it("counts a 31-day Jalali month as 31 days", () => {
+    expect(billingWindowDays(ORDIBEHESHT_1404)).toBe(31);
+  });
+
+  it("bills nothing to the outgoing occupant when the handover is on the 1st", () => {
+    const handover = new Date("2025-04-21T16:50:00Z"); // 1404/02/01 20:20 Tehran
+    const segments = prorateWindow(
+      [
+        { startDate: utcDay("2024-01-01"), endDate: handover },
+        { startDate: handover, endDate: null },
+      ],
+      ORDIBEHESHT_1404,
+      12_500_000
+    );
+
+    expect(segments).toHaveLength(1);
+    expect(segments[0].days).toBe(31);
+    expect(segments[0].amount).toBe(12_500_000);
+    expect(segments[0].startDate).toEqual(utcDay("2025-04-21"));
+  });
+
+  it("splits a mid-month handover on the picked Tehran day", () => {
+    const handover = new Date("2025-04-30T16:51:00Z"); // 1404/02/10 20:21 Tehran
+    const days = prorateWindow(
+      [
+        { startDate: utcDay("2024-01-01"), endDate: handover },
+        { startDate: handover, endDate: null },
+      ],
+      ORDIBEHESHT_1404,
+      12_500_000
+    ).map((s) => s.days);
+
+    // 1st..9th to the outgoing occupant, 10th..31st to the incoming one.
+    expect(days).toEqual([9, 22]);
+  });
+
+  it("bills the last day of the month to an occupant who starts on it", () => {
+    const handover = new Date("2025-05-21T16:55:00Z"); // 1404/02/31 20:25 Tehran
+    const days = prorateWindow(
+      [
+        { startDate: utcDay("2024-01-01"), endDate: handover },
+        { startDate: handover, endDate: null },
+      ],
+      ORDIBEHESHT_1404,
+      12_500_000
+    ).map((s) => s.days);
+
+    expect(days).toEqual([30, 1]);
+  });
+
+  it("puts a time just after Tehran midnight on the Tehran day, not the UTC one", () => {
+    // 1404/02/11 00:15 Tehran is still 10 Ordibehesht in UTC.
+    expect(toBillingDay(new Date("2025-04-30T20:45:00Z"))).toEqual(
+      utcDay("2025-05-01")
+    );
   });
 });
 

@@ -2,7 +2,6 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { errorMSG } from "@/utils/messages";
 import { HistoryType, ShopHistory, ShopType } from "@prisma/client";
-import { addDays, differenceInDays, startOfDay } from "date-fns";
 
 
 const getHistoriesSchema = z.object({
@@ -65,22 +64,27 @@ export async function getRelatedHistories(
     };
   }
 
-  // Fetch ShopHistory entries of specified types
+  // Spans carry whatever time of day they were picked at, so compare against
+  // whole Tehran days with a day of slack on each side. A raw `lte: endDate`
+  // dropped a span starting on the window's last day: the month picker's end
+  // is Tehran midnight, and a handover picked that evening is later than it.
+  // The proration helpers clip every span to the window, so fetching one too
+  // many is harmless.
+  const billingWindow = { startDate, endDate };
   const relevantHistories = await db.shopHistory.findMany({
     where: {
       ...(shopId ? { shopId } : {}),
       type: { in: ["ActiveByOwner", "ActiveByRenter", "InActive"] }, // Exclude "Ownership"
-      startDate: { lte: endDate },
+      startDate: { lt: addBillingDays(billingWindowEndExclusive(billingWindow), 1) },
       OR: [
         { endDate: null }, // Include ongoing periods
-        { endDate: { gte: startDate } }, // Include overlapping periods
+        { endDate: { gte: addBillingDays(toBillingDay(startDate), -1) } }, // Include overlapping periods
       ],
     },
     orderBy: { startDate: "asc" },
   });
 
-  // Calculate the number of days (inclusive)
-  const totalDays = differenceInDays(endDate, startDate) + 1;
+  const totalDays = billingWindowDays(billingWindow);
 
   return {
     success: true,
@@ -109,7 +113,53 @@ export async function getRelatedHistories(
 //
 // Everything below converts (2) to a half-open window once, then works purely
 // in half-open arithmetic — no `+ 1` anywhere near a span.
+//
+// WHICH DAY A DATE FALLS ON is decided in Tehran time, never in the server's.
+// The Jalali month picker sends Tehran MIDNIGHT (20:30 UTC the day before) and
+// the day picker sends the time of day it was used at. date-fns' startOfDay
+// works in the server's zone, so a UTC server put the window a day earlier
+// than every evening handover, and the outgoing occupant was billed a day
+// they did not hold. Days are therefore represented as UTC midnight of the
+// Tehran calendar date, and all day arithmetic is plain UTC milliseconds.
 //--------------------------------------------------------------------------------------
+
+/** The building is in Iran; a billing day is a day on its calendar. */
+export const BILLING_TIME_ZONE = "Asia/Tehran";
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+const billingDayFormat = new Intl.DateTimeFormat("en-US-u-ca-gregory-nu-latn", {
+  timeZone: BILLING_TIME_ZONE,
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+});
+
+/**
+ * The Tehran calendar day `date` falls on, as UTC midnight of that date.
+ * Idempotent: a value it returned maps back to itself.
+ */
+export function toBillingDay(date: Date): Date {
+  const parts = billingDayFormat.formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((p) => p.type === type)?.value);
+  return new Date(Date.UTC(part("year"), part("month") - 1, part("day")));
+}
+
+/** Shift a billing day by whole days. Never crosses a DST change: it is UTC. */
+export function addBillingDays(day: Date, days: number): Date {
+  return new Date(day.getTime() + days * MS_PER_DAY);
+}
+
+/** Whole days from one billing day to another. */
+function billingDaysBetween(from: Date, to: Date): number {
+  return Math.round((to.getTime() - from.getTime()) / MS_PER_DAY);
+}
+
+/** The day after the window's last billed day. */
+function billingWindowEndExclusive(window: BillingWindow): Date {
+  return addBillingDays(toBillingDay(window.endDate), 1);
+}
 
 /** A billing period. `endDate` is INCLUSIVE — it is a billed day. */
 export interface BillingWindow {
@@ -134,9 +184,9 @@ export interface BillableSegment<T> {
 
 /** Days in a billing window, `endDate` inclusive. */
 export function billingWindowDays(window: BillingWindow): number {
-  return differenceInDays(
-    addDays(startOfDay(window.endDate), 1),
-    startOfDay(window.startDate)
+  return billingDaysBetween(
+    toBillingDay(window.startDate),
+    billingWindowEndExclusive(window)
   );
 }
 
@@ -145,8 +195,8 @@ export function billableStartDate(
   span: BillableSpan,
   window: BillingWindow
 ): Date {
-  const spanStart = startOfDay(span.startDate);
-  const windowStart = startOfDay(window.startDate);
+  const spanStart = toBillingDay(span.startDate);
+  const windowStart = toBillingDay(window.startDate);
   return spanStart > windowStart ? spanStart : windowStart;
 }
 
@@ -159,18 +209,17 @@ export function countBillableDays(
   span: BillableSpan,
   window: BillingWindow
 ): number {
-  const windowStart = startOfDay(window.startDate);
-  const windowEndExclusive = addDays(startOfDay(window.endDate), 1);
+  const windowEndExclusive = billingWindowEndExclusive(window);
 
   const from = billableStartDate(span, window);
   // A still-open span runs to the end of the window.
   const spanEndExclusive = span.endDate
-    ? startOfDay(span.endDate)
+    ? toBillingDay(span.endDate)
     : windowEndExclusive;
   const to =
     spanEndExclusive < windowEndExclusive ? spanEndExclusive : windowEndExclusive;
 
-  const days = differenceInDays(to, from);
+  const days = billingDaysBetween(from, to);
   return days > 0 ? days : 0;
 }
 
