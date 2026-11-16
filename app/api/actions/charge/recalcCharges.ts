@@ -98,12 +98,16 @@ const minDate = (a: Date, b: Date) => (a < b ? a : b);
  *
  * Only windows whose split actually changed are returned. When `apply` is true
  * the affected charge rows are deleted and recreated inside the given
- * transaction, preserving the original `operationId`.
+ * transaction, preserving the original `operationId`. `shouldApply` narrows
+ * that to the windows it accepts; every changed window is still returned.
  */
 export async function recomputeShopMonthlyCharges(
   tx: Prisma.TransactionClient,
   shopId: string,
-  options: { apply: boolean }
+  options: {
+    apply: boolean;
+    shouldApply?: (diff: OperationChargeDiff) => boolean;
+  }
 ): Promise<OperationChargeDiff[]> {
   const charges = await tx.charge.findMany({
     where: { shopId, proprietor: false, forRent: false },
@@ -256,7 +260,7 @@ export async function recomputeShopMonthlyCharges(
 
     if (!changed) continue;
 
-    results.push({
+    const diff: OperationChargeDiff = {
       operationId,
       operationName: opCharges[0].operationName,
       windowStart: windowStart.toISOString(),
@@ -264,12 +268,17 @@ export async function recomputeShopMonthlyCharges(
       perPerson,
       hasPaymentConflict,
       noOccupantInWindow,
-    });
+    };
+    results.push(diff);
 
     // Applying an empty split would run the deleteMany and create nothing,
     // wiping a billed month with no trace. Leave the rows alone and let the
     // caller act on `noOccupantInWindow` instead.
-    if (options.apply && !noOccupantInWindow) {
+    if (
+      options.apply &&
+      !noOccupantInWindow &&
+      (options.shouldApply?.(diff) ?? true)
+    ) {
       const template = opCharges[0];
 
       await tx.charge.deleteMany({
