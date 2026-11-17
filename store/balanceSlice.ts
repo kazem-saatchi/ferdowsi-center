@@ -154,8 +154,8 @@ export const createBalanceSlice: StateCreator<
     fileName,
   }: ShopsBalanceExportOptions) => {
     const state = get();
-    // The rent page feeds allBalances (one balance per shop); the two shop
-    // pages feed allBalanceDetails (owner/renter/total).
+    // The two shop pages feed allBalanceDetails (owner/renter/total). The rent
+    // page exports its own rows through utils/rentBalanceExport instead.
     const rows: ShopsBalanceRow[] | null =
       variant === "rent" ? state.allBalances : state.allBalanceDetails;
     if (!rows || rows.length === 0) {

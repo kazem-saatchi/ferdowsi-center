@@ -19,31 +19,28 @@ import {
   PageTitle,
   PageBody,
 } from "@/components/layout/Page";
-import { useStore } from "@/store/store";
 import { useGetAllRentsBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
 import { shopTypeLabel } from "@/utils/shopType";
 import {
+  RENT_STATUS_LABELS,
   rentStatus,
   RentSort,
   RentStatus,
   sortRentBalances,
   summarizeRentBalances,
 } from "@/utils/rentBalance";
-import { useEffect, useMemo, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
+import {
+  exportRentsBalanceToExcel,
+  exportRentsBalanceToPDF,
+} from "@/utils/rentBalanceExport";
+import { useMemo, useState } from "react";
 import Pager from "@/components/Pager";
 import ListToolbar from "@/components/table/ListToolbar";
 import { useClientList } from "@/hooks/useClientList";
 
 const RENT_TYPES = ["BOARD", "PARKING"] as const;
 type RentTypeFilter = (typeof RENT_TYPES)[number] | "all";
-
-const STATUS_LABELS: Record<RentStatus, string> = {
-  debtor: labels.statusDebtor,
-  settled: labels.statusSettled,
-  creditor: labels.statusCreditor,
-};
 
 const SORT_LABELS: Record<RentSort, string> = {
   plaque: labels.rentSortPlaque,
@@ -59,15 +56,6 @@ export default function AllRentsBalancePage() {
     error,
     refetch,
   } = useGetAllRentsBalance();
-
-  const { setAllBalances, exportShopsBalanceToExcel, exportAllBalanceToPdf } =
-    useStore(
-      useShallow((state) => ({
-        setAllBalances: state.setAllBalances,
-        exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-        exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
-      }))
-    );
 
   const [typeFilter, setTypeFilter] = useState<RentTypeFilter>("all");
   const [statusFilter, setStatusFilter] = useState<RentStatus | "all">("all");
@@ -88,11 +76,6 @@ export default function AllRentsBalancePage() {
       (typeFilter === "all" || shop.type === typeFilter) &&
       (statusFilter === "all" || rentStatus(shop.balance) === statusFilter)
   );
-
-  // The store feeds the PDF/Excel exports, which read it on click.
-  useEffect(() => {
-    if (rows) setAllBalances(rows);
-  }, [rows, setAllBalances]);
 
   if (isLoading) {
     return <LoadingComponent text={labels.loadingData} />;
@@ -117,16 +100,18 @@ export default function AllRentsBalancePage() {
         <PageTitle>{labels.allRentsBalance}</PageTitle>
       </PageHeader>
       <PageBody>
+        {/* Downloads cover every unit in plaque order, whatever the filters. */}
         <div className="flex flex-row items-center justify-start gap-2 mb-4">
-          <Button onClick={exportAllBalanceToPdf}>
+          <Button
+            disabled={!rows?.length}
+            onClick={() => exportRentsBalanceToPDF(rows ?? [])}
+          >
             {labels.downloadAsPDF}
           </Button>
           <Button
+            disabled={!rows?.length}
             onClick={() =>
-              void exportShopsBalanceToExcel({
-                variant: "rent",
-                lastBankTransactionDate,
-              })
+              void exportRentsBalanceToExcel(rows ?? [], lastBankTransactionDate)
             }
           >
             {labels.downloadAsExcel}
@@ -168,9 +153,9 @@ export default function AllRentsBalancePage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{labels.rentAllStatuses}</SelectItem>
-              {(Object.keys(STATUS_LABELS) as RentStatus[]).map((status) => (
+              {(Object.keys(RENT_STATUS_LABELS) as RentStatus[]).map((status) => (
                 <SelectItem key={status} value={status}>
-                  {STATUS_LABELS[status]}
+                  {RENT_STATUS_LABELS[status]}
                 </SelectItem>
               ))}
             </SelectContent>

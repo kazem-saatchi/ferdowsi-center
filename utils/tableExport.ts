@@ -22,10 +22,23 @@ interface ExportOptions {
   data: any[];
 }
 
-export const exportToPDF = ({ fileName, columns, data }: ExportOptions) => {
+interface PdfExportOptions extends ExportOptions {
+  /** Landscape fits a wide list (ten or more columns) on A4. */
+  orientation?: "portrait" | "landscape";
+  /** jspdf-autotable column styles by column index, merged over the default. */
+  columnStyles?: Record<number, Record<string, unknown>>;
+}
+
+export const exportToPDF = ({
+  fileName,
+  columns,
+  data,
+  orientation = "portrait",
+  columnStyles,
+}: PdfExportOptions) => {
   // 1. Initialize jsPDF
   const doc = new jsPDF({
-    orientation: "portrait",
+    orientation,
     unit: "mm",
   });
 
@@ -69,6 +82,7 @@ export const exportToPDF = ({ fileName, columns, data }: ExportOptions) => {
     },
     columnStyles: {
       0: { cellWidth: "auto" }, // Adjust as needed
+      ...columnStyles,
     },
   });
   doc.save(`${fileName}.pdf`);

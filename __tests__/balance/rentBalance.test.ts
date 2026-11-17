@@ -1,5 +1,8 @@
+import { labels } from "@/utils/label";
 import {
   buildRentBalanceRows,
+  RENT_PDF_COLUMNS,
+  rentBalancePdfRows,
   monthsBehind,
   RentShopInput,
   rentStatus,
@@ -102,5 +105,27 @@ describe("buildRentBalanceRows", () => {
     expect(sortRentBalances(rows, "debt").map((r) => r.plaque)).toEqual([901, 903, 902]);
     expect(sortRentBalances(rows, "monthsBehind").map((r) => r.plaque)).toEqual([901, 902, 903]);
     expect(sortRentBalances([...rows].reverse(), "plaque").map((r) => r.plaque)).toEqual([901, 902, 903]);
+  });
+
+  it("prints PDF rows with every column filled and the sign as a status word", () => {
+    const pdf = rentBalancePdfRows(rows);
+    expect(pdf[0]).toEqual({
+      plaque: "۹۰۱",
+      type: labels.board,
+      owner: "مدیریت",
+      renter: labels.noValue,
+      rent: "۴,۰۰۰,۰۰۰",
+      charged: "۱۲,۰۰۰,۰۰۰",
+      paid: "۴,۰۰۰,۰۰۰",
+      remaining: "۸,۰۰۰,۰۰۰",
+      status: labels.statusDebtor,
+      months: "۲",
+    });
+    expect(pdf[2]).toMatchObject({ rent: labels.rentNotSet, status: labels.statusSettled, months: labels.noValue });
+    for (const column of RENT_PDF_COLUMNS) {
+      // exportToPDF reformats any accessor containing these words.
+      expect(column.accessor).not.toMatch(/balance|amount/i);
+      expect(pdf[0][column.accessor]).not.toBeUndefined();
+    }
   });
 });

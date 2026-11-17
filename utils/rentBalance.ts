@@ -1,5 +1,8 @@
 import type { ShopType } from "@prisma/client";
 import type { ShopsBalanceData } from "@/schema/balanceSchema";
+import { formatNumber, toPersianDigits } from "./formatNumber";
+import { labels } from "./label";
+import { shopTypeLabel } from "./shopType";
 
 /** One row of the rent balance list (BOARD and PARKING units). It is a
  *  superset of ShopsBalanceData, so the existing rent PDF/Excel exports keep
@@ -145,4 +148,51 @@ export function sortRentBalances(
     );
   }
   return copy.sort(byPlaque);
+}
+
+export const RENT_STATUS_LABELS: Record<RentStatus, string> = {
+  debtor: labels.statusDebtor,
+  settled: labels.statusSettled,
+  creditor: labels.statusCreditor,
+};
+
+export const rentStatusLabel = (balance: number): string =>
+  RENT_STATUS_LABELS[rentStatus(balance)];
+
+/** Columns of the rent PDF. The cells arrive already formatted, so none of
+ *  these accessors may contain "balance" or "amount" — exportToPDF would run
+ *  formatNumber over them a second time. */
+export const RENT_PDF_COLUMNS = [
+  { header: labels.plaque, accessor: "plaque" },
+  { header: labels.type, accessor: "type" },
+  { header: labels.ownerName, accessor: "owner" },
+  { header: labels.renterName, accessor: "renter" },
+  { header: labels.rentMonthly, accessor: "rent" },
+  { header: labels.rentTotalCharged, accessor: "charged" },
+  { header: labels.rentTotalPaid, accessor: "paid" },
+  { header: labels.totalBalance, accessor: "remaining" },
+  { header: labels.status, accessor: "status" },
+  { header: labels.rentMonthsBehind, accessor: "months" },
+] as const;
+
+export type RentPdfRow = Record<(typeof RENT_PDF_COLUMNS)[number]["accessor"], string>;
+
+/** One printable row per unit. The balance is printed without its sign, next
+ *  to its status word, the way the screen shows it. */
+export function rentBalancePdfRows(rows: RentBalanceData[]): RentPdfRow[] {
+  return rows.map((row) => ({
+    plaque: toPersianDigits(row.plaque),
+    type: shopTypeLabel(row.type),
+    owner: row.ownerName,
+    renter: row.renterName || labels.noValue,
+    rent: row.monthlyRent > 0 ? formatNumber(row.monthlyRent) : labels.rentNotSet,
+    charged: formatNumber(row.totalCharge),
+    paid: formatNumber(row.totalPayment),
+    remaining: formatNumber(Math.abs(row.balance)),
+    status: rentStatusLabel(row.balance),
+    // The bare number: the header already says months, and jsPDF has no
+    // bidi support, so "۲ ماه" would print as "ماه ۲".
+    months:
+      row.monthsBehind !== null ? toPersianDigits(row.monthsBehind) : labels.noValue,
+  }));
 }
