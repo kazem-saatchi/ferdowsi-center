@@ -5,6 +5,7 @@ import {
   ShopsBalanceData,
 } from "@/schema/balanceSchema";
 import { Charge, Payment, ShopType } from "@prisma/client";
+import { buildRentBalanceRows, RentBalanceData } from "./rentBalance";
 
 export interface ShopBalanceResponce {
   chargeList: Charge[];
@@ -200,44 +201,48 @@ export async function calculateAllShopMonthlyBalance(
   return { results, totalCount };
 }
 
-export async function calculateAllRentsBalance(): Promise<ShopsBalanceData[]> {
+export async function calculateAllRentsBalance(): Promise<RentBalanceData[]> {
   // BOARD (تابلو) and PARKING are rented out by the building management and are
   // billed only as rent, so they get their own list. KIOSK is deliberately not
   // here: it carries a monthly charge as well as rent, so it stays in the
   // all-shops views until that split is designed.
   const shopType: ShopType[] = ["BOARD", "PARKING"];
 
-  // Three aggregate queries for every unit rather than two per unit. On these
-  // types `proprietor` marks rent owed by the occupant, not a مالکانه levy.
-  const [shops, chargeSums, paymentSums] = await Promise.all([
+  // Four queries for every unit rather than a few per unit. On these types
+  // `proprietor` marks rent owed by the occupant, not a مالکانه levy.
+  const [shops, chargeSums, paymentSums, references] = await Promise.all([
     db.shop.findMany({
       where: { type: { in: shopType } },
       orderBy: { plaque: "asc" },
-      select: { id: true, plaque: true, ownerName: true, renterName: true },
+      select: {
+        id: true,
+        plaque: true,
+        type: true,
+        ownerName: true,
+        renterName: true,
+        RentAmount: true,
+        rentDate: true,
+      },
     }),
     db.charge.groupBy({
       by: ["shopId"],
       where: { proprietor: true, shop: { type: { in: shopType } } },
       _sum: { amount: true },
+      _max: { date: true },
     }),
     db.payment.groupBy({
       by: ["shopId"],
       where: { proprietor: true, shop: { type: { in: shopType } } },
       _sum: { amount: true },
+      _max: { date: true },
+    }),
+    // The same reference the rent generator bills from (one per unit, since
+    // shopId + proprietor is unique).
+    db.shopChargeReference.findMany({
+      where: { proprietor: true, forRent: true, shop: { type: { in: shopType } } },
+      select: { shopId: true, totalAmount: true },
     }),
   ]);
 
-  const charged = new Map(
-    chargeSums.map((row) => [row.shopId, row._sum.amount ?? 0])
-  );
-  const paid = new Map(
-    paymentSums.map((row) => [row.shopId, row._sum.amount ?? 0])
-  );
-
-  return shops.map((shop) => ({
-    plaque: shop.plaque,
-    balance: (paid.get(shop.id) ?? 0) - (charged.get(shop.id) ?? 0),
-    ownerName: shop.ownerName,
-    renterName: shop.renterName,
-  }));
+  return buildRentBalanceRows(shops, chargeSums, paymentSums, references);
 }

@@ -1,10 +1,18 @@
 "use client";
 import EmptyState from "@/components/EmptyState";
 
-import { ShopsBalanceTable } from "@/components/balance/ShopsBalanceTable";
+import { RentsBalanceTable } from "@/components/balance/RentsBalanceTable";
+import { RentsBalanceSummary } from "@/components/balance/RentsBalanceSummary";
 import ErrorComponent from "@/components/ErrorComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Page,
   PageHeader,
@@ -14,11 +22,34 @@ import {
 import { useStore } from "@/store/store";
 import { useGetAllRentsBalance } from "@/tanstack/query/balanceQuery";
 import { labels } from "@/utils/label";
-import { useEffect } from "react";
+import { shopTypeLabel } from "@/utils/shopType";
+import {
+  rentStatus,
+  RentSort,
+  RentStatus,
+  sortRentBalances,
+  summarizeRentBalances,
+} from "@/utils/rentBalance";
+import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import Pager from "@/components/Pager";
 import ListToolbar from "@/components/table/ListToolbar";
 import { useClientList } from "@/hooks/useClientList";
+
+const RENT_TYPES = ["BOARD", "PARKING"] as const;
+type RentTypeFilter = (typeof RENT_TYPES)[number] | "all";
+
+const STATUS_LABELS: Record<RentStatus, string> = {
+  debtor: labels.statusDebtor,
+  settled: labels.statusSettled,
+  creditor: labels.statusCreditor,
+};
+
+const SORT_LABELS: Record<RentSort, string> = {
+  plaque: labels.rentSortPlaque,
+  debt: labels.rentSortDebt,
+  monthsBehind: labels.rentSortMonthsBehind,
+};
 
 export default function AllRentsBalancePage() {
   const {
@@ -29,47 +60,56 @@ export default function AllRentsBalancePage() {
     refetch,
   } = useGetAllRentsBalance();
 
-  const {
-    allBalances,
-    setAllBalances,
-    exportShopsBalanceToExcel,
-    exportAllBalanceToPdf,
-  } = useStore(
-    useShallow((state) => ({
-      allBalances: state.allBalances,
-      setAllBalances: state.setAllBalances,
-      exportAllBalanceToPdf: state.exportAllBalanceToPDF,
-      exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
-    }))
-  );
+  const { setAllBalances, exportShopsBalanceToExcel, exportAllBalanceToPdf } =
+    useStore(
+      useShallow((state) => ({
+        setAllBalances: state.setAllBalances,
+        exportAllBalanceToPdf: state.exportAllBalanceToPDF,
+        exportShopsBalanceToExcel: state.exportShopsBalanceToExcel,
+      }))
+    );
 
+  const [typeFilter, setTypeFilter] = useState<RentTypeFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<RentStatus | "all">("all");
+  const [sort, setSort] = useState<RentSort>("plaque");
+
+  const rows = rentData?.data?.shopsBalance;
   const lastBankTransactionDate = rentData?.data?.lastBankTransactionDate;
 
-  const list = useClientList(allBalances, (shop) => [
-    shop.plaque,
-    shop.ownerName,
-    shop.renterName,
-  ]);
+  const sortedRows = useMemo(
+    () => (rows ? sortRentBalances(rows, sort) : undefined),
+    [rows, sort]
+  );
 
+  const list = useClientList(
+    sortedRows,
+    (shop) => [shop.plaque, shop.ownerName, shop.renterName],
+    (shop) =>
+      (typeFilter === "all" || shop.type === typeFilter) &&
+      (statusFilter === "all" || rentStatus(shop.balance) === statusFilter)
+  );
+
+  // The store feeds the PDF/Excel exports, which read it on click.
   useEffect(() => {
-    if (rentData?.data?.shopsBalance) {
-      setAllBalances(rentData?.data?.shopsBalance);
-    }
-  }, [rentData, setAllBalances]);
+    if (rows) setAllBalances(rows);
+  }, [rows, setAllBalances]);
 
   if (isLoading) {
     return <LoadingComponent text={labels.loadingData} />;
   }
 
-  if (isError) {
+  if (isError || !rentData?.success) {
     return (
       <ErrorComponent
-        error={error}
-        message={labels.errorOccurred}
+        // A failed action resolves with success:false rather than throwing.
+        error={error ?? new Error(rentData?.message || labels.errorOccurred)}
+        message={rentData?.message || labels.errorOccurred}
         retry={refetch}
       />
     );
   }
+
+  const summary = summarizeRentBalances(list.matching);
 
   return (
     <Page>
@@ -92,6 +132,71 @@ export default function AllRentsBalancePage() {
             {labels.downloadAsExcel}
           </Button>
         </div>
+        <RentsBalanceSummary
+          summary={summary}
+          lastBankTransactionDate={lastBankTransactionDate}
+        />
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Select
+            value={typeFilter}
+            onValueChange={(value) => {
+              setTypeFilter(value as RentTypeFilter);
+              list.resetPage();
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-[160px]" aria-label={labels.type}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{labels.rentAllTypes}</SelectItem>
+              {RENT_TYPES.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {shopTypeLabel(type)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value as RentStatus | "all");
+              list.resetPage();
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-[160px]" aria-label={labels.status}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{labels.rentAllStatuses}</SelectItem>
+              {(Object.keys(STATUS_LABELS) as RentStatus[]).map((status) => (
+                <SelectItem key={status} value={status}>
+                  {STATUS_LABELS[status]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={sort}
+            onValueChange={(value) => {
+              setSort(value as RentSort);
+              list.resetPage();
+            }}
+          >
+            <SelectTrigger
+              className="w-full sm:w-[180px]"
+              aria-label={labels.sortByColumn}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(SORT_LABELS) as RentSort[]).map((key) => (
+                <SelectItem key={key} value={key}>
+                  {SORT_LABELS[key]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="mb-4">
           <ListToolbar
             query={list.query}
@@ -104,7 +209,7 @@ export default function AllRentsBalancePage() {
         </div>
         {list.pageItems.length > 0 ? (
           <>
-            <ShopsBalanceTable shopsBlances={list.pageItems} />
+            <RentsBalanceTable rows={list.pageItems} />
             <Pager
               page={list.page}
               totalPages={list.totalPages}

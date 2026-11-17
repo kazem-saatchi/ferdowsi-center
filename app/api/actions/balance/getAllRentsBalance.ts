@@ -1,7 +1,7 @@
 "use server";
 
-import { ShopsBalanceData } from "@/schema/balanceSchema";
 import { calculateAllRentsBalance } from "@/utils/calculateBalance";
+import type { RentBalanceData } from "@/utils/rentBalance";
 import { adminReadAction } from "@/utils/handleServerAction";
 import { errorMSG, successMSG } from "@/utils/messages";
 import { Person } from "@prisma/client";
@@ -10,7 +10,7 @@ import { db } from "@/lib/db";
 interface FindBalanceResponse {
   success: boolean;
   message: string;
-  shopsBalance?: ShopsBalanceData[];
+  shopsBalance?: RentBalanceData[];
   /** Newest bank statement row in the database. Reports print it so the reader
    *  knows payments made after that date are not reflected yet. */
   lastBankTransactionDate?: Date;
@@ -21,7 +21,7 @@ async function getAllRentsBalance(user: Person): Promise<FindBalanceResponse> {
     throw new Error(errorMSG.unauthorized);
   }
 
-  const shopsBalance: ShopsBalanceData[] = await calculateAllRentsBalance();
+  const shopsBalance: RentBalanceData[] = await calculateAllRentsBalance();
 
   const lastBankTransaction = await db.bankTransaction.aggregate({
     _max: { date: true },
